@@ -1,0 +1,16 @@
+{
+  "joinEliteNetwork": "Вступить в Элитную Сеть",
+  "title": "Подать Заявку Мастера",
+  "subtitle": "Зарабатывайте больше и стройте репутацию на UstoGo",
+  "fullNameLabel": "Полное Имя",
+  "fullNamePlaceholder": "Алексей Морозов",
+  "specialtyLabel": "Основная Специализация",
+  "hourlyRateLabel": "Почасовая Ставка ($)",
+  "experienceLabel": "Опыт Работы (лет)",
+  "uploadLabel": "Загрузите Лицензию / Сертификат (PDF или изображение)",
+  "dragDropText": "Перетащите файлы сюда или",
+  "browse": "выберите",
+  "submitButton": "Отправить Заявку",
+  "alreadyMaster": "Уже мастер?",
+  "logIn": "Войти"
+}

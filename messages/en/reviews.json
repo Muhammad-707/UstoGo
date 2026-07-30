@@ -1,0 +1,13 @@
+{
+  "badge": "Verified Experiences",
+  "title": "Customer Reviews & Feedback",
+  "subtitle": "Authentic reviews from verified UstoGo bookings.",
+  "basedOn": "Based on {count}+ reviews",
+  "writeReview": "Write a Review",
+  "craftsmanResponse": "Craftsman Response:",
+  "modalTitle": "Leave a Review",
+  "ratingLabel": "Rating",
+  "commentsLabel": "Review Comments",
+  "commentsPlaceholder": "Describe your experience...",
+  "submitReview": "Submit Review"
+}

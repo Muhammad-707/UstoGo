@@ -1,0 +1,22 @@
+{
+  "badge": "Craftsman Portal",
+  "title": "Master Dashboard",
+  "manageSchedule": "Manage Schedule",
+  "editServices": "Edit Services & Rates",
+  "metricMonthlyRevenue": "Monthly Revenue",
+  "metricJobsCompleted": "Jobs Completed",
+  "metricJobsCompletedValue": "{count} Jobs",
+  "metricCustomerRating": "Customer Rating",
+  "metricCustomerRatingTop": "Top 1%",
+  "metricResponseTime": "Response Time",
+  "metricResponseTimeValue": "{minutes} mins",
+  "metricResponseTimeFast": "Fast",
+  "profileCompletionLabel": "Master Profile Completion",
+  "profileCompletionPercent": "{percent}% Complete",
+  "profileCompletionDesc": "Upload your state electrical certification to reach 100% verified status.",
+  "pendingApprovals": "Pending Job Approvals",
+  "newRequest": "New Request",
+  "scheduleAddressLine": "{date} ({time}) • Address: {address}",
+  "decline": "Decline",
+  "acceptJob": "Accept Job (${price})"
+}

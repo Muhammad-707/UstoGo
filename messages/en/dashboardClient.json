@@ -1,0 +1,22 @@
+{
+  "overview": "Overview",
+  "title": "Client Dashboard",
+  "newBooking": "New Booking",
+  "metricTotalSpent": "Total Spent",
+  "metricActiveBookings": "Active Bookings",
+  "metricActiveBookingsValue": "{count} Jobs",
+  "metricCompletedProjects": "Completed Projects",
+  "metricCompletedProjectsValue": "{count} Jobs",
+  "metricSavedMasters": "Saved Masters",
+  "metricSavedMastersValue": "{count} Masters",
+  "recentBookings": "Recent Service Bookings",
+  "viewTracker": "View Active Job Tracker →",
+  "tableCode": "Code",
+  "tableService": "Service",
+  "tableMaster": "Master",
+  "tableDate": "Date",
+  "tablePrice": "Price",
+  "tableStatus": "Status",
+  "tableAction": "Action",
+  "details": "Details"
+}

@@ -3,10 +3,12 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { Icon } from '@/components/icons/LucideIcons';
 import { CATEGORIES, MASTERS } from '@/lib/mockData';
 
 export default function BookingWizardPage() {
+  const t = useTranslations('booking');
   const searchParams = useSearchParams();
   const preselectedMasterId = searchParams.get('master');
 
@@ -38,10 +40,10 @@ export default function BookingWizardPage() {
       {/* Page Title */}
       <div className="text-center space-y-2">
         <span className="px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-sky-300 text-xs font-bold uppercase tracking-wider">
-          Instant Checkout
+          {t('instantCheckout')}
         </span>
         <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-          Book Craftsman Master
+          {t('pageTitle')}
         </h1>
       </div>
 
@@ -49,10 +51,10 @@ export default function BookingWizardPage() {
       {!bookingConfirmed && (
         <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-6 px-4">
           {[
-            { num: 1, label: 'Service Details' },
-            { num: 2, label: 'Schedule & Time' },
-            { num: 3, label: 'Location' },
-            { num: 4, label: 'Confirmation' },
+            { num: 1, label: t('stepService') },
+            { num: 2, label: t('stepSchedule') },
+            { num: 3, label: t('stepLocation') },
+            { num: 4, label: t('stepConfirmation') },
           ].map((s) => (
             <div key={s.num} className="flex items-center gap-2">
               <div
@@ -81,24 +83,24 @@ export default function BookingWizardPage() {
             <Icon name="CheckCircle2" size={48} />
           </div>
           <div className="space-y-2">
-            <h2 className="text-3xl font-extrabold text-slate-900 dark:text-white">Booking Confirmed! 🎉</h2>
-            <p className="text-sm text-slate-500">Your appointment has been scheduled and broadcasted to the master.</p>
+            <h2 className="text-3xl font-extrabold text-slate-900 dark:text-white">{t('confirmedTitle')}</h2>
+            <p className="text-sm text-slate-500">{t('confirmedDesc')}</p>
             <span className="inline-block px-4 py-1.5 rounded-full bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-sky-400 font-mono text-xs font-extrabold">
-              Booking Ref: #UG-84920
+              {t('bookingRef')}
             </span>
           </div>
 
           <div className="bg-slate-50 dark:bg-slate-800/60 p-6 rounded-2xl text-left text-xs space-y-3 border border-slate-200 dark:border-slate-700 max-w-md mx-auto">
             <div className="flex justify-between">
-              <span className="text-slate-400">Master</span>
+              <span className="text-slate-400">{t('master')}</span>
               <span className="font-bold text-slate-900 dark:text-white">{selectedMaster.name}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-slate-400">Scheduled Date</span>
+              <span className="text-slate-400">{t('scheduledDate')}</span>
               <span className="font-bold text-slate-900 dark:text-white">{date} ({timeSlot})</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-slate-400">Total Price</span>
+              <span className="text-slate-400">{t('totalPrice')}</span>
               <span className="font-extrabold text-blue-600 dark:text-sky-400">${totalPrice}.00</span>
             </div>
           </div>
@@ -108,13 +110,13 @@ export default function BookingWizardPage() {
               href="/booking/b-101"
               className="px-8 py-3.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-lg transition btn-ripple"
             >
-              Track Live Booking Status
+              {t('trackBooking')}
             </Link>
             <Link
               href="/home"
               className="px-8 py-3.5 rounded-2xl border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
             >
-              Back to Home
+              {t('backToHome')}
             </Link>
           </div>
         </div>
@@ -125,10 +127,10 @@ export default function BookingWizardPage() {
           {/* STEP 1: Select Master & Service */}
           {step === 1 && (
             <div className="space-y-6 animate-fade-in">
-              <h3 className="text-lg font-bold text-slate-900 dark:text-white">1. Select Master & Specific Service</h3>
-              
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white">{t('step1Heading')}</h3>
+
               <div className="space-y-3">
-                <label className="text-xs font-bold uppercase tracking-wider text-slate-400">Chosen Craftsman</label>
+                <label className="text-xs font-bold uppercase tracking-wider text-slate-400">{t('chosenCraftsman')}</label>
                 <div className="flex items-center gap-4 p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
                   <img src={selectedMaster.avatar} alt={selectedMaster.name} className="w-14 h-14 rounded-2xl object-cover" />
                   <div>
@@ -140,12 +142,12 @@ export default function BookingWizardPage() {
               </div>
 
               <div className="space-y-3">
-                <label className="text-xs font-bold uppercase tracking-wider text-slate-400">Job Description / Instructions</label>
+                <label className="text-xs font-bold uppercase tracking-wider text-slate-400">{t('jobDescription')}</label>
                 <textarea
                   rows={3}
                   value={jobNotes}
                   onChange={(e) => setJobNotes(e.target.value)}
-                  placeholder="Describe your issue or custom requirements..."
+                  placeholder={t('jobDescriptionPlaceholder')}
                   className="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs text-slate-900 dark:text-white focus:outline-none"
                 />
               </div>
@@ -154,7 +156,7 @@ export default function BookingWizardPage() {
                 onClick={() => setStep(2)}
                 className="w-full py-4 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-lg transition btn-ripple"
               >
-                Continue to Schedule →
+                {t('continueToSchedule')}
               </button>
             </div>
           )}
@@ -162,10 +164,10 @@ export default function BookingWizardPage() {
           {/* STEP 2: Schedule Date & Time */}
           {step === 2 && (
             <div className="space-y-6 animate-fade-in">
-              <h3 className="text-lg font-bold text-slate-900 dark:text-white">2. Select Date & Time Slot</h3>
-              
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white">{t('step2Heading')}</h3>
+
               <div className="space-y-2">
-                <label className="text-xs font-bold uppercase tracking-wider text-slate-400">Appointment Date</label>
+                <label className="text-xs font-bold uppercase tracking-wider text-slate-400">{t('appointmentDate')}</label>
                 <input
                   type="date"
                   value={date}
@@ -175,7 +177,7 @@ export default function BookingWizardPage() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-bold uppercase tracking-wider text-slate-400">Available Time Slots</label>
+                <label className="text-xs font-bold uppercase tracking-wider text-slate-400">{t('availableTimeSlots')}</label>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {timeSlots.map((slot) => (
                     <button
@@ -198,13 +200,13 @@ export default function BookingWizardPage() {
                   onClick={() => setStep(1)}
                   className="flex-1 py-4 rounded-2xl border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-700 dark:text-slate-300"
                 >
-                  ← Back
+                  {t('back')}
                 </button>
                 <button
                   onClick={() => setStep(3)}
                   className="flex-1 py-4 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-lg transition btn-ripple"
                 >
-                  Continue to Address →
+                  {t('continueToAddress')}
                 </button>
               </div>
             </div>
@@ -213,10 +215,10 @@ export default function BookingWizardPage() {
           {/* STEP 3: Address */}
           {step === 3 && (
             <div className="space-y-6 animate-fade-in">
-              <h3 className="text-lg font-bold text-slate-900 dark:text-white">3. Service Location</h3>
-              
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white">{t('step3Heading')}</h3>
+
               <div className="space-y-2">
-                <label className="text-xs font-bold uppercase tracking-wider text-slate-400">Full Address</label>
+                <label className="text-xs font-bold uppercase tracking-wider text-slate-400">{t('fullAddress')}</label>
                 <input
                   type="text"
                   value={address}
@@ -226,7 +228,7 @@ export default function BookingWizardPage() {
               </div>
 
               <div className="h-40 rounded-2xl bg-slate-200 dark:bg-slate-800 flex items-center justify-center text-xs text-slate-500 font-bold border border-slate-300 dark:border-slate-700">
-                [ Map Placeholder - Pin drop accurate to address ]
+                {t('mapPlaceholder')}
               </div>
 
               <div className="flex gap-4">
@@ -234,13 +236,13 @@ export default function BookingWizardPage() {
                   onClick={() => setStep(2)}
                   className="flex-1 py-4 rounded-2xl border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-700 dark:text-slate-300"
                 >
-                  ← Back
+                  {t('back')}
                 </button>
                 <button
                   onClick={() => setStep(4)}
                   className="flex-1 py-4 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-lg transition btn-ripple"
                 >
-                  Review Order →
+                  {t('reviewOrder')}
                 </button>
               </div>
             </div>
@@ -249,23 +251,23 @@ export default function BookingWizardPage() {
           {/* STEP 4: Review Summary & Confirm */}
           {step === 4 && (
             <div className="space-y-6 animate-fade-in">
-              <h3 className="text-lg font-bold text-slate-900 dark:text-white">4. Order Summary & Payment Guarantee</h3>
-              
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white">{t('step4Heading')}</h3>
+
               <div className="bg-slate-50 dark:bg-slate-800/60 p-6 rounded-2xl space-y-3 border border-slate-200 dark:border-slate-700 text-xs">
                 <div className="flex justify-between pb-2 border-b border-slate-200 dark:border-slate-700">
-                  <span className="text-slate-400">Craftsman</span>
+                  <span className="text-slate-400">{t('craftsman')}</span>
                   <span className="font-bold text-slate-900 dark:text-white">{selectedMaster.name} (${selectedMaster.hourlyRate}/hr)</span>
                 </div>
                 <div className="flex justify-between pb-2 border-b border-slate-200 dark:border-slate-700">
-                  <span className="text-slate-400">Scheduled Time</span>
+                  <span className="text-slate-400">{t('scheduledTime')}</span>
                   <span className="font-bold text-slate-900 dark:text-white">{date} ({timeSlot})</span>
                 </div>
                 <div className="flex justify-between pb-2 border-b border-slate-200 dark:border-slate-700">
-                  <span className="text-slate-400">Estimated Duration</span>
-                  <span className="font-bold text-slate-900 dark:text-white">{estimatedHours} hours</span>
+                  <span className="text-slate-400">{t('estimatedDuration')}</span>
+                  <span className="font-bold text-slate-900 dark:text-white">{t('hoursUnit', { count: estimatedHours })}</span>
                 </div>
                 <div className="flex justify-between pt-2 text-sm">
-                  <span className="font-bold text-slate-900 dark:text-white">Total Amount</span>
+                  <span className="font-bold text-slate-900 dark:text-white">{t('totalAmount')}</span>
                   <span className="font-extrabold text-blue-600 dark:text-sky-400">${totalPrice}.00</span>
                 </div>
               </div>
@@ -274,7 +276,7 @@ export default function BookingWizardPage() {
                 onClick={() => setBookingConfirmed(true)}
                 className="w-full py-4 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-sm shadow-xl transition btn-ripple"
               >
-                Confirm & Pay (${totalPrice}.00)
+                {t('confirmAndPay', { amount: totalPrice })}
               </button>
             </div>
           )}

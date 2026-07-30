@@ -1,0 +1,22 @@
+{
+  "overview": "Хулоса",
+  "title": "Кабинети Мизоҷ",
+  "newBooking": "Фармоиши Нав",
+  "metricTotalSpent": "Ҷамъи Хароҷот",
+  "metricActiveBookings": "Фармоишҳои Фаъол",
+  "metricActiveBookingsValue": "{count} кор",
+  "metricCompletedProjects": "Корҳои Иҷрошуда",
+  "metricCompletedProjectsValue": "{count} кор",
+  "metricSavedMasters": "Устоҳои Интихобшуда",
+  "metricSavedMastersValue": "{count} усто",
+  "recentBookings": "Фармоишҳои Охирин",
+  "viewTracker": "Пайгирии фармоиши фаъол →",
+  "tableCode": "Код",
+  "tableService": "Хизматрасонӣ",
+  "tableMaster": "Усто",
+  "tableDate": "Рӯз",
+  "tablePrice": "Нарх",
+  "tableStatus": "Статус",
+  "tableAction": "Амал",
+  "details": "Тафсилот"
+}

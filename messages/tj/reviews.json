@@ -1,0 +1,13 @@
+{
+  "badge": "Таҷрибаи Санҷидашуда",
+  "title": "Баҳо ва Фикрҳои Мизоҷон",
+  "subtitle": "Баҳодиҳиҳои воқеӣ аз фармоишҳои санҷидашудаи UstoGo.",
+  "basedOn": "Дар асоси {count}+ баҳодиҳӣ",
+  "writeReview": "Баҳо Гузоштан",
+  "craftsmanResponse": "Ҷавоби Усто:",
+  "modalTitle": "Баҳо Гузоштан",
+  "ratingLabel": "Баҳо",
+  "commentsLabel": "Шарҳи Баҳодиҳӣ",
+  "commentsPlaceholder": "Таҷрибаи худро тасвир кунед...",
+  "submitReview": "Фиристодани Баҳо"
+}

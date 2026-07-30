@@ -1,0 +1,22 @@
+{
+  "badge": "Портал Мастера",
+  "title": "Кабинет Мастера",
+  "manageSchedule": "Управление Расписанием",
+  "editServices": "Редактировать Услуги и Цены",
+  "metricMonthlyRevenue": "Доход за Месяц",
+  "metricJobsCompleted": "Выполнено Заказов",
+  "metricJobsCompletedValue": "{count} заказов",
+  "metricCustomerRating": "Рейтинг Клиентов",
+  "metricCustomerRatingTop": "Топ 1%",
+  "metricResponseTime": "Время Отклика",
+  "metricResponseTimeValue": "{minutes} мин",
+  "metricResponseTimeFast": "Быстро",
+  "profileCompletionLabel": "Заполненность Профиля Мастера",
+  "profileCompletionPercent": "Заполнено на {percent}%",
+  "profileCompletionDesc": "Загрузите государственный сертификат электрика, чтобы достичь 100% проверенного статуса.",
+  "pendingApprovals": "Запросы на Подтверждение",
+  "newRequest": "Новый Запрос",
+  "scheduleAddressLine": "{date} ({time}) • Адрес: {address}",
+  "decline": "Отклонить",
+  "acceptJob": "Принять Заказ (${price})"
+}

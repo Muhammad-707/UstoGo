@@ -1,0 +1,13 @@
+{
+  "badge": "Проверенный Опыт",
+  "title": "Отзывы и Оценки Клиентов",
+  "subtitle": "Подлинные отзывы от проверенных заказов UstoGo.",
+  "basedOn": "На основе {count}+ отзывов",
+  "writeReview": "Оставить Отзыв",
+  "craftsmanResponse": "Ответ Мастера:",
+  "modalTitle": "Оставить Отзыв",
+  "ratingLabel": "Оценка",
+  "commentsLabel": "Комментарий к Отзыву",
+  "commentsPlaceholder": "Опишите ваш опыт...",
+  "submitReview": "Отправить Отзыв"
+}

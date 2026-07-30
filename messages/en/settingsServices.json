@@ -1,0 +1,6 @@
+{
+  "catalogManagement": "Catalog Management",
+  "servicesPricing": "Services & Pricing",
+  "addService": "+ Add Service",
+  "estimatedDuration": "Estimated Duration: {est}"
+}

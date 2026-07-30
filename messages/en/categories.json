@@ -1,0 +1,10 @@
+{
+  "badge": "Complete Directory",
+  "title": "Explore All Service Categories",
+  "subtitle": "From emergency plumbing & electrical wiring to high-end interior architectural design.",
+  "filterAll": "All Services ({count})",
+  "filterPopular": "Most Popular",
+  "filterLuxury": "Luxury & Premium",
+  "verifiedMasters": "{count} Verified Masters",
+  "startingFrom": "From ${price}/hr"
+}

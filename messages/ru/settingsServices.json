@@ -1,0 +1,6 @@
+{
+  "catalogManagement": "Управление Каталогом",
+  "servicesPricing": "Услуги и Цены",
+  "addService": "+ Добавить Услугу",
+  "estimatedDuration": "Примерная Длительность: {est}"
+}

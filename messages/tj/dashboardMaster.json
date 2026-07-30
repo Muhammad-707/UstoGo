@@ -1,0 +1,22 @@
+{
+  "badge": "Портали Усто",
+  "title": "Кабинети Усто",
+  "manageSchedule": "Идоракунии Ҷадвал",
+  "editServices": "Таҳрири Хизматрасонӣ ва Нархҳо",
+  "metricMonthlyRevenue": "Даромади Моҳона",
+  "metricJobsCompleted": "Корҳои Иҷрошуда",
+  "metricJobsCompletedValue": "{count} кор",
+  "metricCustomerRating": "Баҳои Мизоҷон",
+  "metricCustomerRatingTop": "Топ 1%",
+  "metricResponseTime": "Вақти Ҷавобдиҳӣ",
+  "metricResponseTimeValue": "{minutes} дақ",
+  "metricResponseTimeFast": "Тез",
+  "profileCompletionLabel": "Пуррагии Профили Усто",
+  "profileCompletionPercent": "{percent}% пур шудааст",
+  "profileCompletionDesc": "Сертификати давлатии барқии худро бор кунед, то ба статуси 100% санҷидашуда бирасед.",
+  "pendingApprovals": "Дархостҳо барои Тасдиқ",
+  "newRequest": "Дархости Нав",
+  "scheduleAddressLine": "{date} ({time}) • Суроға: {address}",
+  "decline": "Рад кардан",
+  "acceptJob": "Қабули Кор (${price})"
+}

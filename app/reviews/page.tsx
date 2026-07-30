@@ -2,9 +2,11 @@
 
 import React, { useState } from 'react';
 import { Icon } from '@/components/icons/LucideIcons';
+import { useTranslations } from 'next-intl';
 import { MASTERS } from '@/lib/mockData';
 
 export default function ReviewsPage() {
+  const t = useTranslations('reviews');
   const [modalOpen, setModalOpen] = useState(false);
 
   const allReviews = MASTERS.flatMap((m) => m.reviews);
@@ -16,10 +18,10 @@ export default function ReviewsPage() {
       <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 border border-slate-200 dark:border-slate-800 shadow-xl flex flex-col md:flex-row items-center justify-between gap-8">
         <div className="space-y-2 text-center md:text-left">
           <span className="text-xs font-extrabold uppercase tracking-widest text-blue-600 dark:text-sky-400">
-            Verified Experiences
+            {t('badge')}
           </span>
-          <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white">Customer Reviews & Feedback</h1>
-          <p className="text-xs text-slate-500">Authentic reviews from verified UstoGo bookings.</p>
+          <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white">{t('title')}</h1>
+          <p className="text-xs text-slate-500">{t('subtitle')}</p>
         </div>
 
         <div className="flex items-center gap-6">
@@ -30,14 +32,14 @@ export default function ReviewsPage() {
                 <Icon key={i} name="Star" size={16} className="fill-amber-400" />
               ))}
             </div>
-            <span className="text-[11px] text-slate-400 block mt-1">Based on 38,400+ reviews</span>
+            <span className="text-[11px] text-slate-400 block mt-1">{t('basedOn', { count: '38,400' })}</span>
           </div>
 
           <button
             onClick={() => setModalOpen(true)}
             className="px-6 py-3.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-lg transition btn-ripple"
           >
-            Write a Review
+            {t('writeReview')}
           </button>
         </div>
       </div>
@@ -64,7 +66,7 @@ export default function ReviewsPage() {
 
             {rev.craftsmanReply && (
               <div className="p-4 rounded-2xl bg-blue-50 dark:bg-slate-800/80 text-xs text-slate-700 dark:text-slate-300 space-y-1">
-                <span className="font-bold text-blue-600 dark:text-sky-400">Craftsman Response:</span>
+                <span className="font-bold text-blue-600 dark:text-sky-400">{t('craftsmanResponse')}</span>
                 <p>{rev.craftsmanReply}</p>
               </div>
             )}
@@ -77,14 +79,14 @@ export default function ReviewsPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm">
           <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-8 rounded-3xl max-w-md w-full space-y-4 shadow-2xl animate-fade-in">
             <div className="flex justify-between items-center">
-              <h3 className="font-extrabold text-slate-900 dark:text-white text-lg">Leave a Review</h3>
+              <h3 className="font-extrabold text-slate-900 dark:text-white text-lg">{t('modalTitle')}</h3>
               <button onClick={() => setModalOpen(false)} className="text-slate-400 hover:text-slate-600">
                 <Icon name="X" size={20} />
               </button>
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs font-bold text-slate-400">Rating</label>
+              <label className="text-xs font-bold text-slate-400">{t('ratingLabel')}</label>
               <div className="flex gap-2 text-amber-400">
                 {[1, 2, 3, 4, 5].map((s) => (
                   <Icon key={s} name="Star" size={24} className="fill-amber-400 cursor-pointer hover:scale-110 transition" />
@@ -93,15 +95,15 @@ export default function ReviewsPage() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs font-bold text-slate-400">Review Comments</label>
-              <textarea rows={4} placeholder="Describe your experience..." className="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs" />
+              <label className="text-xs font-bold text-slate-400">{t('commentsLabel')}</label>
+              <textarea rows={4} placeholder={t('commentsPlaceholder')} className="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs" />
             </div>
 
             <button
               onClick={() => setModalOpen(false)}
               className="w-full py-4 rounded-2xl bg-blue-600 text-white font-extrabold text-xs shadow-lg btn-ripple"
             >
-              Submit Review
+              {t('submitReview')}
             </button>
           </div>
         </div>

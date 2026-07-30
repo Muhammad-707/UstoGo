@@ -3,9 +3,11 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { Icon } from '@/components/icons/LucideIcons';
+import { useTranslations } from 'next-intl';
 import { CATEGORIES } from '@/lib/mockData';
 
 export default function CategoriesPage() {
+  const t = useTranslations('categories');
   const [filter, setFilter] = useState<'all' | 'popular' | 'luxury'>('all');
 
   const displayedCategories = CATEGORIES.filter((c) => {
@@ -20,13 +22,13 @@ export default function CategoriesPage() {
       {/* Header */}
       <div className="text-center max-w-3xl mx-auto space-y-4">
         <span className="px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-sky-300 text-xs font-bold uppercase tracking-wider">
-          Complete Directory
+          {t('badge')}
         </span>
         <h1 className="text-4xl sm:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-          Explore All Service Categories
+          {t('title')}
         </h1>
         <p className="text-base text-slate-600 dark:text-slate-300">
-          From emergency plumbing & electrical wiring to high-end interior architectural design.
+          {t('subtitle')}
         </p>
 
         {/* Filter Pills */}
@@ -39,7 +41,7 @@ export default function CategoriesPage() {
                 : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800'
             }`}
           >
-            All Services ({CATEGORIES.length})
+            {t('filterAll', { count: CATEGORIES.length })}
           </button>
           <button
             onClick={() => setFilter('popular')}
@@ -49,7 +51,7 @@ export default function CategoriesPage() {
                 : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800'
             }`}
           >
-            Most Popular
+            {t('filterPopular')}
           </button>
           <button
             onClick={() => setFilter('luxury')}
@@ -59,7 +61,7 @@ export default function CategoriesPage() {
                 : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800'
             }`}
           >
-            Luxury & Premium
+            {t('filterLuxury')}
           </button>
         </div>
       </div>
@@ -93,8 +95,8 @@ export default function CategoriesPage() {
             </div>
 
             <div className="pt-4 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-xs">
-              <span className="text-slate-500 font-medium">{cat.masterCount} Verified Masters</span>
-              <span className="font-extrabold text-slate-900 dark:text-white">From ${cat.startingPrice}/hr</span>
+              <span className="text-slate-500 font-medium">{t('verifiedMasters', { count: cat.masterCount })}</span>
+              <span className="font-extrabold text-slate-900 dark:text-white">{t('startingFrom', { price: cat.startingPrice })}</span>
             </div>
           </Link>
         ))}

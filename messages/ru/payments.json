@@ -1,0 +1,10 @@
+{
+  "badge": "Финансовый Центр",
+  "title": "Платежи и Выплаты",
+  "savedMethodsTitle": "Сохраненные Способы Оплаты",
+  "vaultLabel": "Эскроу-хранилище UstoGo",
+  "expiresLabel": "Действует до {date}",
+  "cardBrand": "VISA Platinum",
+  "addCardButton": "+ Добавить Карту",
+  "transactionsTitle": "Последние Транзакции"
+}

@@ -2,10 +2,12 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { Icon } from '@/components/icons/LucideIcons';
 import { CATEGORIES, MASTERS } from '@/lib/mockData';
 
 export default function SearchMastersPage() {
+  const t = useTranslations('search');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [verifiedOnly, setVerifiedOnly] = useState(false);
@@ -33,10 +35,10 @@ export default function SearchMastersPage() {
       {/* Header & Main Search */}
       <div className="space-y-4">
         <span className="text-xs font-extrabold uppercase tracking-widest text-blue-600 dark:text-sky-400">
-          Find Craftsmen
+          {t('eyebrow')}
         </span>
         <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-          Search Verified Masters & Service Specialists
+          {t('title')}
         </h1>
 
         {/* Search Bar */}
@@ -46,7 +48,7 @@ export default function SearchMastersPage() {
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search by name, skill (e.g. Electrician, Plumbing, Locksmith)..."
+            placeholder={t('searchPlaceholder')}
             className="w-full pl-12 pr-4 py-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-blue-500 shadow-md transition"
           />
           {searchQuery && (
@@ -68,7 +70,7 @@ export default function SearchMastersPage() {
           <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800">
             <h3 className="font-extrabold text-slate-900 dark:text-white text-base flex items-center gap-2">
               <Icon name="Filter" size={18} className="text-blue-600 dark:text-sky-400" />
-              Filters
+              {t('filters')}
             </h3>
             <button
               onClick={() => {
@@ -80,19 +82,19 @@ export default function SearchMastersPage() {
               }}
               className="text-xs text-blue-600 font-bold hover:underline"
             >
-              Reset All
+              {t('resetAll')}
             </button>
           </div>
 
           {/* Category Selector */}
           <div className="space-y-2">
-            <label className="text-xs font-bold uppercase tracking-wider text-slate-400">Category</label>
+            <label className="text-xs font-bold uppercase tracking-wider text-slate-400">{t('category')}</label>
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
               className="w-full p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-900 dark:text-white focus:outline-none"
             >
-              <option value="all">All Categories ({CATEGORIES.length})</option>
+              <option value="all">{t('allCategories', { count: CATEGORIES.length })}</option>
               {CATEGORIES.map((c) => (
                 <option key={c.id} value={c.id}>
                   {c.name}
@@ -103,7 +105,7 @@ export default function SearchMastersPage() {
 
           {/* Verified Toggle */}
           <div className="flex items-center justify-between pt-2">
-            <span className="text-xs font-bold text-slate-700 dark:text-slate-300">Verified Masters Only</span>
+            <span className="text-xs font-bold text-slate-700 dark:text-slate-300">{t('verifiedOnly')}</span>
             <input
               type="checkbox"
               checked={verifiedOnly}
@@ -114,7 +116,7 @@ export default function SearchMastersPage() {
 
           {/* Rating Filter */}
           <div className="space-y-2 pt-2 border-t border-slate-100 dark:border-slate-800">
-            <label className="text-xs font-bold uppercase tracking-wider text-slate-400">Minimum Rating</label>
+            <label className="text-xs font-bold uppercase tracking-wider text-slate-400">{t('minRating')}</label>
             <div className="flex gap-2">
               {[4.0, 4.5, 4.8].map((rating) => (
                 <button
@@ -136,8 +138,8 @@ export default function SearchMastersPage() {
           {/* Max Hourly Rate Slider */}
           <div className="space-y-2 pt-2 border-t border-slate-100 dark:border-slate-800">
             <div className="flex justify-between text-xs font-bold">
-              <span className="text-slate-400 uppercase tracking-wider">Max Rate</span>
-              <span className="text-slate-900 dark:text-white">${maxPrice}/hr</span>
+              <span className="text-slate-400 uppercase tracking-wider">{t('maxRate')}</span>
+              <span className="text-slate-900 dark:text-white">{t('perHour', { price: maxPrice })}</span>
             </div>
             <input
               type="range"
@@ -157,7 +159,10 @@ export default function SearchMastersPage() {
           {/* Top Bar (Results Count + View Mode Switcher) */}
           <div className="flex items-center justify-between bg-white dark:bg-slate-900 px-6 py-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
             <p className="text-xs font-bold text-slate-600 dark:text-slate-300">
-              Showing <span className="text-blue-600 dark:text-sky-400 font-extrabold">{filteredMasters.length}</span> craftsman masters
+              {t.rich('showingResults', {
+                count: filteredMasters.length,
+                highlight: (chunks) => <span className="text-blue-600 dark:text-sky-400 font-extrabold">{chunks}</span>,
+              })}
             </p>
 
             <div className="flex items-center gap-2">
@@ -168,7 +173,7 @@ export default function SearchMastersPage() {
                     ? 'bg-blue-600 text-white'
                     : 'text-slate-400 hover:text-slate-600 dark:hover:text-white'
                 }`}
-                title="Grid View"
+                title={t('gridView')}
               >
                 <Icon name="Grid" size={18} />
               </button>
@@ -179,7 +184,7 @@ export default function SearchMastersPage() {
                     ? 'bg-blue-600 text-white'
                     : 'text-slate-400 hover:text-slate-600 dark:hover:text-white'
                 }`}
-                title="List View"
+                title={t('listView')}
               >
                 <Icon name="Menu" size={18} />
               </button>
@@ -192,9 +197,9 @@ export default function SearchMastersPage() {
               <div className="w-16 h-16 rounded-2xl bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-sky-400 mx-auto flex items-center justify-center">
                 <Icon name="Search" size={32} />
               </div>
-              <h3 className="text-xl font-bold text-slate-900 dark:text-white">No Craftsmen Found</h3>
+              <h3 className="text-xl font-bold text-slate-900 dark:text-white">{t('noResultsTitle')}</h3>
               <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mx-auto">
-                Try expanding your search query or resetting category and price filters to view more masters.
+                {t('noResultsDesc')}
               </p>
             </div>
           ) : viewMode === 'grid' ? (
@@ -233,7 +238,7 @@ export default function SearchMastersPage() {
                   <div className="p-6 pt-0 border-t border-slate-100 dark:border-slate-800/80 mt-4">
                     <div className="flex items-center justify-between py-3 text-xs">
                       <span className="text-slate-400 font-medium">{m.location}</span>
-                      <span className="font-extrabold text-slate-900 dark:text-white text-sm">${m.hourlyRate}/h</span>
+                      <span className="font-extrabold text-slate-900 dark:text-white text-sm">{t('perHour', { price: m.hourlyRate })}</span>
                     </div>
 
                     <div className="grid grid-cols-2 gap-2 mt-2">
@@ -241,13 +246,13 @@ export default function SearchMastersPage() {
                         href={`/master/${m.id}`}
                         className="py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-center text-xs font-bold text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
                       >
-                        Profile
+                        {t('profile')}
                       </Link>
                       <Link
                         href={`/booking?master=${m.id}`}
                         className="py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-center text-xs font-bold shadow transition btn-ripple"
                       >
-                        Book Now
+                        {t('bookNow')}
                       </Link>
                     </div>
                   </div>
@@ -265,14 +270,14 @@ export default function SearchMastersPage() {
                         <h3 className="font-extrabold text-slate-900 dark:text-white text-lg">{m.name}</h3>
                         <Icon name="ShieldCheck" size={18} className="text-blue-500" />
                         <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 text-[10px] font-bold">
-                          {m.completedJobs}+ Jobs Done
+                          {t('jobsDone', { count: m.completedJobs })}
                         </span>
                       </div>
                       <p className="text-xs font-semibold text-blue-600 dark:text-sky-400">{m.title}</p>
                       <div className="flex items-center gap-3 text-xs text-slate-500">
                         <span className="flex items-center gap-1 text-amber-500 font-bold">
                           <Icon name="Star" size={14} className="fill-amber-400" />
-                          {m.rating} ({m.reviewCount} reviews)
+                          {m.rating} ({t('reviewsCount', { count: m.reviewCount })})
                         </span>
                         <span>• {m.distance}</span>
                       </div>
@@ -281,15 +286,15 @@ export default function SearchMastersPage() {
 
                   <div className="flex items-center gap-4 w-full md:w-auto justify-between md:justify-end border-t md:border-t-0 pt-4 md:pt-0 border-slate-100 dark:border-slate-800">
                     <div className="text-right">
-                      <span className="text-[10px] text-slate-400 uppercase font-bold block">Rate</span>
-                      <span className="text-xl font-extrabold text-slate-900 dark:text-white">${m.hourlyRate}/h</span>
+                      <span className="text-[10px] text-slate-400 uppercase font-bold block">{t('rate')}</span>
+                      <span className="text-xl font-extrabold text-slate-900 dark:text-white">{t('perHour', { price: m.hourlyRate })}</span>
                     </div>
 
                     <Link
                       href={`/booking?master=${m.id}`}
                       className="px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow transition btn-ripple"
                     >
-                      Book Now
+                      {t('bookNow')}
                     </Link>
                   </div>
                 </div>

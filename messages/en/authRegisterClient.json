@@ -1,0 +1,13 @@
+{
+  "title": "Create Client Account",
+  "subtitle": "Book background-checked craftsmen in seconds",
+  "fullNameLabel": "Full Name",
+  "fullNamePlaceholder": "John Doe",
+  "emailLabel": "Email Address",
+  "emailPlaceholder": "john@example.com",
+  "passwordLabel": "Password",
+  "passwordPlaceholder": "••••••••",
+  "registerButton": "Register Account",
+  "alreadyHaveAccount": "Already have an account?",
+  "logIn": "Log in"
+}

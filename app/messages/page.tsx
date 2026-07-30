@@ -2,9 +2,11 @@
 
 import React, { useState } from 'react';
 import { Icon } from '@/components/icons/LucideIcons';
+import { useTranslations } from 'next-intl';
 import { MASTERS } from '@/lib/mockData';
 
 export default function MessagesPage() {
+  const t = useTranslations('messagesPage');
   const [selectedMaster, setSelectedMaster] = useState(MASTERS[0]);
   const [messages, setMessages] = useState([
     { id: 1, sender: 'master', text: 'Hello Alex! I have reviewed your electrical panel request.', time: '10:14 AM' },
@@ -30,7 +32,7 @@ export default function MessagesPage() {
         {/* Left Contacts Sidebar */}
         <div className="w-full sm:w-80 border-r border-slate-100 dark:border-slate-800 flex flex-col">
           <div className="p-4 border-b border-slate-100 dark:border-slate-800">
-            <h2 className="font-extrabold text-slate-900 dark:text-white text-lg">Messages</h2>
+            <h2 className="font-extrabold text-slate-900 dark:text-white text-lg">{t('title')}</h2>
           </div>
 
           <div className="divide-y divide-slate-100 dark:divide-slate-800 overflow-y-auto flex-1">
@@ -69,7 +71,7 @@ export default function MessagesPage() {
               <img src={selectedMaster.avatar} alt={selectedMaster.name} className="w-10 h-10 rounded-xl object-cover" />
               <div>
                 <h3 className="text-sm font-bold text-slate-900 dark:text-white">{selectedMaster.name}</h3>
-                <span className="text-[11px] text-emerald-500 font-bold">Online • Responds in ~5m</span>
+                <span className="text-[11px] text-emerald-500 font-bold">{t('onlineStatus')}</span>
               </div>
             </div>
           </div>
@@ -101,14 +103,14 @@ export default function MessagesPage() {
               type="text"
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
-              placeholder="Type your message to the master..."
+              placeholder={t('inputPlaceholder')}
               className="flex-1 px-4 py-3 rounded-2xl bg-slate-100 dark:bg-slate-800 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none"
             />
             <button
               type="submit"
               className="px-5 py-3 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow transition btn-ripple"
             >
-              Send
+              {t('send')}
             </button>
           </form>
 

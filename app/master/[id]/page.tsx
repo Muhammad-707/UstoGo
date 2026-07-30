@@ -3,10 +3,12 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { Icon } from '@/components/icons/LucideIcons';
 import { MASTERS } from '@/lib/mockData';
 
 export default function MasterProfilePage() {
+  const t = useTranslations('masterDetail');
   const params = useParams();
   const masterId = params?.id as string;
   const master = MASTERS.find((m) => m.id === masterId) || MASTERS[0];
@@ -31,7 +33,7 @@ export default function MasterProfilePage() {
             <div className="relative -mt-16 sm:-mt-20">
               <img src={master.avatar} alt={master.name} className="w-32 h-32 rounded-3xl object-cover border-4 border-white dark:border-slate-900 shadow-2xl" />
               {master.verified && (
-                <div className="absolute -bottom-2 -right-2 p-1.5 bg-blue-600 text-white rounded-full shadow-lg" title="Verified Master">
+                <div className="absolute -bottom-2 -right-2 p-1.5 bg-blue-600 text-white rounded-full shadow-lg" title={t('verifiedMaster')}>
                   <Icon name="ShieldCheck" size={18} />
                 </div>
               )}
@@ -54,11 +56,11 @@ export default function MasterProfilePage() {
                 </span>
                 <span className="flex items-center gap-1">
                   <Icon name="Award" size={14} />
-                  {master.experienceYears} Years Experience
+                  {t('yearsExperience', { count: master.experienceYears })}
                 </span>
                 <span className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-bold">
                   <Icon name="CheckCircle2" size={14} />
-                  {master.completedJobs} Jobs Completed
+                  {t('jobsCompleted', { count: master.completedJobs })}
                 </span>
               </div>
             </div>
@@ -70,7 +72,7 @@ export default function MasterProfilePage() {
               className="px-5 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center gap-2"
             >
               <Icon name="MessageSquare" size={16} />
-              <span>Chat</span>
+              <span>{t('chat')}</span>
             </Link>
 
             <Link
@@ -78,7 +80,7 @@ export default function MasterProfilePage() {
               className="px-8 py-3 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-extrabold shadow-lg shadow-blue-600/30 transition btn-ripple flex items-center gap-2"
             >
               <Icon name="Calendar" size={16} />
-              <span>Book Appointment</span>
+              <span>{t('bookAppointment')}</span>
             </Link>
           </div>
 
@@ -93,10 +95,10 @@ export default function MasterProfilePage() {
             {/* Tab Navigation */}
             <div className="flex border-b border-slate-200 dark:border-slate-800 gap-8">
               {[
-                { id: 'about', label: 'About & Skills' },
-                { id: 'gallery', label: `Gallery (${master.gallery.length})` },
-                { id: 'reviews', label: `Reviews (${master.reviews.length})` },
-                { id: 'hours', label: 'Working Hours' },
+                { id: 'about', label: t('tabAbout') },
+                { id: 'gallery', label: t('tabGallery', { count: master.gallery.length }) },
+                { id: 'reviews', label: t('tabReviews', { count: master.reviews.length }) },
+                { id: 'hours', label: t('tabHours') },
               ].map((tab) => (
                 <button
                   key={tab.id}
@@ -117,13 +119,13 @@ export default function MasterProfilePage() {
               <div className="space-y-8 animate-fade-in">
                 {/* Bio */}
                 <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-3">
-                  <h3 className="text-lg font-bold text-slate-900 dark:text-white">Professional Biography</h3>
+                  <h3 className="text-lg font-bold text-slate-900 dark:text-white">{t('professionalBio')}</h3>
                   <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">{master.bio}</p>
                 </div>
 
                 {/* Specializations & Skills */}
                 <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-4">
-                  <h3 className="text-lg font-bold text-slate-900 dark:text-white">Specializations & Skills</h3>
+                  <h3 className="text-lg font-bold text-slate-900 dark:text-white">{t('specializations')}</h3>
                   <div className="flex flex-wrap gap-2">
                     {master.skills.map((skill, idx) => (
                       <span
@@ -140,14 +142,14 @@ export default function MasterProfilePage() {
                 <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-4">
                   <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
                     <Icon name="Award" size={20} className="text-amber-500" />
-                    Verified Certificates & Licenses
+                    {t('verifiedCertificates')}
                   </h3>
                   <div className="divide-y divide-slate-100 dark:divide-slate-800">
                     {master.certificates.map((cert, idx) => (
                       <div key={idx} className="py-3 flex items-center justify-between">
                         <div>
                           <h4 className="text-sm font-bold text-slate-900 dark:text-white">{cert.title}</h4>
-                          <p className="text-xs text-slate-500">Issued by {cert.issuer}</p>
+                          <p className="text-xs text-slate-500">{t('issuedBy', { issuer: cert.issuer })}</p>
                         </div>
                         <span className="text-xs font-semibold px-2.5 py-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-lg">
                           {cert.year}
@@ -164,7 +166,7 @@ export default function MasterProfilePage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 animate-fade-in">
                 {master.gallery.map((img, idx) => (
                   <div key={idx} className="h-60 rounded-3xl overflow-hidden shadow-md border border-slate-200 dark:border-slate-800">
-                    <img src={img} alt={`Work sample ${idx}`} className="w-full h-full object-cover hover:scale-105 transition duration-300" />
+                    <img src={img} alt={t('gallerySampleAlt', { index: idx })} className="w-full h-full object-cover hover:scale-105 transition duration-300" />
                   </div>
                 ))}
               </div>
@@ -191,7 +193,7 @@ export default function MasterProfilePage() {
                     <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">{rev.comment}</p>
                     {rev.craftsmanReply && (
                       <div className="p-4 rounded-2xl bg-blue-50 dark:bg-slate-800 text-xs text-slate-700 dark:text-slate-300 space-y-1">
-                        <span className="font-bold text-blue-600 dark:text-sky-400">Response from {master.name}:</span>
+                        <span className="font-bold text-blue-600 dark:text-sky-400">{t('responseFrom', { name: master.name })}</span>
                         <p>{rev.craftsmanReply}</p>
                       </div>
                     )}
@@ -203,7 +205,7 @@ export default function MasterProfilePage() {
             {/* Tab 4: Working Hours */}
             {activeTab === 'hours' && (
               <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-4 animate-fade-in">
-                <h3 className="text-lg font-bold text-slate-900 dark:text-white">Weekly Availability</h3>
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white">{t('weeklyAvailability')}</h3>
                 <div className="divide-y divide-slate-100 dark:divide-slate-800 text-sm">
                   {Object.entries(master.workingHours).map(([days, hours], idx) => (
                     <div key={idx} className="py-3 flex justify-between">
@@ -221,22 +223,22 @@ export default function MasterProfilePage() {
           <div>
             <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl sticky top-24 space-y-6">
               <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800">
-                <span className="text-xs font-bold text-slate-400 uppercase">Hourly Rate</span>
+                <span className="text-xs font-bold text-slate-400 uppercase">{t('hourlyRate')}</span>
                 <span className="text-2xl font-extrabold text-slate-900 dark:text-white">${master.hourlyRate}/hr</span>
               </div>
 
               <div className="space-y-3 text-xs text-slate-600 dark:text-slate-300">
                 <div className="flex items-center justify-between">
-                  <span>Service Guarantee</span>
-                  <span className="font-bold text-emerald-600 dark:text-emerald-400">100% Insured</span>
+                  <span>{t('serviceGuarantee')}</span>
+                  <span className="font-bold text-emerald-600 dark:text-emerald-400">{t('insured')}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span>Avg Response Time</span>
-                  <span className="font-bold text-slate-900 dark:text-white">under 15 mins</span>
+                  <span>{t('avgResponseTime')}</span>
+                  <span className="font-bold text-slate-900 dark:text-white">{t('underMinutes', { count: 15 })}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span>Travel Fee</span>
-                  <span className="font-bold text-emerald-600 dark:text-emerald-400">FREE</span>
+                  <span>{t('travelFee')}</span>
+                  <span className="font-bold text-emerald-600 dark:text-emerald-400">{t('free')}</span>
                 </div>
               </div>
 
@@ -245,7 +247,7 @@ export default function MasterProfilePage() {
                 className="w-full py-3.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-sm shadow-lg shadow-blue-600/30 transition btn-ripple flex items-center justify-center gap-2"
               >
                 <Icon name="Calendar" size={18} />
-                <span>Book This Master</span>
+                <span>{t('bookThisMaster')}</span>
               </Link>
             </div>
           </div>

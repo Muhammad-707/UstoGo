@@ -1,0 +1,22 @@
+{
+  "overview": "Обзор",
+  "title": "Кабинет Клиента",
+  "newBooking": "Новый Заказ",
+  "metricTotalSpent": "Всего Потрачено",
+  "metricActiveBookings": "Активные Заказы",
+  "metricActiveBookingsValue": "{count} заказа",
+  "metricCompletedProjects": "Завершенные Работы",
+  "metricCompletedProjectsValue": "{count} заказов",
+  "metricSavedMasters": "Сохраненные Мастера",
+  "metricSavedMastersValue": "{count} мастеров",
+  "recentBookings": "Последние Заказы",
+  "viewTracker": "Отследить активный заказ →",
+  "tableCode": "Код",
+  "tableService": "Услуга",
+  "tableMaster": "Мастер",
+  "tableDate": "Дата",
+  "tablePrice": "Цена",
+  "tableStatus": "Статус",
+  "tableAction": "Действие",
+  "details": "Подробнее"
+}

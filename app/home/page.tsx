@@ -3,20 +3,18 @@
 import React from 'react';
 import Link from 'next/link';
 import { Icon } from '@/components/icons/LucideIcons';
+import { useTranslations } from 'next-intl';
 import { CATEGORIES, MASTERS, MOCK_BOOKINGS } from '@/lib/mockData';
-import { useLanguage } from '@/lib/i18n/LanguageContext';
 
 export default function ClientHomePage() {
-  const { t } = useLanguage();
+  const t = useTranslations('common');
   const activeBooking = MOCK_BOOKINGS.find((b) => b.status === 'In Progress') || MOCK_BOOKINGS[0];
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
       
       {/* Welcome Banner */}
-      import HeroSlider from "@/components/layout/HeroSlider";
-
-      <HeroSlider />
+      <div className="bg-gradient-to-r from-blue-900 via-slate-900 to-indigo-950 rounded-3xl p-8 text-white shadow-xl flex flex-col md:flex-row items-center justify-between gap-6 border border-slate-800">
         <div className="space-y-2 max-w-xl">
           <div className="flex items-center gap-2">
             <span className="px-3 py-1 rounded-full bg-blue-500/30 text-blue-200 text-xs font-bold border border-blue-400/30">

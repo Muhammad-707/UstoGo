@@ -1,0 +1,11 @@
+{
+  "scheduledFor": "Назначено на {date} ({time})",
+  "chatWithMaster": "Написать мастеру",
+  "liveTimeline": "Ход выполнения заказа в реальном времени",
+  "profile": "Профиль",
+  "paymentAndAddress": "Оплата и адрес",
+  "serviceFee": "Стоимость услуги",
+  "platformProtection": "Защита платформы",
+  "totalPaid": "Оплачено всего",
+  "serviceAddress": "Адрес услуги:"
+}

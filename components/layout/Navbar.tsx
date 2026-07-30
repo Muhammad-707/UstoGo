@@ -1,16 +1,25 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useTransition } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import { useLocale, useTranslations } from 'next-intl';
 import { Icon } from '@/components/icons/LucideIcons';
 import { MOCK_NOTIFICATIONS } from '@/lib/mockData';
-import { useLanguage } from '@/lib/i18n/LanguageContext';
-import { Language } from '@/lib/i18n/translations';
+import { setLocale } from '@/i18n/actions';
+import { locales, localeMeta, type Locale } from '@/i18n/locales';
 
 export const Navbar: React.FC = () => {
   const pathname = usePathname();
-  const { lang, setLang, t } = useLanguage();
+  const router = useRouter();
+  const lang = useLocale() as Locale;
+  const t = useTranslations('common');
+  const [, startTransition] = useTransition();
+  const setLang = (l: Locale) => {
+    startTransition(() => {
+      setLocale(l).then(() => router.refresh());
+    });
+  };
   const [darkMode, setDarkMode] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [dashboardDropdown, setDashboardDropdown] = useState(false);
@@ -51,11 +60,10 @@ export const Navbar: React.FC = () => {
     { href: '/about', label: t('about') },
   ];
 
-  const languages: Array<{ code: Language; flag: string; label: string }> = [
-    { code: 'tj', flag: '🇹🇯', label: 'Тоҷикӣ' },
-    { code: 'ru', flag: '🇷🇺', label: 'Русский' },
-    { code: 'en', flag: '🇺🇸', label: 'English' },
-  ];
+  const languages: Array<{ code: Locale; flag: string; label: string }> = locales.map((code) => ({
+    code,
+    ...localeMeta[code],
+  }));
 
   const currentLangObj = languages.find((l) => l.code === lang) || languages[2];
   const unreadCount = MOCK_NOTIFICATIONS.filter((n) => n.unread).length;

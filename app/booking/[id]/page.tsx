@@ -3,10 +3,12 @@
 import React from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { Icon } from '@/components/icons/LucideIcons';
 import { MOCK_BOOKINGS } from '@/lib/mockData';
 
 export default function BookingDetailsPage() {
+  const t = useTranslations('bookingDetail');
   const params = useParams();
   const bookingId = params?.id as string;
   const booking = MOCK_BOOKINGS.find((b) => b.id === bookingId) || MOCK_BOOKINGS[0];
@@ -28,7 +30,7 @@ export default function BookingDetailsPage() {
           <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white mt-2">
             {booking.serviceName}
           </h1>
-          <p className="text-xs text-slate-500 mt-1">Scheduled for {booking.scheduledDate} ({booking.scheduledTime})</p>
+          <p className="text-xs text-slate-500 mt-1">{t('scheduledFor', { date: booking.scheduledDate, time: booking.scheduledTime })}</p>
         </div>
 
         <div className="flex items-center gap-3">
@@ -37,7 +39,7 @@ export default function BookingDetailsPage() {
             className="px-5 py-3 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-md transition flex items-center gap-2"
           >
             <Icon name="MessageSquare" size={16} />
-            <span>Chat with Master</span>
+            <span>{t('chatWithMaster')}</span>
           </Link>
         </div>
       </div>
@@ -51,7 +53,7 @@ export default function BookingDetailsPage() {
           <div className="bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-6 shadow-xl">
             <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
               <Icon name="Clock" size={20} className="text-blue-600 dark:text-sky-400" />
-              Live Stage Progress Timeline
+              {t('liveTimeline')}
             </h3>
 
             <div className="relative pl-6 border-l-2 border-slate-200 dark:border-slate-800 space-y-8">
@@ -95,7 +97,7 @@ export default function BookingDetailsPage() {
               href={`/master/${booking.masterId}`}
               className="px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
             >
-              Profile
+              {t('profile')}
             </Link>
           </div>
 
@@ -104,25 +106,25 @@ export default function BookingDetailsPage() {
         {/* Receipt Sidebar */}
         <div className="space-y-6">
           <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-4 shadow-xl">
-            <h3 className="text-sm font-bold uppercase tracking-wider text-slate-400">Payment & Address</h3>
-            
+            <h3 className="text-sm font-bold uppercase tracking-wider text-slate-400">{t('paymentAndAddress')}</h3>
+
             <div className="space-y-3 text-xs">
               <div className="flex justify-between">
-                <span className="text-slate-500">Service Fee</span>
+                <span className="text-slate-500">{t('serviceFee')}</span>
                 <span className="font-bold text-slate-900 dark:text-white">${booking.totalPrice - 20}.00</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-500">Platform Protection</span>
+                <span className="text-slate-500">{t('platformProtection')}</span>
                 <span className="font-bold text-slate-900 dark:text-white">$20.00</span>
               </div>
               <div className="flex justify-between pt-2 border-t border-slate-100 dark:border-slate-800 text-sm">
-                <span className="font-bold text-slate-900 dark:text-white">Total Paid</span>
+                <span className="font-bold text-slate-900 dark:text-white">{t('totalPaid')}</span>
                 <span className="font-extrabold text-emerald-600 dark:text-emerald-400">${booking.totalPrice}.00</span>
               </div>
             </div>
 
             <div className="pt-4 border-t border-slate-100 dark:border-slate-800 space-y-1 text-xs">
-              <span className="font-bold text-slate-900 dark:text-white block">Service Address:</span>
+              <span className="font-bold text-slate-900 dark:text-white block">{t('serviceAddress')}</span>
               <p className="text-slate-500">{booking.address}</p>
             </div>
           </div>

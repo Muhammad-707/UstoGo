@@ -1,0 +1,13 @@
+{
+  "title": "Создать Аккаунт Клиента",
+  "subtitle": "Бронируйте проверенных мастеров за секунды",
+  "fullNameLabel": "Полное Имя",
+  "fullNamePlaceholder": "Иван Иванов",
+  "emailLabel": "Email адрес",
+  "emailPlaceholder": "ivan@example.com",
+  "passwordLabel": "Пароль",
+  "passwordPlaceholder": "••••••••",
+  "registerButton": "Зарегистрироваться",
+  "alreadyHaveAccount": "Уже есть аккаунт?",
+  "logIn": "Войти"
+}

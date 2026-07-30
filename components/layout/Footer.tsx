@@ -2,12 +2,12 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { Icon } from '@/components/icons/LucideIcons';
 import { CATEGORIES } from '@/lib/mockData';
-import { useLanguage } from '@/lib/i18n/LanguageContext';
 
 export const Footer: React.FC = () => {
-  const { t } = useLanguage();
+  const t = useTranslations('common');
 
   return (
     <footer className="bg-slate-900 text-slate-400 border-t border-slate-800 pt-16 pb-12 relative overflow-hidden">

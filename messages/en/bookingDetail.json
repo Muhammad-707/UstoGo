@@ -1,0 +1,11 @@
+{
+  "scheduledFor": "Scheduled for {date} ({time})",
+  "chatWithMaster": "Chat with Master",
+  "liveTimeline": "Live Stage Progress Timeline",
+  "profile": "Profile",
+  "paymentAndAddress": "Payment & Address",
+  "serviceFee": "Service Fee",
+  "platformProtection": "Platform Protection",
+  "totalPaid": "Total Paid",
+  "serviceAddress": "Service Address:"
+}

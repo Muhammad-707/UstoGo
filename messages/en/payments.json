@@ -1,0 +1,10 @@
+{
+  "badge": "Financial Hub",
+  "title": "Payments & Payouts",
+  "savedMethodsTitle": "Saved Payment Methods",
+  "vaultLabel": "UstoGo Escrow Vault",
+  "expiresLabel": "Expires {date}",
+  "cardBrand": "VISA Platinum",
+  "addCardButton": "+ Add New Card",
+  "transactionsTitle": "Recent Transactions"
+}

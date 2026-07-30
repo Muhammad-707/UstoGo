@@ -1,0 +1,13 @@
+{
+  "title": "Ҳисоби Мизоҷ Кушоед",
+  "subtitle": "Устоҳои санҷидашударо дар чанд сония брон кунед",
+  "fullNameLabel": "Ному Насаб",
+  "fullNamePlaceholder": "Аҳмад Раҳимов",
+  "emailLabel": "Почтаи Электронӣ",
+  "emailPlaceholder": "ahmad@example.com",
+  "passwordLabel": "Рамз",
+  "passwordPlaceholder": "••••••••",
+  "registerButton": "Сабти Ном",
+  "alreadyHaveAccount": "Ҳисоб доред?",
+  "logIn": "Вуруд"
+}

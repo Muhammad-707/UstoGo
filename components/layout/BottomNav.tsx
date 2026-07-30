@@ -4,16 +4,16 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Icon } from "@/components/icons/LucideIcons";
 import { motion } from "framer-motion";
-import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { useTranslations } from "next-intl";
 
 export function BottomNav() {
   const pathname = usePathname();
-  const { t } = useLanguage();
+  const t = useTranslations("common");
 
   const navItems = [
     { href: "/home", icon: "Home", label: t("home") },
     { href: "/search", icon: "Search", label: t("searchMasters") },
-    { href: "/messages", icon: "MessageSquare", label: "Messages" }, // Add to translation later or hardcode if needed
+    { href: "/messages", icon: "MessageSquare", label: t("messages") },
     { href: "/dashboard/client", icon: "User", label: t("clientDashboard") },
   ];
 

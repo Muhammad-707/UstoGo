@@ -2,9 +2,11 @@
 
 import React from 'react';
 import { Icon } from '@/components/icons/LucideIcons';
+import { useTranslations } from 'next-intl';
 import { ADMIN_STATS, MASTERS } from '@/lib/mockData';
 
 export default function AdminDashboardPage() {
+  const t = useTranslations('dashboardAdmin');
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
       
@@ -12,22 +14,22 @@ export default function AdminDashboardPage() {
       <div className="flex items-center justify-between">
         <div>
           <span className="text-xs font-extrabold uppercase tracking-widest text-purple-600 dark:text-purple-400">
-            SaaS Control Panel
+            {t('badge')}
           </span>
-          <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white mt-1">Platform Admin Dashboard</h1>
+          <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white mt-1">{t('title')}</h1>
         </div>
         <span className="px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 text-xs font-extrabold">
-          Platform Health: 100% Operational
+          {t('platformHealth')}
         </span>
       </div>
 
       {/* Metrics Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {[
-          { title: 'Gross Revenue', value: `$${ADMIN_STATS.totalRevenue.toLocaleString()}`, growth: `+${ADMIN_STATS.monthlyGrowth}% MoM`, icon: 'DollarSign', color: 'from-purple-600 to-indigo-600' },
-          { title: 'Active Masters', value: ADMIN_STATS.activeMasters.toLocaleString(), growth: `${ADMIN_STATS.verifiedMastersPct}% Verified`, icon: 'Users', color: 'from-blue-600 to-sky-500' },
-          { title: 'Monthly Bookings', value: ADMIN_STATS.totalBookingsThisMonth.toLocaleString(), growth: '+22.4% vs last mo', icon: 'BarChart3', color: 'from-emerald-500 to-teal-500' },
-          { title: 'Completion Rate', value: `${ADMIN_STATS.completionRate}%`, growth: '0.01% Cancel Rate', icon: 'ShieldCheck', color: 'from-amber-500 to-orange-500' },
+          { title: t('metricGrossRevenue'), value: `$${ADMIN_STATS.totalRevenue.toLocaleString()}`, growth: t('metricGrossRevenueGrowth', { growth: ADMIN_STATS.monthlyGrowth }), icon: 'DollarSign', color: 'from-purple-600 to-indigo-600' },
+          { title: t('metricActiveMasters'), value: ADMIN_STATS.activeMasters.toLocaleString(), growth: t('metricActiveMastersGrowth', { percent: ADMIN_STATS.verifiedMastersPct }), icon: 'Users', color: 'from-blue-600 to-sky-500' },
+          { title: t('metricMonthlyBookings'), value: ADMIN_STATS.totalBookingsThisMonth.toLocaleString(), growth: t('metricMonthlyBookingsGrowth'), icon: 'BarChart3', color: 'from-emerald-500 to-teal-500' },
+          { title: t('metricCompletionRate'), value: `${ADMIN_STATS.completionRate}%`, growth: t('metricCompletionRateGrowth'), icon: 'ShieldCheck', color: 'from-amber-500 to-orange-500' },
         ].map((m, idx) => (
           <div key={idx} className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl flex items-center justify-between">
             <div className="space-y-1">
@@ -46,10 +48,10 @@ export default function AdminDashboardPage() {
       <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-6 shadow-xl">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-lg font-bold text-slate-900 dark:text-white">Revenue & Booking Growth</h3>
-            <p className="text-xs text-slate-500">Real-time marketplace transaction volume</p>
+            <h3 className="text-lg font-bold text-slate-900 dark:text-white">{t('chartTitle')}</h3>
+            <p className="text-xs text-slate-500">{t('chartSubtitle')}</p>
           </div>
-          <span className="text-xs font-bold text-purple-600 dark:text-purple-400">2026 YTD</span>
+          <span className="text-xs font-bold text-purple-600 dark:text-purple-400">{t('chartPeriod')}</span>
         </div>
 
         {/* Visual Bar Chart */}
@@ -68,17 +70,17 @@ export default function AdminDashboardPage() {
 
       {/* Master Verification Table */}
       <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-6 shadow-xl">
-        <h3 className="text-lg font-bold text-slate-900 dark:text-white">Master Verification Queue</h3>
+        <h3 className="text-lg font-bold text-slate-900 dark:text-white">{t('verificationQueue')}</h3>
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead>
               <tr className="border-b border-slate-100 dark:border-slate-800 text-slate-400 font-bold uppercase tracking-wider">
-                <th className="pb-3">Applicant</th>
-                <th className="pb-3">Specialization</th>
-                <th className="pb-3">Experience</th>
-                <th className="pb-3">License Proof</th>
-                <th className="pb-3">Status</th>
-                <th className="pb-3 text-right">Actions</th>
+                <th className="pb-3">{t('tableApplicant')}</th>
+                <th className="pb-3">{t('tableSpecialization')}</th>
+                <th className="pb-3">{t('tableExperience')}</th>
+                <th className="pb-3">{t('tableLicenseProof')}</th>
+                <th className="pb-3">{t('tableStatus')}</th>
+                <th className="pb-3 text-right">{t('tableActions')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800 font-semibold">
@@ -89,15 +91,15 @@ export default function AdminDashboardPage() {
                     <span className="text-slate-900 dark:text-white">{m.name}</span>
                   </td>
                   <td className="py-4 text-slate-500">{m.category}</td>
-                  <td className="py-4 text-slate-500">{m.experienceYears} Years</td>
-                  <td className="py-4 text-purple-600 font-bold">Verified License</td>
+                  <td className="py-4 text-slate-500">{t('yearsExperience', { years: m.experienceYears })}</td>
+                  <td className="py-4 text-purple-600 font-bold">{t('verifiedLicense')}</td>
                   <td className="py-4">
                     <span className="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 text-[10px] font-bold">
-                      Approved
+                      {t('approved')}
                     </span>
                   </td>
                   <td className="py-4 text-right">
-                    <button className="text-xs text-blue-600 hover:underline">Manage</button>
+                    <button className="text-xs text-blue-600 hover:underline">{t('manage')}</button>
                   </td>
                 </tr>
               ))}

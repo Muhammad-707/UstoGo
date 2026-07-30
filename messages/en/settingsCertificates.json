@@ -1,0 +1,7 @@
+{
+  "craftsmanVerification": "Craftsman Verification",
+  "certificatesLicenses": "Certificates & Licenses",
+  "addNewLicense": "+ Add New License",
+  "issuerVerified": "Issuer: {issuer} • Verified in {year}",
+  "verifiedActive": "Verified Active"
+}

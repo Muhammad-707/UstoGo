@@ -1,21 +1,24 @@
 'use client';
 
 import React from 'react';
+import { useTranslations } from 'next-intl';
 import { Icon } from '@/components/icons/LucideIcons';
 import { MOCK_NOTIFICATIONS } from '@/lib/mockData';
 
 export default function NotificationsPage() {
+  const t = useTranslations('notifications');
+
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8">
       <div className="flex items-center justify-between">
         <div>
           <span className="text-xs font-extrabold uppercase tracking-widest text-blue-600 dark:text-sky-400">
-            Activity Center
+            {t('badge')}
           </span>
-          <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white mt-1">Notifications</h1>
+          <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white mt-1">{t('title')}</h1>
         </div>
         <button className="text-xs font-bold text-blue-600 dark:text-sky-400 hover:underline">
-          Mark All as Read
+          {t('markAllRead')}
         </button>
       </div>
 

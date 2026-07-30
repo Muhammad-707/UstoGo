@@ -1,0 +1,7 @@
+{
+  "craftsmanVerification": "Верификация Мастера",
+  "certificatesLicenses": "Сертификаты и Лицензии",
+  "addNewLicense": "+ Добавить Лицензию",
+  "issuerVerified": "Выдал: {issuer} • Проверено в {year}",
+  "verifiedActive": "Подтверждено"
+}

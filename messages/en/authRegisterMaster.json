@@ -1,0 +1,16 @@
+{
+  "joinEliteNetwork": "Join Elite Network",
+  "title": "Apply as a Master Craftsman",
+  "subtitle": "Earn higher rates & build your reputation on UstoGo",
+  "fullNameLabel": "Full Name",
+  "fullNamePlaceholder": "Alex Morgan",
+  "specialtyLabel": "Primary Specialty",
+  "hourlyRateLabel": "Hourly Rate ($)",
+  "experienceLabel": "Years Experience",
+  "uploadLabel": "Upload State License / Certificate (PDF or Image)",
+  "dragDropText": "Drag & drop files or",
+  "browse": "browse",
+  "submitButton": "Submit Master Application",
+  "alreadyMaster": "Already a master?",
+  "logIn": "Log in"
+}

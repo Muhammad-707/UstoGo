@@ -1,10 +1,12 @@
 'use client';
 
 import React from 'react';
+import { useTranslations } from 'next-intl';
 import { Icon } from '@/components/icons/LucideIcons';
 import { MASTERS } from '@/lib/mockData';
 
 export default function CertificatesPage() {
+  const t = useTranslations('settingsCertificates');
   const certs = MASTERS[0].certificates;
 
   return (
@@ -12,12 +14,12 @@ export default function CertificatesPage() {
       <div className="flex items-center justify-between">
         <div>
           <span className="text-xs font-extrabold uppercase tracking-widest text-amber-600 dark:text-amber-400">
-            Craftsman Verification
+            {t('craftsmanVerification')}
           </span>
-          <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white mt-1">Certificates & Licenses</h1>
+          <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white mt-1">{t('certificatesLicenses')}</h1>
         </div>
         <button className="px-5 py-2.5 rounded-2xl bg-amber-600 text-white font-extrabold text-xs shadow-md">
-          + Add New License
+          {t('addNewLicense')}
         </button>
       </div>
 
@@ -30,10 +32,10 @@ export default function CertificatesPage() {
               </div>
               <div>
                 <h3 className="text-sm font-bold text-slate-900 dark:text-white">{c.title}</h3>
-                <p className="text-xs text-slate-500">Issuer: {c.issuer} • Verified in {c.year}</p>
+                <p className="text-xs text-slate-500">{t('issuerVerified', { issuer: c.issuer, year: c.year })}</p>
               </div>
             </div>
-            <span className="px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold">Verified Active</span>
+            <span className="px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold">{t('verifiedActive')}</span>
           </div>
         ))}
       </div>

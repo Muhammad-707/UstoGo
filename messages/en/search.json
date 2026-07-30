@@ -1,0 +1,23 @@
+{
+  "eyebrow": "Find Craftsmen",
+  "title": "Search Verified Masters & Service Specialists",
+  "searchPlaceholder": "Search by name, skill (e.g. Electrician, Plumbing, Locksmith)...",
+  "filters": "Filters",
+  "resetAll": "Reset All",
+  "category": "Category",
+  "allCategories": "All Categories ({count})",
+  "verifiedOnly": "Verified Masters Only",
+  "minRating": "Minimum Rating",
+  "maxRate": "Max Rate",
+  "perHour": "${price}/hr",
+  "showingResults": "Showing <highlight>{count}</highlight> craftsman masters",
+  "gridView": "Grid View",
+  "listView": "List View",
+  "noResultsTitle": "No Craftsmen Found",
+  "noResultsDesc": "Try expanding your search query or resetting category and price filters to view more masters.",
+  "profile": "Profile",
+  "bookNow": "Book Now",
+  "jobsDone": "{count}+ Jobs Done",
+  "reviewsCount": "{count} reviews",
+  "rate": "Rate"
+}
