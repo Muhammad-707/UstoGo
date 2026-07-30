@@ -9,6 +9,8 @@ import { MASTERS } from '@/lib/mockData';
 
 export default function MasterProfilePage() {
   const t = useTranslations('masterDetail');
+  const tc = useTranslations('common');
+  const tm = useTranslations('mockData');
   const params = useParams();
   const masterId = params?.id as string;
   const master = MASTERS.find((m) => m.id === masterId) || MASTERS[0];
@@ -47,7 +49,7 @@ export default function MasterProfilePage() {
                 </span>
               </div>
 
-              <p className="text-sm font-semibold text-blue-600 dark:text-sky-400">{master.title}</p>
+              <p className="text-sm font-semibold text-blue-600 dark:text-sky-400">{tm(`masters.${master.id}.title`)}</p>
               
               <div className="flex flex-wrap items-center justify-center sm:justify-start gap-4 text-xs text-slate-500 pt-1">
                 <span className="flex items-center gap-1">
@@ -120,14 +122,14 @@ export default function MasterProfilePage() {
                 {/* Bio */}
                 <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-3">
                   <h3 className="text-lg font-bold text-slate-900 dark:text-white">{t('professionalBio')}</h3>
-                  <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">{master.bio}</p>
+                  <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">{tm(`masters.${master.id}.bio`)}</p>
                 </div>
 
                 {/* Specializations & Skills */}
                 <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-4">
                   <h3 className="text-lg font-bold text-slate-900 dark:text-white">{t('specializations')}</h3>
                   <div className="flex flex-wrap gap-2">
-                    {master.skills.map((skill, idx) => (
+                    {tm.raw(`masters.${master.id}.skills`).map((skill: string, idx: number) => (
                       <span
                         key={idx}
                         className="px-3 py-1.5 rounded-xl bg-blue-50 dark:bg-blue-950/80 text-blue-700 dark:text-sky-300 text-xs font-semibold border border-blue-200/60 dark:border-blue-800/60"
@@ -182,7 +184,7 @@ export default function MasterProfilePage() {
                         <img src={rev.clientAvatar} alt={rev.clientName} className="w-10 h-10 rounded-full object-cover" />
                         <div>
                           <h4 className="text-sm font-bold text-slate-900 dark:text-white">{rev.clientName}</h4>
-                          <p className="text-xs text-slate-400">{rev.date} • {rev.serviceTitle}</p>
+                          <p className="text-xs text-slate-400">{rev.date} • {tm(`masters.${master.id}.reviews.${rev.id}.serviceTitle`)}</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-1 text-amber-500 text-xs font-bold">
@@ -190,11 +192,11 @@ export default function MasterProfilePage() {
                         <span>{rev.rating}.0</span>
                       </div>
                     </div>
-                    <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">{rev.comment}</p>
+                    <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">{tm(`masters.${master.id}.reviews.${rev.id}.comment`)}</p>
                     {rev.craftsmanReply && (
                       <div className="p-4 rounded-2xl bg-blue-50 dark:bg-slate-800 text-xs text-slate-700 dark:text-slate-300 space-y-1">
                         <span className="font-bold text-blue-600 dark:text-sky-400">{t('responseFrom', { name: master.name })}</span>
-                        <p>{rev.craftsmanReply}</p>
+                        <p>{tm(`masters.${master.id}.reviews.${rev.id}.craftsmanReply`)}</p>
                       </div>
                     )}
                   </div>
@@ -207,9 +209,9 @@ export default function MasterProfilePage() {
               <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-4 animate-fade-in">
                 <h3 className="text-lg font-bold text-slate-900 dark:text-white">{t('weeklyAvailability')}</h3>
                 <div className="divide-y divide-slate-100 dark:divide-slate-800 text-sm">
-                  {Object.entries(master.workingHours).map(([days, hours], idx) => (
+                  {Object.entries(tm.raw(`masters.${master.id}.workingHours`) as Record<string, string>).map(([days, hours], idx) => (
                     <div key={idx} className="py-3 flex justify-between">
-                      <span className="font-semibold text-slate-700 dark:text-slate-300">{days}</span>
+                      <span className="font-semibold text-slate-700 dark:text-slate-300">{tc.raw('dayLabels')[days] ?? days}</span>
                       <span className="text-blue-600 dark:text-sky-400 font-bold">{hours}</span>
                     </div>
                   ))}

@@ -8,6 +8,7 @@ import { CATEGORIES } from '@/lib/mockData';
 
 export default function CategoriesPage() {
   const t = useTranslations('categories');
+  const tm = useTranslations('mockData');
   const [filter, setFilter] = useState<'all' | 'popular' | 'luxury'>('all');
 
   const displayedCategories = CATEGORIES.filter((c) => {
@@ -80,17 +81,17 @@ export default function CategoriesPage() {
               </div>
               {cat.badge && (
                 <span className="px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-sky-300 text-[10px] font-extrabold uppercase">
-                  {cat.badge}
+                  {tm(`categories.${cat.id}.badge`)}
                 </span>
               )}
             </div>
 
             <div className="space-y-2 mt-4">
               <h3 className="text-xl font-extrabold text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-sky-400 transition">
-                {cat.name}
+                {tm(`categories.${cat.id}.name`)}
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">
-                {cat.description}
+                {tm(`categories.${cat.id}.description`)}
               </p>
             </div>
 

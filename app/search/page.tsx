@@ -8,6 +8,7 @@ import { CATEGORIES, MASTERS } from '@/lib/mockData';
 
 export default function SearchMastersPage() {
   const t = useTranslations('search');
+  const tm = useTranslations('mockData');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [verifiedOnly, setVerifiedOnly] = useState(false);
@@ -97,7 +98,7 @@ export default function SearchMastersPage() {
               <option value="all">{t('allCategories', { count: CATEGORIES.length })}</option>
               {CATEGORIES.map((c) => (
                 <option key={c.id} value={c.id}>
-                  {c.name}
+                  {tm(`categories.${c.id}.name`)}
                 </option>
               ))}
             </select>
@@ -214,7 +215,7 @@ export default function SearchMastersPage() {
                           <h3 className="font-extrabold text-slate-900 dark:text-white text-base">{m.name}</h3>
                           <Icon name="ShieldCheck" size={16} className="text-blue-500" />
                         </div>
-                        <p className="text-xs font-semibold text-blue-600 dark:text-sky-400">{m.category}</p>
+                        <p className="text-xs font-semibold text-blue-600 dark:text-sky-400">{tm(`categories.${m.categoryId}.name`)}</p>
                         <div className="flex items-center gap-1 text-xs text-amber-500 font-bold mt-1">
                           <Icon name="Star" size={14} className="fill-amber-400" />
                           <span>{m.rating} ({m.reviewCount})</span>
@@ -223,11 +224,11 @@ export default function SearchMastersPage() {
                     </div>
 
                     <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">
-                      {m.bio}
+                      {tm(`masters.${m.id}.bio`)}
                     </p>
 
                     <div className="flex flex-wrap gap-1">
-                      {m.skills.slice(0, 3).map((s, idx) => (
+                      {tm.raw(`masters.${m.id}.skills`).slice(0, 3).map((s: string, idx: number) => (
                         <span key={idx} className="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-[10px] text-slate-600 dark:text-slate-300">
                           {s}
                         </span>
@@ -273,7 +274,7 @@ export default function SearchMastersPage() {
                           {t('jobsDone', { count: m.completedJobs })}
                         </span>
                       </div>
-                      <p className="text-xs font-semibold text-blue-600 dark:text-sky-400">{m.title}</p>
+                      <p className="text-xs font-semibold text-blue-600 dark:text-sky-400">{tm(`masters.${m.id}.title`)}</p>
                       <div className="flex items-center gap-3 text-xs text-slate-500">
                         <span className="flex items-center gap-1 text-amber-500 font-bold">
                           <Icon name="Star" size={14} className="fill-amber-400" />

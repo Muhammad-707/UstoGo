@@ -7,6 +7,8 @@ import { MASTERS } from '@/lib/mockData';
 
 export default function MessagesPage() {
   const t = useTranslations('messagesPage');
+  const tc = useTranslations('common');
+  const tm = useTranslations('mockData');
   const [selectedMaster, setSelectedMaster] = useState(MASTERS[0]);
   const [messages, setMessages] = useState([
     { id: 1, sender: 'master', text: 'Hello Alex! I have reviewed your electrical panel request.', time: '10:14 AM' },
@@ -20,7 +22,7 @@ export default function MessagesPage() {
     if (!inputText.trim()) return;
     setMessages((prev) => [
       ...prev,
-      { id: Date.now(), sender: 'client', text: inputText, time: 'Just now' },
+      { id: Date.now(), sender: 'client', text: inputText, time: tc('justNow') },
     ]);
     setInputText('');
   };
@@ -55,7 +57,7 @@ export default function MessagesPage() {
                     <h4 className="text-xs font-bold text-slate-900 dark:text-white truncate">{m.name}</h4>
                     <span className="text-[10px] text-slate-400">10:18 AM</span>
                   </div>
-                  <p className="text-xs text-slate-500 truncate mt-0.5">{m.category}</p>
+                  <p className="text-xs text-slate-500 truncate mt-0.5">{tm(`categories.${m.categoryId}.name`)}</p>
                 </div>
               </div>
             ))}

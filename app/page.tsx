@@ -10,6 +10,7 @@ import HeroSlider from '@/components/layout/HeroSlider';
 
 export default function LandingPage() {
   const t = useTranslations('common');
+  const tm = useTranslations('mockData');
   const [selectedCategory, setSelectedCategory] = useState('all');
 
   const filteredCategories = selectedCategory === 'all' 
@@ -101,7 +102,7 @@ export default function LandingPage() {
                 </div>
                 {cat.badge && (
                   <span className="px-2.5 py-0.5 rounded-full bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-sky-300 text-[10px] font-extrabold uppercase">
-                    {cat.badge}
+                    {tm(`categories.${cat.id}.badge`)}
                   </span>
                 )}
               </div>
@@ -109,10 +110,10 @@ export default function LandingPage() {
               {/* Text info */}
               <div className="space-y-1 mt-4">
                 <h3 className="font-bold text-slate-900 dark:text-white text-base group-hover:text-blue-600 dark:group-hover:text-sky-400 transition">
-                  {cat.name}
+                  {tm(`categories.${cat.id}.name`)}
                 </h3>
                 <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2">
-                  {cat.description}
+                  {tm(`categories.${cat.id}.description`)}
                 </p>
               </div>
 
@@ -245,13 +246,13 @@ export default function LandingPage() {
 
                 <div className="space-y-2">
                   <h3 className="text-lg font-extrabold text-slate-900 dark:text-white">{master.name}</h3>
-                  <p className="text-xs font-semibold text-blue-600 dark:text-sky-400">{master.title}</p>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">{master.bio}</p>
+                  <p className="text-xs font-semibold text-blue-600 dark:text-sky-400">{tm(`masters.${master.id}.title`)}</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">{tm(`masters.${master.id}.bio`)}</p>
                 </div>
 
                 {/* Skills tags */}
                 <div className="flex flex-wrap gap-1.5 mt-4">
-                  {master.skills.slice(0, 3).map((skill, idx) => (
+                  {tm.raw(`masters.${master.id}.skills`).slice(0, 3).map((skill: string, idx: number) => (
                     <span key={idx} className="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-[11px] font-medium text-slate-600 dark:text-slate-300">
                       {skill}
                     </span>

@@ -9,6 +9,7 @@ import { CATEGORIES, MASTERS } from '@/lib/mockData';
 
 export default function BookingWizardPage() {
   const t = useTranslations('booking');
+  const tm = useTranslations('mockData');
   const searchParams = useSearchParams();
   const preselectedMasterId = searchParams.get('master');
 
@@ -135,7 +136,7 @@ export default function BookingWizardPage() {
                   <img src={selectedMaster.avatar} alt={selectedMaster.name} className="w-14 h-14 rounded-2xl object-cover" />
                   <div>
                     <h4 className="font-bold text-slate-900 dark:text-white text-sm">{selectedMaster.name}</h4>
-                    <p className="text-xs text-blue-600 dark:text-sky-400 font-semibold">{selectedMaster.category}</p>
+                    <p className="text-xs text-blue-600 dark:text-sky-400 font-semibold">{tm(`categories.${selectedMaster.categoryId}.name`)}</p>
                     <span className="text-xs text-slate-500 font-bold">${selectedMaster.hourlyRate}/hr</span>
                   </div>
                 </div>

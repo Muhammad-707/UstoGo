@@ -8,6 +8,7 @@ import { MASTERS } from '@/lib/mockData';
 
 export default function FavoritesPage() {
   const t = useTranslations('favorites');
+  const tm = useTranslations('mockData');
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8">
@@ -25,7 +26,7 @@ export default function FavoritesPage() {
               <img src={m.avatar} alt={m.name} className="w-16 h-16 rounded-2xl object-cover" />
               <div>
                 <h3 className="font-extrabold text-slate-900 dark:text-white text-base">{m.name}</h3>
-                <p className="text-xs text-blue-600 dark:text-sky-400 font-semibold">{m.category}</p>
+                <p className="text-xs text-blue-600 dark:text-sky-400 font-semibold">{tm(`categories.${m.categoryId}.name`)}</p>
                 <span className="text-xs text-amber-500 font-bold">★ {m.rating}</span>
               </div>
             </div>

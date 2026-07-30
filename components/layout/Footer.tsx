@@ -8,6 +8,7 @@ import { CATEGORIES } from '@/lib/mockData';
 
 export const Footer: React.FC = () => {
   const t = useTranslations('common');
+  const tm = useTranslations('mockData');
 
   return (
     <footer className="bg-slate-900 text-slate-400 border-t border-slate-800 pt-16 pb-12 relative overflow-hidden">
@@ -68,7 +69,7 @@ export const Footer: React.FC = () => {
               {['ShieldCheck', 'Award', 'CheckCircle2'].map((badgeIcon, idx) => (
                 <div key={idx} className="flex items-center gap-2 text-xs font-semibold text-slate-300 bg-slate-800/80 px-3 py-1.5 rounded-xl border border-slate-700/60">
                   <Icon name={badgeIcon} size={15} className="text-sky-400" />
-                  <span>{idx === 0 ? '100% Insured' : idx === 1 ? 'Top 1% Craftsmen' : 'Verified Reviews'}</span>
+                  <span>{idx === 0 ? t('trustInsured') : idx === 1 ? t('trustTop1') : t('trustVerified')}</span>
                 </div>
               ))}
             </div>
@@ -82,7 +83,7 @@ export const Footer: React.FC = () => {
                 <li key={cat.id}>
                   <Link href={`/categories`} className="hover:text-sky-400 transition flex items-center gap-2">
                     <Icon name="ChevronRight" size={14} className="text-slate-600" />
-                    <span>{cat.name}</span>
+                    <span>{tm(`categories.${cat.id}.name`)}</span>
                   </Link>
                 </li>
               ))}
@@ -108,7 +109,7 @@ export const Footer: React.FC = () => {
               <li><Link href="/about" className="hover:text-sky-400 transition">{t('aboutUstoGo')}</Link></li>
               <li><Link href="/contact" className="hover:text-sky-400 transition">{t('contactSupport')}</Link></li>
               <li><Link href="/faq" className="hover:text-sky-400 transition">{t('faq')}</Link></li>
-              <li><Link href="/404" className="hover:text-sky-400 transition text-slate-500">404 Error Page</Link></li>
+              <li><Link href="/404" className="hover:text-sky-400 transition text-slate-500">{t('footer404Link')}</Link></li>
             </ul>
           </div>
 
@@ -118,9 +119,9 @@ export const Footer: React.FC = () => {
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
           <p>{t('copyright')}</p>
           <div className="flex items-center gap-6">
-            <span className="hover:text-slate-300 cursor-pointer">Privacy Policy</span>
-            <span className="hover:text-slate-300 cursor-pointer">Terms of Service</span>
-            <span className="hover:text-slate-300 cursor-pointer">Craftsman Code of Ethics</span>
+            <span className="hover:text-slate-300 cursor-pointer">{t('privacyPolicy')}</span>
+            <span className="hover:text-slate-300 cursor-pointer">{t('termsOfService')}</span>
+            <span className="hover:text-slate-300 cursor-pointer">{t('craftsmanEthics')}</span>
           </div>
         </div>
 

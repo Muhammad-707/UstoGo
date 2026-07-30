@@ -8,6 +8,7 @@ import { MOCK_BOOKINGS } from '@/lib/mockData';
 
 export default function MasterDashboardPage() {
   const t = useTranslations('dashboardMaster');
+  const tm = useTranslations('mockData');
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
       
@@ -76,7 +77,7 @@ export default function MasterDashboardPage() {
             <div key={b.id} className="py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
-                  <span className="font-bold text-slate-900 dark:text-white text-sm">{b.serviceName}</span>
+                  <span className="font-bold text-slate-900 dark:text-white text-sm">{tm(`bookings.${b.id}.serviceName`)}</span>
                   <span className="px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[10px] font-bold">{t('newRequest')}</span>
                 </div>
                 <p className="text-xs text-slate-500">{t('scheduleAddressLine', { date: b.scheduledDate, time: b.scheduledTime, address: b.address })}</p>

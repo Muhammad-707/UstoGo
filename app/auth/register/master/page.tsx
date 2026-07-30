@@ -8,6 +8,7 @@ import { CATEGORIES } from '@/lib/mockData';
 
 export default function RegisterMasterPage() {
   const t = useTranslations('authRegisterMaster');
+  const tm = useTranslations('mockData');
   const router = useRouter();
 
   return (
@@ -31,7 +32,7 @@ export default function RegisterMasterPage() {
               <label className="text-xs font-bold text-slate-700 dark:text-slate-300">{t('specialtyLabel')}</label>
               <select className="w-full p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold">
                 {CATEGORIES.map((c) => (
-                  <option key={c.id} value={c.id}>{c.name}</option>
+                  <option key={c.id} value={c.id}>{tm(`categories.${c.id}.name`)}</option>
                 ))}
               </select>
             </div>

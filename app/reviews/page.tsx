@@ -7,9 +7,10 @@ import { MASTERS } from '@/lib/mockData';
 
 export default function ReviewsPage() {
   const t = useTranslations('reviews');
+  const tm = useTranslations('mockData');
   const [modalOpen, setModalOpen] = useState(false);
 
-  const allReviews = MASTERS.flatMap((m) => m.reviews);
+  const allReviews = MASTERS.flatMap((m) => m.reviews.map((r) => ({ ...r, masterId: m.id })));
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-12">
@@ -53,7 +54,7 @@ export default function ReviewsPage() {
                 <img src={rev.clientAvatar} alt={rev.clientName} className="w-12 h-12 rounded-2xl object-cover" />
                 <div>
                   <h4 className="font-bold text-slate-900 dark:text-white text-sm">{rev.clientName}</h4>
-                  <span className="text-[11px] text-slate-400">{rev.date} • {rev.serviceTitle}</span>
+                  <span className="text-[11px] text-slate-400">{rev.date} • {tm(`masters.${rev.masterId}.reviews.${rev.id}.serviceTitle`)}</span>
                 </div>
               </div>
               <div className="flex items-center gap-1 text-amber-500 font-bold text-xs">
@@ -62,12 +63,12 @@ export default function ReviewsPage() {
               </div>
             </div>
 
-            <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">{rev.comment}</p>
+            <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">{tm(`masters.${rev.masterId}.reviews.${rev.id}.comment`)}</p>
 
             {rev.craftsmanReply && (
               <div className="p-4 rounded-2xl bg-blue-50 dark:bg-slate-800/80 text-xs text-slate-700 dark:text-slate-300 space-y-1">
                 <span className="font-bold text-blue-600 dark:text-sky-400">{t('craftsmanResponse')}</span>
-                <p>{rev.craftsmanReply}</p>
+                <p>{tm(`masters.${rev.masterId}.reviews.${rev.id}.craftsmanReply`)}</p>
               </div>
             )}
           </div>

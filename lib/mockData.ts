@@ -53,6 +53,7 @@ export interface Booking {
   bookingCode: string;
   serviceName: string;
   categoryName: string;
+  categoryId: string;
   masterId: string;
   masterName: string;
   masterAvatar: string;
@@ -486,6 +487,7 @@ export const MOCK_BOOKINGS: Booking[] = [
     bookingCode: 'UG-84920',
     serviceName: '200A Smart Electrical Panel Upgrade',
     categoryName: 'Electrical Work',
+    categoryId: 'electrician',
     masterId: 'master-1',
     masterName: 'Alex Morgan',
     masterAvatar: 'https://images.unsplash.com/photo-1540569014015-19a7be504e3a?auto=format&fit=crop&w=400&q=80',
@@ -510,6 +512,7 @@ export const MOCK_BOOKINGS: Booking[] = [
     bookingCode: 'UG-73911',
     serviceName: 'Living Room Deep Limewash Wall Painting',
     categoryName: 'Interior & Exterior Painting',
+    categoryId: 'painter',
     masterId: 'master-5',
     masterName: 'Elena Rostova',
     masterAvatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=400&q=80',
@@ -534,6 +537,7 @@ export const MOCK_BOOKINGS: Booking[] = [
     bookingCode: 'UG-55201',
     serviceName: 'Tankless Water Heater Inspection & Flush',
     categoryName: 'Plumbing Services',
+    categoryId: 'plumber',
     masterId: 'master-2',
     masterName: 'Marcus Vance',
     masterAvatar: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=400&q=80',

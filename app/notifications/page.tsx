@@ -7,6 +7,7 @@ import { MOCK_NOTIFICATIONS } from '@/lib/mockData';
 
 export default function NotificationsPage() {
   const t = useTranslations('notifications');
+  const tm = useTranslations('mockData');
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8">
@@ -30,10 +31,10 @@ export default function NotificationsPage() {
             </div>
             <div className="flex-1 space-y-1">
               <div className="flex items-center justify-between">
-                <h3 className="text-sm font-bold text-slate-900 dark:text-white">{n.title}</h3>
+                <h3 className="text-sm font-bold text-slate-900 dark:text-white">{tm(`notifications.${n.id}.title`)}</h3>
                 <span className="text-xs text-slate-400">{n.time}</span>
               </div>
-              <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">{n.message}</p>
+              <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">{tm(`notifications.${n.id}.message`)}</p>
             </div>
           </div>
         ))}

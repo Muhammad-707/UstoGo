@@ -7,6 +7,7 @@ import { ADMIN_STATS, MASTERS } from '@/lib/mockData';
 
 export default function AdminDashboardPage() {
   const t = useTranslations('dashboardAdmin');
+  const tm = useTranslations('mockData');
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
       
@@ -90,7 +91,7 @@ export default function AdminDashboardPage() {
                     <img src={m.avatar} alt="" className="w-8 h-8 rounded-full object-cover" />
                     <span className="text-slate-900 dark:text-white">{m.name}</span>
                   </td>
-                  <td className="py-4 text-slate-500">{m.category}</td>
+                  <td className="py-4 text-slate-500">{tm(`categories.${m.categoryId}.name`)}</td>
                   <td className="py-4 text-slate-500">{t('yearsExperience', { years: m.experienceYears })}</td>
                   <td className="py-4 text-purple-600 font-bold">{t('verifiedLicense')}</td>
                   <td className="py-4">

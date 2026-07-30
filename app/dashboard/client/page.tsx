@@ -8,6 +8,8 @@ import { MOCK_BOOKINGS, MASTERS } from '@/lib/mockData';
 
 export default function ClientDashboardPage() {
   const t = useTranslations('dashboardClient');
+  const tc = useTranslations('common');
+  const tm = useTranslations('mockData');
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
       
@@ -74,7 +76,7 @@ export default function ClientDashboardPage() {
               {MOCK_BOOKINGS.map((b) => (
                 <tr key={b.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/40">
                   <td className="py-4 font-mono font-bold text-blue-600 dark:text-sky-400">{b.bookingCode}</td>
-                  <td className="py-4 text-slate-900 dark:text-white">{b.serviceName}</td>
+                  <td className="py-4 text-slate-900 dark:text-white">{tm(`bookings.${b.id}.serviceName`)}</td>
                   <td className="py-4 flex items-center gap-2">
                     <img src={b.masterAvatar} alt="" className="w-6 h-6 rounded-full object-cover" />
                     <span>{b.masterName}</span>
@@ -89,7 +91,7 @@ export default function ClientDashboardPage() {
                           : 'bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300'
                       }`}
                     >
-                      {b.status}
+                      {tc(`status${b.status.replace(/\s+/g, '')}`)}
                     </span>
                   </td>
                   <td className="py-4 text-right">

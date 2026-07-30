@@ -9,6 +9,8 @@ import { MOCK_BOOKINGS } from '@/lib/mockData';
 
 export default function BookingDetailsPage() {
   const t = useTranslations('bookingDetail');
+  const tc = useTranslations('common');
+  const tm = useTranslations('mockData');
   const params = useParams();
   const bookingId = params?.id as string;
   const booking = MOCK_BOOKINGS.find((b) => b.id === bookingId) || MOCK_BOOKINGS[0];
@@ -24,11 +26,11 @@ export default function BookingDetailsPage() {
               {booking.bookingCode}
             </span>
             <span className="px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 text-xs font-bold">
-              {booking.status}
+              {tc(`status${booking.status.replace(/\s+/g, '')}`)}
             </span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white mt-2">
-            {booking.serviceName}
+            {tm(`bookings.${booking.id}.serviceName`)}
           </h1>
           <p className="text-xs text-slate-500 mt-1">{t('scheduledFor', { date: booking.scheduledDate, time: booking.scheduledTime })}</p>
         </div>
@@ -74,7 +76,7 @@ export default function BookingDetailsPage() {
                           : 'text-slate-400 dark:text-slate-500'
                       }`}
                     >
-                      {item.stage}
+                      {tm.raw(`bookings.${booking.id}.timeline`)[idx]}
                     </h4>
                     <p className="text-xs text-slate-400 mt-0.5">{item.timestamp}</p>
                   </div>
@@ -89,7 +91,7 @@ export default function BookingDetailsPage() {
               <img src={booking.masterAvatar} alt={booking.masterName} className="w-14 h-14 rounded-2xl object-cover" />
               <div>
                 <h4 className="font-bold text-slate-900 dark:text-white text-base">{booking.masterName}</h4>
-                <p className="text-xs text-slate-500">{booking.categoryName}</p>
+                <p className="text-xs text-slate-500">{tm(`categories.${booking.categoryId}.name`)}</p>
                 <span className="text-xs font-bold text-blue-600 dark:text-sky-400">{booking.masterPhone}</span>
               </div>
             </div>

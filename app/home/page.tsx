@@ -8,6 +8,7 @@ import { CATEGORIES, MASTERS, MOCK_BOOKINGS } from '@/lib/mockData';
 
 export default function ClientHomePage() {
   const t = useTranslations('common');
+  const tm = useTranslations('mockData');
   const activeBooking = MOCK_BOOKINGS.find((b) => b.status === 'In Progress') || MOCK_BOOKINGS[0];
 
   return (
@@ -23,10 +24,10 @@ export default function ClientHomePage() {
             <span className="text-xs text-blue-300">• New York, NY</span>
           </div>
           <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
-            Good Afternoon, Alex! 👋
+            {t('greetingAfternoon', { name: 'Alex' })}
           </h1>
           <p className="text-sm text-slate-300">
-            What home repair or upgrade project can our verified masters assist you with today?
+            {t('homeSubheading')}
           </p>
         </div>
 
@@ -58,17 +59,17 @@ export default function ClientHomePage() {
             <div>
               <div className="flex items-center gap-2">
                 <span className="text-xs font-extrabold text-blue-700 dark:text-sky-300 uppercase tracking-wide">
-                  Active Booking #{activeBooking.bookingCode}
+                  {t('activeBookingPrefix')}{activeBooking.bookingCode}
                 </span>
                 <span className="px-2 py-0.5 rounded-full bg-blue-600 text-white text-[10px] font-bold">
-                  {activeBooking.status}
+                  {t(`status${activeBooking.status.replace(/\s+/g, '')}`)}
                 </span>
               </div>
               <h4 className="text-sm font-bold text-slate-900 dark:text-white mt-0.5">
-                {activeBooking.serviceName} with {activeBooking.masterName}
+                {tm(`bookings.${activeBooking.id}.serviceName`)} {t('withConnector')} {activeBooking.masterName}
               </h4>
               <p className="text-xs text-slate-500 dark:text-slate-400">
-                Scheduled for {activeBooking.scheduledDate} ({activeBooking.scheduledTime})
+                {t('scheduledForPrefix')} {activeBooking.scheduledDate} ({activeBooking.scheduledTime})
               </p>
             </div>
           </div>
@@ -103,7 +104,7 @@ export default function ClientHomePage() {
               </div>
               <div>
                 <h4 className="text-xs font-bold text-slate-900 dark:text-white group-hover:text-blue-600 transition">
-                  {cat.name}
+                  {tm(`categories.${cat.id}.name`)}
                 </h4>
                 <span className="text-[11px] text-slate-400">{cat.masterCount} {t('mastersCount')}</span>
               </div>
@@ -117,7 +118,7 @@ export default function ClientHomePage() {
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-xl font-extrabold text-slate-900 dark:text-white">{t('topRatedCraftsmen')}</h2>
-            <p className="text-xs text-slate-500 dark:text-slate-400">Available for fast dispatch in under 1 hour</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400">{t('topRatedSubheading')}</p>
           </div>
           <Link href="/search" className="text-xs font-bold text-blue-600 dark:text-sky-400 hover:underline">
             {t('viewAllMasters')}
@@ -134,7 +135,7 @@ export default function ClientHomePage() {
                     <h3 className="font-bold text-slate-900 dark:text-white text-sm">{m.name}</h3>
                     <Icon name="ShieldCheck" size={15} className="text-blue-500" />
                   </div>
-                  <p className="text-xs text-blue-600 dark:text-sky-400 font-semibold">{m.category}</p>
+                  <p className="text-xs text-blue-600 dark:text-sky-400 font-semibold">{tm(`categories.${m.categoryId}.name`)}</p>
                   <div className="flex items-center gap-2 text-xs text-slate-500">
                     <span className="flex items-center gap-1 text-amber-500 font-bold">
                       <Icon name="Star" size={13} className="fill-amber-400" />

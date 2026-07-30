@@ -3,63 +3,65 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { Icon } from '@/components/icons/LucideIcons';
 
 export const PagePreviewSwitcher: React.FC = () => {
+  const t = useTranslations('common');
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
 
   const pageGroups = [
     {
-      group: 'Core Marketplace',
+      group: t('ppGroupCore'),
       pages: [
-        { name: 'Landing Page', path: '/' },
-        { name: 'Client Home Feed', path: '/home' },
-        { name: 'Search Masters', path: '/search' },
-        { name: 'Categories (All 15)', path: '/categories' },
-        { name: 'Master Profile', path: '/master/master-1' },
-        { name: 'Customer Reviews', path: '/reviews' },
+        { name: t('ppLandingPage'), path: '/' },
+        { name: t('ppClientHomeFeed'), path: '/home' },
+        { name: t('searchMasters'), path: '/search' },
+        { name: t('ppCategoriesAll'), path: '/categories' },
+        { name: t('ppMasterProfile'), path: '/master/master-1' },
+        { name: t('customerReviews'), path: '/reviews' },
       ],
     },
     {
-      group: 'Booking & Messages',
+      group: t('ppGroupBooking'),
       pages: [
-        { name: 'Booking Wizard', path: '/booking' },
-        { name: 'Booking Live Tracker', path: '/booking/b-101' },
-        { name: 'Messages & Chat', path: '/messages' },
-        { name: 'Notifications Feed', path: '/notifications' },
-        { name: 'Saved Favorites', path: '/favorites' },
+        { name: t('ppBookingWizard'), path: '/booking' },
+        { name: t('ppBookingLiveTracker'), path: '/booking/b-101' },
+        { name: t('ppMessagesChat'), path: '/messages' },
+        { name: t('ppNotificationsFeed'), path: '/notifications' },
+        { name: t('ppSavedFavorites'), path: '/favorites' },
       ],
     },
     {
-      group: 'Dashboards',
+      group: t('ppGroupDashboards'),
       pages: [
-        { name: 'Client Dashboard', path: '/dashboard/client' },
-        { name: 'Master Dashboard', path: '/dashboard/master' },
-        { name: 'Admin SaaS Panel', path: '/dashboard/admin' },
+        { name: t('clientDashboard'), path: '/dashboard/client' },
+        { name: t('masterDashboard'), path: '/dashboard/master' },
+        { name: t('adminDashboard'), path: '/dashboard/admin' },
       ],
     },
     {
-      group: 'Master & Client Settings',
+      group: t('ppGroupSettings'),
       pages: [
-        { name: 'Edit Profile', path: '/settings/profile' },
-        { name: 'Certificates & Licenses', path: '/settings/certificates' },
-        { name: 'Services & Rates', path: '/settings/services' },
-        { name: 'Working Schedule', path: '/settings/schedule' },
-        { name: 'Payments & Payouts', path: '/payments' },
+        { name: t('ppEditProfile'), path: '/settings/profile' },
+        { name: t('ppCertificatesLicenses'), path: '/settings/certificates' },
+        { name: t('ppServicesRates'), path: '/settings/services' },
+        { name: t('ppWorkingSchedule'), path: '/settings/schedule' },
+        { name: t('ppPaymentsPayouts'), path: '/payments' },
       ],
     },
     {
-      group: 'Auth & Informational',
+      group: t('ppGroupAuth'),
       pages: [
-        { name: 'Login Screen', path: '/auth/login' },
-        { name: 'Register Client', path: '/auth/register/client' },
-        { name: 'Register Master', path: '/auth/register/master' },
-        { name: 'Forgot Password', path: '/auth/forgot-password' },
-        { name: 'About UstoGo', path: '/about' },
-        { name: 'Contact Us', path: '/contact' },
-        { name: 'FAQ Accordions', path: '/faq' },
-        { name: '404 Custom Error', path: '/404' },
+        { name: t('ppLoginScreen'), path: '/auth/login' },
+        { name: t('ppRegisterClient'), path: '/auth/register/client' },
+        { name: t('ppRegisterMaster'), path: '/auth/register/master' },
+        { name: t('ppForgotPasswordPage'), path: '/auth/forgot-password' },
+        { name: t('aboutUstoGo'), path: '/about' },
+        { name: t('ppContactUs'), path: '/contact' },
+        { name: t('ppFaqAccordions'), path: '/faq' },
+        { name: t('ppError404'), path: '/404' },
       ],
     },
   ];
@@ -73,7 +75,7 @@ export const PagePreviewSwitcher: React.FC = () => {
           className="flex items-center gap-2.5 px-4 py-3 rounded-full bg-slate-900/90 dark:bg-white/90 text-white dark:text-slate-900 shadow-2xl backdrop-blur-xl hover:scale-105 transition-all duration-300 border border-slate-700/50 dark:border-slate-200/50 group"
         >
           <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping" />
-          <span className="text-xs font-bold tracking-tight">Explore 27+ Pages</span>
+          <span className="text-xs font-bold tracking-tight">{t('explorePages')}</span>
           <Icon name="Compass" size={16} className="group-hover:rotate-45 transition-transform" />
         </button>
       </div>
@@ -88,14 +90,14 @@ export const PagePreviewSwitcher: React.FC = () => {
               <div>
                 <div className="flex items-center gap-2">
                   <span className="px-2.5 py-0.5 rounded-full bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-sky-300 text-[11px] font-extrabold uppercase">
-                    Page Navigator
+                    {t('ppBadge')}
                   </span>
                   <h3 className="text-xl font-extrabold text-slate-900 dark:text-white">
-                    UstoGo Complete UI/UX Catalog
+                    {t('ppHeading')}
                   </h3>
                 </div>
                 <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                  Click any page below to preview high-fidelity interactive screens and responsive layouts.
+                  {t('ppSub')}
                 </p>
               </div>
 
@@ -144,13 +146,13 @@ export const PagePreviewSwitcher: React.FC = () => {
             <div className="p-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 flex items-center justify-between text-xs text-slate-500">
               <span className="flex items-center gap-1">
                 <Icon name="Sparkles" size={14} className="text-amber-500" />
-                Theme Switcher active in top header
+                {t('ppFooterNote')}
               </span>
               <button
                 onClick={() => setIsOpen(false)}
                 className="px-4 py-2 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold"
               >
-                Close Previewer
+                {t('ppClose')}
               </button>
             </div>
 

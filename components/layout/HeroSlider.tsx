@@ -17,42 +17,42 @@ export interface SlideData {
 export const HERO_SLIDES: SlideData[] = [
   {
     id: 1,
-    category: 'Plumbing Services',
-    title: 'Master Plumber • Luxury Kitchen Repair',
-    image: 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=2400&q=90',
-    photographer: 'Luxury Residence Shoot',
-  },
-  {
-    id: 2,
-    category: 'Electrical Work',
+    category: 'heroCategoryElectrical',
     title: 'Certified Electrician • Smart Home Installation',
     image: 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=2400&q=90',
     photographer: 'Penthouse Interior Shoot',
   },
   {
+    id: 2,
+    category: 'heroCategoryPlumbing',
+    title: 'Master Plumber • Luxury Kitchen Repair',
+    image: 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=2400&q=90',
+    photographer: 'Luxury Residence Shoot',
+  },
+  {
     id: 3,
-    category: 'Carpentry & Woodwork',
+    category: 'heroCategoryCarpentry',
     title: 'Custom Craftsman • Architectural Woodworking',
     image: 'https://images.unsplash.com/photo-1504148455328-c376907d081c?auto=format&fit=crop&w=2400&q=90',
     photographer: 'Sunlit Studio Photoshoot',
   },
   {
     id: 4,
-    category: 'Interior Painting',
+    category: 'heroCategoryPainting',
     title: 'Master Painter • Designer Wall Finishes',
     image: 'https://images.unsplash.com/photo-1562259949-e8e7689d7828?auto=format&fit=crop&w=2400&q=90',
     photographer: 'Contemporary Living Room',
   },
   {
     id: 5,
-    category: 'AC & HVAC Repair',
+    category: 'heroCategoryHVAC',
     title: 'HVAC Specialist • Climate Control Servicing',
     image: 'https://images.unsplash.com/photo-1621905252507-b35492cc74b4?auto=format&fit=crop&w=2400&q=90',
     photographer: 'High-Rise Residence',
   },
   {
     id: 6,
-    category: 'Deep Home Cleaning',
+    category: 'heroCategoryCleaning',
     title: 'Sanitization Specialist • Marble & Interior Care',
     image: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=2400&q=90',
     photographer: 'Modern Kitchen Shoot',
@@ -61,6 +61,7 @@ export const HERO_SLIDES: SlideData[] = [
 
 export default function HeroSlider() {
   const t = useTranslations('common');
+  const tm = useTranslations('mockData');
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -144,8 +145,8 @@ export default function HeroSlider() {
         })}
 
         {/* Premium Dark Gradient & Vignette Overlay for Crisp Readability */}
-        <div className="absolute inset-0 z-20 bg-gradient-to-b from-slate-950/85 via-slate-950/70 to-slate-950/90" />
-        <div className="absolute inset-0 z-20 bg-[radial-gradient(circle_at_center,_transparent_20%,_rgba(2,6,23,0.75)_100%)]" />
+        <div className="absolute inset-0 z-20 dark:bg-gradient-to-b dark:from-slate-950/70 dark:via-slate-950/55 dark:to-slate-950/78" />
+        <div className="absolute inset-0 z-20 dark:bg-[radial-gradient(circle_at_center,_transparent_20%,_rgba(2,6,23,0.6)_100%)]" />
       </div>
 
       {/* =================================================== */}
@@ -153,7 +154,7 @@ export default function HeroSlider() {
       {/* =================================================== */}
       <button
         onClick={prevSlide}
-        aria-label="Previous Slide"
+        aria-label={t('prevSlideAria')}
         className="hidden sm:flex absolute left-6 top-1/2 -translate-y-1/2 z-40 w-12 h-12 rounded-2xl bg-white/10 hover:bg-white/25 border border-white/20 text-white items-center justify-center shadow-2xl backdrop-blur-md transition-all duration-300 hover:scale-110 active:scale-95 group"
       >
         <Icon name="ChevronLeft" size={24} className="group-hover:-translate-x-0.5 transition-transform" />
@@ -161,7 +162,7 @@ export default function HeroSlider() {
 
       <button
         onClick={nextSlide}
-        aria-label="Next Slide"
+        aria-label={t('nextSlideAria')}
         className="hidden sm:flex absolute right-6 top-1/2 -translate-y-1/2 z-40 w-12 h-12 rounded-2xl bg-white/10 hover:bg-white/25 border border-white/20 text-white items-center justify-center shadow-2xl backdrop-blur-md transition-all duration-300 hover:scale-110 active:scale-95 group"
       >
         <Icon name="ChevronRight" size={24} className="group-hover:translate-x-0.5 transition-transform" />
@@ -178,7 +179,7 @@ export default function HeroSlider() {
       {/* Active Slide Category Pill (Top Left) */}
       <div className="absolute top-6 left-6 z-40 hidden sm:flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-600/30 border border-blue-400/40 text-blue-200 text-xs font-semibold backdrop-blur-md shadow-md">
         <Icon name="Sparkles" size={14} className="text-amber-400 animate-spin-slow" />
-        <span>{HERO_SLIDES[currentIndex].category}</span>
+        <span>{t(HERO_SLIDES[currentIndex].category)}</span>
       </div>
 
       {/* =================================================== */}
@@ -262,19 +263,19 @@ export default function HeroSlider() {
               <img src={MASTERS[0].avatar} alt={MASTERS[0].name} className="w-14 h-14 rounded-2xl object-cover shadow-md border border-slate-700" />
               <div>
                 <div className="flex items-center gap-1.5">
-                  <h4 className="font-bold text-white text-base">{MASTERS[0].name}</h4>
+                  <h4 className="font-bold text-slate-900 dark:text-white text-base">{MASTERS[0].name}</h4>
                   <Icon name="ShieldCheck" size={16} className="text-blue-400" />
                 </div>
-                <p className="text-xs text-slate-400">{MASTERS[0].category}</p>
-                <div className="flex items-center gap-1 text-xs text-amber-400 font-bold mt-1">
-                  <Icon name="Star" size={14} className="fill-amber-400 text-amber-400" />
-                  <span>{MASTERS[0].rating} ({MASTERS[0].reviewCount} reviews)</span>
+                <p className="text-xs text-slate-500 dark:text-slate-400">{tm(`categories.${MASTERS[0].categoryId}.name`)}</p>
+                <div className="flex items-center gap-1 text-xs text-amber-500 dark:text-amber-400 font-bold mt-1">
+                  <Icon name="Star" size={14} className="fill-amber-500 dark:fill-amber-400 text-amber-500 dark:text-amber-400" />
+                  <span>{MASTERS[0].rating} ({MASTERS[0].reviewCount} {t('reviewsWord')})</span>
                 </div>
               </div>
             </div>
-            <div className="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between text-xs">
-              <span className="font-bold text-white">${MASTERS[0].hourlyRate}/hr</span>
-              <Link href={`/master/${MASTERS[0].id}`} className="text-sky-400 font-bold hover:underline flex items-center gap-1">
+            <div className="mt-4 pt-3 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs">
+              <span className="font-bold text-slate-900 dark:text-white">${MASTERS[0].hourlyRate}/hr</span>
+              <Link href={`/master/${MASTERS[0].id}`} className="text-blue-600 dark:text-sky-400 font-bold hover:underline flex items-center gap-1">
                 <span>{t('viewDetails')}</span>
                 <Icon name="ChevronRight" size={14} />
               </Link>
@@ -284,25 +285,25 @@ export default function HeroSlider() {
           {/* Card 2: Sarah Jenkins */}
           <div className="glass-card rounded-3xl p-5 relative overflow-hidden group bg-slate-900/80 border-2 border-blue-500/50 backdrop-blur-xl hover:border-blue-400 transition duration-300 shadow-xl shadow-blue-900/20">
             <div className="absolute top-3 right-3 px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[10px] font-extrabold uppercase">
-              ★ Top Rated
+              {t('topRatedBadge')}
             </div>
             <div className="flex items-center gap-4">
               <img src={MASTERS[2].avatar} alt={MASTERS[2].name} className="w-14 h-14 rounded-2xl object-cover shadow-md border border-slate-700" />
               <div>
                 <div className="flex items-center gap-1.5">
-                  <h4 className="font-bold text-white text-base">{MASTERS[2].name}</h4>
+                  <h4 className="font-bold text-slate-900 dark:text-white text-base">{MASTERS[2].name}</h4>
                   <Icon name="ShieldCheck" size={16} className="text-blue-400" />
                 </div>
-                <p className="text-xs text-slate-400">{MASTERS[2].category}</p>
-                <div className="flex items-center gap-1 text-xs text-amber-400 font-bold mt-1">
-                  <Icon name="Star" size={14} className="fill-amber-400 text-amber-400" />
-                  <span>{MASTERS[2].rating} ({MASTERS[2].reviewCount} reviews)</span>
+                <p className="text-xs text-slate-500 dark:text-slate-400">{tm(`categories.${MASTERS[2].categoryId}.name`)}</p>
+                <div className="flex items-center gap-1 text-xs text-amber-500 dark:text-amber-400 font-bold mt-1">
+                  <Icon name="Star" size={14} className="fill-amber-500 dark:fill-amber-400 text-amber-500 dark:text-amber-400" />
+                  <span>{MASTERS[2].rating} ({MASTERS[2].reviewCount} {t('reviewsWord')})</span>
                 </div>
               </div>
             </div>
-            <div className="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between text-xs">
-              <span className="font-bold text-white">${MASTERS[2].hourlyRate}/hr</span>
-              <Link href={`/master/${MASTERS[2].id}`} className="text-sky-400 font-bold hover:underline flex items-center gap-1">
+            <div className="mt-4 pt-3 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs">
+              <span className="font-bold text-slate-900 dark:text-white">${MASTERS[2].hourlyRate}/hr</span>
+              <Link href={`/master/${MASTERS[2].id}`} className="text-blue-600 dark:text-sky-400 font-bold hover:underline flex items-center gap-1">
                 <span>{t('viewDetails')}</span>
                 <Icon name="ChevronRight" size={14} />
               </Link>
@@ -315,19 +316,19 @@ export default function HeroSlider() {
               <img src={MASTERS[1].avatar} alt={MASTERS[1].name} className="w-14 h-14 rounded-2xl object-cover shadow-md border border-slate-700" />
               <div>
                 <div className="flex items-center gap-1.5">
-                  <h4 className="font-bold text-white text-base">{MASTERS[1].name}</h4>
+                  <h4 className="font-bold text-slate-900 dark:text-white text-base">{MASTERS[1].name}</h4>
                   <Icon name="ShieldCheck" size={16} className="text-blue-400" />
                 </div>
-                <p className="text-xs text-slate-400">{MASTERS[1].category}</p>
-                <div className="flex items-center gap-1 text-xs text-amber-400 font-bold mt-1">
-                  <Icon name="Star" size={14} className="fill-amber-400 text-amber-400" />
-                  <span>{MASTERS[1].rating} ({MASTERS[1].reviewCount} reviews)</span>
+                <p className="text-xs text-slate-500 dark:text-slate-400">{tm(`categories.${MASTERS[1].categoryId}.name`)}</p>
+                <div className="flex items-center gap-1 text-xs text-amber-500 dark:text-amber-400 font-bold mt-1">
+                  <Icon name="Star" size={14} className="fill-amber-500 dark:fill-amber-400 text-amber-500 dark:text-amber-400" />
+                  <span>{MASTERS[1].rating} ({MASTERS[1].reviewCount} {t('reviewsWord')})</span>
                 </div>
               </div>
             </div>
-            <div className="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between text-xs">
-              <span className="font-bold text-white">${MASTERS[1].hourlyRate}/hr</span>
-              <Link href={`/master/${MASTERS[1].id}`} className="text-sky-400 font-bold hover:underline flex items-center gap-1">
+            <div className="mt-4 pt-3 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs">
+              <span className="font-bold text-slate-900 dark:text-white">${MASTERS[1].hourlyRate}/hr</span>
+              <Link href={`/master/${MASTERS[1].id}`} className="text-blue-600 dark:text-sky-400 font-bold hover:underline flex items-center gap-1">
                 <span>{t('viewDetails')}</span>
                 <Icon name="ChevronRight" size={14} />
               </Link>
@@ -348,7 +349,7 @@ export default function HeroSlider() {
             <button
               key={slide.id}
               onClick={() => setCurrentIndex(idx)}
-              aria-label={`Go to slide ${idx + 1}`}
+              aria-label={t('goToSlideAria', { n: idx + 1 })}
               className={`h-2.5 rounded-full transition-all duration-500 ${
                 isActive ? 'w-8 bg-blue-500 shadow-md shadow-blue-500/50' : 'w-2.5 bg-white/30 hover:bg-white/60'
               }`}
