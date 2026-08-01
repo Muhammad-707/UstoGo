@@ -347,6 +347,9 @@ export default function BookingDetailsPage() {
                   {booking.contactPhone}
                 </p>
               )}
+              {booking.clientNote && (
+                <p className="pt-2 text-slate-600 dark:text-slate-300 italic">{booking.clientNote}</p>
+              )}
             </div>
           </div>
         </div>
