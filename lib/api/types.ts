@@ -281,16 +281,16 @@ export interface Paginated<T> {
 export interface AdminMasterListItem {
   id: string;
   email: string;
-  phone: string;
-  firstName: string;
-  lastName: string;
+  phone: string | null;
   displayName: string;
-  city: City;
+  cityName: string;
+  categories: string[];
   approvalStatus: ApprovalStatus;
   isActive: boolean;
+  ratingAverage: string;
+  ratingCount: number;
+  priceFrom: string | null;
   createdAt: string;
-  rating: number;
-  bookingCount: number;
 }
 
 export interface MasterStatus {

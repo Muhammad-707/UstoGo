@@ -141,7 +141,6 @@ export const masterCabinetApi = {
     description?: string;
     priceType: string;
     price: number;
-    currency: string;
     durationMinutes: number;
   }) => api.post<MasterService>('/masters/me/services', data),
   updateService: (id: string, data: Record<string, unknown>) =>

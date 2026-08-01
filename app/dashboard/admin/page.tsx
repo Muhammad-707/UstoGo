@@ -96,12 +96,13 @@ export default function AdminDashboardPage() {
     : 0;
 
   // Real backend response has no revenue/monthly-growth concept — show the metrics that do have a
-  // real source instead of fabricating revenue numbers.
+  // real source instead of fabricating revenue numbers. Counts come from `data.users` (clients /
+  // masters) and `data.masters` (moderation buckets), verified against the live Swagger.
   const metrics = data
     ? [
-        { title: t('metricActiveMasters'), value: data.masters.approved.toLocaleString(), growth: `${data.masters.pending} pending`, icon: 'Users', color: 'from-blue-600 to-sky-500' },
-        { title: t('metricMonthlyBookings'), value: totalBookings.toLocaleString(), growth: `${data.bookings.completed} completed`, icon: 'BarChart3', color: 'from-emerald-500 to-teal-500' },
-        { title: t('metricCompletionRate'), value: `${data.rates.completionRate}%`, growth: `${data.rates.cancellationRate}% cancel rate`, icon: 'ShieldCheck', color: 'from-amber-500 to-orange-500' },
+        { title: t('metricTotalClients'), value: data.users.clients.toLocaleString(), growth: t('metricTotalClientsGrowth', { count: data.users.blocked }), icon: 'Users', color: 'from-emerald-500 to-teal-500' },
+        { title: t('metricTotalMasters'), value: data.users.masters.toLocaleString(), growth: `${data.masters.approved} ${t('approved')}`, icon: 'shieldcheck', color: 'from-blue-600 to-sky-500' },
+        { title: t('metricMonthlyBookings'), value: totalBookings.toLocaleString(), growth: `${data.bookings.completed} completed`, icon: 'BarChart3', color: 'from-amber-500 to-orange-500' },
         { title: 'Average Rating', value: data.reviews.averageRating.toFixed(2), growth: `${data.reviews.count} reviews`, icon: 'Star', color: 'from-purple-600 to-indigo-600' },
       ]
     : [];
@@ -250,9 +251,9 @@ export default function AdminDashboardPage() {
                       <div className="font-bold text-slate-900 dark:text-white">{m.displayName}</div>
                       <div className="text-slate-400">{m.email}</div>
                     </td>
-                    <td className="py-3 pr-4">{m.city?.name ?? '—'}</td>
-                    <td className="py-3 pr-4">{m.rating.toFixed(1)}</td>
-                    <td className="py-3 pr-4">{m.bookingCount}</td>
+                    <td className="py-3 pr-4">{m.cityName ?? '—'}</td>
+                    <td className="py-3 pr-4">{m.ratingAverage}</td>
+                    <td className="py-3 pr-4">{m.ratingCount}</td>
                     <td className="py-3 pr-4">
                       <span className="px-2 py-1 rounded-full bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 font-bold text-[10px]">
                         {m.approvalStatus}

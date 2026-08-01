@@ -47,7 +47,6 @@ export default function MasterServicesPage() {
         title,
         priceType: 'FIXED',
         price: Number(price),
-        currency: 'USD',
         durationMinutes: Number(durationMinutes) || 60,
       });
       setServices((prev) => [...prev, created]);
