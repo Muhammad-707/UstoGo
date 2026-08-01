@@ -21,6 +21,7 @@
   "step2Heading": "2. Выберите Дату и Время",
   "appointmentDate": "Дата визита",
   "availableTimeSlots": "Доступные интервалы времени",
+  "busy": "Занято",
   "back": "← Назад",
   "continueToAddress": "Далее к адресу →",
   "step3Heading": "3. Адрес Услуги",

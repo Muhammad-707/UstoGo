@@ -21,6 +21,7 @@
   "step2Heading": "2. Select Date & Time Slot",
   "appointmentDate": "Appointment Date",
   "availableTimeSlots": "Available Time Slots",
+  "busy": "Busy",
   "back": "← Back",
   "continueToAddress": "Continue to Address →",
   "step3Heading": "3. Service Location",
