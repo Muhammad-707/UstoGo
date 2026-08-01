@@ -10,7 +10,16 @@
   "uploadLabel": "Загрузите Лицензию / Сертификат (PDF или изображение)",
   "dragDropText": "Перетащите файлы сюда или",
   "browse": "выберите",
+  "emailLabel": "Email адрес",
+  "emailPlaceholder": "alex@example.com",
+  "passwordLabel": "Пароль",
+  "passwordPlaceholder": "••••••••",
+  "phoneLabel": "Номер Телефона",
+  "phonePlaceholder": "+992 90 123 4567",
+  "cityLabel": "Город",
+  "cityPlaceholder": "Выберите город",
   "submitButton": "Отправить Заявку",
+  "submitting": "Отправка заявки...",
   "alreadyMaster": "Уже мастер?",
   "logIn": "Войти"
 }

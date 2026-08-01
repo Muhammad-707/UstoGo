@@ -1,0 +1,7 @@
+{
+  "required": "This field is required",
+  "invalidEmail": "Enter a valid email address",
+  "passwordTooShort": "Password must be at least 8 characters",
+  "nameTooShort": "Must be at least 2 characters",
+  "invalidPhone": "Enter a valid phone number, e.g. +992901234567"
+}

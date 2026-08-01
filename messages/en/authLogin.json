@@ -1,14 +1,12 @@
 {
   "welcomeBack": "Welcome Back",
   "signInSubtitle": "Sign in to your UstoGo account",
-  "quickDemoSwitcher": "Quick Demo Switcher",
-  "asClient": "As Client",
-  "asMaster": "As Master",
-  "asAdmin": "As Admin",
   "emailLabel": "Email Address",
   "passwordLabel": "Password",
   "forgot": "Forgot?",
   "signInButton": "Sign In to UstoGo",
+  "signingIn": "Signing In...",
+  "twoFactorRequired": "Two-factor code required",
   "noAccount": "Don't have an account?",
   "registerAsClient": "Register as Client",
   "joinAsMaster": "Join as Master"

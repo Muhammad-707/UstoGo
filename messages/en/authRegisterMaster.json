@@ -10,7 +10,16 @@
   "uploadLabel": "Upload State License / Certificate (PDF or Image)",
   "dragDropText": "Drag & drop files or",
   "browse": "browse",
+  "emailLabel": "Email Address",
+  "emailPlaceholder": "alex@example.com",
+  "passwordLabel": "Password",
+  "passwordPlaceholder": "••••••••",
+  "phoneLabel": "Phone Number",
+  "phonePlaceholder": "+992 90 123 4567",
+  "cityLabel": "City",
+  "cityPlaceholder": "Select your city",
   "submitButton": "Submit Master Application",
+  "submitting": "Submitting Application...",
   "alreadyMaster": "Already a master?",
   "logIn": "Log in"
 }

@@ -17,6 +17,7 @@
   "pendingApprovals": "Запросы на Подтверждение",
   "newRequest": "Новый Запрос",
   "scheduleAddressLine": "{date} ({time}) • Адрес: {address}",
+  "clientNoteLabel": "“{note}”",
   "decline": "Отклонить",
   "acceptJob": "Принять Заказ (${price})"
 }

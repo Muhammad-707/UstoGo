@@ -17,6 +17,7 @@
   "pendingApprovals": "Дархостҳо барои Тасдиқ",
   "newRequest": "Дархости Нав",
   "scheduleAddressLine": "{date} ({time}) • Суроға: {address}",
+  "clientNoteLabel": "“{note}”",
   "decline": "Рад кардан",
   "acceptJob": "Қабули Кор (${price})"
 }

@@ -10,7 +10,16 @@
   "uploadLabel": "Литсензия / Сертификатро Бор Кунед (PDF ё Расм)",
   "dragDropText": "Файлҳоро гузоред ё",
   "browse": "интихоб кунед",
+  "emailLabel": "Почтаи Электронӣ",
+  "emailPlaceholder": "alex@example.com",
+  "passwordLabel": "Рамз",
+  "passwordPlaceholder": "••••••••",
+  "phoneLabel": "Рақами Телефон",
+  "phonePlaceholder": "+992 90 123 4567",
+  "cityLabel": "Шаҳр",
+  "cityPlaceholder": "Шаҳратонро интихоб кунед",
   "submitButton": "Аризаро Фиристодан",
+  "submitting": "Фиристодани ариза...",
   "alreadyMaster": "Аллакай усто ҳастед?",
   "logIn": "Вуруд"
 }

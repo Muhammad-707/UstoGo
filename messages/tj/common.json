@@ -28,6 +28,7 @@
   "browseServices": "Каталоги Хизматрасониҳо",
   "topCategories": "Категорияҳои Машҳуртарин",
   "allServices": "Ҳамаи Хизматрасониҳо",
+  "filterPopular": "Танҳо Машҳур",
   "popularOnly": "Танҳо Машҳур",
   "luxuryPremium": "Люкс ва Премиум",
   "mastersCount": "устоҳо",
@@ -91,7 +92,7 @@
   "grossRevenue": "Даромади Умумӣ",
   "monthlyBookings": "Фармоишҳои моҳона",
   "completionRate": "Фоизи муваффақият",
-  "exploreAllCategories": "Тамошои ҳамаи 15 категория",
+  "exploreAllCategories": "Тамошои ҳамаи {count} категория",
   "ctaTitle": "Ҳисоби нархро гиред ва устоҳои сертификатдорро имрӯз фармоиш диҳед",
   "tagPlumber": "Сантехник",
   "tagElectrician": "Электрик",
@@ -175,5 +176,8 @@
     "Monday - Saturday": "Душанбе - Шанбе",
     "Saturday": "Шанбе",
     "Sunday": "Якшанбе"
-  }
+  },
+  "myDashboard": "Кабинети Ман",
+  "logOut": "Баромадан",
+  "noNotifications": "Ҳанӯз огоҳинома нест"
 }

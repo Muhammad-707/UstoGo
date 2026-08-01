@@ -4,7 +4,9 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { Icon } from '@/components/icons/LucideIcons';
-import { MASTERS } from '@/lib/mockData';
+import { mastersApi } from '@/lib/api/endpoints';
+import type { MasterPublic } from '@/lib/api/types';
+import { getAvatarUrl } from '@/lib/placeholders';
 
 export interface SlideData {
   id: number;
@@ -61,12 +63,16 @@ export const HERO_SLIDES: SlideData[] = [
 
 export default function HeroSlider() {
   const t = useTranslations('common');
-  const tm = useTranslations('mockData');
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [showcaseMasters, setShowcaseMasters] = useState<MasterPublic[]>([]);
   const touchStartXRef = useRef<number | null>(null);
   const touchEndXRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    mastersApi.search({ limit: 3, sort: 'rating:desc' }).then((res) => setShowcaseMasters(res.items)).catch(() => {});
+  }, []);
 
   const nextSlide = useCallback(() => {
     setCurrentIndex((prev) => (prev + 1) % HERO_SLIDES.length);
@@ -256,85 +262,43 @@ export default function HeroSlider() {
 
         {/* Hero Visual Showcase Cards (3 Top Masters) */}
         <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
-          
-          {/* Card 1: Alex Morgan */}
-          <div className="glass-card rounded-3xl p-5 relative overflow-hidden group bg-slate-900/70 border border-slate-800/80 backdrop-blur-xl hover:border-blue-500/50 transition duration-300">
-            <div className="flex items-center gap-4">
-              <img src={MASTERS[0].avatar} alt={MASTERS[0].name} className="w-14 h-14 rounded-2xl object-cover shadow-md border border-slate-700" />
-              <div>
-                <div className="flex items-center gap-1.5">
-                  <h4 className="font-bold text-slate-900 dark:text-white text-base">{MASTERS[0].name}</h4>
-                  <Icon name="ShieldCheck" size={16} className="text-blue-400" />
+          {showcaseMasters.map((master, idx) => (
+            <div
+              key={master.id}
+              className={
+                idx === 1
+                  ? 'glass-card rounded-3xl p-5 relative overflow-hidden group bg-slate-900/80 border-2 border-blue-500/50 backdrop-blur-xl hover:border-blue-400 transition duration-300 shadow-xl shadow-blue-900/20'
+                  : 'glass-card rounded-3xl p-5 relative overflow-hidden group bg-slate-900/70 border border-slate-800/80 backdrop-blur-xl hover:border-blue-500/50 transition duration-300'
+              }
+            >
+              {idx === 1 && (
+                <div className="absolute top-3 right-3 px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[10px] font-extrabold uppercase">
+                  {t('topRatedBadge')}
                 </div>
-                <p className="text-xs text-slate-500 dark:text-slate-400">{tm(`categories.${MASTERS[0].categoryId}.name`)}</p>
-                <div className="flex items-center gap-1 text-xs text-amber-500 dark:text-amber-400 font-bold mt-1">
-                  <Icon name="Star" size={14} className="fill-amber-500 dark:fill-amber-400 text-amber-500 dark:text-amber-400" />
-                  <span>{MASTERS[0].rating} ({MASTERS[0].reviewCount} {t('reviewsWord')})</span>
-                </div>
-              </div>
-            </div>
-            <div className="mt-4 pt-3 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs">
-              <span className="font-bold text-slate-900 dark:text-white">${MASTERS[0].hourlyRate}/hr</span>
-              <Link href={`/master/${MASTERS[0].id}`} className="text-blue-600 dark:text-sky-400 font-bold hover:underline flex items-center gap-1">
-                <span>{t('viewDetails')}</span>
-                <Icon name="ChevronRight" size={14} />
-              </Link>
-            </div>
-          </div>
-
-          {/* Card 2: Sarah Jenkins */}
-          <div className="glass-card rounded-3xl p-5 relative overflow-hidden group bg-slate-900/80 border-2 border-blue-500/50 backdrop-blur-xl hover:border-blue-400 transition duration-300 shadow-xl shadow-blue-900/20">
-            <div className="absolute top-3 right-3 px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[10px] font-extrabold uppercase">
-              {t('topRatedBadge')}
-            </div>
-            <div className="flex items-center gap-4">
-              <img src={MASTERS[2].avatar} alt={MASTERS[2].name} className="w-14 h-14 rounded-2xl object-cover shadow-md border border-slate-700" />
-              <div>
-                <div className="flex items-center gap-1.5">
-                  <h4 className="font-bold text-slate-900 dark:text-white text-base">{MASTERS[2].name}</h4>
-                  <Icon name="ShieldCheck" size={16} className="text-blue-400" />
-                </div>
-                <p className="text-xs text-slate-500 dark:text-slate-400">{tm(`categories.${MASTERS[2].categoryId}.name`)}</p>
-                <div className="flex items-center gap-1 text-xs text-amber-500 dark:text-amber-400 font-bold mt-1">
-                  <Icon name="Star" size={14} className="fill-amber-500 dark:fill-amber-400 text-amber-500 dark:text-amber-400" />
-                  <span>{MASTERS[2].rating} ({MASTERS[2].reviewCount} {t('reviewsWord')})</span>
+              )}
+              <div className="flex items-center gap-4">
+                <img src={getAvatarUrl(master.id)} alt={master.displayName} className="w-14 h-14 rounded-2xl object-cover shadow-md border border-slate-700" />
+                <div>
+                  <div className="flex items-center gap-1.5">
+                    <h4 className="font-bold text-slate-900 dark:text-white text-base">{master.displayName}</h4>
+                    {master.hasCertificates && <Icon name="ShieldCheck" size={16} className="text-blue-400" />}
+                  </div>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">{master.cityName}</p>
+                  <div className="flex items-center gap-1 text-xs text-amber-500 dark:text-amber-400 font-bold mt-1">
+                    <Icon name="Star" size={14} className="fill-amber-500 dark:fill-amber-400 text-amber-500 dark:text-amber-400" />
+                    <span>{master.ratingAverage} ({master.ratingCount} {t('reviewsWord')})</span>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="mt-4 pt-3 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs">
-              <span className="font-bold text-slate-900 dark:text-white">${MASTERS[2].hourlyRate}/hr</span>
-              <Link href={`/master/${MASTERS[2].id}`} className="text-blue-600 dark:text-sky-400 font-bold hover:underline flex items-center gap-1">
-                <span>{t('viewDetails')}</span>
-                <Icon name="ChevronRight" size={14} />
-              </Link>
-            </div>
-          </div>
-
-          {/* Card 3: Marcus Vance */}
-          <div className="glass-card rounded-3xl p-5 relative overflow-hidden group bg-slate-900/70 border border-slate-800/80 backdrop-blur-xl hover:border-blue-500/50 transition duration-300">
-            <div className="flex items-center gap-4">
-              <img src={MASTERS[1].avatar} alt={MASTERS[1].name} className="w-14 h-14 rounded-2xl object-cover shadow-md border border-slate-700" />
-              <div>
-                <div className="flex items-center gap-1.5">
-                  <h4 className="font-bold text-slate-900 dark:text-white text-base">{MASTERS[1].name}</h4>
-                  <Icon name="ShieldCheck" size={16} className="text-blue-400" />
-                </div>
-                <p className="text-xs text-slate-500 dark:text-slate-400">{tm(`categories.${MASTERS[1].categoryId}.name`)}</p>
-                <div className="flex items-center gap-1 text-xs text-amber-500 dark:text-amber-400 font-bold mt-1">
-                  <Icon name="Star" size={14} className="fill-amber-500 dark:fill-amber-400 text-amber-500 dark:text-amber-400" />
-                  <span>{MASTERS[1].rating} ({MASTERS[1].reviewCount} {t('reviewsWord')})</span>
-                </div>
+              <div className="mt-4 pt-3 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs">
+                <span className="font-bold text-slate-900 dark:text-white">{master.priceFrom ? `$${master.priceFrom}/hr` : '—'}</span>
+                <Link href={`/master/${master.id}`} className="text-blue-600 dark:text-sky-400 font-bold hover:underline flex items-center gap-1">
+                  <span>{t('viewDetails')}</span>
+                  <Icon name="ChevronRight" size={14} />
+                </Link>
               </div>
             </div>
-            <div className="mt-4 pt-3 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs">
-              <span className="font-bold text-slate-900 dark:text-white">${MASTERS[1].hourlyRate}/hr</span>
-              <Link href={`/master/${MASTERS[1].id}`} className="text-blue-600 dark:text-sky-400 font-bold hover:underline flex items-center gap-1">
-                <span>{t('viewDetails')}</span>
-                <Icon name="ChevronRight" size={14} />
-              </Link>
-            </div>
-          </div>
-
+          ))}
         </div>
 
       </div>

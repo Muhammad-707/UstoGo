@@ -17,6 +17,7 @@
   "pendingApprovals": "Pending Job Approvals",
   "newRequest": "New Request",
   "scheduleAddressLine": "{date} ({time}) • Address: {address}",
+  "clientNoteLabel": "“{note}”",
   "decline": "Decline",
   "acceptJob": "Accept Job (${price})"
 }

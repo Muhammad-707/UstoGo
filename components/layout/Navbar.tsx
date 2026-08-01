@@ -5,27 +5,47 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useLocale, useTranslations } from 'next-intl';
 import { Icon } from '@/components/icons/LucideIcons';
-import { MOCK_NOTIFICATIONS } from '@/lib/mockData';
 import { setLocale } from '@/i18n/actions';
 import { locales, localeMeta, type Locale } from '@/i18n/locales';
+import { useAuth, dashboardPathFor } from '@/contexts/AuthContext';
+import { notificationsApi } from '@/lib/api/endpoints';
+import type { NotificationItem } from '@/lib/api/types';
 
 export const Navbar: React.FC = () => {
   const pathname = usePathname();
   const router = useRouter();
   const lang = useLocale() as Locale;
   const t = useTranslations('common');
-  const tm = useTranslations('mockData');
   const [, startTransition] = useTransition();
   const setLang = (l: Locale) => {
     startTransition(() => {
       setLocale(l).then(() => router.refresh());
     });
   };
+  const { user, loading, logout } = useAuth();
   const [darkMode, setDarkMode] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [dashboardDropdown, setDashboardDropdown] = useState(false);
+  const [userDropdown, setUserDropdown] = useState(false);
   const [langDropdown, setLangDropdown] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
+  const [notifications, setNotifications] = useState<NotificationItem[]>([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  useEffect(() => {
+    if (!user) {
+      setNotifications([]);
+      setUnreadCount(0);
+      return;
+    }
+    notificationsApi.unreadCount().then((res) => setUnreadCount(res.count)).catch(() => {});
+    notificationsApi.list({ limit: 5 }).then((res) => setNotifications(res.items)).catch(() => {});
+  }, [user]);
+
+  const handleLogout = async () => {
+    await logout();
+    setUserDropdown(false);
+    router.push('/');
+  };
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -67,7 +87,6 @@ export const Navbar: React.FC = () => {
   }));
 
   const currentLangObj = languages.find((l) => l.code === lang) || languages[2];
-  const unreadCount = MOCK_NOTIFICATIONS.filter((n) => n.unread).length;
 
   return (
     <header className="sticky top-0 z-50 w-full glass-panel border-b transition-colors duration-300">
@@ -112,49 +131,15 @@ export const Navbar: React.FC = () => {
             );
           })}
 
-          {/* Dashboards Dropdown */}
-          <div className="relative">
-            <button
-              onClick={() => setDashboardDropdown(!dashboardDropdown)}
-              onBlur={() => setTimeout(() => setDashboardDropdown(false), 200)}
+          {/* Dashboard link (only the user's own dashboard, when logged in) */}
+          {user && (
+            <Link
+              href={dashboardPathFor(user.role)}
               className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white hover:bg-slate-100/60 dark:hover:bg-slate-800/60 transition-all"
             >
-              {t('dashboards')}
-              <Icon name="ChevronDown" size={14} className={`transition-transform ${dashboardDropdown ? 'rotate-180' : ''}`} />
-            </button>
-            
-            {dashboardDropdown && (
-              <div className="absolute top-full left-0 mt-2 w-56 bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200/80 dark:border-slate-800 p-2 z-50 animate-fade-in">
-                <Link
-                  href="/dashboard/client"
-                  className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-blue-50 dark:hover:bg-blue-950/50 hover:text-blue-600 transition"
-                >
-                  <div className="w-7 h-7 rounded-lg bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-sky-400 flex items-center justify-center">
-                    <Icon name="User" size={15} />
-                  </div>
-                  {t('clientDashboard')}
-                </Link>
-                <Link
-                  href="/dashboard/master"
-                  className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-amber-50 dark:hover:bg-amber-950/50 hover:text-amber-600 transition"
-                >
-                  <div className="w-7 h-7 rounded-lg bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400 flex items-center justify-center">
-                    <Icon name="Briefcase" size={15} />
-                  </div>
-                  {t('masterDashboard')}
-                </Link>
-                <Link
-                  href="/dashboard/admin"
-                  className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-purple-50 dark:hover:bg-purple-950/50 hover:text-purple-600 transition"
-                >
-                  <div className="w-7 h-7 rounded-lg bg-purple-100 dark:bg-purple-900/40 text-purple-600 dark:text-purple-400 flex items-center justify-center">
-                    <Icon name="BarChart3" size={15} />
-                  </div>
-                  {t('adminDashboard')}
-                </Link>
-              </div>
-            )}
-          </div>
+              {t('myDashboard')}
+            </Link>
+          )}
         </nav>
 
         {/* Right Header Actions */}
@@ -196,45 +181,56 @@ export const Navbar: React.FC = () => {
             )}
           </div>
 
-          {/* Notification Button */}
+          {/* Notification Button (hidden entirely when logged out, wrapper kept for spacing) */}
           <div className="relative">
-            <button
-              onClick={() => setNotifOpen(!notifOpen)}
-              className="p-2.5 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition relative"
-              aria-label={t('notificationsTitle')}
-            >
-              <Icon name="Bell" size={18} />
-              {unreadCount > 0 && (
-                <span className="absolute top-1.5 right-1.5 w-4 h-4 bg-red-500 text-white text-[10px] font-extrabold rounded-full flex items-center justify-center border-2 border-white dark:border-slate-900 animate-pulse">
-                  {unreadCount}
-                </span>
-              )}
-            </button>
+            {user && (
+              <>
+                <button
+                  onClick={() => setNotifOpen(!notifOpen)}
+                  className="p-2.5 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition relative"
+                  aria-label={t('notificationsTitle')}
+                >
+                  <Icon name="Bell" size={18} />
+                  {unreadCount > 0 && (
+                    <span className="absolute top-1.5 right-1.5 w-4 h-4 bg-red-500 text-white text-[10px] font-extrabold rounded-full flex items-center justify-center border-2 border-white dark:border-slate-900 animate-pulse">
+                      {unreadCount}
+                    </span>
+                  )}
+                </button>
 
-            {/* Notification Dropdown */}
-            {notifOpen && (
-              <div className="absolute right-0 top-full mt-2 w-80 sm:w-96 bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 p-4 z-50 animate-fade-in">
-                <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
-                  <h4 className="text-sm font-bold text-slate-900 dark:text-white">{t('notificationsTitle')}</h4>
-                  <Link href="/notifications" className="text-xs font-semibold text-blue-600 hover:underline">
-                    {t('viewAll')}
-                  </Link>
-                </div>
-                <div className="divide-y divide-slate-100 dark:divide-slate-800/60 max-h-72 overflow-y-auto">
-                  {MOCK_NOTIFICATIONS.map((n) => (
-                    <div key={n.id} className="py-3 flex gap-3 items-start hover:bg-slate-50 dark:hover:bg-slate-800/40 px-2 rounded-xl transition">
-                      <div className="p-2 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-sky-400 mt-0.5">
-                        <Icon name={n.type === 'booking' ? 'Clock' : n.type === 'promo' ? 'Sparkles' : 'CheckCircle2'} size={16} />
-                      </div>
-                      <div>
-                        <p className="text-xs font-bold text-slate-900 dark:text-slate-100">{tm(`notifications.${n.id}.title`)}</p>
-                        <p className="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-2 mt-0.5">{tm(`notifications.${n.id}.message`)}</p>
-                        <span className="text-[10px] text-slate-400 mt-1 block">{n.time}</span>
-                      </div>
+                {/* Notification Dropdown */}
+                {notifOpen && (
+                  <div className="absolute right-0 top-full mt-2 w-80 sm:w-96 bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 p-4 z-50 animate-fade-in">
+                    <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+                      <h4 className="text-sm font-bold text-slate-900 dark:text-white">{t('notificationsTitle')}</h4>
+                      <Link href="/notifications" className="text-xs font-semibold text-blue-600 hover:underline">
+                        {t('viewAll')}
+                      </Link>
                     </div>
-                  ))}
-                </div>
-              </div>
+                    <div className="divide-y divide-slate-100 dark:divide-slate-800/60 max-h-72 overflow-y-auto">
+                      {notifications.length === 0 && (
+                        <p className="py-4 text-center text-xs text-slate-400">{t('noNotifications')}</p>
+                      )}
+                      {notifications.map((n) => {
+                        const title = (n.payload?.title as string) || '';
+                        const message = (n.payload?.message as string) || '';
+                        return (
+                          <div key={n.id} className="py-3 flex gap-3 items-start hover:bg-slate-50 dark:hover:bg-slate-800/40 px-2 rounded-xl transition">
+                            <div className="p-2 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-sky-400 mt-0.5">
+                              <Icon name={n.type === 'booking' ? 'Clock' : n.type === 'promo' ? 'Sparkles' : 'CheckCircle2'} size={16} />
+                            </div>
+                            <div>
+                              <p className="text-xs font-bold text-slate-900 dark:text-slate-100">{title}</p>
+                              <p className="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-2 mt-0.5">{message}</p>
+                              <span className="text-[10px] text-slate-400 mt-1 block">{new Date(n.createdAt).toLocaleString()}</span>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+              </>
             )}
           </div>
 
@@ -249,12 +245,53 @@ export const Navbar: React.FC = () => {
 
           {/* User Profile / Login Button */}
           <div className="flex items-center gap-2 pl-2 border-l border-slate-200 dark:border-slate-800">
-            <Link
-              href="/auth/login"
-              className="hidden sm:inline-flex px-3.5 py-2 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
-            >
-              {t('logIn')}
-            </Link>
+            {user ? (
+              <div className="relative hidden sm:block">
+                <button
+                  onClick={() => setUserDropdown(!userDropdown)}
+                  onBlur={() => setTimeout(() => setUserDropdown(false), 200)}
+                  className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+                >
+                  <Icon name="User" size={15} />
+                  <span className="max-w-[120px] truncate">
+                    {user.masterProfile?.displayName || user.clientProfile?.firstName || user.email}
+                  </span>
+                  <Icon name="ChevronDown" size={14} className={`transition-transform ${userDropdown ? 'rotate-180' : ''}`} />
+                </button>
+
+                {userDropdown && (
+                  <div className="absolute right-0 top-full mt-2 w-52 bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200/80 dark:border-slate-800 p-2 z-50 animate-fade-in">
+                    <Link
+                      href={dashboardPathFor(user.role)}
+                      className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-blue-50 dark:hover:bg-blue-950/50 hover:text-blue-600 transition"
+                    >
+                      <div className="w-7 h-7 rounded-lg bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-sky-400 flex items-center justify-center">
+                        <Icon name="User" size={15} />
+                      </div>
+                      {t('myDashboard')}
+                    </Link>
+                    <button
+                      onClick={handleLogout}
+                      className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-red-600 hover:bg-red-50 dark:hover:bg-red-950/40 transition"
+                    >
+                      <div className="w-7 h-7 rounded-lg bg-red-100 dark:bg-red-900/40 text-red-600 flex items-center justify-center">
+                        <Icon name="LogOut" size={15} />
+                      </div>
+                      {t('logOut')}
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              !loading && (
+                <Link
+                  href="/auth/login"
+                  className="hidden sm:inline-flex px-3.5 py-2 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+                >
+                  {t('logIn')}
+                </Link>
+              )
+            )}
 
             <Link
               href="/booking"
@@ -291,28 +328,36 @@ export const Navbar: React.FC = () => {
             </Link>
           ))}
           <div className="pt-3 border-t border-slate-100 dark:border-slate-800 space-y-2">
-            <span className="text-xs font-extrabold uppercase tracking-wider text-slate-400 px-4">{t('dashboards')}</span>
-            <Link
-              href="/dashboard/client"
-              onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-blue-50 dark:hover:bg-blue-950"
-            >
-              {t('clientDashboard')}
-            </Link>
-            <Link
-              href="/dashboard/master"
-              onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-amber-50 dark:hover:bg-amber-950"
-            >
-              {t('masterDashboard')}
-            </Link>
-            <Link
-              href="/dashboard/admin"
-              onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-purple-50 dark:hover:bg-purple-950"
-            >
-              {t('adminDashboard')}
-            </Link>
+            {user ? (
+              <>
+                <Link
+                  href={dashboardPathFor(user.role)}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-blue-50 dark:hover:bg-blue-950"
+                >
+                  {t('myDashboard')}
+                </Link>
+                <button
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    handleLogout();
+                  }}
+                  className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-red-600 hover:bg-red-50 dark:hover:bg-red-950/40"
+                >
+                  {t('logOut')}
+                </button>
+              </>
+            ) : (
+              !loading && (
+                <Link
+                  href="/auth/login"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-blue-50 dark:hover:bg-blue-950"
+                >
+                  {t('logIn')}
+                </Link>
+              )
+            )}
           </div>
         </div>
       )}

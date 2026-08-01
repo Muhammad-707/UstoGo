@@ -28,6 +28,7 @@
   "browseServices": "Каталог Услуг",
   "topCategories": "Популярные Категории",
   "allServices": "Все Услуги",
+  "filterPopular": "Только Популярные",
   "popularOnly": "Только Популярные",
   "luxuryPremium": "Люкс и Премиум",
   "mastersCount": "мастеров",
@@ -91,7 +92,7 @@
   "grossRevenue": "Валовый Доход",
   "monthlyBookings": "Заказов в месяц",
   "completionRate": "Процент успешности",
-  "exploreAllCategories": "Посмотреть все 15 категорий",
+  "exploreAllCategories": "Посмотреть все {count} категорий",
   "ctaTitle": "Получите расчет стоимости и забронируйте сертифицированных мастеров сегодня",
   "tagPlumber": "Сантехник",
   "tagElectrician": "Электрик",
@@ -175,5 +176,8 @@
     "Monday - Saturday": "Понедельник - Суббота",
     "Saturday": "Суббота",
     "Sunday": "Воскресенье"
-  }
+  },
+  "myDashboard": "Моя Панель",
+  "logOut": "Выйти",
+  "noNotifications": "Пока нет уведомлений"
 }

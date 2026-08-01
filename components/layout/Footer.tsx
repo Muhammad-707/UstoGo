@@ -1,14 +1,19 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { Icon } from '@/components/icons/LucideIcons';
-import { CATEGORIES } from '@/lib/mockData';
+import { categoriesApi } from '@/lib/api/endpoints';
+import type { Category } from '@/lib/api/types';
 
 export const Footer: React.FC = () => {
   const t = useTranslations('common');
-  const tm = useTranslations('mockData');
+  const [categories, setCategories] = useState<Category[]>([]);
+
+  useEffect(() => {
+    categoriesApi.tree().then(setCategories).catch(() => {});
+  }, []);
 
   return (
     <footer className="bg-slate-900 text-slate-400 border-t border-slate-800 pt-16 pb-12 relative overflow-hidden">
@@ -79,11 +84,11 @@ export const Footer: React.FC = () => {
           <div>
             <h4 className="text-sm font-bold uppercase tracking-wider text-white mb-4">{t('topServicesFooter')}</h4>
             <ul className="space-y-2.5 text-sm">
-              {CATEGORIES.slice(0, 5).map((cat) => (
+              {categories.slice(0, 5).map((cat) => (
                 <li key={cat.id}>
-                  <Link href={`/categories`} className="hover:text-sky-400 transition flex items-center gap-2">
+                  <Link href={`/search?category=${cat.id}`} className="hover:text-sky-400 transition flex items-center gap-2">
                     <Icon name="ChevronRight" size={14} className="text-slate-600" />
-                    <span>{tm(`categories.${cat.id}.name`)}</span>
+                    <span>{cat.name}</span>
                   </Link>
                 </li>
               ))}

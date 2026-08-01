@@ -5,9 +5,10 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { Icon } from '@/components/icons/LucideIcons';
-import { mastersApi, bookingsApi } from '@/lib/api/endpoints';
+import { mastersApi, bookingsApi, citiesApi } from '@/lib/api/endpoints';
 import { ApiError } from '@/lib/api/client';
-import type { MasterPublic, MasterService } from '@/lib/api/types';
+import type { City, MasterPublic, MasterService } from '@/lib/api/types';
+import { useAuth } from '@/contexts/AuthContext';
 import { getAvatarUrl } from '@/lib/placeholders';
 
 function formatSlotLabel(iso: string, durationMinutes?: number): string {
@@ -33,6 +34,7 @@ export default function BookingWizardPage() {
   const t = useTranslations('booking');
   const searchParams = useSearchParams();
   const preselectedMasterId = searchParams.get('master');
+  const { user } = useAuth();
 
   const [step, setStep] = useState<number>(1);
 
@@ -50,12 +52,36 @@ export default function BookingWizardPage() {
   const [slotsLoading, setSlotsLoading] = useState(false);
   const [timeSlot, setTimeSlot] = useState<string>('');
 
-  const [address, setAddress] = useState('');
   const [jobNotes, setJobNotes] = useState('');
   const [bookingConfirmed, setBookingConfirmed] = useState(false);
   const [createdBookingId, setCreatedBookingId] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+
+  // ---- Address step: city → district (from the client's registered city) ----
+  const [cities, setCities] = useState<City[]>([]);
+  const [cityId, setCityId] = useState('');
+  const [district, setDistrict] = useState('');
+  const [street, setStreet] = useState('');
+  const [house, setHouse] = useState('');
+  const [contactPhone, setContactPhone] = useState('');
+
+  useEffect(() => {
+    citiesApi
+      .list()
+      .then((list) => {
+        setCities(list);
+        const registeredCityId = user?.clientProfile?.cityId;
+        if (registeredCityId && list.some((city) => city.id === registeredCityId)) {
+          setCityId(registeredCityId);
+        }
+      })
+      .catch(() => setCities([]));
+  }, [user?.clientProfile?.cityId]);
+
+  const activeCity = cities.find((city) => city.id === cityId) ?? null;
+  const activeDistricts = activeCity?.districts ?? [];
+  const composedAddressLine = [street, house].filter(Boolean).join(', ').trim();
 
   // Load the preselected master
   useEffect(() => {
@@ -145,7 +171,12 @@ export default function BookingWizardPage() {
         masterId: preselectedMasterId,
         serviceId: selectedServiceId,
         scheduledAt: timeSlot,
-        address: address ? ({ line: address } as unknown) : undefined,
+        address: {
+          cityId,
+          district,
+          line: composedAddressLine,
+          ...(contactPhone.trim() ? { contactPhone: contactPhone.trim() } : {}),
+        },
         note: jobNotes || undefined,
       });
       setCreatedBookingId(created.id);
@@ -450,15 +481,79 @@ export default function BookingWizardPage() {
             <div className="space-y-6 animate-fade-in">
               <h3 className="text-lg font-bold text-slate-900 dark:text-white">{t('step3Heading')}</h3>
 
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-xs font-bold uppercase tracking-wider text-slate-400">{t('cityLabel')}</label>
+                  <select
+                    value={cityId}
+                    onChange={(e) => {
+                      setCityId(e.target.value);
+                      setDistrict('');
+                    }}
+                    className="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-900 dark:text-white focus:outline-none"
+                  >
+                    <option value="">{t('selectCity')}</option>
+                    {cities.map((city) => (
+                      <option key={city.id} value={city.id}>
+                        {city.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-xs font-bold uppercase tracking-wider text-slate-400">{t('districtLabel')}</label>
+                  <select
+                    value={district}
+                    onChange={(e) => setDistrict(e.target.value)}
+                    disabled={!activeCity}
+                    className="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-900 dark:text-white focus:outline-none disabled:opacity-50"
+                  >
+                    <option value="">{t('selectDistrict')}</option>
+                    {activeDistricts.map((d) => (
+                      <option key={d.id} value={d.name}>
+                        {d.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-xs font-bold uppercase tracking-wider text-slate-400">{t('streetLabel')}</label>
+                  <input
+                    type="text"
+                    value={street}
+                    onChange={(e) => setStreet(e.target.value)}
+                    placeholder={t('streetPlaceholder')}
+                    className="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-900 dark:text-white focus:outline-none"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                    {t('houseLabel')} <span className="text-slate-400 normal-case">{t('optional')}</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={house}
+                    onChange={(e) => setHouse(e.target.value)}
+                    placeholder={t('housePlaceholder')}
+                    className="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-900 dark:text-white focus:outline-none"
+                  />
+                </div>
+              </div>
+
               <div className="space-y-2">
-                <label className="text-xs font-bold uppercase tracking-wider text-slate-400">{t('fullAddress')}</label>
-                <input
-                  type="text"
-                  value={address}
-                  onChange={(e) => setAddress(e.target.value)}
-                  placeholder={t('fullAddress')}
-                  className="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-900 dark:text-white focus:outline-none"
-                />
+                <label className="text-xs font-bold uppercase tracking-wider text-slate-400">{t('phoneLabel')}</label>
+                  <input
+                    type="tel"
+                    value={contactPhone}
+                    onChange={(e) => setContactPhone(e.target.value)}
+                    placeholder={user?.phone ?? '+992 __ ___-__-__'}
+                    className="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-900 dark:text-white focus:outline-none"
+                  />
+                <p className="text-[10px] text-slate-400">{t('phoneHint')}</p>
               </div>
 
               <div className="h-40 rounded-2xl bg-slate-200 dark:bg-slate-800 flex items-center justify-center text-xs text-slate-500 font-bold border border-slate-300 dark:border-slate-700">
@@ -474,7 +569,7 @@ export default function BookingWizardPage() {
                 </button>
                 <button
                   onClick={() => setStep(4)}
-                  disabled={!address.trim()}
+                  disabled={!district || !street.trim()}
                   className="flex-1 py-4 rounded-2xl bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-extrabold text-xs shadow-lg transition btn-ripple"
                 >
                   {t('reviewOrder')}
@@ -505,6 +600,15 @@ export default function BookingWizardPage() {
                     {date} ({formatSlotLabel(timeSlot, selectedService?.durationMinutes)})
                   </span>
                 </div>
+                {district && (
+                  <div className="flex justify-between pb-2 border-b border-slate-200 dark:border-slate-700">
+                    <span className="text-slate-400">{t('serviceAddress')}</span>
+                    <span className="font-bold text-slate-900 dark:text-white text-right">
+                      {district}
+                      {composedAddressLine ? `, ${composedAddressLine}` : ''}
+                    </span>
+                  </div>
+                )}
                 {selectedService?.durationMinutes && (
                   <div className="flex justify-between pb-2 border-b border-slate-200 dark:border-slate-700">
                     <span className="text-slate-400">{t('estimatedDuration')}</span>

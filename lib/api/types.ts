@@ -79,6 +79,12 @@ export interface UserProfile {
   masterProfile?: MasterProfile | null;
 }
 
+export interface District {
+  id: string;
+  name: string;
+  slug: string;
+}
+
 export interface City {
   id: string;
   name: string;
@@ -86,6 +92,7 @@ export interface City {
   region?: string | null;
   latitude?: number | null;
   longitude?: number | null;
+  districts?: District[];
 }
 
 export interface Category {
@@ -179,6 +186,8 @@ export interface Booking {
   durationMinutes: number;
   addressLine?: string | null;
   addressDistrict?: string | null;
+  cityId?: string | null;
+  contactPhone?: string | null;
   latitude?: number | null;
   longitude?: number | null;
   clientNote?: string | null;

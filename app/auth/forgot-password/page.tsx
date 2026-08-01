@@ -3,10 +3,29 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
+import { authApi } from '@/lib/api/endpoints';
+import { ApiError } from '@/lib/api/client';
 
 export default function ForgotPasswordPage() {
   const t = useTranslations('authForgotPassword');
+  const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setSubmitting(true);
+    try {
+      await authApi.forgotPassword(email);
+      setSubmitted(true);
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : 'Something went wrong. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center p-4 sm:p-6">
@@ -29,10 +48,22 @@ export default function ForgotPasswordPage() {
               <p className="text-xs text-slate-500">{t('subtitle')}</p>
             </div>
 
-            <form onSubmit={(e) => { e.preventDefault(); setSubmitted(true); }} className="space-y-4">
-              <input type="email" placeholder={t('emailPlaceholder')} className="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs" required />
-              <button type="submit" className="w-full py-4 rounded-2xl bg-blue-600 text-white font-extrabold text-xs shadow-lg btn-ripple">
-                {t('sendResetLink')}
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <input
+                type="email"
+                placeholder={t('emailPlaceholder')}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs"
+                required
+              />
+              {error && <p className="text-red-500 text-sm">{error}</p>}
+              <button
+                type="submit"
+                disabled={submitting}
+                className="w-full py-4 rounded-2xl bg-blue-600 text-white font-extrabold text-xs shadow-lg btn-ripple disabled:opacity-60 disabled:cursor-not-allowed"
+              >
+                {submitting ? t('sending') : t('sendResetLink')}
               </button>
             </form>
 

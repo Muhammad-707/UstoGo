@@ -7,7 +7,12 @@
   "emailPlaceholder": "john@example.com",
   "passwordLabel": "Password",
   "passwordPlaceholder": "••••••••",
+  "phoneLabel": "Phone Number",
+  "phonePlaceholder": "+992 90 123 4567",
+  "cityLabel": "City",
+  "cityPlaceholder": "Select your city",
   "registerButton": "Register Account",
+  "registering": "Creating Account...",
   "alreadyHaveAccount": "Already have an account?",
   "logIn": "Log in"
 }

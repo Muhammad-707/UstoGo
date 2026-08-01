@@ -5,21 +5,52 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { Icon } from '@/components/icons/LucideIcons';
+import { useAuth, dashboardPathFor } from '@/contexts/AuthContext';
+import { ApiError } from '@/lib/api/client';
+import { PasswordInput } from '@/components/ui/PasswordInput';
+import { validateEmail, validateRequired, type ValidationErrorKey } from '@/lib/validation';
 
 export default function LoginPage() {
   const t = useTranslations('authLogin');
+  const tv = useTranslations('validation');
   const router = useRouter();
-  const [email, setEmail] = useState('client@ustogo.com');
-  const [password, setPassword] = useState('password123');
+  const { login } = useAuth();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [twoFactor, setTwoFactor] = useState(false);
+  const [emailError, setEmailError] = useState<ValidationErrorKey | null>(null);
+  const [passwordError, setPasswordError] = useState<ValidationErrorKey | null>(null);
 
-  const handleLogin = (targetPath: string) => {
-    router.push(targetPath);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setTwoFactor(false);
+    const emailErr = validateEmail(email);
+    const passwordErr = validateRequired(password);
+    setEmailError(emailErr);
+    setPasswordError(passwordErr);
+    if (emailErr || passwordErr) return;
+    setSubmitting(true);
+    try {
+      const result = await login(email, password);
+      if (result.twoFactor) {
+        setTwoFactor(true);
+        return;
+      }
+      router.push(dashboardPathFor(result.user?.role ?? 'CLIENT'));
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : 'Something went wrong. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center p-4 sm:p-6">
       <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 sm:p-12 w-full max-w-md shadow-2xl space-y-8 animate-fade-in">
-        
+
         {/* Brand */}
         <div className="text-center space-y-2">
           <Link href="/" className="inline-flex items-center gap-2">
@@ -32,41 +63,18 @@ export default function LoginPage() {
           <p className="text-xs text-slate-500">{t('signInSubtitle')}</p>
         </div>
 
-        {/* Quick Demo Login Buttons */}
-        <div className="space-y-2">
-          <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block text-center">{t('quickDemoSwitcher')}</span>
-          <div className="grid grid-cols-3 gap-2">
-            <button
-              onClick={() => handleLogin('/dashboard/client')}
-              className="py-2 rounded-xl bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-sky-300 text-[11px] font-bold hover:bg-blue-100 transition"
-            >
-              {t('asClient')}
-            </button>
-            <button
-              onClick={() => handleLogin('/dashboard/master')}
-              className="py-2 rounded-xl bg-amber-50 dark:bg-amber-950 text-amber-700 dark:text-amber-300 text-[11px] font-bold hover:bg-amber-100 transition"
-            >
-              {t('asMaster')}
-            </button>
-            <button
-              onClick={() => handleLogin('/dashboard/admin')}
-              className="py-2 rounded-xl bg-purple-50 dark:bg-purple-950 text-purple-700 dark:text-purple-300 text-[11px] font-bold hover:bg-purple-100 transition"
-            >
-              {t('asAdmin')}
-            </button>
-          </div>
-        </div>
-
         {/* Login Form */}
-        <form onSubmit={(e) => { e.preventDefault(); handleLogin('/dashboard/client'); }} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-1.5">
             <label className="text-xs font-bold text-slate-700 dark:text-slate-300">{t('emailLabel')}</label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-blue-500"
+              className={`w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-800 border text-xs text-slate-900 dark:text-white focus:outline-none focus:border-blue-500 ${emailError ? 'border-red-500' : 'border-slate-200 dark:border-slate-700'}`}
+              required
             />
+            {emailError && <p className="text-red-500 text-xs">{tv(emailError)}</p>}
           </div>
 
           <div className="space-y-1.5">
@@ -76,19 +84,29 @@ export default function LoginPage() {
                 {t('forgot')}
               </Link>
             </div>
-            <input
-              type="password"
+            <PasswordInput
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-blue-500"
+              error={!!passwordError}
+              required
             />
+            {passwordError && <p className="text-red-500 text-xs">{tv(passwordError)}</p>}
           </div>
+
+          {twoFactor && (
+            <p className="text-amber-600 dark:text-amber-400 text-xs font-bold">{t('twoFactorRequired')}</p>
+          )}
+          {error && (
+            <p className="text-red-500 text-sm">{error}</p>
+          )}
 
           <button
             type="submit"
-            className="w-full py-4 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-lg transition btn-ripple"
+            disabled={submitting}
+            className="w-full py-4 rounded-2xl bg-blue-600 hover:bg-blue-700 disabled:opacity-60 disabled:cursor-not-allowed text-white font-extrabold text-xs shadow-lg transition btn-ripple"
           >
-            {t('signInButton')}
+            {submitting ? t('signingIn') : t('signInButton')}
           </button>
         </form>
 

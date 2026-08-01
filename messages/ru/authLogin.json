@@ -1,14 +1,12 @@
 {
   "welcomeBack": "С возвращением",
   "signInSubtitle": "Войдите в свой аккаунт UstoGo",
-  "quickDemoSwitcher": "Быстрый Демо-Вход",
-  "asClient": "Как Клиент",
-  "asMaster": "Как Мастер",
-  "asAdmin": "Как Админ",
   "emailLabel": "Email адрес",
   "passwordLabel": "Пароль",
   "forgot": "Забыли?",
   "signInButton": "Войти в UstoGo",
+  "signingIn": "Вход...",
+  "twoFactorRequired": "Требуется код двухфакторной аутентификации",
   "noAccount": "Нет аккаунта?",
   "registerAsClient": "Регистрация Клиента",
   "joinAsMaster": "Стать Мастером"

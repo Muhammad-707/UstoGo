@@ -7,7 +7,12 @@
   "emailPlaceholder": "ahmad@example.com",
   "passwordLabel": "Рамз",
   "passwordPlaceholder": "••••••••",
+  "phoneLabel": "Рақами Телефон",
+  "phonePlaceholder": "+992 90 123 4567",
+  "cityLabel": "Шаҳр",
+  "cityPlaceholder": "Шаҳратонро интихоб кунед",
   "registerButton": "Сабти Ном",
+  "registering": "Сохтани ҳисоб...",
   "alreadyHaveAccount": "Ҳисоб доред?",
   "logIn": "Вуруд"
 }

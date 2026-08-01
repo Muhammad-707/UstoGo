@@ -164,8 +164,13 @@ export const bookingsApi = {
 
   byId: (id: string) => api.get<BookingDetail>(`/bookings/${id}`),
 
-  create: (data: { masterId: string; serviceId: string; scheduledAt: string; address?: unknown; note?: string }) =>
-    api.post<Booking>('/bookings', data),
+  create: (data: {
+    masterId: string;
+    serviceId: string;
+    scheduledAt: string;
+    address: { cityId: string; district: string; line: string; contactPhone?: string; latitude?: number; longitude?: number };
+    note?: string;
+  }) => api.post<Booking>('/bookings', data),
 
   accept: (id: string) => api.post<Booking>(`/bookings/${id}/accept`),
   reject: (id: string, reason: string) => api.post<Booking>(`/bookings/${id}/reject`, { reason }),

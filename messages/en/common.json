@@ -28,6 +28,7 @@
   "browseServices": "Browse Services",
   "topCategories": "Top Craftsmen Categories",
   "allServices": "All Services",
+  "filterPopular": "Popular Only",
   "popularOnly": "Popular Only",
   "luxuryPremium": "Luxury & Premium",
   "mastersCount": "masters",
@@ -91,7 +92,7 @@
   "grossRevenue": "Gross Revenue",
   "monthlyBookings": "Monthly Bookings",
   "completionRate": "Completion Rate",
-  "exploreAllCategories": "Explore All 15 Categories",
+  "exploreAllCategories": "Explore All {count} Categories",
   "ctaTitle": "Get Instant Quotes & Book Certified Craftsmen Today",
   "tagPlumber": "Plumber",
   "tagElectrician": "Electrician",
@@ -175,5 +176,8 @@
     "Monday - Saturday": "Monday - Saturday",
     "Saturday": "Saturday",
     "Sunday": "Sunday"
-  }
+  },
+  "myDashboard": "My Dashboard",
+  "logOut": "Log Out",
+  "noNotifications": "No notifications yet"
 }
