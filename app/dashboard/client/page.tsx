@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Icon } from '@/components/icons/LucideIcons';
 import { useTranslations } from 'next-intl';
 import { bookingsApi } from '@/lib/api/endpoints';
+import { getBookingsSocket } from '@/lib/bookings/socket';
 import type { Booking } from '@/lib/api/types';
 import { getAvatarUrl } from '@/lib/placeholders';
 import { useFavorites } from '@/hooks/useFavorites';
@@ -29,7 +30,8 @@ export default function ClientDashboardPage() {
   const active = bookings.filter((b) => ['PENDING', 'ACCEPTED', 'IN_PROGRESS'].includes(b.status));
 
   // Live status without a manual refresh — a master accepting/starting/completing a
-  // job should show up here without the client reloading the page.
+  // job should show up here without the client reloading the page. WebSocket push
+  // is primary (BookingsGateway); polling is the fallback while active.
   useEffect(() => {
     if (active.length === 0) return;
     const interval = setInterval(() => {
@@ -37,9 +39,23 @@ export default function ClientDashboardPage() {
         .list({ limit: 20 })
         .then((res) => setBookings(res.items))
         .catch(() => {});
-    }, 12_000);
+    }, 20_000);
     return () => clearInterval(interval);
   }, [active.length]);
+
+  useEffect(() => {
+    const socket = getBookingsSocket();
+    const onUpdate = () => {
+      bookingsApi
+        .list({ limit: 20 })
+        .then((res) => setBookings(res.items))
+        .catch(() => {});
+    };
+    socket?.on('booking:update', onUpdate);
+    return () => {
+      socket?.off('booking:update', onUpdate);
+    };
+  }, []);
   const totalSpent = completed.reduce((sum, b) => sum + (Number(b.price) || 0), 0);
 
   const metrics = [

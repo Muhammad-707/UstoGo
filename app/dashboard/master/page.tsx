@@ -8,6 +8,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { bookingsApi, citiesApi, masterCabinetApi, mastersApi } from '@/lib/api/endpoints';
 import { ApiError } from '@/lib/api/client';
 import { revalidateMastersCache } from '@/lib/api/revalidate';
+import { getBookingsSocket } from '@/lib/bookings/socket';
 import type { Booking, City, MasterStats, WorkingDay } from '@/lib/api/types';
 import { getAvatarUrl } from '@/lib/placeholders';
 import { FilterContainer, FilterItem } from '@/components/ui/FilterAnimate';
@@ -73,6 +74,19 @@ export default function MasterDashboardPage() {
 
   useEffect(() => {
     loadBookings();
+  }, [loadBookings]);
+
+  // Live "new job request" push (BookingsGateway) — a new PENDING booking, or the
+  // client cancelling one, should show up here without a manual refresh.
+  useEffect(() => {
+    const socket = getBookingsSocket();
+    const onUpdate = () => {
+      loadBookings();
+    };
+    socket?.on('booking:update', onUpdate);
+    return () => {
+      socket?.off('booking:update', onUpdate);
+    };
   }, [loadBookings]);
 
   const handleAccept = async (id: string) => {

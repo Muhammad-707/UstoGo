@@ -7,6 +7,7 @@ import { useTranslations } from 'next-intl';
 import { Icon } from '@/components/icons/LucideIcons';
 import { bookingsApi, citiesApi, reviewsApi } from '@/lib/api/endpoints';
 import { ApiError } from '@/lib/api/client';
+import { getBookingsSocket } from '@/lib/bookings/socket';
 import type { BookingDetail, City } from '@/lib/api/types';
 import { useAuth } from '@/contexts/AuthContext';
 import { getAvatarUrl } from '@/lib/placeholders';
@@ -92,9 +93,9 @@ export default function BookingDetailsPage() {
       .catch(() => {});
   }, [booking, user?.role]);
 
-  // Live status without a manual refresh: poll while the booking is still in a
-  // state either side can change (client cancels, master accepts/starts/completes).
-  // Terminal states stop polling — nothing left to change.
+  // Live status without a manual refresh: WebSocket push (BookingsGateway) is the
+  // primary channel, with polling as a fallback while the socket reconnects or if
+  // it's unavailable. Terminal states stop both — nothing left to change.
   const TERMINAL_STATUSES = new Set([
     'COMPLETED',
     'REJECTED',
@@ -107,9 +108,23 @@ export default function BookingDetailsPage() {
     if (!bookingId || !booking || TERMINAL_STATUSES.has(booking.status)) return;
     const interval = setInterval(() => {
       bookingsApi.byId(bookingId).then(setBooking).catch(() => {});
-    }, 12_000);
+    }, 20_000);
     return () => clearInterval(interval);
   }, [bookingId, booking?.status]);
+
+  useEffect(() => {
+    if (!bookingId) return;
+    const socket = getBookingsSocket();
+    const onUpdate = (payload: { bookingId: string; status: string }) => {
+      if (payload.bookingId === bookingId) {
+        bookingsApi.byId(bookingId).then(setBooking).catch(() => {});
+      }
+    };
+    socket?.on('booking:update', onUpdate);
+    return () => {
+      socket?.off('booking:update', onUpdate);
+    };
+  }, [bookingId]);
 
   const runAction = async (fn: () => Promise<unknown>) => {
     setActionPending(true);
