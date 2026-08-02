@@ -1,6 +1,7 @@
 {
   "scheduledFor": "Назначено на {date} ({time})",
   "chatWithMaster": "Написать мастеру",
+  "leaveReview": "Оставить отзыв",
   "liveTimeline": "Ход выполнения заказа в реальном времени",
   "profile": "Профиль",
   "paymentAndAddress": "Оплата и адрес",

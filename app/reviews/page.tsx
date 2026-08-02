@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { Icon } from '@/components/icons/LucideIcons';
 import { useTranslations } from 'next-intl';
 import { useAuth } from '@/contexts/AuthContext';
@@ -14,6 +15,8 @@ export default function ReviewsPage() {
   const t = useTranslations('reviews');
   const { user } = useAuth();
   const isMaster = user?.role === 'MASTER';
+  const searchParams = useSearchParams();
+  const deepLinkedBookingId = searchParams?.get('booking') ?? null;
 
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
@@ -45,11 +48,20 @@ export default function ReviewsPage() {
         .list({ status: 'COMPLETED', limit: 20 })
         .then((res) => {
           setCompletedBookings(res.items);
-          if (res.items.length > 0) setBookingId(res.items[0].id);
+          const preselect = deepLinkedBookingId && res.items.some((b) => b.id === deepLinkedBookingId)
+            ? deepLinkedBookingId
+            : res.items[0]?.id;
+          if (preselect) setBookingId(preselect);
         })
         .catch(() => setCompletedBookings([]));
     }
   };
+
+  // Deep link from the booking detail page's "Leave a review" CTA.
+  useEffect(() => {
+    if (deepLinkedBookingId && !isMaster) openModal();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [deepLinkedBookingId, isMaster]);
 
   const avgRating =
     reviews.length > 0 ? (reviews.reduce((s, r) => s + r.rating, 0) / reviews.length).toFixed(2) : '—';

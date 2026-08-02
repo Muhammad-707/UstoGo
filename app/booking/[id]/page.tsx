@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { Icon } from '@/components/icons/LucideIcons';
-import { bookingsApi, citiesApi } from '@/lib/api/endpoints';
+import { bookingsApi, citiesApi, reviewsApi } from '@/lib/api/endpoints';
 import { ApiError } from '@/lib/api/client';
 import type { BookingDetail, City } from '@/lib/api/types';
 import { useAuth } from '@/contexts/AuthContext';
@@ -55,6 +55,7 @@ export default function BookingDetailsPage() {
   const [error, setError] = useState<string | null>(null);
   const [actionPending, setActionPending] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
+  const [alreadyReviewed, setAlreadyReviewed] = useState(false);
 
   useEffect(() => {
     citiesApi.list().then((list) => setCities(list)).catch(() => setCities([]));
@@ -82,6 +83,14 @@ export default function BookingDetailsPage() {
   useEffect(() => {
     load();
   }, [load]);
+
+  useEffect(() => {
+    if (!booking || user?.role !== 'CLIENT' || booking.status !== 'COMPLETED') return;
+    reviewsApi
+      .myReviews()
+      .then((reviews) => setAlreadyReviewed(reviews.some((r) => r.bookingId === booking.id)))
+      .catch(() => {});
+  }, [booking, user?.role]);
 
   // Live status without a manual refresh: poll while the booking is still in a
   // state either side can change (client cancels, master accepts/starts/completes).
@@ -197,6 +206,16 @@ export default function BookingDetailsPage() {
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
+          {isClient && booking.status === 'COMPLETED' && !alreadyReviewed && (
+            <Link
+              href={`/reviews?booking=${booking.id}`}
+              className="px-5 py-3 rounded-2xl bg-amber-500 hover:bg-amber-600 text-white font-extrabold text-xs shadow-md shadow-amber-500/30 transition flex items-center gap-2"
+            >
+              <Icon name="Star" size={16} />
+              <span>{t('leaveReview')}</span>
+            </Link>
+          )}
+
           <Link
             href={`/messages?master=${booking.masterId}`}
             className="px-5 py-3 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-md transition flex items-center gap-2"
