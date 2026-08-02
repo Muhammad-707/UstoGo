@@ -1,9 +1,24 @@
 {
   "accountSettings": "Account Settings",
   "editProfile": "Edit Profile",
-  "changeAvatar": "Change Avatar",
+  "changeAvatar": "Change Photo",
+  "changeBanner": "Change Banner",
   "fullNameLabel": "Full Name",
   "phoneLabel": "Phone Number",
   "bioLabel": "Bio & Experience",
-  "saveChanges": "Save Changes"
+  "saveChanges": "Save Changes",
+  "firstNameLabel": "First Name",
+  "lastNameLabel": "Last Name",
+  "displayNameLabel": "Display Name (public)",
+  "displayNameHint": "This name is shown to clients on your public page",
+  "cityLabel": "City",
+  "experienceLabel": "Years of Experience",
+  "radiusLabel": "Service Radius (km)",
+  "savedOk": "Saved ✓",
+  "saveFailed": "Failed to save changes",
+  "uploadFailed": "Failed to upload the file",
+  "validationName": "First and last name are required",
+  "deleteAccount": "Delete Account",
+  "confirmDelete": "Delete your account permanently? This action cannot be undone.",
+  "deleteFailed": "Failed to delete the account"
 }

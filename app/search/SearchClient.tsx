@@ -4,9 +4,9 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { Icon } from '@/components/icons/LucideIcons';
-import { mastersApi } from '@/lib/api/endpoints';
+import { mastersApi, citiesApi } from '@/lib/api/endpoints';
 import { flattenCategories, resolveCategoryId } from '@/lib/api/category-utils';
-import type { Category, MasterPublic } from '@/lib/api/types';
+import type { Category, City, MasterPublic } from '@/lib/api/types';
 import { getAvatarUrl } from '@/lib/placeholders';
 import { FilterContainer, FilterItem, FilterButton, AnimatedGrid, AnimatedCard } from '@/components/ui/FilterAnimate';
 
@@ -36,7 +36,14 @@ export default function SearchClient({
   const [verifiedOnly, setVerifiedOnly] = useState(false);
   const [minRating, setMinRating] = useState<number>(0);
   const [maxPrice, setMaxPrice] = useState<number>(500);
+  const [selectedCity, setSelectedCity] = useState<string>('');
+  const [sortBy, setSortBy] = useState<string>('');
+  const [cities, setCities] = useState<City[]>([]);
   const [viewMode, setViewModeState] = useState<'grid' | 'list'>('grid');
+
+  useEffect(() => {
+    citiesApi.list().then(setCities).catch(() => {});
+  }, []);
 
   useEffect(() => {
     const stored = localStorage.getItem('search:viewMode');
@@ -48,7 +55,7 @@ export default function SearchClient({
     localStorage.setItem('search:viewMode', mode);
   };
 
-  const filterKey = `${selectedCategory}|${verifiedOnly}|${minRating}|${maxPrice}|${searchQuery}|${viewMode}`;
+  const filterKey = `${selectedCategory}|${verifiedOnly}|${minRating}|${maxPrice}|${searchQuery}|${selectedCity}|${sortBy}|${viewMode}`;
 
   const [masters, setMasters] = useState<MasterPublic[]>(initialMasters);
   const [page, setPage] = useState(1);
@@ -63,7 +70,7 @@ export default function SearchClient({
   // Reset pagination whenever a filter (other than page itself) changes.
   useEffect(() => {
     setPage(1);
-  }, [searchQuery, selectedCategory, verifiedOnly, minRating, maxPrice]);
+  }, [searchQuery, selectedCategory, verifiedOnly, minRating, maxPrice, selectedCity, sortBy]);
 
   useEffect(() => {
     if (firstRun.current) {
@@ -78,9 +85,11 @@ export default function SearchClient({
         .search({
           search: searchQuery || undefined,
           categoryId: selectedCategory !== 'all' ? selectedCategory : undefined,
+          cityId: selectedCity || undefined,
           minRating: minRating || undefined,
           maxPrice: maxPrice || undefined,
           hasCertificates: verifiedOnly || undefined,
+          sort: sortBy || undefined,
           page,
           limit: 20,
         })
@@ -89,12 +98,12 @@ export default function SearchClient({
           setTotalPages(res.meta.totalPages);
           setTotal(res.meta.total);
         })
-        .catch(() => setError(true))
-        .finally(() => setLoading(false));
+    .catch(() => setError(true))
+    .finally(() => setLoading(false));
     }, 400);
 
     return () => clearTimeout(timeout);
-  }, [searchQuery, selectedCategory, verifiedOnly, minRating, maxPrice, page]);
+  }, [searchQuery, selectedCategory, verifiedOnly, minRating, maxPrice, selectedCity, sortBy, page]);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
@@ -146,6 +155,8 @@ export default function SearchClient({
                 setMinRating(0);
                 setMaxPrice(500);
                 setSearchQuery('');
+                setSelectedCity('');
+                setSortBy('');
               }}
               className="text-xs text-blue-600 font-bold hover:underline"
             >
@@ -167,6 +178,39 @@ export default function SearchClient({
                   {c.name}
                 </option>
               ))}
+            </select>
+          </FilterItem>
+
+          {/* City Selector */}
+          <FilterItem className="space-y-2">
+            <label className="text-xs font-bold uppercase tracking-wider text-slate-400">{t('city')}</label>
+            <select
+              value={selectedCity}
+              onChange={(e) => setSelectedCity(e.target.value)}
+              className="w-full p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-900 dark:text-white focus:outline-none transition"
+            >
+              <option value="">{t('allCities')}</option>
+              {cities.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
+          </FilterItem>
+
+          {/* Sort */}
+          <FilterItem className="space-y-2">
+            <label className="text-xs font-bold uppercase tracking-wider text-slate-400">{t('sortBy')}</label>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              className="w-full p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-900 dark:text-white focus:outline-none transition"
+            >
+              <option value="">{t('sortDefault')}</option>
+              <option value="rating:desc">{t('sortRating')}</option>
+              <option value="price:asc">{t('sortPriceAsc')}</option>
+              <option value="price:desc">{t('sortPriceDesc')}</option>
+              <option value="createdAt:desc">{t('sortNewest')}</option>
             </select>
           </FilterItem>
 
@@ -290,7 +334,7 @@ export default function SearchClient({
                 <AnimatedCard key={m.id} index={idx % 3} className="glass-card rounded-3xl overflow-hidden border border-slate-200 dark:border-slate-800 flex flex-col justify-between group">
                   <div className="p-6 space-y-4">
                     <div className="flex items-center gap-4">
-                      <img src={getAvatarUrl(m.id)} alt={m.displayName} className="w-16 h-16 rounded-2xl object-cover shadow-md" />
+                      <img src={m.avatarUrl ?? getAvatarUrl(m.id)} alt={m.displayName} className="w-16 h-16 rounded-2xl object-cover shadow-md" />
                       <div>
                         <div className="flex items-center gap-1.5">
                           <h3 className="font-extrabold text-slate-900 dark:text-white text-base">{m.displayName}</h3>
@@ -344,7 +388,7 @@ export default function SearchClient({
               {masters.map((m, idx) => (
                 <AnimatedCard key={m.id} index={idx} className="glass-card rounded-3xl p-6 border border-slate-200 dark:border-slate-800 flex flex-col md:flex-row items-center justify-between gap-6">
                   <div className="flex items-center gap-6">
-                    <img src={getAvatarUrl(m.id)} alt={m.displayName} className="w-20 h-20 rounded-2xl object-cover shadow-md" />
+                    <img src={m.avatarUrl ?? getAvatarUrl(m.id)} alt={m.displayName} className="w-20 h-20 rounded-2xl object-cover shadow-md" />
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
                         <h3 className="font-extrabold text-slate-900 dark:text-white text-lg">{m.displayName}</h3>

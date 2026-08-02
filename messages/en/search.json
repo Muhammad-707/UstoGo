@@ -19,5 +19,13 @@
   "bookNow": "Book Now",
   "jobsDone": "{count}+ Jobs Done",
   "reviewsCount": "{count} reviews",
-  "rate": "Rate"
+  "rate": "Rate",
+  "city": "City",
+  "allCities": "All Cities",
+  "sortBy": "Sort By",
+  "sortDefault": "Recommended",
+  "sortRating": "Top Rated",
+  "sortPriceAsc": "Price: Low to High",
+  "sortPriceDesc": "Price: High to Low",
+  "sortNewest": "Newest First"
 }

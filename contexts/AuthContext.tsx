@@ -3,6 +3,7 @@
 import { createContext, useContext, useEffect, useState, useCallback, ReactNode } from 'react';
 import { authApi, usersApi } from '@/lib/api/endpoints';
 import { clearTokens, setTokens, getAccessToken, clearApiCache } from '@/lib/api/client';
+import { disposeChatSocket } from '@/lib/chat/socket';
 import type { AuthResponse, UserProfile } from '@/lib/api/types';
 
 interface AuthContextValue {
@@ -102,6 +103,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
     clearTokens();
     clearApiCache();
+    disposeChatSocket();
     setUser(null);
   };
 

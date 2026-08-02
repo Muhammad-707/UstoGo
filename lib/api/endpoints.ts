@@ -10,6 +10,8 @@ import type {
   City,
   Conversation,
   DashboardResponse,
+  MasterCertificatePublic,
+  MasterMedia,
   MasterPublic,
   MasterService,
   MasterStatus,
@@ -71,6 +73,7 @@ export const usersApi = {
   updateMe: (data: Record<string, unknown>) => api.patch<UserProfile>('/users/me', data),
   deleteMe: () => api.delete<void>('/users/me'),
   setAvatar: (fileId: string) => api.patch<UserProfile>('/users/me/avatar', { fileId }),
+  setBanner: (fileId: string) => api.patch<UserProfile>('/users/me/banner', { fileId }),
 };
 
 // ---- Cities ----
@@ -102,7 +105,14 @@ export const mastersApi = {
 
   byId: (id: string) => api.get<MasterPublic>(`/masters/${id}`, undefined, false),
 
+  media: (id: string) => api.get<MasterMedia>(`/masters/${id}/media`, undefined, false),
+
   services: (id: string) => api.get<MasterService[]>(`/masters/${id}/services`, undefined, false),
+
+  certificates: (id: string) =>
+    api.get<MasterCertificatePublic[]>(`/masters/${id}/certificates`, undefined, false),
+
+  schedule: (id: string) => api.get<WorkingDay[]>(`/masters/${id}/schedule`, undefined, false),
 
   availability: (id: string, from: string, to: string, serviceId?: string) =>
     api.get<{ date: string; free: string[]; busy: string[] }[]>(
@@ -125,7 +135,7 @@ export const masterCabinetApi = {
   detachCategory: (categoryId: string) => api.delete<void>(`/masters/me/categories/${categoryId}`),
 
   myCertificates: () => api.get<Certificate[]>('/masters/me/certificates'),
-  addCertificate: (data: { title: string; issuer?: string; year?: string; fileId?: string }) =>
+  addCertificate: (data: { title: string; issuer?: string; issuedAt?: string; fileId?: string }) =>
     api.post<Certificate>('/masters/me/certificates', data),
   removeCertificate: (id: string) => api.delete<void>(`/masters/me/certificates/${id}`),
 
@@ -218,7 +228,7 @@ export const favoritesApi = {
 // ---- Files ----
 export const filesApi = {
   presign: (data: { mimeType: string; sizeBytes: number; purpose: string }) =>
-    api.post<{ id: string; url: string; expiresAt: string }>('/files/presign', data),
+    api.post<{ fileId: string; uploadUrl: string; fileKey: string; expiresIn: number }>('/files/presign', data),
   confirm: (id: string) =>
     api.post<{ id: string; mimeType: string; sizeBytes: number; purpose: string; confirmed: boolean; createdAt: string }>(
       `/files/${id}/confirm`

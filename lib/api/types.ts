@@ -58,6 +58,7 @@ export interface MasterProfile {
   serviceRadiusKm: number;
   timezone: string;
   avatarFileId?: string | null;
+  bannerFileId?: string | null;
   approvalStatus: ApprovalStatus;
   rejectionReason?: string | null;
   approvedAt?: string | null;
@@ -112,7 +113,11 @@ export interface MasterPublic {
   id: string;
   displayName: string;
   avatarFileId?: string | null;
+  avatarUrl?: string | null;
+  bannerFileId?: string | null;
   bio?: string | null;
+  yearsOfExperience: number;
+  serviceRadiusKm: number;
   cityName: string;
   categories: string[];
   ratingAverage: string;
@@ -121,6 +126,21 @@ export interface MasterPublic {
   priceFrom?: string | null;
   hasCertificates: boolean;
   portfolioImageFileIds?: string[];
+}
+
+export interface MasterMedia {
+  avatarUrl: string | null;
+  bannerUrl: string | null;
+  portfolio: Array<{ fileId: string; caption: string | null; url: string }>;
+}
+
+export interface MasterCertificatePublic {
+  id: string;
+  title: string;
+  issuedBy?: string | null;
+  issuedAt?: string | null;
+  verifiedAt?: string | null;
+  fileId: string;
 }
 
 export interface MasterService {
@@ -139,14 +159,15 @@ export interface Certificate {
   id: string;
   title: string;
   issuer?: string | null;
-  year?: string | null;
+  issuedAt?: string | null;
   fileId?: string | null;
 }
 
 export interface PortfolioImage {
   id: string;
   fileId: string;
-  order: number;
+  caption?: string | null;
+  sortOrder: number;
   createdAt: string;
 }
 
@@ -216,6 +237,7 @@ export interface Review {
   id: string;
   bookingId: string;
   clientId: string;
+  clientName?: string;
   masterId: string;
   rating: number;
   comment?: string | null;

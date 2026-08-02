@@ -2,5 +2,9 @@
   "title": "Messages",
   "onlineStatus": "Online • Responds in ~5m",
   "inputPlaceholder": "Type your message to the master...",
-  "send": "Send"
+  "send": "Send",
+  "loading": "Loading…",
+  "empty": "No conversations yet.",
+  "typing": "typing…",
+  "selectConversation": "Select a conversation"
 }

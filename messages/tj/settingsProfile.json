@@ -1,9 +1,24 @@
 {
   "accountSettings": "Танзимоти Ҳисоб",
   "editProfile": "Таҳрири Профил",
-  "changeAvatar": "Иваз кардани Расм",
-  "fullNameLabel": "Ному Насаб",
+  "changeAvatar": "Ивази Сурат",
+  "changeBanner": "Ивази Баннер",
+  "fullNameLabel": "Номи Пурра",
   "phoneLabel": "Рақами Телефон",
-  "bioLabel": "Дар бораи Худ ва Таҷриба",
-  "saveChanges": "Нигоҳ доштани Тағйирот"
+  "bioLabel": "Дар бораи худ ва Таҷриба",
+  "saveChanges": "Захираи Тағйирот",
+  "firstNameLabel": "Ном",
+  "lastNameLabel": "Насаб",
+  "displayNameLabel": "Номи нишондиҳӣ (оммавӣ)",
+  "displayNameHint": "Ин ном ба клиентҳо дар саҳифаи шумо нишон дода мешавад",
+  "cityLabel": "Шаҳр",
+  "experienceLabel": "Солҳои таҷриба",
+  "radiusLabel": "Радиуси хизматрасонӣ (км)",
+  "savedOk": "Захира шуд ✓",
+  "saveFailed": "Захираи тағйирот номуваффақ шуд",
+  "uploadFailed": "Боркунии файл номуваффақ шуд",
+  "validationName": "Ном ва насаб ҳатмианд",
+  "deleteAccount": "Нест кардани ҳисоб",
+  "confirmDelete": "Оё ҳисоби худро комилан нест кардани хостед? Ин амал бозгашт надорад.",
+  "deleteFailed": "Нест кардани ҳисоб номуваффақ шуд"
 }

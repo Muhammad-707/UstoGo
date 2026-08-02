@@ -19,5 +19,13 @@
   "bookNow": "Заказать",
   "jobsDone": "{count}+ выполненных заказов",
   "reviewsCount": "{count} отзывов",
-  "rate": "Ставка"
+  "rate": "Ставка",
+  "city": "Город",
+  "allCities": "Все города",
+  "sortBy": "Сортировка",
+  "sortDefault": "Рекомендуемые",
+  "sortRating": "Высокий рейтинг",
+  "sortPriceAsc": "Цена: по возрастанию",
+  "sortPriceDesc": "Цена: по убыванию",
+  "sortNewest": "Сначала новые"
 }

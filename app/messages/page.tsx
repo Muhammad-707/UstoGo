@@ -1,11 +1,12 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { conversationsApi } from '@/lib/api/endpoints';
 import type { Conversation, Message } from '@/lib/api/types';
 import { getAvatarUrl } from '@/lib/placeholders';
 import { useAuth } from '@/contexts/AuthContext';
+import { getChatSocket } from '@/lib/chat/socket';
 import { FilterItem } from '@/components/ui/FilterAnimate';
 
 export default function MessagesPage() {
@@ -17,6 +18,19 @@ export default function MessagesPage() {
   const [selected, setSelected] = useState<Conversation | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState('');
+  const [typingIn, setTypingIn] = useState<string | null>(null);
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const lastTypingEmitRef = useRef(0);
+
+  const loadConversations = useCallback(() => {
+    conversationsApi
+      .list({ limit: 30 })
+      .then((res) => {
+        setConversations(res.items);
+      })
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     conversationsApi
@@ -27,7 +41,71 @@ export default function MessagesPage() {
       })
       .catch(() => setConversations([]))
       .finally(() => setLoading(false));
-  }, []);
+
+    const socket = getChatSocket();
+
+    const onMessageNew = (payload: { conversationId: string; senderUserId: string; preview: string }) => {
+      setConversations((prev) => {
+        const target = prev.find((c) => c.id === payload.conversationId);
+        const updated = prev.map((c) =>
+          c.id === payload.conversationId
+            ? {
+                ...c,
+                lastMessageAt: new Date().toISOString(),
+                lastMessagePreview: payload.preview,
+                unreadCount:
+                  payload.senderUserId === user?.id || c.id === selected?.id
+                    ? 0
+                    : c.unreadCount + 1,
+              }
+            : c
+        );
+        if (!target) {
+          void conversationsApi
+            .list({ limit: 30 })
+            .then((res) => setConversations(res.items))
+            .catch(() => {});
+        }
+        return updated;
+      });
+
+      if (selected && payload.conversationId === selected.id) {
+        if (payload.senderUserId !== user?.id) {
+          conversationsApi
+            .messages(selected.id)
+            .then((res) => setMessages(res.items))
+            .catch(() => {});
+          conversationsApi.markRead(selected.id).catch(() => {});
+        }
+      }
+    };
+
+    const onTyping = (payload: { conversationId: string; userId: string }) => {
+      if (selected && payload.conversationId === selected.id && payload.userId !== user?.id) {
+        setTypingIn(payload.conversationId);
+        if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+        typingTimeoutRef.current = setTimeout(() => setTypingIn(null), 2500);
+      }
+    };
+
+    const onMessagesRead = (payload: { conversationId: string; messageIds: string[] }) => {
+      if (!selected || payload.conversationId !== selected.id) return;
+      const ids = new Set(payload.messageIds);
+      setMessages((prev) => prev.map((m) => (ids.has(m.id) ? { ...m, readAt: new Date().toISOString() } : m)));
+    };
+
+    socket?.on('message:new', onMessageNew);
+    socket?.on('typing', onTyping);
+    socket?.on('message:read', onMessagesRead);
+
+    return () => {
+      socket?.off('message:new', onMessageNew);
+      socket?.off('typing', onTyping);
+      socket?.off('message:read', onMessagesRead);
+      if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selected?.id]);
 
   useEffect(() => {
     if (!selected) return;
@@ -36,7 +114,12 @@ export default function MessagesPage() {
       .then((res) => setMessages(res.items))
       .catch(() => setMessages([]));
     conversationsApi.markRead(selected.id).catch(() => {});
+    setConversations((prev) => prev.map((c) => (c.id === selected.id ? { ...c, unreadCount: 0 } : c)));
   }, [selected]);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages, typingIn]);
 
   const handleSend = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,9 +129,24 @@ export default function MessagesPage() {
     try {
       const sent = await conversationsApi.send(selected.id, body);
       setMessages((prev) => [...prev, sent]);
+      setConversations((prev) =>
+        prev.map((c) =>
+          c.id === selected.id
+            ? { ...c, lastMessageAt: sent.createdAt, lastMessagePreview: sent.body, unreadCount: 0 }
+            : c
+        )
+      );
     } catch {
       // ignore
     }
+  };
+
+  const handleTyping = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputText(e.target.value);
+    const now = Date.now();
+    if (!selected || now - lastTypingEmitRef.current < 1500) return;
+    lastTypingEmitRef.current = now;
+    getChatSocket()?.emit('typing', { conversationId: selected.id });
   };
 
   return (
@@ -62,9 +160,9 @@ export default function MessagesPage() {
           </div>
 
           <div className="divide-y divide-slate-100 dark:divide-slate-800 overflow-y-auto flex-1">
-            {loading && <div className="p-4 text-xs text-slate-400 font-semibold">Loading…</div>}
+            {loading && <div className="p-4 text-xs text-slate-400 font-semibold">{t('loading')}</div>}
             {!loading && conversations.length === 0 && (
-              <div className="p-4 text-xs text-slate-400 font-semibold">No conversations yet.</div>
+              <div className="p-4 text-xs text-slate-400 font-semibold">{t('empty')}</div>
             )}
             {conversations.map((c, idx) => (
               <FilterItem
@@ -110,31 +208,56 @@ export default function MessagesPage() {
                   <img src={getAvatarUrl(selected.participantUserId)} alt={selected.participantName} className="w-10 h-10 rounded-xl object-cover" />
                   <div>
                     <h3 className="text-sm font-bold text-slate-900 dark:text-white">{selected.participantName}</h3>
+                    {typingIn === selected.id && (
+                      <p className="text-[11px] text-blue-600 dark:text-sky-400 font-semibold animate-pulse">{t('typing')}</p>
+                    )}
                   </div>
                 </div>
               </div>
 
               {/* Messages Body */}
               <div className="flex-1 p-6 overflow-y-auto space-y-4">
-                {messages.map((msg) => (
-                  <div
-                    key={msg.id}
-                    className={`flex flex-col animate-fade-in ${msg.senderUserId === user?.id ? 'items-end' : 'items-start'}`}
-                  >
+                {messages.map((msg) => {
+                  const mine = msg.senderUserId === user?.id;
+                  return (
                     <div
-                      className={`max-w-md p-4 rounded-2xl text-xs leading-relaxed ${
-                        msg.senderUserId === user?.id
-                          ? 'bg-blue-600 text-white rounded-br-none shadow-md'
-                          : 'bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-800 rounded-bl-none shadow-sm'
-                      }`}
+                      key={msg.id}
+                      className={`flex flex-col animate-fade-in ${mine ? 'items-end' : 'items-start'}`}
                     >
-                      {msg.body}
+                      <div
+                        className={`max-w-md p-4 rounded-2xl text-xs leading-relaxed ${
+                          mine
+                            ? 'bg-blue-600 text-white rounded-br-none shadow-md'
+                            : 'bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-800 rounded-bl-none shadow-sm'
+                        }`}
+                      >
+                        {msg.body}
+                      </div>
+                      <span className="text-[10px] text-slate-400 mt-1 px-1 flex items-center gap-1">
+                        {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        {mine && (
+                          <span className={msg.readAt ? 'text-sky-500' : 'text-slate-400'}>
+                            {msg.readAt ? '✓✓' : '✓'}
+                          </span>
+                        )}
+                      </span>
                     </div>
-                    <span className="text-[10px] text-slate-400 mt-1 px-1">
-                      {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                    </span>
+                  );
+                })}
+                {typingIn === selected.id && (
+                  <div className="flex items-start gap-2 animate-fade-in">
+                    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl rounded-bl-none px-4 py-3 flex items-center gap-1">
+                      {[0, 1, 2].map((i) => (
+                        <span
+                          key={i}
+                          className="w-1.5 h-1.5 rounded-full bg-slate-400 animate-bounce"
+                          style={{ animationDelay: `${i * 150}ms` }}
+                        />
+                      ))}
+                    </div>
                   </div>
-                ))}
+                )}
+                <div ref={messagesEndRef} />
               </div>
 
               {/* Input Bar */}
@@ -142,7 +265,7 @@ export default function MessagesPage() {
                 <input
                   type="text"
                   value={inputText}
-                  onChange={(e) => setInputText(e.target.value)}
+                  onChange={handleTyping}
                   placeholder={t('inputPlaceholder')}
                   className="flex-1 px-4 py-3 rounded-2xl bg-slate-100 dark:bg-slate-800 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none"
                 />
@@ -156,7 +279,7 @@ export default function MessagesPage() {
             </>
           ) : (
             <div className="flex-1 flex items-center justify-center text-xs text-slate-400 font-semibold">
-              Select a conversation
+              {t('selectConversation')}
             </div>
           )}
 

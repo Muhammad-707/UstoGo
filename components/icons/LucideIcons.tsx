@@ -224,11 +224,33 @@ export const Icon: React.FC<IconProps> = ({ name, size = 20, className = '', ...
           <path d="M16 3.13a4 4 0 0 1 0 7.75" />
         </svg>
       );
+    case 'chevronleft':
+    case 'chevron-left':
+      return (
+        <svg {...iconProps}>
+          <polyline points="15 18 9 12 15 6" />
+        </svg>
+      );
     case 'chevronright':
     case 'chevron-right':
       return (
         <svg {...iconProps}>
           <polyline points="9 18 15 12 9 6" />
+        </svg>
+      );
+    case 'briefcase':
+      return (
+        <svg {...iconProps}>
+          <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
+          <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+        </svg>
+      );
+    case 'image':
+      return (
+        <svg {...iconProps}>
+          <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+          <circle cx="8.5" cy="8.5" r="1.5" />
+          <polyline points="21 15 16 10 5 21" />
         </svg>
       );
     case 'chevrondown':

@@ -1,0 +1,19 @@
+{
+  "badge": "Work Gallery",
+  "title": "Portfolio / Gallery",
+  "hint": "Showcase your completed work — these photos appear on your public page",
+  "addImage": "+ Add Photo",
+  "uploading": "Uploading...",
+  "loading": "Loading...",
+  "empty": "No photos yet. Upload your first piece of work",
+  "remove": "Remove",
+  "moveLeft": "Move left",
+  "moveRight": "Move right",
+  "confirmRemove": "Remove this photo?",
+  "loadFailed": "Failed to load the gallery",
+  "uploadFailed": "Failed to upload the photo",
+  "removeFailed": "Failed to remove the photo",
+  "reorderFailed": "Failed to save the order",
+  "limitReached": "Limit of 20 photos reached",
+  "count": "{current} of {max} photos"
+}

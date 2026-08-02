@@ -3,5 +3,17 @@
   "certificatesLicenses": "Certificates & Licenses",
   "addNewLicense": "+ Add New License",
   "issuerVerified": "Issuer: {issuer} • Verified in {year}",
-  "verifiedActive": "Verified Active"
+  "verifiedActive": "Verified Active",
+  "certificateHint": "Certificates with a file attached appear on your public page",
+  "titlePlaceholder": "Certificate title",
+  "issuerPlaceholder": "Issuer",
+  "uploadFile": "Attach file (image/PDF)",
+  "fileAttached": "✓ File attached",
+  "validationTitle": "Certificate title is required",
+  "addFailed": "Failed to add the certificate",
+  "removeFailed": "Failed to remove the certificate",
+  "loadFailed": "Failed to load certificates",
+  "noCertificates": "No certificates added yet",
+  "loading": "Loading...",
+  "saving": "Saving..."
 }

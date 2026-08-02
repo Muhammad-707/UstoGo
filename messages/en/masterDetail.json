@@ -22,5 +22,22 @@
   "underMinutes": "under {count} mins",
   "travelFee": "Travel Fee",
   "free": "FREE",
-  "bookThisMaster": "Book This Master"
+  "bookThisMaster": "Book This Master",
+  "loading": "Loading master profile...",
+  "notFoundTitle": "Master Not Found",
+  "notFoundBody": "This master profile does not exist or is no longer available.",
+  "backToSearch": "Back to Search",
+  "servicesTab": "Services ({count})",
+  "noServices": "No services listed yet.",
+  "noGallery": "No portfolio images yet.",
+  "noReviews": "No reviews yet.",
+  "noSchedule": "This master has not set their working hours yet.",
+  "serviceRadius": "{count} km radius",
+  "experience": "Experience",
+  "years": "years",
+  "serviceArea": "Service area",
+  "verified": "Verified",
+  "noAbout": "No information added yet.",
+  "anonymousClient": "Client",
+  "minutes": "min"
 }

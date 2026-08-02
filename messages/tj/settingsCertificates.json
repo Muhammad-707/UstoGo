@@ -1,7 +1,19 @@
 {
-  "craftsmanVerification": "Тасдиқи Усто",
+  "craftsmanVerification": "Верификатсияи Усто",
   "certificatesLicenses": "Сертификатҳо ва Литсензияҳо",
-  "addNewLicense": "+ Иловаи Литсензияи Нав",
-  "issuerVerified": "Додашуда аз: {issuer} • Санҷида шуд дар {year}",
-  "verifiedActive": "Тасдиқшуда"
+  "addNewLicense": "+ Иловаи Литсензия",
+  "issuerVerified": "Дода: {issuer} • Тафтиш шуд {year}",
+  "verifiedActive": "Тасдиқшуда",
+  "certificateHint": "Сертификатҳои бо файл — дар саҳифаи оммавии шумо нишон дода мешаванд",
+  "titlePlaceholder": "Номи сертификат",
+  "issuerPlaceholder": "Додакунанда",
+  "uploadFile": "Пайваст кардани файл (расм/PDF)",
+  "fileAttached": "✓ Файл пайваст шуд",
+  "validationTitle": "Номи сертификат ҳатмист",
+  "addFailed": "Иловаи сертификат номуваффақ шуд",
+  "removeFailed": "Нест кардани сертификат номуваффақ шуд",
+  "loadFailed": "Боркунии сертификатҳо номуваффақ шуд",
+  "noCertificates": "Ҳанӯз сертификат илова нашудааст",
+  "loading": "Боркунӣ...",
+  "saving": "Захира..."
 }

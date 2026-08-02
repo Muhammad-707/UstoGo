@@ -22,5 +22,22 @@
   "underMinutes": "камтар аз {count} дақиқа",
   "travelFee": "Ҳаққи роҳ",
   "free": "РОЙГОН",
-  "bookThisMaster": "Ин Устро Фармоиш Диҳед"
+  "bookThisMaster": "Ин Устро Фармоиш Диҳед",
+  "loading": "Боркунӣ шуда истодааст...",
+  "notFoundTitle": "Устод ёфт нашуд",
+  "notFoundBody": "Ин профили устод вуҷуд надорад ё дигар дастрас нест.",
+  "backToSearch": "Бозгашт ба Ҷустуҷӯ",
+  "servicesTab": "Хизматҳо ({count})",
+  "noServices": "Хизматҳо ҳанӯз нестанд.",
+  "noGallery": "Аксҳои кор ҳанӯз нестанд.",
+  "noReviews": "Тақризҳо ҳанӯз нестанд.",
+  "noSchedule": "Устод ҳанӯз соати кориашро муайян накардааст.",
+  "serviceRadius": "{count} км радиус",
+  "experience": "Таҷриба",
+  "years": "сол",
+  "serviceArea": "Минтақаи хизмат",
+  "verified": "Тасдиқшуда",
+  "noAbout": "Маълумот ҳанӯз илова нашудааст.",
+  "anonymousClient": "Мизоҷ",
+  "minutes": "дақ"
 }

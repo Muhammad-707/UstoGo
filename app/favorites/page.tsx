@@ -61,7 +61,7 @@ export default function FavoritesPage() {
           {masters.map((m, idx) => (
             <FilterItem key={m.id} index={idx % 3} className="glass-card rounded-3xl p-6 border border-slate-200 dark:border-slate-800 space-y-4">
               <div className="flex items-center gap-4">
-                <img src={getAvatarUrl(m.id)} alt={m.displayName} className="w-16 h-16 rounded-2xl object-cover" />
+                <img src={m.avatarUrl ?? getAvatarUrl(m.id)} alt={m.displayName} className="w-16 h-16 rounded-2xl object-cover" />
                 <div>
                   <h3 className="font-extrabold text-slate-900 dark:text-white text-base">{m.displayName}</h3>
                   <p className="text-xs text-blue-600 dark:text-sky-400 font-semibold">{m.cityName}</p>

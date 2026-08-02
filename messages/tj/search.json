@@ -19,5 +19,13 @@
   "bookNow": "Фармоиш додан",
   "jobsDone": "{count}+ кори иҷрошуда",
   "reviewsCount": "{count} шарҳ",
-  "rate": "Нарх"
+  "rate": "Нарх",
+  "city": "Шаҳр",
+  "allCities": "Ҳамаи шаҳрҳо",
+  "sortBy": "Тартиб",
+  "sortDefault": "Тавсияшуда",
+  "sortRating": "Рейтинги баланд",
+  "sortPriceAsc": "Нарх: аз кам ба зиёд",
+  "sortPriceDesc": "Нарх: аз зиёд ба кам",
+  "sortNewest": "Навтарин"
 }

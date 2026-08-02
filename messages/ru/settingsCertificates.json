@@ -3,5 +3,17 @@
   "certificatesLicenses": "Сертификаты и Лицензии",
   "addNewLicense": "+ Добавить Лицензию",
   "issuerVerified": "Выдал: {issuer} • Проверено в {year}",
-  "verifiedActive": "Подтверждено"
+  "verifiedActive": "Подтверждено",
+  "certificateHint": "Сертификаты с прикреплённым файлом отображаются на вашей публичной странице",
+  "titlePlaceholder": "Название сертификата",
+  "issuerPlaceholder": "Кто выдал",
+  "uploadFile": "Прикрепить файл (изображение/PDF)",
+  "fileAttached": "✓ Файл прикреплён",
+  "validationTitle": "Название сертификата обязательно",
+  "addFailed": "Не удалось добавить сертификат",
+  "removeFailed": "Не удалось удалить сертификат",
+  "loadFailed": "Не удалось загрузить сертификаты",
+  "noCertificates": "Сертификаты ещё не добавлены",
+  "loading": "Загрузка...",
+  "saving": "Сохранение..."
 }

@@ -48,6 +48,7 @@ export const PagePreviewSwitcher: React.FC = () => {
         { name: t('ppCertificatesLicenses'), path: '/settings/certificates' },
         { name: t('ppServicesRates'), path: '/settings/services' },
         { name: t('ppWorkingSchedule'), path: '/settings/schedule' },
+        { name: t('ppPortfolio'), path: '/settings/portfolio' },
         { name: t('ppPaymentsPayouts'), path: '/payments' },
       ],
     },

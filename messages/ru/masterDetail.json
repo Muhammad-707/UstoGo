@@ -22,5 +22,22 @@
   "underMinutes": "менее {count} мин",
   "travelFee": "Плата за выезд",
   "free": "БЕСПЛАТНО",
-  "bookThisMaster": "Записаться к мастеру"
+  "bookThisMaster": "Записаться к мастеру",
+  "loading": "Загрузка профиля мастера...",
+  "notFoundTitle": "Мастер не найден",
+  "notFoundBody": "Этот профиль мастера не существует или больше недоступен.",
+  "backToSearch": "Назад к поиску",
+  "servicesTab": "Услуги ({count})",
+  "noServices": "Услуг пока нет.",
+  "noGallery": "Фотографий работ пока нет.",
+  "noReviews": "Отзывов пока нет.",
+  "noSchedule": "Мастер ещё не указал свои рабочие часы.",
+  "serviceRadius": "{count} км радиус",
+  "experience": "Опыт",
+  "years": "лет",
+  "serviceArea": "Зона обслуживания",
+  "verified": "Подтверждено",
+  "noAbout": "Информация ещё не добавлена.",
+  "anonymousClient": "Клиент",
+  "minutes": "мин"
 }
