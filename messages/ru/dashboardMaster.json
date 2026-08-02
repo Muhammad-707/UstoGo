@@ -25,6 +25,7 @@
   "statusInactive": "Неактивен",
   "statusPending": "Ожидает проверки",
   "statusRejected": "Отклонён",
+  "toggleAvailabilityHint": "Нажмите, чтобы включить/выключить приём новых заказов",
   "reviewsCount": "отзывов",
   "yearsExperience": "опыт {count} лет",
   "metricActiveServices": "Активные услуги",

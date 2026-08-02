@@ -2,9 +2,12 @@
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
+import { Icon } from '@/components/icons/LucideIcons';
 import { categoriesApi, masterCabinetApi } from '@/lib/api/endpoints';
 import { ApiError } from '@/lib/api/client';
+import { revalidateMastersCache } from '@/lib/api/revalidate';
 import type { Category, MasterService } from '@/lib/api/types';
+import { MasterPageHeader } from '@/components/master/MasterPageHeader';
 
 type PriceType = 'FIXED' | 'HOURLY' | 'FROM';
 
@@ -134,6 +137,7 @@ export default function MasterServicesPage() {
         setServices((prev) => [...prev, created]);
       }
       resetForm();
+      revalidateMastersCache();
     } catch (err) {
       setError(err instanceof ApiError ? err.message : t('saveFailed'));
     } finally {
@@ -148,6 +152,7 @@ export default function MasterServicesPage() {
         isActive: !(service.isActive ?? true),
       });
       setServices((prev) => prev.map((s) => (s.id === service.id ? updated : s)));
+      revalidateMastersCache();
     } catch (err) {
       setError(err instanceof ApiError ? err.message : t('saveFailed'));
     }
@@ -159,6 +164,7 @@ export default function MasterServicesPage() {
     try {
       await masterCabinetApi.removeService(service.id);
       setServices((prev) => prev.filter((s) => s.id !== service.id));
+      revalidateMastersCache();
     } catch (err) {
       setError(err instanceof ApiError ? err.message : t('deleteFailed'));
     }
@@ -200,31 +206,30 @@ export default function MasterServicesPage() {
 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
-      <div className="flex items-center justify-between">
-        <div>
-          <span className="text-xs font-extrabold uppercase tracking-widest text-amber-600 dark:text-amber-400">
-            {t('catalogManagement')}
-          </span>
-          <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white mt-1">{t('servicesPricing')}</h1>
-          <p className="text-xs text-slate-400 font-semibold mt-1">{t('pageHint')}</p>
-        </div>
-        <button
-          onClick={() => {
-            if (myCategoryIds.length === 0) {
-              setError(t('noCategoryAttached'));
-              return;
-            }
-            setShowForm((s) => !s);
-            if (!showForm) {
-              setEditingId(null);
-              setForm({ ...EMPTY_FORM, categoryId: myCategoryIds[0] });
-            }
-          }}
-          className="px-5 py-2.5 rounded-2xl bg-amber-600 hover:bg-amber-700 text-white font-extrabold text-xs shadow-md transition"
-        >
-          {t('addService')}
-        </button>
-      </div>
+      <MasterPageHeader
+        icon="briefcase"
+        eyebrow={t('catalogManagement')}
+        title={t('servicesPricing')}
+        hint={t('pageHint')}
+        action={
+          <button
+            onClick={() => {
+              if (myCategoryIds.length === 0) {
+                setError(t('noCategoryAttached'));
+                return;
+              }
+              setShowForm((s) => !s);
+              if (!showForm) {
+                setEditingId(null);
+                setForm({ ...EMPTY_FORM, categoryId: myCategoryIds[0] });
+              }
+            }}
+            className="px-5 py-2.5 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-extrabold text-xs shadow-lg shadow-amber-900/20 transition"
+          >
+            + {t('addService')}
+          </button>
+        }
+      />
 
       {error && (
         <div className="p-4 rounded-2xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 text-xs font-bold text-red-600 dark:text-red-400">
@@ -234,7 +239,10 @@ export default function MasterServicesPage() {
 
       {/* My categories */}
       <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 space-y-4 shadow-xl">
-        <h3 className="text-sm font-extrabold text-slate-900 dark:text-white">{t('myCategories')}</h3>
+        <h3 className="text-sm font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
+          <Icon name="award" size={16} className="text-amber-500" />
+          {t('myCategories')}
+        </h3>
         {myCategories.length === 0 && (
           <p className="text-xs text-slate-400 font-semibold">{t('noCategoryAttached')}</p>
         )}
@@ -365,31 +373,42 @@ export default function MasterServicesPage() {
 
       {/* Services list */}
       <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 space-y-4 shadow-xl">
-        <h3 className="text-sm font-extrabold text-slate-900 dark:text-white">
+        <h3 className="text-sm font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
+          <Icon name="sparkles" size={16} className="text-amber-500" />
           {t('myServicesTitle', { count: services.length })}
         </h3>
         {loading && <p className="text-xs text-slate-400 font-semibold">{t('loading')}</p>}
         {!loading && services.length === 0 && (
-          <p className="text-xs text-slate-400 font-semibold">{t('noServices')}</p>
+          <div className="py-10 text-center space-y-3">
+            <div className="w-14 h-14 rounded-2xl bg-amber-50 dark:bg-amber-950/40 text-amber-500 mx-auto flex items-center justify-center">
+              <Icon name="briefcase" size={26} />
+            </div>
+            <p className="text-xs text-slate-400 font-semibold">{t('noServices')}</p>
+          </div>
         )}
         <div className="space-y-3">
           {services.map((s) => (
             <div
               key={s.id}
-              className={`p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs ${(s.isActive ?? true) ? '' : 'opacity-60'}`}
+              className={`p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs transition ${(s.isActive ?? true) ? 'hover:border-amber-300 dark:hover:border-amber-800' : 'opacity-60'}`}
             >
-              <div className="space-y-1 min-w-0">
-                <div className="flex items-center gap-2">
-                  <h4 className="font-bold text-slate-900 dark:text-white text-sm truncate">{s.title}</h4>
-                  <span className="px-2 py-0.5 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-[10px] font-bold">
-                    {myCategories.find((c) => c.id === s.categoryId)?.name ?? '—'}
-                  </span>
+              <div className="flex items-start gap-3 min-w-0">
+                <div className="hidden sm:flex w-10 h-10 shrink-0 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 text-white items-center justify-center shadow-md">
+                  <Icon name="wrench" size={18} />
                 </div>
-                {s.description && <p className="text-slate-500 line-clamp-2">{s.description}</p>}
-                <p className="text-slate-400">
-                  {t('estimatedDuration', { est: `${s.durationMinutes} min` })} ·{' '}
-                  {t(`priceType${(PRICE_TYPES.includes(s.priceType as PriceType) ? s.priceType : 'FIXED')}`)}
-                </p>
+                <div className="space-y-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <h4 className="font-bold text-slate-900 dark:text-white text-sm truncate">{s.title}</h4>
+                    <span className="px-2 py-0.5 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-[10px] font-bold">
+                      {myCategories.find((c) => c.id === s.categoryId)?.name ?? '—'}
+                    </span>
+                  </div>
+                  {s.description && <p className="text-slate-500 line-clamp-2">{s.description}</p>}
+                  <p className="text-slate-400">
+                    {t('estimatedDuration', { est: `${s.durationMinutes} min` })} ·{' '}
+                    {t(`priceType${(PRICE_TYPES.includes(s.priceType as PriceType) ? s.priceType : 'FIXED')}`)}
+                  </p>
+                </div>
               </div>
               <div className="flex items-center gap-3">
                 <span className="font-extrabold text-amber-600 dark:text-amber-400 text-sm">{s.price} {s.currency}</span>

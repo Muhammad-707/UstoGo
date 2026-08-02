@@ -14,6 +14,7 @@ import type {
   MasterMedia,
   MasterPublic,
   MasterService,
+  MasterStats,
   MasterStatus,
   Message,
   NotificationItem,
@@ -129,6 +130,7 @@ export const mastersApi = {
 export const masterCabinetApi = {
   submit: () => api.post<MasterStatus>('/masters/me/submit'),
   resubmit: () => api.post<MasterStatus>('/masters/me/resubmit'),
+  setAvailability: (isActive: boolean) => api.patch<MasterStatus>('/masters/me/availability', { isActive }),
 
   myCategories: () => api.get<string[]>('/masters/me/categories'),
   attachCategory: (categoryId: string) => api.post<void>('/masters/me/categories', { categoryId }),
@@ -172,6 +174,8 @@ export const bookingsApi = {
     api.get<Paginated<Booking>>('/bookings', query),
 
   byId: (id: string) => api.get<BookingDetail>(`/bookings/${id}`),
+
+  myStats: () => api.get<MasterStats>('/bookings/me/stats'),
 
   create: (data: {
     masterId: string;

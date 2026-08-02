@@ -27,6 +27,19 @@ export default function ClientDashboardPage() {
 
   const completed = bookings.filter((b) => b.status === 'COMPLETED');
   const active = bookings.filter((b) => ['PENDING', 'ACCEPTED', 'IN_PROGRESS'].includes(b.status));
+
+  // Live status without a manual refresh — a master accepting/starting/completing a
+  // job should show up here without the client reloading the page.
+  useEffect(() => {
+    if (active.length === 0) return;
+    const interval = setInterval(() => {
+      bookingsApi
+        .list({ limit: 20 })
+        .then((res) => setBookings(res.items))
+        .catch(() => {});
+    }, 12_000);
+    return () => clearInterval(interval);
+  }, [active.length]);
   const totalSpent = completed.reduce((sum, b) => sum + (Number(b.price) || 0), 0);
 
   const metrics = [
@@ -102,7 +115,7 @@ export default function ClientDashboardPage() {
                     <td className="py-4 font-mono font-bold text-blue-600 dark:text-sky-400">{b.bookingNumber}</td>
                     <td className="py-4 text-slate-900 dark:text-white">{b.serviceTitle}</td>
                     <td className="py-4 flex items-center gap-2">
-                      <img src={getAvatarUrl(b.masterId)} alt="" className="w-6 h-6 rounded-full object-cover" />
+                      <img src={getAvatarUrl(b.masterId, b.masterDisplayName)} alt="" className="w-6 h-6 rounded-full object-cover" />
                       <span>{b.masterDisplayName}</span>
                     </td>
                     <td className="py-4 text-slate-500">{new Date(b.scheduledAt).toLocaleDateString()}</td>

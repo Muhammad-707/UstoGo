@@ -16,9 +16,14 @@ interface SearchPageData {
   total: number;
 }
 
-// Data is fetched once on the server and reused for 60s, so the first paint
-// includes the results instead of waiting for a client-side round trip.
-const REVALIDATE_SECONDS = 60;
+// Data is fetched once on the server and reused for a short window, so the first
+// paint includes the results instead of waiting for a client-side round trip. Any
+// master-affecting mutation (services, schedule, portfolio, avatar/banner, approval)
+// calls POST /api/revalidate to clear the 'masters' tag on demand — see
+// lib/api/revalidate.ts — so this window is just a fallback ceiling on staleness,
+// not the primary invalidation mechanism.
+const REVALIDATE_SECONDS = 30;
+const MASTERS_TAG = 'masters';
 
 export const getLandingData = unstable_cache(
   async (): Promise<HomePageData> => {
@@ -30,7 +35,7 @@ export const getLandingData = unstable_cache(
     return { categories, topMasters: top.items, allMasters: all.items };
   },
   ['home-page', 'landing'],
-  { revalidate: REVALIDATE_SECONDS }
+  { revalidate: REVALIDATE_SECONDS, tags: [MASTERS_TAG] }
 );
 
 export const getHomeData = unstable_cache(
@@ -43,7 +48,7 @@ export const getHomeData = unstable_cache(
     return { categories, topMasters: top.items, allMasters: all.items };
   },
   ['home-page', 'home'],
-  { revalidate: REVALIDATE_SECONDS }
+  { revalidate: REVALIDATE_SECONDS, tags: [MASTERS_TAG] }
 );
 
 export const getSearchData = unstable_cache(
@@ -54,5 +59,5 @@ export const getSearchData = unstable_cache(
     return { categories, initialMasters: res.items, totalPages: res.meta.totalPages, total: res.meta.total };
   },
   ['search-page'],
-  { revalidate: REVALIDATE_SECONDS }
+  { revalidate: REVALIDATE_SECONDS, tags: [MASTERS_TAG] }
 );

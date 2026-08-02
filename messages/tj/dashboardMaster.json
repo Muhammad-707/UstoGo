@@ -25,6 +25,7 @@
   "statusInactive": "Ғайрифаъол",
   "statusPending": "Интизори тасдиқ",
   "statusRejected": "Рад шуд",
+  "toggleAvailabilityHint": "Барои фаъол/ғайрифаъол кардани қабули фармоишҳои нав пахш кунед",
   "reviewsCount": "тақриз",
   "yearsExperience": "таҷрибаи {count} сол",
   "metricActiveServices": "Хизматҳои фаъол",

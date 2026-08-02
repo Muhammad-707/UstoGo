@@ -196,7 +196,7 @@ export default function ClientHomePage({
           {topMasters.map((m, idx) => (
             <FilterItem key={m.id} index={idx % 3} className="glass-card rounded-2xl p-5 space-y-4 flex flex-col justify-between border border-slate-200 dark:border-slate-800">
               <div className="flex items-start gap-4">
-                <img src={getAvatarUrl(m.id)} alt={m.displayName} className="w-16 h-16 rounded-2xl object-cover shadow" />
+                <img src={getAvatarUrl(m.id, m.displayName)} alt={m.displayName} className="w-16 h-16 rounded-2xl object-cover shadow" />
                 <div className="space-y-1">
                   <div className="flex items-center gap-1.5">
                     <h3 className="font-bold text-slate-900 dark:text-white text-sm">{m.displayName}</h3>

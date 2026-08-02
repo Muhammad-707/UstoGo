@@ -109,7 +109,7 @@ export default function ReviewsPage() {
           <FilterItem key={rev.id} index={idx % 2} className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-4 shadow-lg">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <img src={getAvatarUrl(rev.clientId)} alt="" className="w-12 h-12 rounded-2xl object-cover" />
+                <img src={getAvatarUrl(rev.clientId, rev.clientName)} alt="" className="w-12 h-12 rounded-2xl object-cover" />
                 <div>
                   <span className="text-[11px] text-slate-400">{new Date(rev.createdAt).toLocaleDateString()}</span>
                 </div>

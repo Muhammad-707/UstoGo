@@ -233,6 +233,32 @@ export interface BookingDetail extends Booking {
   history: BookingHistoryEntry[];
 }
 
+export interface DailyEarning {
+  date: string;
+  total: string;
+}
+
+export interface CategoryEarning {
+  categoryId: string;
+  categoryName: string;
+  total: string;
+  completedCount: number;
+}
+
+export interface MasterStats {
+  totalEarnings: string;
+  dailyEarnings: DailyEarning[];
+  pendingCount: number;
+  acceptedCount: number;
+  completedCount: number;
+  cancelledCount: number;
+  completionRate: number;
+  earningsByCategory: CategoryEarning[];
+  avgAcceptLatencyMinutes: number | null;
+  repeatClientRate: number;
+  profileViews: number;
+}
+
 export interface Review {
   id: string;
   bookingId: string;

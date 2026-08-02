@@ -7,16 +7,19 @@ import { useTranslations } from 'next-intl';
 import { useAuth } from '@/contexts/AuthContext';
 import { bookingsApi, citiesApi, masterCabinetApi, mastersApi } from '@/lib/api/endpoints';
 import { ApiError } from '@/lib/api/client';
-import type { Booking, City, WorkingDay } from '@/lib/api/types';
+import { revalidateMastersCache } from '@/lib/api/revalidate';
+import type { Booking, City, MasterStats, WorkingDay } from '@/lib/api/types';
 import { getAvatarUrl } from '@/lib/placeholders';
 import { FilterContainer, FilterItem } from '@/components/ui/FilterAnimate';
+import { AnalyticsSection } from '@/components/master/AnalyticsSection';
 
 const WEEKDAYS = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'] as const;
 
 export default function MasterDashboardPage() {
   const t = useTranslations('dashboardMaster');
-  const { user } = useAuth();
+  const { user, refreshUser } = useAuth();
   const masterProfile = user?.masterProfile;
+  const [togglingActive, setTogglingActive] = useState(false);
 
   const [pending, setPending] = useState<Booking[]>([]);
   const [upcoming, setUpcoming] = useState<Booking[]>([]);
@@ -27,9 +30,19 @@ export default function MasterDashboardPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [actingId, setActingId] = useState<string | null>(null);
+  const [stats, setStats] = useState<MasterStats | null>(null);
+  const [statsLoading, setStatsLoading] = useState(true);
 
   useEffect(() => {
     citiesApi.list().then((list) => setCities(list)).catch(() => setCities([]));
+  }, []);
+
+  useEffect(() => {
+    bookingsApi
+      .myStats()
+      .then(setStats)
+      .catch(() => setStats(null))
+      .finally(() => setStatsLoading(false));
   }, []);
 
   useEffect(() => {
@@ -98,6 +111,20 @@ export default function MasterDashboardPage() {
     }
   };
 
+  const handleToggleAvailability = async () => {
+    if (!masterProfile || masterProfile.approvalStatus !== 'APPROVED') return;
+    setTogglingActive(true);
+    try {
+      await masterCabinetApi.setAvailability(!masterProfile.isActive);
+      await refreshUser();
+      revalidateMastersCache();
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : 'Failed to update availability.');
+    } finally {
+      setTogglingActive(false);
+    }
+  };
+
   const metrics = [
     {
       title: t('metricJobsCompleted'),
@@ -158,11 +185,16 @@ export default function MasterDashboardPage() {
 
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <span className="text-xs font-extrabold uppercase tracking-widest text-amber-600 dark:text-amber-400">
-            {t('badge')}
-          </span>
-          <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white mt-1">{t('title')}</h1>
+        <div className="flex items-center gap-4">
+          <div className="hidden sm:flex w-12 h-12 shrink-0 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 text-white items-center justify-center shadow-lg shadow-amber-900/20">
+            <Icon name="sparkles" size={22} />
+          </div>
+          <div>
+            <span className="text-xs font-extrabold uppercase tracking-widest text-amber-600 dark:text-amber-400">
+              {t('badge')}
+            </span>
+            <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white mt-1">{t('title')}</h1>
+          </div>
         </div>
         <div className="flex items-center gap-3">
           <Link
@@ -190,7 +222,7 @@ export default function MasterDashboardPage() {
       {masterProfile && (
         <FilterContainer className="bg-gradient-to-r from-slate-900 via-slate-900 to-amber-950/60 rounded-3xl p-6 sm:p-8 border border-slate-700/60 shadow-2xl text-white flex flex-col md:flex-row md:items-center gap-6">
           <div className="relative shrink-0">
-            <img src={avatarUrl ?? getAvatarUrl(masterProfile.id)} alt={masterProfile.displayName} className="w-24 h-24 rounded-3xl object-cover border-4 border-amber-400/40 shadow-2xl" />
+            <img src={avatarUrl ?? getAvatarUrl(masterProfile.id, masterProfile.displayName)} alt={masterProfile.displayName} className="w-24 h-24 rounded-3xl object-cover border-4 border-amber-400/40 shadow-2xl" />
             <div className="absolute -bottom-1 -right-1 p-1.5 rounded-full bg-amber-500 text-white shadow-lg" title={t('verifiedMaster')}>
               <Icon name="shieldcheck" size={14} />
             </div>
@@ -214,23 +246,37 @@ export default function MasterDashboardPage() {
               )}
             </div>
           </div>
-          <div className="shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-white/10 border border-white/10 text-xs font-extrabold">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            {masterProfile.approvalStatus === 'APPROVED'
-              ? masterProfile.isActive
-                ? t('statusActive')
-                : t('statusInactive')
-              : masterProfile.approvalStatus === 'REJECTED'
-                ? t('statusRejected')
-                : t('statusPending')}
-          </div>
+          {masterProfile.approvalStatus === 'APPROVED' ? (
+            <button
+              onClick={handleToggleAvailability}
+              disabled={togglingActive}
+              className={`shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-2xl border text-xs font-extrabold transition disabled:opacity-60 ${
+                masterProfile.isActive
+                  ? 'bg-white/10 border-white/10 hover:bg-white/15'
+                  : 'bg-red-500/10 border-red-400/30 hover:bg-red-500/20'
+              }`}
+              title={t('toggleAvailabilityHint')}
+            >
+              <span
+                className={`w-2 h-2 rounded-full ${
+                  masterProfile.isActive ? 'bg-emerald-400 animate-pulse' : 'bg-red-400'
+                }`}
+              />
+              {masterProfile.isActive ? t('statusActive') : t('statusInactive')}
+            </button>
+          ) : (
+            <div className="shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-white/10 border border-white/10 text-xs font-extrabold">
+              <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+              {masterProfile.approvalStatus === 'REJECTED' ? t('statusRejected') : t('statusPending')}
+            </div>
+          )}
         </FilterContainer>
       )}
 
       {/* Metrics Grid */}
       <FilterContainer className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {metrics.map((m, idx) => (
-          <FilterItem key={idx} index={idx} className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl flex items-center justify-between">
+          <FilterItem key={idx} index={idx} className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl flex items-center justify-between hover:shadow-2xl hover:-translate-y-0.5 transition">
             <div className="space-y-1">
               <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">{m.title}</span>
               <h3 className="text-2xl font-extrabold text-slate-900 dark:text-white">{m.value}</h3>
@@ -243,6 +289,9 @@ export default function MasterDashboardPage() {
         ))}
       </FilterContainer>
 
+      {/* Analytics */}
+      <AnalyticsSection stats={stats} loading={statsLoading} />
+
       {/* Quick Actions */}
       <div>
         <h3 className="text-sm font-extrabold uppercase tracking-widest text-slate-400 mb-4">{t('quickActions')}</h3>
@@ -251,7 +300,7 @@ export default function MasterDashboardPage() {
             <FilterItem key={qa.href} index={idx}>
               <Link
                 href={qa.href}
-                className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-md p-5 flex flex-col items-center gap-3 text-center hover:border-blue-500 transition group"
+                className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-md p-5 flex flex-col items-center gap-3 text-center hover:border-amber-400 hover:shadow-lg transition group"
               >
                 <div className={`w-11 h-11 rounded-2xl ${qa.color} text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition`}>
                   <Icon name={qa.icon} size={20} />
@@ -283,7 +332,7 @@ export default function MasterDashboardPage() {
                   <span className="px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[10px] font-bold">{t('newRequest')}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <img src={getAvatarUrl(b.clientId)} alt="" className="w-6 h-6 rounded-full object-cover" />
+                  <img src={getAvatarUrl(b.clientId, b.clientName)} alt="" className="w-6 h-6 rounded-full object-cover" />
                   <span className="text-xs font-bold text-slate-700 dark:text-slate-300">{b.clientName}</span>
                 </div>
                 <p className="text-xs text-slate-500">

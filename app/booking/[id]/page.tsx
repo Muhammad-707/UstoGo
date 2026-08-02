@@ -83,6 +83,25 @@ export default function BookingDetailsPage() {
     load();
   }, [load]);
 
+  // Live status without a manual refresh: poll while the booking is still in a
+  // state either side can change (client cancels, master accepts/starts/completes).
+  // Terminal states stop polling — nothing left to change.
+  const TERMINAL_STATUSES = new Set([
+    'COMPLETED',
+    'REJECTED',
+    'EXPIRED',
+    'CANCELLED_BY_CLIENT',
+    'CANCELLED_BY_MASTER',
+    'CANCELLED_BY_ADMIN',
+  ]);
+  useEffect(() => {
+    if (!bookingId || !booking || TERMINAL_STATUSES.has(booking.status)) return;
+    const interval = setInterval(() => {
+      bookingsApi.byId(bookingId).then(setBooking).catch(() => {});
+    }, 12_000);
+    return () => clearInterval(interval);
+  }, [bookingId, booking?.status]);
+
   const runAction = async (fn: () => Promise<unknown>) => {
     setActionPending(true);
     setActionError(null);
@@ -296,7 +315,7 @@ export default function BookingDetailsPage() {
           {/* Master Info Card */}
           <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 flex items-center justify-between shadow-lg">
             <div className="flex items-center gap-4">
-              <img src={getAvatarUrl(booking.masterId)} alt={booking.masterDisplayName} className="w-14 h-14 rounded-2xl object-cover" />
+              <img src={getAvatarUrl(booking.masterId, booking.masterDisplayName)} alt={booking.masterDisplayName} className="w-14 h-14 rounded-2xl object-cover" />
               <div>
                 <h4 className="font-bold text-slate-900 dark:text-white text-base">{booking.masterDisplayName}</h4>
                 <p className="text-xs text-slate-500">{booking.serviceTitle}</p>

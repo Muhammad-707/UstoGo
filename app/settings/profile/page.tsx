@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import { useAuth } from '@/contexts/AuthContext';
 import { citiesApi, usersApi } from '@/lib/api/endpoints';
 import { ApiError } from '@/lib/api/client';
+import { revalidateMastersCache } from '@/lib/api/revalidate';
 import { resolveOwnFileUrl, uploadFile } from '@/lib/api/upload';
 import { getAvatarUrl, getCoverUrl } from '@/lib/placeholders';
 import type { City } from '@/lib/api/types';
@@ -74,6 +75,7 @@ export default function EditProfilePage() {
       await usersApi.setAvatar(fileId);
       await refreshUser();
       await refreshMedia();
+      if (isMaster) revalidateMastersCache();
     } catch (err) {
       setError(err instanceof ApiError ? err.message : t('uploadFailed'));
     } finally {
@@ -92,6 +94,7 @@ export default function EditProfilePage() {
       await usersApi.setBanner(fileId);
       await refreshUser();
       await refreshMedia();
+      revalidateMastersCache();
     } catch (err) {
       setError(err instanceof ApiError ? err.message : t('uploadFailed'));
     } finally {
@@ -123,6 +126,7 @@ export default function EditProfilePage() {
       await usersApi.updateMe(data);
       await refreshUser();
       setSaved(true);
+      if (isMaster) revalidateMastersCache();
     } catch (err) {
       setError(err instanceof ApiError ? err.message : t('saveFailed'));
     } finally {
@@ -143,7 +147,8 @@ export default function EditProfilePage() {
     }
   };
 
-  const effectiveAvatar = avatarUrl ?? getAvatarUrl(user?.id ?? '');
+  const fullName = isMaster ? displayName : `${firstName} ${lastName}`.trim();
+  const effectiveAvatar = avatarUrl ?? getAvatarUrl(user?.id ?? '', fullName);
   const effectiveBanner = bannerUrl ?? getCoverUrl(user?.id ?? '');
 
   return (

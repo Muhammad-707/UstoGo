@@ -5,6 +5,7 @@ import { Icon } from '@/components/icons/LucideIcons';
 import { useTranslations } from 'next-intl';
 import { adminApi, categoriesApi } from '@/lib/api/endpoints';
 import { ApiError } from '@/lib/api/client';
+import { revalidateMastersCache } from '@/lib/api/revalidate';
 import type { AdminMasterListItem, ApprovalStatus, Category, DashboardResponse } from '@/lib/api/types';
 import { FilterContainer, FilterItem, InViewRow } from '@/components/ui/FilterAnimate';
 
@@ -70,6 +71,7 @@ export default function AdminDashboardPage() {
     try {
       await adminApi.masters.approve(id);
       await loadMasters();
+      revalidateMastersCache();
     } catch (err) {
       setMastersError(err instanceof ApiError ? err.message : 'Failed to approve master.');
     } finally {
@@ -84,6 +86,7 @@ export default function AdminDashboardPage() {
     try {
       await adminApi.masters.reject(id, reason);
       await loadMasters();
+      revalidateMastersCache();
     } catch (err) {
       setMastersError(err instanceof ApiError ? err.message : 'Failed to reject master.');
     } finally {

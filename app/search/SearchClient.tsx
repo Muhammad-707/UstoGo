@@ -334,7 +334,7 @@ export default function SearchClient({
                 <AnimatedCard key={m.id} index={idx % 3} className="glass-card rounded-3xl overflow-hidden border border-slate-200 dark:border-slate-800 flex flex-col justify-between group">
                   <div className="p-6 space-y-4">
                     <div className="flex items-center gap-4">
-                      <img src={m.avatarUrl ?? getAvatarUrl(m.id)} alt={m.displayName} className="w-16 h-16 rounded-2xl object-cover shadow-md" />
+                      <img src={m.avatarUrl ?? getAvatarUrl(m.id, m.displayName)} alt={m.displayName} className="w-16 h-16 rounded-2xl object-cover shadow-md" />
                       <div>
                         <div className="flex items-center gap-1.5">
                           <h3 className="font-extrabold text-slate-900 dark:text-white text-base">{m.displayName}</h3>
@@ -388,7 +388,7 @@ export default function SearchClient({
               {masters.map((m, idx) => (
                 <AnimatedCard key={m.id} index={idx} className="glass-card rounded-3xl p-6 border border-slate-200 dark:border-slate-800 flex flex-col md:flex-row items-center justify-between gap-6">
                   <div className="flex items-center gap-6">
-                    <img src={m.avatarUrl ?? getAvatarUrl(m.id)} alt={m.displayName} className="w-20 h-20 rounded-2xl object-cover shadow-md" />
+                    <img src={m.avatarUrl ?? getAvatarUrl(m.id, m.displayName)} alt={m.displayName} className="w-20 h-20 rounded-2xl object-cover shadow-md" />
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
                         <h3 className="font-extrabold text-slate-900 dark:text-white text-lg">{m.displayName}</h3>

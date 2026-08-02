@@ -2,9 +2,12 @@
 
 import React, { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
+import { Icon } from '@/components/icons/LucideIcons';
 import { masterCabinetApi } from '@/lib/api/endpoints';
 import { ApiError } from '@/lib/api/client';
+import { revalidateMastersCache } from '@/lib/api/revalidate';
 import type { ScheduleException, WorkingDay } from '@/lib/api/types';
+import { MasterPageHeader } from '@/components/master/MasterPageHeader';
 
 type DayUi = WorkingDay & { isWorking: boolean };
 
@@ -79,6 +82,7 @@ export default function WorkingSchedulePage() {
       const savedSchedule = await masterCabinetApi.replaceSchedule(toPayload(days));
       setDays(toUi(savedSchedule));
       setSaved(true);
+      revalidateMastersCache();
     } catch (err) {
       setError(err instanceof ApiError ? err.message : t('saveFailed'));
     } finally {
@@ -131,13 +135,12 @@ export default function WorkingSchedulePage() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
-      <div>
-        <span className="text-xs font-extrabold uppercase tracking-widest text-amber-600 dark:text-amber-400">
-          {t('availabilityMatrix')}
-        </span>
-        <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white mt-1">{t('workingSchedule')}</h1>
-        <p className="text-xs text-slate-400 font-semibold mt-1">{t('scheduleHint')}</p>
-      </div>
+      <MasterPageHeader
+        icon="clock"
+        eyebrow={t('availabilityMatrix')}
+        title={t('workingSchedule')}
+        hint={t('scheduleHint')}
+      />
 
       {error && (
         <div className="p-4 rounded-2xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 text-xs font-bold text-red-600 dark:text-red-400">
@@ -149,35 +152,50 @@ export default function WorkingSchedulePage() {
         {loading && <p className="text-xs text-slate-400 font-semibold">{t('loading')}</p>}
         {!loading &&
           days.map((day) => (
-            <div key={day.weekday} className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800 text-xs">
-              <span className="font-bold text-slate-900 dark:text-white text-sm">{dayLabels[day.weekday]}</span>
+            <div
+              key={day.weekday}
+              className={`flex items-center justify-between p-4 rounded-2xl border text-xs transition ${
+                day.isWorking
+                  ? 'bg-emerald-50/60 dark:bg-emerald-950/20 border-emerald-100 dark:border-emerald-900/40'
+                  : 'bg-slate-50 dark:bg-slate-800/40 border-slate-100 dark:border-slate-800'
+              }`}
+            >
               <div className="flex items-center gap-3">
-                {day.isWorking ? (
-                  <>
-                    <input
-                      type="time"
-                      value={day.startTime}
-                      onChange={(e) => updateDay(day.weekday, { startTime: e.target.value })}
-                      className="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold"
-                    />
-                    <span className="text-slate-400">—</span>
-                    <input
-                      type="time"
-                      value={day.endTime}
-                      onChange={(e) => updateDay(day.weekday, { endTime: e.target.value })}
-                      className="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold"
-                    />
-                  </>
-                ) : (
-                  <span className="text-slate-500">{t('emergencyOnly')}</span>
-                )}
                 <button
                   onClick={() => updateDay(day.weekday, { isWorking: !day.isWorking })}
-                  className="px-3 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold"
+                  role="switch"
+                  aria-checked={day.isWorking}
+                  className={`relative w-10 h-6 rounded-full shrink-0 transition ${
+                    day.isWorking ? 'bg-emerald-500' : 'bg-slate-300 dark:bg-slate-700'
+                  }`}
                 >
-                  {t('edit')}
+                  <span
+                    className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform ${
+                      day.isWorking ? 'translate-x-4' : 'translate-x-0'
+                    }`}
+                  />
                 </button>
+                <span className="font-bold text-slate-900 dark:text-white text-sm">{dayLabels[day.weekday]}</span>
               </div>
+              {day.isWorking ? (
+                <div className="flex items-center gap-2">
+                  <input
+                    type="time"
+                    value={day.startTime}
+                    onChange={(e) => updateDay(day.weekday, { startTime: e.target.value })}
+                    className="p-2 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-bold"
+                  />
+                  <span className="text-slate-400">—</span>
+                  <input
+                    type="time"
+                    value={day.endTime}
+                    onChange={(e) => updateDay(day.weekday, { endTime: e.target.value })}
+                    className="p-2 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-bold"
+                  />
+                </div>
+              ) : (
+                <span className="text-slate-400 font-bold">{t('emergencyOnly')}</span>
+              )}
             </div>
           ))}
 
@@ -195,7 +213,10 @@ export default function WorkingSchedulePage() {
 
       {/* Exceptions */}
       <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-8 space-y-6 shadow-xl">
-        <h2 className="text-sm font-extrabold text-slate-900 dark:text-white">{t('exceptionsTitle')}</h2>
+        <h2 className="text-sm font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
+          <Icon name="calendar" size={16} className="text-amber-500" />
+          {t('exceptionsTitle')}
+        </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
           <label className="space-y-1">
             <span className="font-bold text-slate-500">{t('exceptionDate')}</span>

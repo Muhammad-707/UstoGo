@@ -277,7 +277,7 @@ export default function LandingClient({
               <div className="p-6 relative pt-0">
                 <div className="-mt-12 flex items-end justify-between mb-4">
                   <div className="relative">
-                    <img src={getAvatarUrl(master.id)} alt={master.displayName} className="w-20 h-20 rounded-2xl object-cover border-4 border-white dark:border-slate-900 shadow-xl" />
+                    <img src={getAvatarUrl(master.id, master.displayName)} alt={master.displayName} className="w-20 h-20 rounded-2xl object-cover border-4 border-white dark:border-slate-900 shadow-xl" />
                     {master.hasCertificates && (
                       <div className="absolute -bottom-1 -right-1 p-1 bg-blue-600 text-white rounded-full">
                         <Icon name="ShieldCheck" size={14} />

@@ -1,25 +1,17 @@
-// Placeholder imagery reused across pages whenever a real image URL (avatar/cover) isn't
-// available from the backend yet (avatarFileId is a file id, not a directly renderable URL).
-// These are the same unsplash URLs the old lib/mockData.ts used for master avatars/covers.
+// Deterministic fallback imagery used whenever a real avatar/banner isn't available yet
+// (avatarFileId/bannerFileId is null because the user never uploaded one). Previously this
+// picked a random stranger's stock photo per id, which looked like a bug (a different fake
+// face every time, and a different fake face on every page) — now it renders the person's
+// own initials on a consistent brand gradient, the same pattern Slack/Google use.
 
-export const PLACEHOLDER_AVATARS: string[] = [
-  'https://images.unsplash.com/photo-1540569014015-19a7be504e3a?auto=format&fit=crop&w=400&q=80',
-  'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=400&q=80',
-  'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80',
-  'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&q=80',
-  'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=400&q=80',
-  'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=400&q=80',
+const GRADIENTS: [string, string][] = [
+  ['#f59e0b', '#ea580c'], // amber -> orange (master brand)
+  ['#3b82f6', '#6366f1'], // blue -> indigo (client brand)
+  ['#10b981', '#0ea5e9'], // emerald -> sky
+  ['#ec4899', '#8b5cf6'], // pink -> violet
+  ['#14b8a6', '#0891b2'], // teal -> cyan
+  ['#f43f5e', '#f59e0b'], // rose -> amber
 ];
-
-export const PLACEHOLDER_COVERS: string[] = [
-  'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=1200&q=80',
-  'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=1200&q=80',
-  'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1200&q=80',
-  'https://images.unsplash.com/photo-1562259949-e8e7689d7828?auto=format&fit=crop&w=1200&q=80',
-];
-
-export const PLACEHOLDER_REVIEWER_AVATAR =
-  'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80';
 
 function hashSeed(seed: string): number {
   let hash = 0;
@@ -30,14 +22,8 @@ function hashSeed(seed: string): number {
   return Math.abs(hash);
 }
 
-export function getAvatarUrl(seed: string): string {
-  if (!seed) return PLACEHOLDER_AVATARS[0];
-  return PLACEHOLDER_AVATARS[hashSeed(seed) % PLACEHOLDER_AVATARS.length];
-}
-
-export function getCoverUrl(seed: string): string {
-  if (!seed) return PLACEHOLDER_COVERS[0];
-  return PLACEHOLDER_COVERS[hashSeed(seed) % PLACEHOLDER_COVERS.length];
+function gradientFor(seed: string): [string, string] {
+  return GRADIENTS[hashSeed(seed) % GRADIENTS.length];
 }
 
 export function getInitials(name: string): string {
@@ -46,3 +32,44 @@ export function getInitials(name: string): string {
   if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
   return (parts[0][0] + parts[1][0]).toUpperCase();
 }
+
+function initialsAvatarDataUri(name: string, seed: string): string {
+  const initials = getInitials(name || '?');
+  const [from, to] = gradientFor(seed || name || '0');
+  const svg =
+    `<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200">` +
+    `<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1">` +
+    `<stop offset="0%" stop-color="${from}"/><stop offset="100%" stop-color="${to}"/>` +
+    `</linearGradient></defs>` +
+    `<rect width="200" height="200" fill="url(#g)"/>` +
+    `<text x="100" y="112" font-family="system-ui,-apple-system,Segoe UI,Roboto,sans-serif" ` +
+    `font-size="76" font-weight="700" fill="#ffffff" text-anchor="middle">${initials}</text>` +
+    `</svg>`;
+  return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+}
+
+function gradientCoverDataUri(seed: string): string {
+  const [from, to] = gradientFor(seed || '0');
+  const svg =
+    `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="400" viewBox="0 0 1200 400">` +
+    `<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1">` +
+    `<stop offset="0%" stop-color="${from}"/><stop offset="100%" stop-color="${to}"/>` +
+    `</linearGradient></defs>` +
+    `<rect width="1200" height="400" fill="url(#g)"/>` +
+    `<circle cx="1050" cy="60" r="220" fill="#ffffff" opacity="0.06"/>` +
+    `<circle cx="120" cy="360" r="180" fill="#ffffff" opacity="0.06"/>` +
+    `</svg>`;
+  return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+}
+
+/** Renders the person's initials on a deterministic gradient. Pass `name` whenever it's known — it's what actually gets shown. */
+export function getAvatarUrl(seed: string, name?: string): string {
+  return initialsAvatarDataUri(name ?? '', seed || name || '0');
+}
+
+/** Deterministic gradient banner — no more random strangers' bathrooms/electricians as a default cover. */
+export function getCoverUrl(seed: string): string {
+  return gradientCoverDataUri(seed);
+}
+
+export const PLACEHOLDER_REVIEWER_AVATAR = initialsAvatarDataUri('?', '0');

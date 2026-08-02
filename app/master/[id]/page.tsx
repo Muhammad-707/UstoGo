@@ -107,7 +107,7 @@ export default function MasterProfilePage() {
     );
   }
 
-  const avatarUrl = media?.avatarUrl || getAvatarUrl(master.id);
+  const avatarUrl = media?.avatarUrl || getAvatarUrl(master.id, master.displayName);
   const bannerUrl = media?.bannerUrl || getCoverUrl(master.id);
 
   const orderedSchedule = [...schedule].sort((a, b) => {

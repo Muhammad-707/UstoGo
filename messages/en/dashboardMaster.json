@@ -25,6 +25,7 @@
   "statusInactive": "Inactive",
   "statusPending": "Pending Verification",
   "statusRejected": "Rejected",
+  "toggleAvailabilityHint": "Click to toggle whether you're accepting new bookings",
   "reviewsCount": "reviews",
   "yearsExperience": "{count} yrs experience",
   "metricActiveServices": "Active Services",

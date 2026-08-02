@@ -176,7 +176,7 @@ export default function MessagesPage() {
                 }`}
               >
                 <div className="relative">
-                  <img src={getAvatarUrl(c.participantUserId)} alt={c.participantName} className="w-12 h-12 rounded-2xl object-cover" />
+                  <img src={getAvatarUrl(c.participantUserId, c.participantName)} alt={c.participantName} className="w-12 h-12 rounded-2xl object-cover" />
                   {c.unreadCount > 0 && (
                     <span className="absolute -top-1 -right-1 w-5 h-5 bg-blue-600 text-white text-[10px] font-bold rounded-full flex items-center justify-center border-2 border-white dark:border-slate-900">
                       {c.unreadCount}
@@ -205,7 +205,7 @@ export default function MessagesPage() {
               {/* Header */}
               <div className="p-4 border-b border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <img src={getAvatarUrl(selected.participantUserId)} alt={selected.participantName} className="w-10 h-10 rounded-xl object-cover" />
+                  <img src={getAvatarUrl(selected.participantUserId, selected.participantName)} alt={selected.participantName} className="w-10 h-10 rounded-xl object-cover" />
                   <div>
                     <h3 className="text-sm font-bold text-slate-900 dark:text-white">{selected.participantName}</h3>
                     {typingIn === selected.id && (

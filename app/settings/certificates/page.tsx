@@ -5,8 +5,10 @@ import { useTranslations } from 'next-intl';
 import { Icon } from '@/components/icons/LucideIcons';
 import { masterCabinetApi } from '@/lib/api/endpoints';
 import { ApiError } from '@/lib/api/client';
+import { revalidateMastersCache } from '@/lib/api/revalidate';
 import { uploadFile } from '@/lib/api/upload';
 import type { Certificate } from '@/lib/api/types';
+import { MasterPageHeader } from '@/components/master/MasterPageHeader';
 
 export default function CertificatesPage() {
   const t = useTranslations('settingsCertificates');
@@ -66,6 +68,7 @@ export default function CertificatesPage() {
     try {
       await masterCabinetApi.removeCertificate(id);
       setCerts((prev) => prev.filter((x) => x.id !== id));
+      revalidateMastersCache();
     } catch (err) {
       setError(err instanceof ApiError ? err.message : t('removeFailed'));
     }
@@ -73,21 +76,20 @@ export default function CertificatesPage() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
-      <div className="flex items-center justify-between">
-        <div>
-          <span className="text-xs font-extrabold uppercase tracking-widest text-amber-600 dark:text-amber-400">
-            {t('craftsmanVerification')}
-          </span>
-          <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white mt-1">{t('certificatesLicenses')}</h1>
-          <p className="text-xs text-slate-400 font-semibold mt-1">{t('certificateHint')}</p>
-        </div>
-        <button
-          onClick={() => setShowForm((s) => !s)}
-          className="px-5 py-2.5 rounded-2xl bg-amber-600 hover:bg-amber-700 text-white font-extrabold text-xs shadow-md transition"
-        >
-          {t('addNewLicense')}
-        </button>
-      </div>
+      <MasterPageHeader
+        icon="award"
+        eyebrow={t('craftsmanVerification')}
+        title={t('certificatesLicenses')}
+        hint={t('certificateHint')}
+        action={
+          <button
+            onClick={() => setShowForm((s) => !s)}
+            className="px-5 py-2.5 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-extrabold text-xs shadow-lg shadow-amber-900/20 transition"
+          >
+            + {t('addNewLicense')}
+          </button>
+        }
+      />
 
       {error && (
         <div className="p-4 rounded-2xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 text-xs font-bold text-red-600 dark:text-red-400">
@@ -146,7 +148,12 @@ export default function CertificatesPage() {
       <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 divide-y divide-slate-100 dark:divide-slate-800 shadow-xl overflow-hidden">
         {loading && <div className="p-6 text-xs text-slate-400 font-semibold">{t('loading')}</div>}
         {!loading && certs.length === 0 && (
-          <div className="p-6 text-xs text-slate-400 font-semibold">{t('noCertificates')}</div>
+          <div className="p-12 text-center space-y-3">
+            <div className="w-14 h-14 rounded-2xl bg-amber-50 dark:bg-amber-950/40 text-amber-500 mx-auto flex items-center justify-center">
+              <Icon name="award" size={26} />
+            </div>
+            <p className="text-xs text-slate-400 font-semibold">{t('noCertificates')}</p>
+          </div>
         )}
         {certs.map((c) => (
           <div key={c.id} className="p-6 flex items-center justify-between">

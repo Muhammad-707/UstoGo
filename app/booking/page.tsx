@@ -332,7 +332,7 @@ export default function BookingWizardPage() {
                 <label className="text-xs font-bold uppercase tracking-wider text-slate-400">{t('chosenCraftsman')}</label>
                 <div className="flex items-center gap-4 p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
                   <img
-                    src={getAvatarUrl(master.id)}
+                    src={getAvatarUrl(master.id, master.displayName)}
                     alt={master.displayName}
                     className="w-14 h-14 rounded-2xl object-cover"
                   />
