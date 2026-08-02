@@ -18,5 +18,9 @@
   "unknownDevice": "Дастгоҳи номаълум",
   "thisDevice": "Ин дастгоҳ",
   "lastActive": "Фаъолияти охирин {date}",
-  "revoke": "Баромадан"
+  "revoke": "Баромадан",
+  "exportDataTitle": "Содироти Маълумоти Ман",
+  "exportDataDesc": "Ҳисоб, фармоишҳо, тақризҳо ва огоҳиномаҳои худро ҳамчун файли JSON боргирӣ кунед.",
+  "exportDataButton": "Боргирӣ",
+  "exporting": "Омодасозӣ…"
 }

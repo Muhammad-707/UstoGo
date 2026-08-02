@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Icon } from '@/components/icons/LucideIcons';
 import { useAuth } from '@/contexts/AuthContext';
-import { authApi } from '@/lib/api/endpoints';
+import { authApi, usersApi } from '@/lib/api/endpoints';
 import { ApiError } from '@/lib/api/client';
 import { PasswordInput } from '@/components/ui/PasswordInput';
 import { validatePassword, type ValidationErrorKey } from '@/lib/validation';
@@ -28,6 +28,7 @@ export default function SecuritySettingsPage() {
   const [sessionsLoading, setSessionsLoading] = useState(true);
   const [revokingId, setRevokingId] = useState<string | null>(null);
   const [loggingOutAll, setLoggingOutAll] = useState(false);
+  const [exporting, setExporting] = useState(false);
 
   const loadSessions = useCallback(() => {
     setSessionsLoading(true);
@@ -88,6 +89,24 @@ export default function SecuritySettingsPage() {
   };
 
   const formatDate = (iso: string) => new Date(iso).toLocaleString();
+
+  const handleExport = async () => {
+    setExporting(true);
+    try {
+      const data = await usersApi.exportMe();
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'ustogo-my-data.json';
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      // ignore — best-effort
+    } finally {
+      setExporting(false);
+    }
+  };
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
@@ -198,6 +217,24 @@ export default function SecuritySettingsPage() {
             </div>
           ))}
         </div>
+      </div>
+
+      {/* Data Export */}
+      <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-xl flex items-center justify-between gap-4">
+        <div>
+          <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <Icon name="filetext" size={18} />
+            {t('exportDataTitle')}
+          </h3>
+          <p className="text-xs text-slate-400 mt-1">{t('exportDataDesc')}</p>
+        </div>
+        <button
+          onClick={handleExport}
+          disabled={exporting}
+          className="shrink-0 px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-800 transition disabled:opacity-60"
+        >
+          {exporting ? t('exporting') : t('exportDataButton')}
+        </button>
       </div>
     </div>
   );

@@ -92,6 +92,7 @@ export const usersApi = {
   deleteMe: () => api.delete<void>('/users/me'),
   setAvatar: (fileId: string) => api.patch<UserProfile>('/users/me/avatar', { fileId }),
   setBanner: (fileId: string) => api.patch<UserProfile>('/users/me/banner', { fileId }),
+  exportMe: () => api.get<Record<string, unknown>>('/users/me/export'),
 };
 
 // ---- Cities ----

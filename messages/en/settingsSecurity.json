@@ -18,5 +18,9 @@
   "unknownDevice": "Unknown device",
   "thisDevice": "This device",
   "lastActive": "Last active {date}",
-  "revoke": "Log out"
+  "revoke": "Log out",
+  "exportDataTitle": "Export My Data",
+  "exportDataDesc": "Download your account, bookings, reviews and notifications as a JSON file.",
+  "exportDataButton": "Download",
+  "exporting": "Preparing…"
 }

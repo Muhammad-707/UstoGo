@@ -18,5 +18,9 @@
   "unknownDevice": "Неизвестное устройство",
   "thisDevice": "Это устройство",
   "lastActive": "Последняя активность {date}",
-  "revoke": "Выйти"
+  "revoke": "Выйти",
+  "exportDataTitle": "Экспорт моих данных",
+  "exportDataDesc": "Скачайте аккаунт, бронирования, отзывы и уведомления в виде JSON-файла.",
+  "exportDataButton": "Скачать",
+  "exporting": "Подготовка…"
 }
