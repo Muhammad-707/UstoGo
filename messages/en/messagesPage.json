@@ -6,5 +6,7 @@
   "loading": "Loading…",
   "empty": "No conversations yet.",
   "typing": "typing…",
+  "deleteMessage": "Delete message",
+  "confirmDeleteMessage": "Delete this message? This only removes it from your view.",
   "selectConversation": "Select a conversation"
 }

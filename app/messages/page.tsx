@@ -2,7 +2,8 @@
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { conversationsApi } from '@/lib/api/endpoints';
+import { conversationsApi, messagesApi } from '@/lib/api/endpoints';
+import { Icon } from '@/components/icons/LucideIcons';
 import type { Conversation, Message } from '@/lib/api/types';
 import { getAvatarUrl } from '@/lib/placeholders';
 import { useAuth } from '@/contexts/AuthContext';
@@ -141,6 +142,16 @@ export default function MessagesPage() {
     }
   };
 
+  const handleDeleteMessage = async (id: string) => {
+    if (!window.confirm(t('confirmDeleteMessage'))) return;
+    try {
+      await messagesApi.remove(id);
+      setMessages((prev) => prev.filter((m) => m.id !== id));
+    } catch {
+      // ignore
+    }
+  };
+
   const handleTyping = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputText(e.target.value);
     const now = Date.now();
@@ -222,16 +233,27 @@ export default function MessagesPage() {
                   return (
                     <div
                       key={msg.id}
-                      className={`flex flex-col animate-fade-in ${mine ? 'items-end' : 'items-start'}`}
+                      className={`group flex flex-col animate-fade-in ${mine ? 'items-end' : 'items-start'}`}
                     >
-                      <div
-                        className={`max-w-md p-4 rounded-2xl text-xs leading-relaxed ${
-                          mine
-                            ? 'bg-blue-600 text-white rounded-br-none shadow-md'
-                            : 'bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-800 rounded-bl-none shadow-sm'
-                        }`}
-                      >
-                        {msg.body}
+                      <div className="flex items-center gap-1.5">
+                        {mine && (
+                          <button
+                            onClick={() => handleDeleteMessage(msg.id)}
+                            className="opacity-0 group-hover:opacity-100 transition text-slate-400 hover:text-red-500"
+                            title={t('deleteMessage')}
+                          >
+                            <Icon name="x" size={14} />
+                          </button>
+                        )}
+                        <div
+                          className={`max-w-md p-4 rounded-2xl text-xs leading-relaxed ${
+                            mine
+                              ? 'bg-blue-600 text-white rounded-br-none shadow-md'
+                              : 'bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-800 rounded-bl-none shadow-sm'
+                          }`}
+                        >
+                          {msg.body}
+                        </div>
                       </div>
                       <span className="text-[10px] text-slate-400 mt-1 px-1 flex items-center gap-1">
                         {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}

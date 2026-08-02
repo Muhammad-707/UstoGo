@@ -239,6 +239,11 @@ export const conversationsApi = {
   markRead: (id: string) => api.patch<void>(`/conversations/${id}/read`),
 };
 
+// ---- Messages ----
+export const messagesApi = {
+  remove: (id: string) => api.delete<void>(`/messages/${id}`),
+};
+
 // ---- Favorites ----
 export const favoritesApi = {
   list: () => api.get<MasterPublic[]>('/favorites'),
