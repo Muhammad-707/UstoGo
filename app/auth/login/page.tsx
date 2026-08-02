@@ -14,12 +14,13 @@ export default function LoginPage() {
   const t = useTranslations('authLogin');
   const tv = useTranslations('validation');
   const router = useRouter();
-  const { login } = useAuth();
+  const { login, completeTwoFactor } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [twoFactor, setTwoFactor] = useState(false);
+  const [twoFactorCode, setTwoFactorCode] = useState('');
   const [emailError, setEmailError] = useState<ValidationErrorKey | null>(null);
   const [passwordError, setPasswordError] = useState<ValidationErrorKey | null>(null);
 
@@ -47,6 +48,21 @@ export default function LoginPage() {
     }
   };
 
+  const handleTwoFactorSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    if (!twoFactorCode.trim()) return;
+    setSubmitting(true);
+    try {
+      const me = await completeTwoFactor(twoFactorCode.trim());
+      router.push(dashboardPathFor(me.role));
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : 'Invalid code. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
     <div className="min-h-[80vh] flex items-center justify-center p-4 sm:p-6">
       <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 sm:p-12 w-full max-w-md shadow-2xl space-y-8 animate-fade-in">
@@ -63,52 +79,90 @@ export default function LoginPage() {
           <p className="text-xs text-slate-500">{t('signInSubtitle')}</p>
         </div>
 
-        {/* Login Form */}
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-1.5">
-            <label className="text-xs font-bold text-slate-700 dark:text-slate-300">{t('emailLabel')}</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className={`w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-800 border text-xs text-slate-900 dark:text-white focus:outline-none focus:border-blue-500 ${emailError ? 'border-red-500' : 'border-slate-200 dark:border-slate-700'}`}
-              required
-            />
-            {emailError && <p className="text-red-500 text-xs">{tv(emailError)}</p>}
-          </div>
-
-          <div className="space-y-1.5">
-            <div className="flex justify-between items-center">
-              <label className="text-xs font-bold text-slate-700 dark:text-slate-300">{t('passwordLabel')}</label>
-              <Link href="/auth/forgot-password" className="text-xs font-bold text-blue-600 hover:underline">
-                {t('forgot')}
-              </Link>
-            </div>
-            <PasswordInput
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-blue-500"
-              error={!!passwordError}
-              required
-            />
-            {passwordError && <p className="text-red-500 text-xs">{tv(passwordError)}</p>}
-          </div>
-
-          {twoFactor && (
+        {/* Two-Factor Step */}
+        {twoFactor ? (
+          <form onSubmit={handleTwoFactorSubmit} className="space-y-4">
             <p className="text-amber-600 dark:text-amber-400 text-xs font-bold">{t('twoFactorRequired')}</p>
-          )}
-          {error && (
-            <p className="text-red-500 text-sm">{error}</p>
-          )}
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-slate-700 dark:text-slate-300">{t('twoFactorCodeLabel')}</label>
+              <input
+                type="text"
+                inputMode="numeric"
+                autoComplete="one-time-code"
+                value={twoFactorCode}
+                onChange={(e) => setTwoFactorCode(e.target.value)}
+                className="w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-blue-500 tracking-widest text-center"
+                placeholder="000000"
+                autoFocus
+                required
+              />
+            </div>
 
-          <button
-            type="submit"
-            disabled={submitting}
-            className="w-full py-4 rounded-2xl bg-blue-600 hover:bg-blue-700 disabled:opacity-60 disabled:cursor-not-allowed text-white font-extrabold text-xs shadow-lg transition btn-ripple"
-          >
-            {submitting ? t('signingIn') : t('signInButton')}
-          </button>
-        </form>
+            {error && <p className="text-red-500 text-sm">{error}</p>}
+
+            <button
+              type="submit"
+              disabled={submitting}
+              className="w-full py-4 rounded-2xl bg-blue-600 hover:bg-blue-700 disabled:opacity-60 disabled:cursor-not-allowed text-white font-extrabold text-xs shadow-lg transition btn-ripple"
+            >
+              {submitting ? t('verifying') : t('verifyButton')}
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setTwoFactor(false);
+                setTwoFactorCode('');
+                setError(null);
+              }}
+              className="w-full text-xs font-bold text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
+            >
+              {t('backToLogin')}
+            </button>
+          </form>
+        ) : (
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-slate-700 dark:text-slate-300">{t('emailLabel')}</label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className={`w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-800 border text-xs text-slate-900 dark:text-white focus:outline-none focus:border-blue-500 ${emailError ? 'border-red-500' : 'border-slate-200 dark:border-slate-700'}`}
+                required
+              />
+              {emailError && <p className="text-red-500 text-xs">{tv(emailError)}</p>}
+            </div>
+
+            <div className="space-y-1.5">
+              <div className="flex justify-between items-center">
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300">{t('passwordLabel')}</label>
+                <Link href="/auth/forgot-password" className="text-xs font-bold text-blue-600 hover:underline">
+                  {t('forgot')}
+                </Link>
+              </div>
+              <PasswordInput
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-blue-500"
+                error={!!passwordError}
+                required
+              />
+              {passwordError && <p className="text-red-500 text-xs">{tv(passwordError)}</p>}
+            </div>
+
+            {error && (
+              <p className="text-red-500 text-sm">{error}</p>
+            )}
+
+            <button
+              type="submit"
+              disabled={submitting}
+              className="w-full py-4 rounded-2xl bg-blue-600 hover:bg-blue-700 disabled:opacity-60 disabled:cursor-not-allowed text-white font-extrabold text-xs shadow-lg transition btn-ripple"
+            >
+              {submitting ? t('signingIn') : t('signInButton')}
+            </button>
+          </form>
+        )}
 
         <div className="text-center text-xs text-slate-500 space-y-1">
           <p>{t('noAccount')}</p>

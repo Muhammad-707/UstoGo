@@ -10,6 +10,7 @@ interface AuthContextValue {
   user: UserProfile | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<{ twoFactor: boolean; user?: UserProfile }>;
+  completeTwoFactor: (code: string) => Promise<UserProfile>;
   registerClient: (data: {
     email: string;
     password: string;
@@ -45,6 +46,7 @@ function dashboardPathFor(role: string): string {
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [challengeToken, setChallengeToken] = useState<string | null>(null);
 
   const refreshUser = useCallback(async () => {
     if (!getAccessToken()) {
@@ -78,10 +80,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = async (email: string, password: string) => {
     const res = await authApi.login({ email, password });
     if ('challengeToken' in res) {
+      setChallengeToken(res.challengeToken);
       return { twoFactor: true };
     }
     const me = await applyAuthResponse(res);
     return { twoFactor: false, user: me };
+  };
+
+  const completeTwoFactor = async (code: string) => {
+    if (!challengeToken) {
+      throw new Error('No pending two-factor challenge.');
+    }
+    const res = await authApi.verify2fa(challengeToken, code);
+    setChallengeToken(null);
+    return applyAuthResponse(res);
   };
 
   const registerClient: AuthContextValue['registerClient'] = async (data) => {
@@ -108,7 +120,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, registerClient, registerMaster, logout, refreshUser }}>
+    <AuthContext.Provider
+      value={{ user, loading, login, completeTwoFactor, registerClient, registerMaster, logout, refreshUser }}
+    >
       {children}
     </AuthContext.Provider>
   );

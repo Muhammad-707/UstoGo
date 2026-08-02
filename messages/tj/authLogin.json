@@ -7,6 +7,10 @@
   "signInButton": "Ба UstoGo Ворид Шавед",
   "signingIn": "Вуруд...",
   "twoFactorRequired": "Рамзи дуфакторӣ лозим аст",
+  "twoFactorCodeLabel": "Рамзи 6-рақама аз барномаи аутентификатор",
+  "verifying": "Санҷиш…",
+  "verifyButton": "Тасдиқ ва вуруд",
+  "backToLogin": "← Бозгашт ба вуруд",
   "noAccount": "Ҳисоб надоред?",
   "registerAsClient": "Ба сифати Мизоҷ Сабти Ном Кунед",
   "joinAsMaster": "Ҳамчун Усто Ҳамроҳ Шавед"

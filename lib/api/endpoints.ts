@@ -51,7 +51,14 @@ export const authApi = {
   }) => api.post<AuthResponse>('/auth/register/master', data, false),
 
   login: (data: { email: string; password: string; deviceId?: string }) =>
-    api.post<AuthResponse | { challengeToken: string }>('/auth/login', data, false),
+    api.post<AuthResponse | { twoFactorRequired: true; challengeToken: string }>(
+      '/auth/login',
+      data,
+      false
+    ),
+
+  verify2fa: (challengeToken: string, code: string) =>
+    api.post<AuthResponse>('/auth/2fa/verify', { challengeToken, code }, false),
 
   refresh: (refreshToken: string) => api.post<AuthResponse>('/auth/refresh', { refreshToken }, false),
 

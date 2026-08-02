@@ -7,6 +7,10 @@
   "signInButton": "Войти в UstoGo",
   "signingIn": "Вход...",
   "twoFactorRequired": "Требуется код двухфакторной аутентификации",
+  "twoFactorCodeLabel": "6-значный код из приложения-аутентификатора",
+  "verifying": "Проверка…",
+  "verifyButton": "Подтвердить и войти",
+  "backToLogin": "← Назад ко входу",
   "noAccount": "Нет аккаунта?",
   "registerAsClient": "Регистрация Клиента",
   "joinAsMaster": "Стать Мастером"

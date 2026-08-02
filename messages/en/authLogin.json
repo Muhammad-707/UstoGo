@@ -7,6 +7,10 @@
   "signInButton": "Sign In to UstoGo",
   "signingIn": "Signing In...",
   "twoFactorRequired": "Two-factor code required",
+  "twoFactorCodeLabel": "6-digit code from your authenticator app",
+  "verifying": "Verifying…",
+  "verifyButton": "Verify & Sign In",
+  "backToLogin": "← Back to login",
   "noAccount": "Don't have an account?",
   "registerAsClient": "Register as Client",
   "joinAsMaster": "Join as Master"
