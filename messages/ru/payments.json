@@ -1,10 +1,11 @@
 {
   "badge": "Финансовый Центр",
   "title": "Платежи и Выплаты",
-  "savedMethodsTitle": "Сохраненные Способы Оплаты",
-  "vaultLabel": "Эскроу-хранилище UstoGo",
-  "expiresLabel": "Действует до {date}",
-  "cardBrand": "VISA Platinum",
-  "addCardButton": "+ Добавить Карту",
-  "transactionsTitle": "Последние Транзакции"
+  "summaryTitle": "Сводка Расходов",
+  "totalSpentLabel": "Всего Потрачено",
+  "completedCount": "{count} завершённых заказов",
+  "payDirectlyNotice": "UstoGo пока не обрабатывает платежи — вы платите мастеру напрямую после завершения работы.",
+  "transactionsTitle": "Завершённые Заказы",
+  "loading": "Загрузка…",
+  "noTransactions": "Завершённых заказов пока нет."
 }

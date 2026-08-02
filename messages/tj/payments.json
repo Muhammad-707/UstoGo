@@ -1,10 +1,11 @@
 {
   "badge": "Маркази Молиявӣ",
   "title": "Пардохтҳо ва Интиқолҳо",
-  "savedMethodsTitle": "Усулҳои Пардохти Захирашуда",
-  "vaultLabel": "Хазинаи Эскроуи UstoGo",
-  "expiresLabel": "Мӯҳлат то {date}",
-  "cardBrand": "VISA Platinum",
-  "addCardButton": "+ Илова кардани Корт",
-  "transactionsTitle": "Транзаксияҳои Охирин"
+  "summaryTitle": "Хулосаи Хароҷот",
+  "totalSpentLabel": "Ҳамагӣ Харҷшуда",
+  "completedCount": "{count} фармоиши анҷомёфта",
+  "payDirectlyNotice": "UstoGo ҳоло пардохтҳоро коркард намекунад — шумо бевосита пас аз анҷоми кор ба усто пардохт мекунед.",
+  "transactionsTitle": "Фармоишҳои Анҷомёфта",
+  "loading": "Боркунӣ…",
+  "noTransactions": "Ҳоло фармоиши анҷомёфта нест."
 }
