@@ -352,6 +352,16 @@ export interface MasterStatus {
   rejectionReason?: string | null;
 }
 
+export interface Session {
+  id: string;
+  deviceId: string | null;
+  userAgent: string | null;
+  ipAddress: string | null;
+  createdAt: string;
+  lastActiveAt: string;
+  current: boolean;
+}
+
 // Matches the real DashboardResponseDto from /admin/dashboard (verified against live Swagger
 // at /api/docs-json — the backend has no revenue/monthlyGrowth/verifiedPct concept, so those are
 // derived or omitted on the consuming pages rather than fabricated).

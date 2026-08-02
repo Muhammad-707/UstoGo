@@ -1,0 +1,22 @@
+{
+  "accountSettings": "Account Settings",
+  "title": "Security",
+  "changePasswordTitle": "Change Password",
+  "currentPasswordLabel": "Current Password",
+  "newPasswordLabel": "New Password",
+  "confirmPasswordLabel": "Confirm New Password",
+  "passwordMismatch": "Passwords don't match.",
+  "changePasswordButton": "Change Password",
+  "changing": "Changing…",
+  "changeSuccess": "Your password has been changed.",
+  "changeFailed": "Could not change your password. Check your current password and try again.",
+  "activeSessionsTitle": "Active Sessions",
+  "logoutAllDevices": "Log out everywhere",
+  "confirmLogoutAll": "This will sign you out on every device, including this one. Continue?",
+  "loading": "Loading…",
+  "noSessions": "No active sessions.",
+  "unknownDevice": "Unknown device",
+  "thisDevice": "This device",
+  "lastActive": "Last active {date}",
+  "revoke": "Log out"
+}

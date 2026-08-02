@@ -1,0 +1,22 @@
+{
+  "accountSettings": "Настройки аккаунта",
+  "title": "Безопасность",
+  "changePasswordTitle": "Смена пароля",
+  "currentPasswordLabel": "Текущий пароль",
+  "newPasswordLabel": "Новый пароль",
+  "confirmPasswordLabel": "Подтвердите новый пароль",
+  "passwordMismatch": "Пароли не совпадают.",
+  "changePasswordButton": "Сменить пароль",
+  "changing": "Смена…",
+  "changeSuccess": "Ваш пароль изменён.",
+  "changeFailed": "Не удалось сменить пароль. Проверьте текущий пароль и попробуйте снова.",
+  "activeSessionsTitle": "Активные сессии",
+  "logoutAllDevices": "Выйти на всех устройствах",
+  "confirmLogoutAll": "Это выйдет из вашего аккаунта на всех устройствах, включая это. Продолжить?",
+  "loading": "Загрузка…",
+  "noSessions": "Активных сессий нет.",
+  "unknownDevice": "Неизвестное устройство",
+  "thisDevice": "Это устройство",
+  "lastActive": "Последняя активность {date}",
+  "revoke": "Выйти"
+}

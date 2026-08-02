@@ -19,6 +19,7 @@
   "uploadFailed": "Failed to upload the file",
   "validationName": "First and last name are required",
   "deleteAccount": "Delete Account",
+  "securitySettings": "Password & Security",
   "confirmDelete": "Delete your account permanently? This action cannot be undone.",
   "deleteFailed": "Failed to delete the account"
 }

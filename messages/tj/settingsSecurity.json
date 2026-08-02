@@ -1,0 +1,22 @@
+{
+  "accountSettings": "Танзимоти Ҳисоб",
+  "title": "Бехатарӣ",
+  "changePasswordTitle": "Иваз кардани парол",
+  "currentPasswordLabel": "Пароли ҷорӣ",
+  "newPasswordLabel": "Пароли нав",
+  "confirmPasswordLabel": "Тасдиқи пароли нав",
+  "passwordMismatch": "Пароҳо мувофиқат намекунанд.",
+  "changePasswordButton": "Иваз кардани парол",
+  "changing": "Ивазкунӣ…",
+  "changeSuccess": "Пароли шумо иваз шуд.",
+  "changeFailed": "Иваз кардани парол ноком шуд. Пароли ҷориро санҷед ва аз нав кӯшиш кунед.",
+  "activeSessionsTitle": "Сессияҳои Фаъол",
+  "logoutAllDevices": "Баромадан аз ҳама дастгоҳҳо",
+  "confirmLogoutAll": "Ин шуморо аз ҳама дастгоҳҳо, аз ҷумла ин як, хориҷ мекунад. Идома медиҳед?",
+  "loading": "Боркунӣ…",
+  "noSessions": "Сессияи фаъол нест.",
+  "unknownDevice": "Дастгоҳи номаълум",
+  "thisDevice": "Ин дастгоҳ",
+  "lastActive": "Фаъолияти охирин {date}",
+  "revoke": "Баромадан"
+}

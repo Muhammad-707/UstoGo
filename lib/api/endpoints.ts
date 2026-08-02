@@ -22,6 +22,7 @@ import type {
   PortfolioImage,
   Review,
   ScheduleException,
+  Session,
   UserProfile,
   WorkingDay,
 } from './types';
@@ -77,6 +78,11 @@ export const authApi = {
   verifyEmail: (token: string) => api.post<void>('/auth/verify-email', { token }, false),
 
   resendVerification: () => api.post<void>('/auth/resend-verification'),
+
+  sessions: {
+    list: () => api.get<Session[]>('/auth/sessions'),
+    revoke: (id: string) => api.delete<void>(`/auth/sessions/${id}`),
+  },
 };
 
 // ---- Users ----

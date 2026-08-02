@@ -1,7 +1,9 @@
 'use client';
 
 import React, { useCallback, useEffect, useState } from 'react';
+import Link from 'next/link';
 import { useTranslations } from 'next-intl';
+import { Icon } from '@/components/icons/LucideIcons';
 import { useAuth } from '@/contexts/AuthContext';
 import { citiesApi, usersApi } from '@/lib/api/endpoints';
 import { ApiError } from '@/lib/api/client';
@@ -339,6 +341,13 @@ export default function EditProfilePage() {
           >
             {deleting ? '...' : t('deleteAccount')}
           </button>
+          <Link
+            href="/settings/security"
+            className="px-5 py-3.5 rounded-2xl border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-extrabold text-xs hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center gap-2 ml-auto"
+          >
+            <Icon name="key" size={14} />
+            {t('securitySettings')}
+          </Link>
         </div>
       </div>
     </div>
