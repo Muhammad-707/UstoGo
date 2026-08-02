@@ -325,8 +325,11 @@ export default function MasterProfilePage() {
                 )}
 
                 {!master.bio && master.categories.length === 0 && certificates.length === 0 && (
-                  <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 text-center text-xs text-slate-500 dark:text-slate-400">
-                    {t('noAbout')}
+                  <div className="bg-white dark:bg-slate-900 p-12 rounded-3xl border border-slate-200 dark:border-slate-800 text-center space-y-3">
+                    <div className="w-14 h-14 rounded-2xl bg-blue-50 dark:bg-blue-950/40 text-blue-500 dark:text-sky-400 mx-auto flex items-center justify-center">
+                      <Icon name="user" size={26} />
+                    </div>
+                    <p className="text-xs text-slate-400 font-semibold">{t('noAbout')}</p>
                   </div>
                 )}
               </div>
@@ -336,8 +339,11 @@ export default function MasterProfilePage() {
             {activeTab === 'services' && (
               <div className="space-y-4 animate-fade-in">
                 {services.length === 0 ? (
-                  <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 text-center text-xs text-slate-500 dark:text-slate-400">
-                    {t('noServices')}
+                  <div className="bg-white dark:bg-slate-900 p-12 rounded-3xl border border-slate-200 dark:border-slate-800 text-center space-y-3">
+                    <div className="w-14 h-14 rounded-2xl bg-blue-50 dark:bg-blue-950/40 text-blue-500 dark:text-sky-400 mx-auto flex items-center justify-center">
+                      <Icon name="briefcase" size={26} />
+                    </div>
+                    <p className="text-xs text-slate-400 font-semibold">{t('noServices')}</p>
                   </div>
                 ) : (
                   services.map((s, idx) => (
@@ -364,8 +370,11 @@ export default function MasterProfilePage() {
             {activeTab === 'gallery' && (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 animate-fade-in">
                 {media.portfolio.length === 0 ? (
-                  <div className="sm:col-span-2 bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 text-center text-xs text-slate-500 dark:text-slate-400">
-                    {t('noGallery')}
+                  <div className="sm:col-span-2 bg-white dark:bg-slate-900 p-12 rounded-3xl border border-slate-200 dark:border-slate-800 text-center space-y-3">
+                    <div className="w-14 h-14 rounded-2xl bg-blue-50 dark:bg-blue-950/40 text-blue-500 dark:text-sky-400 mx-auto flex items-center justify-center">
+                      <Icon name="image" size={26} />
+                    </div>
+                    <p className="text-xs text-slate-400 font-semibold">{t('noGallery')}</p>
                   </div>
                 ) : (
                   media.portfolio.map((item, idx) => (
@@ -385,8 +394,11 @@ export default function MasterProfilePage() {
             {activeTab === 'reviews' && (
               <div className="space-y-6 animate-fade-in">
                 {reviews.length === 0 ? (
-                  <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 text-center text-xs text-slate-500 dark:text-slate-400">
-                    {t('noReviews')}
+                  <div className="bg-white dark:bg-slate-900 p-12 rounded-3xl border border-slate-200 dark:border-slate-800 text-center space-y-3">
+                    <div className="w-14 h-14 rounded-2xl bg-blue-50 dark:bg-blue-950/40 text-blue-500 dark:text-sky-400 mx-auto flex items-center justify-center">
+                      <Icon name="star" size={26} />
+                    </div>
+                    <p className="text-xs text-slate-400 font-semibold">{t('noReviews')}</p>
                   </div>
                 ) : (
                   reviews.map((rev, idx) => (
