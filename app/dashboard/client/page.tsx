@@ -6,6 +6,7 @@ import { Icon } from '@/components/icons/LucideIcons';
 import { useTranslations } from 'next-intl';
 import { bookingsApi } from '@/lib/api/endpoints';
 import { getBookingsSocket } from '@/lib/bookings/socket';
+import { ClientPageHeader } from '@/components/client/ClientPageHeader';
 import type { Booking } from '@/lib/api/types';
 import { getAvatarUrl } from '@/lib/placeholders';
 import { useFavorites } from '@/hooks/useFavorites';
@@ -69,21 +70,20 @@ export default function ClientDashboardPage() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
 
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <span className="text-xs font-extrabold uppercase tracking-widest text-blue-600 dark:text-sky-400">
-            {t('overview')}
-          </span>
-          <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white mt-1">{t('title')}</h1>
-        </div>
-        <Link
-          href="/search"
-          className="px-6 py-3 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-lg transition btn-ripple flex items-center gap-2"
-        >
-          <Icon name="Calendar" size={16} />
-          <span>{t('newBooking')}</span>
-        </Link>
-      </div>
+      <ClientPageHeader
+        icon="sparkles"
+        eyebrow={t('overview')}
+        title={t('title')}
+        action={
+          <Link
+            href="/search"
+            className="px-6 py-3 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-lg transition btn-ripple flex items-center gap-2"
+          >
+            <Icon name="Calendar" size={16} />
+            <span>{t('newBooking')}</span>
+          </Link>
+        }
+      />
 
       {/* Metrics Grid */}
       <FilterContainer className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">

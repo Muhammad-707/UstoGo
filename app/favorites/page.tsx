@@ -9,6 +9,7 @@ import type { MasterPublic } from '@/lib/api/types';
 import { getAvatarUrl } from '@/lib/placeholders';
 import { useFavorites } from '@/hooks/useFavorites';
 import { FilterContainer, FilterItem } from '@/components/ui/FilterAnimate';
+import { ClientPageHeader } from '@/components/client/ClientPageHeader';
 
 export default function FavoritesPage() {
   const t = useTranslations('favorites');
@@ -41,12 +42,7 @@ export default function FavoritesPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8">
-      <div>
-        <span className="text-xs font-extrabold uppercase tracking-widest text-blue-600 dark:text-sky-400">
-          {t('badge')}
-        </span>
-        <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white mt-1">{t('title')}</h1>
-      </div>
+      <ClientPageHeader icon="heart" eyebrow={t('badge')} title={t('title')} />
 
       {loading ? (
         <div className="text-center py-16 text-sm text-slate-500 dark:text-slate-400 font-medium">
