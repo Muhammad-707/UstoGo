@@ -73,6 +73,10 @@ export const authApi = {
 
   changePassword: (currentPassword: string, newPassword: string) =>
     api.patch<void>('/auth/password', { currentPassword, newPassword }),
+
+  verifyEmail: (token: string) => api.post<void>('/auth/verify-email', { token }, false),
+
+  resendVerification: () => api.post<void>('/auth/resend-verification'),
 };
 
 // ---- Users ----

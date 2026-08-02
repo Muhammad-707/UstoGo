@@ -1,0 +1,14 @@
+{
+  "verifying": "Verifying your email…",
+  "successTitle": "Email Verified",
+  "successDesc": "Your email address has been confirmed.",
+  "continue": "Continue",
+  "goToLogin": "Go to Login",
+  "errorTitle": "Verification Failed",
+  "missingToken": "This link is missing its verification token.",
+  "genericError": "This link is invalid or has expired.",
+  "resendLink": "Resend Verification Email",
+  "resending": "Sending…",
+  "resentDesc": "A new verification email is on its way.",
+  "backToLogin": "← Back to Login"
+}
