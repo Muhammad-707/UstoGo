@@ -2,5 +2,7 @@
   "badge": "Saved Professionals",
   "title": "My Favorite Masters",
   "hourlyRate": "{rate}/hr",
-  "bookService": "Book Service"
+  "bookService": "Book Service",
+  "unavailablePending": "No longer approved — can't be booked right now",
+  "unavailableInactive": "Not accepting bookings right now"
 }

@@ -243,6 +243,7 @@ export default function AdminDashboardPage() {
                   <th className="py-3 pr-4">City</th>
                   <th className="py-3 pr-4">Rating</th>
                   <th className="py-3 pr-4">Bookings</th>
+                  <th className="py-3 pr-4">Earnings</th>
                   <th className="py-3 pr-4">{t('tableStatus')}</th>
                   <th className="py-3 pr-4">{t('tableActions')}</th>
                 </tr>
@@ -256,7 +257,8 @@ export default function AdminDashboardPage() {
                     </td>
                     <td className="py-3 pr-4">{m.cityName ?? '—'}</td>
                     <td className="py-3 pr-4">{m.ratingAverage}</td>
-                    <td className="py-3 pr-4">{m.ratingCount}</td>
+                    <td className="py-3 pr-4">{m.completedBookingsCount}</td>
+                    <td className="py-3 pr-4">${m.totalEarnings}</td>
                     <td className="py-3 pr-4">
                       <span className="px-2 py-1 rounded-full bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 font-bold text-[10px]">
                         {m.approvalStatus}

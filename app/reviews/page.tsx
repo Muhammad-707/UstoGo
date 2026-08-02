@@ -26,6 +26,10 @@ export default function ReviewsPage() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const [replyDrafts, setReplyDrafts] = useState<Record<string, string>>({});
+  const [replyOpenFor, setReplyOpenFor] = useState<string | null>(null);
+  const [replySubmittingFor, setReplySubmittingFor] = useState<string | null>(null);
+
   useEffect(() => {
     const load = isMaster ? reviewsApi.received() : reviewsApi.myReviews();
     load
@@ -49,6 +53,22 @@ export default function ReviewsPage() {
 
   const avgRating =
     reviews.length > 0 ? (reviews.reduce((s, r) => s + r.rating, 0) / reviews.length).toFixed(2) : '—';
+
+  const handleReply = async (reviewId: string) => {
+    const body = (replyDrafts[reviewId] ?? '').trim();
+    if (!body) return;
+    setReplySubmittingFor(reviewId);
+    try {
+      const updated = await reviewsApi.reply(reviewId, body);
+      setReviews((prev) => prev.map((r) => (r.id === reviewId ? updated : r)));
+      setReplyOpenFor(null);
+      setReplyDrafts((prev) => ({ ...prev, [reviewId]: '' }));
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : 'Failed to send reply.');
+    } finally {
+      setReplySubmittingFor(null);
+    }
+  };
 
   const handleSubmit = async () => {
     if (!bookingId) return;
@@ -127,6 +147,42 @@ export default function ReviewsPage() {
                 <span className="font-bold text-blue-600 dark:text-sky-400">{t('craftsmanResponse')}</span>
                 <p>{rev.reply.body}</p>
               </div>
+            )}
+
+            {isMaster && !rev.reply && (
+              replyOpenFor === rev.id ? (
+                <div className="space-y-2">
+                  <textarea
+                    rows={2}
+                    value={replyDrafts[rev.id] ?? ''}
+                    onChange={(e) => setReplyDrafts((prev) => ({ ...prev, [rev.id]: e.target.value }))}
+                    placeholder={t('replyPlaceholder')}
+                    className="w-full p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs"
+                  />
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => handleReply(rev.id)}
+                      disabled={replySubmittingFor === rev.id || !(replyDrafts[rev.id] ?? '').trim()}
+                      className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold disabled:opacity-50"
+                    >
+                      {t('sendReply')}
+                    </button>
+                    <button
+                      onClick={() => setReplyOpenFor(null)}
+                      className="px-4 py-2 rounded-xl text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 text-xs font-bold"
+                    >
+                      {t('cancelReply')}
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <button
+                  onClick={() => setReplyOpenFor(rev.id)}
+                  className="text-xs font-bold text-blue-600 dark:text-sky-400 hover:underline"
+                >
+                  {t('replyToReview')}
+                </button>
+              )
             )}
           </FilterItem>
         ))}

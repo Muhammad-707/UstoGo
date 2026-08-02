@@ -126,6 +126,8 @@ export interface MasterPublic {
   priceFrom?: string | null;
   hasCertificates: boolean;
   portfolioImageFileIds?: string[];
+  isActive: boolean;
+  approvalStatus: ApprovalStatus;
 }
 
 export interface MasterMedia {
@@ -339,6 +341,8 @@ export interface AdminMasterListItem {
   ratingCount: number;
   priceFrom: string | null;
   createdAt: string;
+  completedBookingsCount: number;
+  totalEarnings: string;
 }
 
 export interface MasterStatus {
