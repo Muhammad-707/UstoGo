@@ -26,6 +26,7 @@ export default function MasterDashboardPage() {
   const [upcoming, setUpcoming] = useState<Booking[]>([]);
   const [cities, setCities] = useState<City[]>([]);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [portfolioCount, setPortfolioCount] = useState<number | null>(null);
   const [schedule, setSchedule] = useState<WorkingDay[]>([]);
   const [activeServicesCount, setActiveServicesCount] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -48,7 +49,13 @@ export default function MasterDashboardPage() {
 
   useEffect(() => {
     if (!masterProfile?.id) return;
-    mastersApi.media(masterProfile.id).then((media) => setAvatarUrl(media.avatarUrl)).catch(() => {});
+    mastersApi
+      .media(masterProfile.id)
+      .then((media) => {
+        setAvatarUrl(media.avatarUrl);
+        setPortfolioCount(media.portfolio.length);
+      })
+      .catch(() => {});
     masterCabinetApi.myServices().then((list) => setActiveServicesCount(list.filter((s) => s.isActive).length)).catch(() => {});
     masterCabinetApi.mySchedule().then(setSchedule).catch(() => setSchedule([]));
   }, [masterProfile?.id]);
@@ -194,6 +201,11 @@ export default function MasterDashboardPage() {
 
   const dayFor = (date: Date) => orderedSchedule.find((d) => d.weekday === date.getDay());
 
+  const MIN_PORTFOLIO_PHOTOS = 3;
+  const missingAvatar = avatarUrl === null;
+  const missingPortfolio = portfolioCount !== null && portfolioCount < MIN_PORTFOLIO_PHOTOS;
+  const profileIncomplete = portfolioCount !== null && (missingAvatar || missingPortfolio);
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
 
@@ -229,6 +241,23 @@ export default function MasterDashboardPage() {
       {error && (
         <div className="p-4 rounded-2xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 text-xs font-bold text-red-600 dark:text-red-400">
           {error}
+        </div>
+      )}
+
+      {profileIncomplete && (
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-2xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900">
+          <div className="flex items-start gap-3">
+            <Icon name="award" size={20} className="text-amber-500 shrink-0 mt-0.5" />
+            <p className="text-xs font-bold text-amber-800 dark:text-amber-300">
+              {t('incompleteProfileNotice', { count: MIN_PORTFOLIO_PHOTOS })}
+            </p>
+          </div>
+          <Link
+            href="/settings/profile"
+            className="shrink-0 px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-extrabold text-xs shadow-md transition"
+          >
+            {t('incompleteProfileCta')}
+          </Link>
         </div>
       )}
 

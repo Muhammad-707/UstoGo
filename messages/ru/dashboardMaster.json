@@ -26,6 +26,8 @@
   "statusPending": "Ожидает проверки",
   "statusRejected": "Отклонён",
   "toggleAvailabilityHint": "Нажмите, чтобы включить/выключить приём новых заказов",
+  "incompleteProfileNotice": "Ваш профиль неполный: добавьте фото профиля и {count}+ фото своих работ, чтобы клиенты вам больше доверяли.",
+  "incompleteProfileCta": "Заполнить профиль →",
   "reviewsCount": "отзывов",
   "yearsExperience": "опыт {count} лет",
   "metricActiveServices": "Активные услуги",

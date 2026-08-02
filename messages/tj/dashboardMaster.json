@@ -26,6 +26,8 @@
   "statusPending": "Интизори тасдиқ",
   "statusRejected": "Рад шуд",
   "toggleAvailabilityHint": "Барои фаъол/ғайрифаъол кардани қабули фармоишҳои нав пахш кунед",
+  "incompleteProfileNotice": "Профили шумо пур нашудааст: сурати профил ва {count}+ сурати корҳои худро илова кунед, то мизоҷон ба шумо бештар боварӣ кунанд.",
+  "incompleteProfileCta": "Пур кардани профил →",
   "reviewsCount": "тақриз",
   "yearsExperience": "таҷрибаи {count} сол",
   "metricActiveServices": "Хизматҳои фаъол",

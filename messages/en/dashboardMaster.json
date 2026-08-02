@@ -26,6 +26,8 @@
   "statusPending": "Pending Verification",
   "statusRejected": "Rejected",
   "toggleAvailabilityHint": "Click to toggle whether you're accepting new bookings",
+  "incompleteProfileNotice": "Your profile is incomplete: add a profile photo and {count}+ photos of your work so clients trust you more.",
+  "incompleteProfileCta": "Complete Profile →",
   "reviewsCount": "reviews",
   "yearsExperience": "{count} yrs experience",
   "metricActiveServices": "Active Services",
