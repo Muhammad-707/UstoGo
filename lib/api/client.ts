@@ -34,6 +34,20 @@ function refreshInBackground(key: string, fetcher: () => Promise<unknown>): void
   );
 }
 
+const LOCALE_COOKIE = 'ustogo-lang';
+
+/**
+ * The locale the user picked in the app (persisted by `i18n/actions.ts`), sent as
+ * `X-Locale` so the backend can return translated reference data (categories,
+ * cities, master search results). Deliberately not `Accept-Language` — that header
+ * reflects the browser/OS setting and would drift from the in-app switcher.
+ */
+function getLocale(): string {
+  if (typeof document === 'undefined') return 'en';
+  const match = document.cookie.match(new RegExp(`(?:^|; )${LOCALE_COOKIE}=([^;]*)`));
+  return match ? decodeURIComponent(match[1]) : 'en';
+}
+
 export function getAccessToken(): string | null {
   if (typeof window === 'undefined') return null;
   return localStorage.getItem(ACCESS_KEY);
@@ -197,7 +211,7 @@ async function fetchWithAuth<T>(
   retried: boolean
 ): Promise<T> {
   const { method = 'GET', body, auth = true } = options;
-  const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+  const headers: Record<string, string> = { 'Content-Type': 'application/json', 'X-Locale': getLocale() };
 
   if (auth) {
     const token = getAccessToken();
@@ -267,7 +281,7 @@ export async function apiRequest<T>(path: string, options: RequestOptions = {}, 
   const { method = 'GET', auth = true } = options;
   const fullUrl = `${API_URL}${path}${buildQuery(options.query)}`;
   const scope = auth ? (getAccessToken() ?? 'anon') : 'public';
-  const key = `${scope}|${method}|${fullUrl}`;
+  const key = `${scope}|${getLocale()}|${method}|${fullUrl}`;
   const cache = method === 'GET' && options.cache !== false;
   const ttl = typeof options.cache === 'number' ? options.cache : DEFAULT_TTL;
 
