@@ -132,10 +132,10 @@ export default function AdminDashboardPage() {
 
   const metrics = data
     ? [
-        { title: t('metricTotalClients'), value: data.users.clients.toLocaleString(), growth: t('metricTotalClientsGrowth', { count: data.users.blocked }), icon: 'Users', color: 'from-emerald-500 to-teal-500' },
-        { title: t('metricTotalMasters'), value: data.users.masters.toLocaleString(), growth: `${data.masters.approved} ${t('approved')}`, icon: 'shieldcheck', color: 'from-blue-600 to-sky-500' },
-        { title: t('metricMonthlyBookings'), value: totalBookings.toLocaleString(), growth: `${data.bookings.completed} completed`, icon: 'BarChart3', color: 'from-amber-500 to-orange-500' },
-        { title: 'Average Rating', value: data.reviews.averageRating.toFixed(2), growth: `${data.reviews.count} reviews`, icon: 'Star', color: 'from-purple-600 to-indigo-600' },
+        { title: t('metricTotalClients'), value: data.users.clients.toLocaleString(), growth: t('metricTotalClientsGrowth', { count: data.users.blocked }), icon: 'Users', color: 'from-emerald-500 to-teal-500', bg: 'from-emerald-500/10 to-teal-500/10' },
+        { title: t('metricTotalMasters'), value: data.users.masters.toLocaleString(), growth: `${data.masters.approved} ${t('approved')}`, icon: 'shieldcheck', color: 'from-blue-600 to-sky-500', bg: 'from-blue-600/10 to-sky-500/10' },
+        { title: t('metricMonthlyBookings'), value: totalBookings.toLocaleString(), growth: `${data.bookings.completed} completed`, icon: 'BarChart3', color: 'from-amber-500 to-orange-500', bg: 'from-amber-500/10 to-orange-500/10' },
+        { title: 'Average Rating', value: data.reviews.averageRating.toFixed(2), growth: `${data.reviews.count} reviews`, icon: 'Star', color: 'from-purple-600 to-indigo-600', bg: 'from-purple-600/10 to-indigo-600/10' },
       ]
     : [];
 
@@ -149,60 +149,114 @@ export default function AdminDashboardPage() {
         </div>
       )}
 
+      {/* Hero Banner */}
+      <div className="relative bg-gradient-to-br from-purple-600 via-violet-600 to-indigo-700 rounded-3xl p-6 sm:p-8 overflow-hidden shadow-xl shadow-purple-600/20">
+        <div className="absolute inset-0 bg-black/10" />
+        <div className="absolute top-0 right-0 w-72 h-72 bg-white/10 rounded-full blur-3xl -translate-y-1/3 translate-x-1/3" />
+        <div className="absolute bottom-0 left-0 w-56 h-56 bg-white/5 rounded-full blur-3xl translate-y-1/3 -translate-x-1/3" />
+        <div className="absolute top-4 right-4 w-24 h-24 bg-white/5 rounded-full blur-2xl" />
+        <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 rounded-2xl bg-white/20 backdrop-blur flex items-center justify-center text-white shadow-lg">
+              <Icon name="shieldcheck" size={28} />
+            </div>
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-extrabold text-white">{t('title')}</h1>
+              <p className="text-purple-100 text-xs mt-0.5">{t('platformHealth')}</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <span className="px-4 py-2 rounded-full bg-white/20 backdrop-blur text-white text-xs font-bold flex items-center gap-2">
+              <Icon name="circle" size={8} className="fill-emerald-400 text-emerald-400" />
+              {t('chartPeriod')}
+            </span>
+          </div>
+        </div>
+      </div>
+
       {/* Metrics Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         {loading &&
           Array.from({ length: 4 }).map((_, idx) => (
-            <div key={idx} className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl h-[92px] animate-pulse" />
+            <div key={idx} className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl h-[100px] animate-pulse" />
           ))}
         {!loading &&
           metrics.map((m, idx) => (
-            <div key={idx} className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl flex items-center justify-between">
+            <div key={idx} className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl flex items-center justify-between group hover:shadow-2xl hover:-translate-y-0.5 transition-all duration-300">
               <div className="space-y-1">
-                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">{m.title}</span>
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{m.title}</span>
                 <h3 className="text-2xl font-extrabold text-slate-900 dark:text-white">{m.value}</h3>
                 <span className="text-[10px] font-bold text-emerald-500">{m.growth}</span>
               </div>
-              <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${m.color} text-white flex items-center justify-center shadow-lg`}>
-                <Icon name={m.icon} size={22} />
+              <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${m.color} text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+                <Icon name={m.icon} size={24} />
               </div>
             </div>
           ))}
       </div>
 
-      {/* Chart Visual */}
-      <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-6 shadow-xl">
-        <div className="flex items-center justify-between">
-          <div>
-            <h3 className="text-lg font-bold text-slate-900 dark:text-white">{t('chartTitle')}</h3>
-            <p className="text-xs text-slate-500">{t('chartSubtitle')}</p>
+      {/* Chart + Quick Stats Row */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        {/* Chart */}
+        <div className="lg:col-span-2 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-6 shadow-xl">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white">{t('chartTitle')}</h3>
+              <p className="text-xs text-slate-500">{t('chartSubtitle')}</p>
+            </div>
+            <span className="text-xs font-bold text-purple-600 dark:text-purple-400">{t('chartPeriod')}</span>
           </div>
-          <span className="text-xs font-bold text-purple-600 dark:text-purple-400">{t('chartPeriod')}</span>
+
+          {!loading && data && data.series.length > 0 && (
+            <div className="h-52 flex items-end justify-between gap-3 pt-6 border-b border-slate-100 dark:border-slate-800">
+              {data.series.map((s, idx) => (
+                <div key={idx} className="flex-1 flex flex-col items-center gap-2 h-full justify-end group">
+                  <div
+                    style={{ height: `${Math.max((s.created / barMax) * 100, 4)}%` }}
+                    className="w-full bg-gradient-to-t from-purple-600 via-indigo-500 to-sky-400 rounded-t-xl group-hover:from-purple-500 group-hover:to-sky-300 transition-all duration-300 shadow-md"
+                  />
+                  <span className="text-[10px] text-slate-400 font-bold">{s.date.slice(5)}</span>
+                </div>
+              ))}
+            </div>
+          )}
+          {!loading && data && data.series.length === 0 && (
+            <p className="text-xs text-slate-400 font-semibold text-center py-10">No booking activity data yet.</p>
+          )}
+          {loading && <div className="h-52 rounded-2xl bg-slate-50 dark:bg-slate-800/40 animate-pulse" />}
         </div>
 
-        {!loading && data && data.series.length > 0 && (
-          <div className="h-48 flex items-end justify-between gap-3 pt-6 border-b border-slate-100 dark:border-slate-800">
-            {data.series.map((s, idx) => (
-              <div key={idx} className="flex-1 flex flex-col items-center gap-2 h-full justify-end group">
-                <div
-                  style={{ height: `${Math.max((s.created / barMax) * 100, 4)}%` }}
-                  className="w-full bg-gradient-to-t from-purple-600 to-indigo-500 rounded-t-xl group-hover:from-purple-500 group-hover:to-sky-400 transition"
-                />
-                <span className="text-[10px] text-slate-400 font-bold">{s.date.slice(5)}</span>
+        {/* Quick Stats */}
+        <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-xl space-y-4">
+          <h3 className="text-sm font-bold text-slate-900 dark:text-white">{t('quickStats')}</h3>
+          <div className="space-y-3">
+            {[
+              { label: t('metricTotalClients'), value: data?.users.clients.toLocaleString() ?? '—', icon: 'Users', color: 'text-emerald-500', bg: 'bg-emerald-50 dark:bg-emerald-950/20' },
+              { label: t('metricTotalMasters'), value: data?.users.masters.toLocaleString() ?? '—', icon: 'shieldcheck', color: 'text-blue-500', bg: 'bg-blue-50 dark:bg-blue-950/20' },
+              { label: t('metricMonthlyBookings'), value: totalBookings.toLocaleString() ?? '—', icon: 'BarChart3', color: 'text-amber-500', bg: 'bg-amber-50 dark:bg-amber-950/20' },
+              { label: 'Avg Rating', value: data ? data.reviews.averageRating.toFixed(2) : '—', icon: 'Star', color: 'text-purple-500', bg: 'bg-purple-50 dark:bg-purple-950/20' },
+            ].map((s, i) => (
+              <div key={i} className="flex items-center justify-between p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/50">
+                <div className="flex items-center gap-3">
+                  <div className={`w-8 h-8 rounded-xl ${s.bg} flex items-center justify-center ${s.color}`}>
+                    <Icon name={s.icon} size={14} />
+                  </div>
+                  <span className="text-[10px] font-bold text-slate-400 uppercase">{s.label}</span>
+                </div>
+                <span className="text-sm font-extrabold text-slate-900 dark:text-white">{s.value}</span>
               </div>
             ))}
           </div>
-        )}
-        {!loading && data && data.series.length === 0 && (
-          <p className="text-xs text-slate-400 font-semibold text-center py-10">No booking activity data yet.</p>
-        )}
-        {loading && <div className="h-48 rounded-2xl bg-slate-50 dark:bg-slate-800/40 animate-pulse" />}
+        </div>
       </div>
 
       {/* Master Verification Table */}
       <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-6 shadow-xl">
         <div className="flex flex-wrap items-center justify-between gap-4">
-          <h3 className="text-lg font-bold text-slate-900 dark:text-white">{t('verificationQueue')}</h3>
+          <div>
+            <h3 className="text-lg font-bold text-slate-900 dark:text-white">{t('verificationQueue')}</h3>
+            <p className="text-[10px] text-slate-400 font-semibold mt-0.5">{t('verificationQueueSub')}</p>
+          </div>
           <FilterContainer className="flex flex-wrap items-center gap-3">
             <FilterItem>
               <select
@@ -245,7 +299,12 @@ export default function AdminDashboardPage() {
         )}
 
         {!mastersLoading && !mastersError && masters.length === 0 && (
-          <p className="text-xs text-slate-400 font-semibold text-center py-10">No masters found for this filter.</p>
+          <div className="text-center py-12">
+            <div className="w-16 h-16 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-400 flex items-center justify-center mx-auto mb-3">
+              <Icon name="shieldcheck" size={24} />
+            </div>
+            <p className="text-xs text-slate-400 font-semibold">No masters found for this filter.</p>
+          </div>
         )}
 
         {!mastersLoading && masters.length > 0 && (
@@ -268,17 +327,33 @@ export default function AdminDashboardPage() {
                   <InViewRow
                     key={m.id}
                     index={idx}
-                    className="border-b border-slate-50 dark:border-slate-800/60 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/40 transition"
+                    className="border-b border-slate-50 dark:border-slate-800/60 cursor-pointer hover:bg-purple-50/50 dark:hover:bg-purple-950/10 transition-colors group"
                     onClick={() => handleMasterClick(m)}
                   >
                     <td className="py-3 pr-4">
-                      <div className="font-bold text-slate-900 dark:text-white">{m.displayName}</div>
-                      <div className="text-slate-400">{m.email}</div>
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-purple-100 to-indigo-100 dark:from-purple-900/40 dark:to-indigo-900/40 flex items-center justify-center text-purple-600 dark:text-purple-400 font-extrabold text-xs">
+                          {m.displayName.charAt(0)}
+                        </div>
+                        <div>
+                          <div className="font-bold text-slate-900 dark:text-white group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">{m.displayName}</div>
+                          <div className="text-slate-400">{m.email}</div>
+                        </div>
+                      </div>
                     </td>
                     <td className="py-3 pr-4">{m.cityName ?? '—'}</td>
-                    <td className="py-3 pr-4">{m.ratingAverage}</td>
-                    <td className="py-3 pr-4">{m.completedBookingsCount}</td>
-                    <td className="py-3 pr-4">${m.totalEarnings}</td>
+                    <td className="py-3 pr-4">
+                      <span className="flex items-center gap-1 text-amber-500">
+                        <Icon name="star" size={10} className="fill-amber-400" />
+                        {m.ratingAverage}
+                      </span>
+                    </td>
+                    <td className="py-3 pr-4">
+                      <span className="px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-[10px]">
+                        {m.completedBookingsCount}
+                      </span>
+                    </td>
+                    <td className="py-3 pr-4 font-bold text-slate-900 dark:text-white">${m.totalEarnings}</td>
                     <td className="py-3 pr-4">
                       {m.whatsappPhone ? (
                         <a
@@ -292,11 +367,17 @@ export default function AdminDashboardPage() {
                           {t('tableWhatsAppOpen')}
                         </a>
                       ) : (
-                        <span className="text-slate-400">—</span>
+                        <span className="text-slate-300 dark:text-slate-600">—</span>
                       )}
                     </td>
                     <td className="py-3 pr-4">
-                      <span className="px-2 py-1 rounded-full bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 font-bold text-[10px]">
+                      <span className={`px-2 py-1 rounded-full font-bold text-[10px] ${
+                        m.approvalStatus === 'PENDING'
+                          ? 'bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300'
+                          : m.approvalStatus === 'APPROVED'
+                            ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300'
+                            : 'bg-red-100 dark:bg-red-950 text-red-800 dark:text-red-300'
+                      }`}>
                         {m.approvalStatus}
                       </span>
                     </td>
@@ -306,14 +387,14 @@ export default function AdminDashboardPage() {
                           <button
                             onClick={() => handleApprove(m.id)}
                             disabled={actingId === m.id}
-                            className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 disabled:opacity-60 text-white font-bold"
+                            className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 disabled:opacity-60 text-white font-bold shadow-sm transition"
                           >
                             Approve
                           </button>
                           <button
                             onClick={() => handleReject(m.id)}
                             disabled={actingId === m.id}
-                            className="px-3 py-1.5 rounded-xl bg-red-600 hover:bg-red-700 disabled:opacity-60 text-white font-bold"
+                            className="px-3 py-1.5 rounded-xl bg-red-600 hover:bg-red-700 disabled:opacity-60 text-white font-bold shadow-sm transition"
                           >
                             Reject
                           </button>
@@ -331,63 +412,75 @@ export default function AdminDashboardPage() {
       {/* Master Booking Details Overlay */}
       {selectedMaster && (
         <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setSelectedMaster(null)}>
-          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl w-full max-w-2xl max-h-[80vh] overflow-y-auto p-6 sm:p-8 space-y-6" onClick={(e) => e.stopPropagation()}>
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-xl font-extrabold text-slate-900 dark:text-white">{selectedMaster.displayName}</h2>
-                <p className="text-xs text-slate-400">{selectedMaster.email}</p>
-              </div>
-              <button onClick={() => setSelectedMaster(null)} className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition">
-                <Icon name="x" size={18} />
-              </button>
-            </div>
-
-            <div className="grid grid-cols-3 gap-4">
-              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 text-center">
-                <p className="text-[10px] font-bold text-slate-400 uppercase">Bookings</p>
-                <p className="text-xl font-extrabold text-slate-900 dark:text-white">{masterBookings.length}</p>
-              </div>
-              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 text-center">
-                <p className="text-[10px] font-bold text-slate-400 uppercase">Rating</p>
-                <p className="text-xl font-extrabold text-slate-900 dark:text-white">{selectedMaster.ratingAverage}</p>
-              </div>
-              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 text-center">
-                <p className="text-[10px] font-bold text-slate-400 uppercase">Earnings</p>
-                <p className="text-xl font-extrabold text-slate-900 dark:text-white">${selectedMaster.totalEarnings}</p>
+          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl w-full max-w-2xl max-h-[85vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+            <div className="bg-gradient-to-r from-purple-600 to-indigo-600 p-6 rounded-t-3xl">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-xl font-extrabold text-white">{selectedMaster.displayName}</h2>
+                  <p className="text-purple-100 text-xs">{selectedMaster.email}</p>
+                </div>
+                <button onClick={() => setSelectedMaster(null)} className="p-2 rounded-xl bg-white/20 hover:bg-white/30 text-white transition">
+                  <Icon name="x" size={18} />
+                </button>
               </div>
             </div>
 
-            {masterBookingsLoading ? (
-              <div className="space-y-2">
-                {Array.from({ length: 3 }).map((_, i) => (
-                  <div key={i} className="h-12 rounded-2xl bg-slate-50 dark:bg-slate-800 animate-pulse" />
-                ))}
+            <div className="p-6 space-y-6">
+              <div className="grid grid-cols-3 gap-4">
+                <div className="p-4 rounded-2xl bg-purple-50 dark:bg-purple-950/20 text-center">
+                  <p className="text-[10px] font-bold text-purple-400 uppercase">Bookings</p>
+                  <p className="text-2xl font-extrabold text-purple-600 dark:text-purple-400">{masterBookings.length}</p>
+                </div>
+                <div className="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/20 text-center">
+                  <p className="text-[10px] font-bold text-amber-400 uppercase">Rating</p>
+                  <p className="text-2xl font-extrabold text-amber-600 dark:text-amber-400">{selectedMaster.ratingAverage}</p>
+                </div>
+                <div className="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/20 text-center">
+                  <p className="text-[10px] font-bold text-emerald-400 uppercase">Earnings</p>
+                  <p className="text-2xl font-extrabold text-emerald-600 dark:text-emerald-400">${selectedMaster.totalEarnings}</p>
+                </div>
               </div>
-            ) : masterBookings.length === 0 ? (
-              <p className="text-xs text-slate-400 font-semibold text-center py-8">No active bookings for this master.</p>
-            ) : (
-              <div className="space-y-3">
-                <h3 className="text-sm font-bold text-slate-900 dark:text-white">Active Bookings</h3>
-                {masterBookings.map((b) => (
-                  <div key={b.id} className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700 flex items-center justify-between">
-                    <div>
-                      <p className="text-xs font-bold text-slate-900 dark:text-white">{b.bookingNumber}</p>
-                      <p className="text-[10px] text-slate-500">{b.serviceTitle}</p>
-                    </div>
-                    <div className="text-right">
-                      <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                        b.status === 'ACCEPTED' ? 'bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300' :
-                        b.status === 'IN_PROGRESS' ? 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300' :
-                        'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300'
-                      }`}>
-                        {b.status}
-                      </span>
-                      <p className="text-[10px] text-slate-400 mt-0.5">{b.clientName}</p>
-                    </div>
+
+              {masterBookingsLoading ? (
+                <div className="space-y-2">
+                  {Array.from({ length: 3 }).map((_, i) => (
+                    <div key={i} className="h-12 rounded-2xl bg-slate-50 dark:bg-slate-800 animate-pulse" />
+                  ))}
+                </div>
+              ) : masterBookings.length === 0 ? (
+                <div className="text-center py-8">
+                  <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-400 flex items-center justify-center mx-auto mb-3">
+                    <Icon name="checkcircle2" size={20} />
                   </div>
-                ))}
-              </div>
-            )}
+                  <p className="text-xs text-slate-400 font-semibold">No active bookings for this master.</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                    <Icon name="clock" size={14} className="text-purple-500" />
+                    Active Bookings
+                  </h3>
+                  {masterBookings.map((b) => (
+                    <div key={b.id} className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700 flex items-center justify-between hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+                      <div>
+                        <p className="text-xs font-bold text-slate-900 dark:text-white font-mono">{b.bookingNumber}</p>
+                        <p className="text-[10px] text-slate-500">{b.serviceTitle}</p>
+                      </div>
+                      <div className="text-right">
+                        <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                          b.status === 'ACCEPTED' ? 'bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300' :
+                          b.status === 'IN_PROGRESS' ? 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300' :
+                          'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300'
+                        }`}>
+                          {b.status}
+                        </span>
+                        <p className="text-[10px] text-slate-400 mt-0.5">{b.clientName}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}

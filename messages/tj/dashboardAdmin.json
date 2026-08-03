@@ -17,6 +17,8 @@
   "chartSubtitle": "Ҳаҷми амалиётҳои бозор дар вақти воқеӣ",
   "chartPeriod": "2026 Сол",
   "verificationQueue": "Навбати Санҷиши Устоҳо",
+  "verificationQueueSub": "Устоҳое, ки дар соликаи тасдиқ ҷойгиранд",
+  "quickStats": "Хулосаи Фаврӣ",
   "tableApplicant": "Дархосткунанда",
   "tableSpecialization": "Ихтисос",
   "tableExperience": "Таҷриба",

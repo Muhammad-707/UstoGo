@@ -17,6 +17,8 @@
   "chartSubtitle": "Объем транзакций маркетплейса в реальном времени",
   "chartPeriod": "2026 Год",
   "verificationQueue": "Очередь Верификации Мастеров",
+  "verificationQueueSub": "Мастера, ожидающие проверки",
+  "quickStats": "Быстрая статистика",
   "tableApplicant": "Кандидат",
   "tableSpecialization": "Специализация",
   "tableExperience": "Опыт",

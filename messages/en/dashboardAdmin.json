@@ -17,6 +17,8 @@
   "chartSubtitle": "Real-time marketplace transaction volume",
   "chartPeriod": "2026 YTD",
   "verificationQueue": "Master Verification Queue",
+  "verificationQueueSub": "Masters pending verification review",
+  "quickStats": "Quick Stats",
   "tableApplicant": "Applicant",
   "tableSpecialization": "Specialization",
   "tableExperience": "Experience",
