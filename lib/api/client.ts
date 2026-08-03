@@ -5,9 +5,9 @@ const REFRESH_KEY = 'ustogo-refresh-token';
 
 // ---- Client-side response caching ----
 // Speeds up every request: repeated/parallel GETs to the same endpoint are
-// served from memory (30s fresh window) and refreshed in the background
+// served from memory (2min fresh window) and refreshed in the background
 // during the stale window instead of blocking with a full network round-trip.
-const DEFAULT_TTL = 30_000;
+const DEFAULT_TTL = 120_000;
 const MAX_STALE = 5 * 60_000;
 
 interface CacheEntry {
@@ -70,6 +70,52 @@ export class ApiError extends Error {
 
 let refreshPromise: Promise<boolean> | null = null;
 
+const REFRESH_LOCK_KEY = 'ustogo-refresh-lock';
+const REFRESH_LOCK_TTL = 20_000;
+
+/** Lets the app react to a dead session (e.g. redirect to login). */
+function notifySessionExpired(): void {
+  if (typeof window === 'undefined') return;
+  window.dispatchEvent(new Event('ustogo:session-expired'));
+}
+
+/**
+ * The backend rotates refresh tokens and revokes the whole family when one is
+ * reused (REFRESH_TOKEN_REUSED). Two tabs refreshing with the same token would
+ * kill the session, so only one tab may run the refresh cycle at a time; the
+ * others wait for the rotated token instead of presenting the old one again.
+ */
+function acquireRefreshLock(): boolean {
+  const now = Date.now();
+  try {
+    const raw = localStorage.getItem(REFRESH_LOCK_KEY);
+    if (raw) {
+      const { at } = JSON.parse(raw) as { at: number };
+      if (Number.isFinite(at) && now - at < REFRESH_LOCK_TTL) return false;
+    }
+  } catch {
+    // Corrupt lock — take it over.
+  }
+  localStorage.setItem(REFRESH_LOCK_KEY, JSON.stringify({ at: now }));
+  return true;
+}
+
+function releaseRefreshLock(): void {
+  localStorage.removeItem(REFRESH_LOCK_KEY);
+}
+
+/** Another tab is mid-refresh; wait for the rotated token, then retry. */
+async function waitForRefreshLock(): Promise<boolean> {
+  const deadline = Date.now() + REFRESH_LOCK_TTL;
+  while (Date.now() < deadline) {
+    if (localStorage.getItem(REFRESH_LOCK_KEY) === null) {
+      return getAccessToken() !== null;
+    }
+    await new Promise((r) => setTimeout(r, 150));
+  }
+  return false;
+}
+
 async function doRefresh(): Promise<boolean> {
   const refreshToken = getRefreshToken();
   if (!refreshToken) return false;
@@ -81,6 +127,7 @@ async function doRefresh(): Promise<boolean> {
     });
     if (!res.ok) {
       clearTokens();
+      notifySessionExpired();
       return false;
     }
     const data = await res.json();
@@ -88,6 +135,7 @@ async function doRefresh(): Promise<boolean> {
     return true;
   } catch {
     clearTokens();
+    notifySessionExpired();
     return false;
   }
 }
@@ -134,7 +182,7 @@ async function fetchWithTimeout(fullUrl: string, init: RequestInit): Promise<Res
         const message = err instanceof Error ? err.message : 'network error';
         throw new ApiError(0, `Network error: ${message}`, 'NETWORK_ERROR');
       }
-      await new Promise((r) => setTimeout(r, attempt * 1_500));
+      await new Promise((r) => setTimeout(r, attempt * 1_000));
     }
   }
 }
@@ -163,11 +211,18 @@ async function fetchWithAuth<T>(
   });
 
   if (res.status === 401 && auth && !retried && getRefreshToken()) {
-    refreshPromise ??= doRefresh().finally(() => {
-      refreshPromise = null;
-    });
-    const refreshed = await refreshPromise;
-    if (refreshed) {
+    if (acquireRefreshLock()) {
+      try {
+        refreshPromise ??= doRefresh().finally(() => {
+          refreshPromise = null;
+        });
+        if (await refreshPromise) {
+          return apiRequest<T>(path, options, true);
+        }
+      } finally {
+        releaseRefreshLock();
+      }
+    } else if (await waitForRefreshLock()) {
       return apiRequest<T>(path, options, true);
     }
     clearTokens();

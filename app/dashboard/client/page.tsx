@@ -6,6 +6,7 @@ import { Icon } from '@/components/icons/LucideIcons';
 import { useTranslations } from 'next-intl';
 import { bookingsApi } from '@/lib/api/endpoints';
 import { getBookingsSocket } from '@/lib/bookings/socket';
+import { useRequireAuth } from '@/hooks/useRequireAuth';
 import { ClientPageHeader } from '@/components/client/ClientPageHeader';
 import type { Booking } from '@/lib/api/types';
 import { getAvatarUrl } from '@/lib/placeholders';
@@ -14,6 +15,7 @@ import { FilterContainer, FilterItem, InViewRow } from '@/components/ui/FilterAn
 
 export default function ClientDashboardPage() {
   const t = useTranslations('dashboardClient');
+  useRequireAuth(['CLIENT']);
   const { favoriteIds } = useFavorites();
 
   const [bookings, setBookings] = useState<Booking[]>([]);

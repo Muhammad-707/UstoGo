@@ -8,5 +8,7 @@
   "serviceFee": "Service Fee",
   "platformProtection": "Platform Protection",
   "totalPaid": "Total Paid",
-  "serviceAddress": "Service Address:"
+  "serviceAddress": "Service Address:",
+  "rateClient": "Rate Client",
+  "startJobTooEarly": "This booking can only be started at its scheduled time."
 }

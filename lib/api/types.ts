@@ -114,6 +114,7 @@ export interface MasterPublic {
   displayName: string;
   avatarFileId?: string | null;
   avatarUrl?: string | null;
+  bannerUrl?: string | null;
   bannerFileId?: string | null;
   bio?: string | null;
   yearsOfExperience: number;
@@ -262,17 +263,19 @@ export interface MasterStats {
 }
 
 export interface Review {
-  id: string;
-  bookingId: string;
-  clientId: string;
-  clientName?: string;
-  masterId: string;
-  rating: number;
-  comment?: string | null;
-  status: string;
-  editedAt?: string | null;
-  createdAt: string;
-  reply?: { body: string; createdAt: string } | null;
+   id: string;
+   bookingId: string;
+   clientId: string;
+   clientName?: string;
+   masterId: string;
+   rating: number;
+   clientRating?: number | null;
+   comment?: string | null;
+   clientComment?: string | null;
+   status: string;
+   editedAt?: string | null;
+   createdAt: string;
+   reply?: { body: string; createdAt: string } | null;
 }
 
 export interface NotificationItem {

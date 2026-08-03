@@ -2,11 +2,13 @@
   "scheduledFor": "Барои {date} ({time}) таъин шудааст",
   "chatWithMaster": "Бо усто сӯҳбат кардан",
   "leaveReview": "Тақриз гузоштан",
+  "rateClient": "Баҳои Клент Гузоштан",
   "liveTimeline": "Пайгирии зиндаи марҳилаҳои иҷроиш",
   "profile": "Профил",
   "paymentAndAddress": "Пардохт ва Суроға",
   "serviceFee": "Нархи хизматрасонӣ",
   "platformProtection": "Ҳимояи платформа",
   "totalPaid": "Ҷамъи пардохтшуда",
-  "serviceAddress": "Суроғаи хизматрасонӣ:"
+  "serviceAddress": "Суроғаи хизматрасонӣ:",
+  "startJobTooEarly": "Ин кор танҳо дар вақти муайян гарон аст."
 }

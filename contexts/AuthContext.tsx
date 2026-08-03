@@ -69,6 +69,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     refreshUser();
   }, [refreshUser]);
 
+  useEffect(() => {
+    // The refresh cycle failed or another tab cleared the session — drop the
+    // user immediately so every page redirects to login instead of 401-looping.
+    const onSessionExpired = () => {
+      clearTokens();
+      clearApiCache();
+      setUser(null);
+    };
+    window.addEventListener('ustogo:session-expired', onSessionExpired);
+    return () => window.removeEventListener('ustogo:session-expired', onSessionExpired);
+  }, []);
+
   const applyAuthResponse = async (res: AuthResponse) => {
     clearApiCache();
     setTokens(res.accessToken, res.refreshToken);

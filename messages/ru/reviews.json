@@ -4,6 +4,7 @@
   "subtitle": "Подлинные отзывы от проверенных заказов UstoGo.",
   "basedOn": "На основе {count}+ отзывов",
   "writeReview": "Оставить Отзыв",
+  "rateClient": "Оценить Клиента",
   "craftsmanResponse": "Ответ Мастера:",
   "replyToReview": "Ответить на отзыв",
   "replyPlaceholder": "Напишите публичный ответ…",
@@ -13,5 +14,11 @@
   "ratingLabel": "Оценка",
   "commentsLabel": "Комментарий к Отзыву",
   "commentsPlaceholder": "Опишите ваш опыт...",
-  "submitReview": "Отправить Отзыв"
+  "submitReview": "Отправить Отзыв",
+  "rateClientTitle": "Оценить Клиента",
+  "clientRatingLabel": "Оценка Клиента",
+  "bookingLabel": "Заказ",
+  "clientCommentLabel": "Комментарий Клиента",
+  "clientCommentPlaceholder": "Опишите поведение клиента...",
+  "submitClientRating": "Отправить Оценку Клиента"
 }

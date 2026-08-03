@@ -5,6 +5,7 @@ import { Icon } from '@/components/icons/LucideIcons';
 import { useTranslations } from 'next-intl';
 import { adminApi, categoriesApi } from '@/lib/api/endpoints';
 import { ApiError } from '@/lib/api/client';
+import { useRequireAuth } from '@/hooks/useRequireAuth';
 import { revalidateMastersCache } from '@/lib/api/revalidate';
 import type { AdminMasterListItem, ApprovalStatus, Category, DashboardResponse } from '@/lib/api/types';
 import { FilterContainer, FilterItem, InViewRow } from '@/components/ui/FilterAnimate';
@@ -15,6 +16,7 @@ function flattenCategories(cats: Category[]): Category[] {
 
 export default function AdminDashboardPage() {
   const t = useTranslations('dashboardAdmin');
+  useRequireAuth(['ADMIN']);
 
   const [data, setData] = useState<DashboardResponse | null>(null);
   const [loading, setLoading] = useState(true);

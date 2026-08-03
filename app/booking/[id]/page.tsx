@@ -57,6 +57,7 @@ export default function BookingDetailsPage() {
   const [actionPending, setActionPending] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
   const [alreadyReviewed, setAlreadyReviewed] = useState(false);
+  const [alreadyClientRated, setAlreadyClientRated] = useState(false);
 
   useEffect(() => {
     citiesApi.list().then((list) => setCities(list)).catch(() => setCities([]));
@@ -91,6 +92,14 @@ export default function BookingDetailsPage() {
       .myReviews()
       .then((reviews) => setAlreadyReviewed(reviews.some((r) => r.bookingId === booking.id)))
       .catch(() => {});
+  }, [booking, user?.role]);
+
+  useEffect(() => {
+    if (!booking || user?.role !== 'MASTER' || booking.status !== 'COMPLETED') return;
+    reviewsApi
+      .received()
+      .then((reviews) => setAlreadyClientRated(reviews.some((r) => r.bookingId === booking.id && r.clientRating != null)))
+      .catch(() => setAlreadyClientRated(false));
   }, [booking, user?.role]);
 
   // Live status without a manual refresh: WebSocket push (BookingsGateway) is the
@@ -133,7 +142,11 @@ export default function BookingDetailsPage() {
       await fn();
       await load();
     } catch (err) {
-      setActionError(err instanceof ApiError ? err.message : 'Action failed. Please try again.');
+      if (err instanceof ApiError && (err.code === 'TOO_EARLY_TO_START' || err.status === 422)) {
+        setActionError(t('startJobTooEarly'));
+      } else {
+        setActionError(err instanceof ApiError ? err.message : 'Action failed. Please try again.');
+      }
     } finally {
       setActionPending(false);
     }
@@ -197,7 +210,7 @@ export default function BookingDetailsPage() {
   const canClientCancel = isClient && ['PENDING', 'ACCEPTED'].includes(booking.status);
   const canMasterAccept = isMaster && booking.status === 'PENDING';
   const canMasterReject = isMaster && booking.status === 'PENDING';
-  const canMasterStart = isMaster && booking.status === 'ACCEPTED';
+  const canMasterStart = isMaster && booking.status === 'ACCEPTED' && new Date(booking.scheduledAt).getTime() <= Date.now();
   const canMasterComplete = isMaster && booking.status === 'IN_PROGRESS';
 
   return (
@@ -228,6 +241,16 @@ export default function BookingDetailsPage() {
             >
               <Icon name="Star" size={16} />
               <span>{t('leaveReview')}</span>
+            </Link>
+          )}
+
+          {isMaster && booking.status === 'COMPLETED' && !alreadyClientRated && (
+            <Link
+              href={`/reviews?booking=${booking.id}`}
+              className="px-5 py-3 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white font-extrabold text-xs shadow-md shadow-emerald-500/30 transition flex items-center gap-2"
+            >
+              <Icon name="Star" size={16} />
+              <span>{t('rateClient')}</span>
             </Link>
           )}
 

@@ -277,7 +277,7 @@ export default function HeroSlider() {
                 </div>
               )}
               <div className="flex items-center gap-4">
-                <img src={getAvatarUrl(master.id, master.displayName)} alt={master.displayName} className="w-14 h-14 rounded-2xl object-cover shadow-md border border-slate-700" />
+                <img src={master.avatarUrl || getAvatarUrl(master.id, master.displayName)} alt={master.displayName} className="w-14 h-14 rounded-2xl object-cover shadow-md border border-slate-700" />
                 <div>
                   <div className="flex items-center gap-1.5">
                     <h4 className="font-bold text-slate-900 dark:text-white text-base">{master.displayName}</h4>

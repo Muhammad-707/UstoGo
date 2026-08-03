@@ -8,8 +8,11 @@ import { Icon } from '@/components/icons/LucideIcons';
 import { mastersApi, bookingsApi, citiesApi } from '@/lib/api/endpoints';
 import { ApiError } from '@/lib/api/client';
 import type { City, MasterPublic, MasterService } from '@/lib/api/types';
-import { useAuth } from '@/contexts/AuthContext';
+import { useRequireAuth } from '@/hooks/useRequireAuth';
 import { getAvatarUrl } from '@/lib/placeholders';
+
+// The backend rejects bookings made less than 2 hours in advance (SLOT_TOO_SOON).
+const MIN_BOOKING_ADVANCE_MS = 2 * 60 * 60 * 1000;
 
 function formatSlotLabel(iso: string, durationMinutes?: number): string {
   const start = new Date(iso);
@@ -34,7 +37,7 @@ export default function BookingWizardPage() {
   const t = useTranslations('booking');
   const searchParams = useSearchParams();
   const preselectedMasterId = searchParams.get('master');
-  const { user } = useAuth();
+  const { user } = useRequireAuth(['CLIENT']);
 
   const [step, setStep] = useState<number>(1);
 
@@ -133,16 +136,17 @@ export default function BookingWizardPage() {
 
   // Load availability for the selected date + service
   useEffect(() => {
-    if (!preselectedMasterId || !date) return;
+    if (!preselectedMasterId || !date || !selectedServiceId) return;
     let cancelled = false;
     setSlotsLoading(true);
     setTimeSlot('');
     mastersApi
-      .availability(preselectedMasterId, date, date, selectedServiceId || undefined)
+      .availability(preselectedMasterId, date, date, selectedServiceId)
       .then((days) => {
         if (cancelled) return;
         const day = days.find((d) => d.date === date);
-        setSlots(day?.free ?? []);
+        const cutoff = Date.now() + MIN_BOOKING_ADVANCE_MS;
+        setSlots((day?.free ?? []).filter((slot) => new Date(slot).getTime() >= cutoff));
         setBusySlots(day?.busy ?? []);
       })
       .catch(() => {

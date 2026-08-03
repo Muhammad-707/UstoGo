@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Icon } from '@/components/icons/LucideIcons';
 import { useTranslations } from 'next-intl';
 import { useAuth } from '@/contexts/AuthContext';
+import { useRequireAuth } from '@/hooks/useRequireAuth';
 import { bookingsApi, citiesApi, masterCabinetApi, mastersApi } from '@/lib/api/endpoints';
 import { ApiError } from '@/lib/api/client';
 import { revalidateMastersCache } from '@/lib/api/revalidate';
@@ -18,6 +19,7 @@ const WEEKDAYS = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'frida
 
 export default function MasterDashboardPage() {
   const t = useTranslations('dashboardMaster');
+  useRequireAuth(['MASTER']);
   const { user, refreshUser } = useAuth();
   const masterProfile = user?.masterProfile;
   const [togglingActive, setTogglingActive] = useState(false);
@@ -126,7 +128,11 @@ export default function MasterDashboardPage() {
       await bookingsApi.start(id);
       await loadBookings();
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Failed to start job.');
+      if (err instanceof ApiError && (err.code === 'TOO_EARLY_TO_START' || err.status === 422)) {
+        setError(t('startJobTooEarly'));
+      } else {
+        setError(err instanceof ApiError ? err.message : 'Failed to start job.');
+      }
     } finally {
       setActingId(null);
     }

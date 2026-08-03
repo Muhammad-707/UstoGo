@@ -4,6 +4,7 @@
   "subtitle": "Баҳодиҳиҳои воқеӣ аз фармоишҳои санҷидашудаи UstoGo.",
   "basedOn": "Дар асоси {count}+ баҳодиҳӣ",
   "writeReview": "Баҳо Гузоштан",
+  "rateClient": "Баҳои Клент Гузоштан",
   "craftsmanResponse": "Ҷавоби Усто:",
   "replyToReview": "Ба тақриз ҷавоб додан",
   "replyPlaceholder": "Ҷавоби оммавӣ нависед…",
@@ -13,5 +14,11 @@
   "ratingLabel": "Баҳо",
   "commentsLabel": "Шарҳи Баҳодиҳӣ",
   "commentsPlaceholder": "Таҷрибаи худро тасвир кунед...",
-  "submitReview": "Фиристодани Баҳо"
+  "submitReview": "Фиристодани Баҳо",
+  "rateClientTitle": "Баҳои Клент Гузоштан",
+  "clientRatingLabel": "Баҳои Клент",
+  "bookingLabel": "Фармоиш",
+  "clientCommentLabel": "Шарҳи Клент",
+  "clientCommentPlaceholder": "Рафтори клентро тасвир кунед...",
+  "submitClientRating": "Фиристодани Баҳои Клент"
 }

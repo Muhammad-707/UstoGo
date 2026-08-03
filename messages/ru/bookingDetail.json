@@ -2,11 +2,13 @@
   "scheduledFor": "Назначено на {date} ({time})",
   "chatWithMaster": "Написать мастеру",
   "leaveReview": "Оставить отзыв",
+  "rateClient": "Оценить Клиента",
   "liveTimeline": "Ход выполнения заказа в реальном времени",
   "profile": "Профиль",
   "paymentAndAddress": "Оплата и адрес",
   "serviceFee": "Стоимость услуги",
   "platformProtection": "Защита платформы",
   "totalPaid": "Оплачено всего",
-  "serviceAddress": "Адрес услуги:"
+  "serviceAddress": "Адрес услуги:",
+  "startJobTooEarly": "Эту работу можно начать только в назначенное время."
 }

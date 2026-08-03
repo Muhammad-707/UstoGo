@@ -50,5 +50,6 @@
   "weeklySchedule": "This Week",
   "editSchedule": "Edit",
   "noScheduleSet": "No working hours set. Add them in Schedule settings.",
-  "dayOff": "Day off"
+  "dayOff": "Day off",
+  "startJobTooEarly": "This booking can only be started at its scheduled time."
 }
