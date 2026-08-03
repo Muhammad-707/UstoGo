@@ -4,13 +4,14 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Icon } from '@/components/icons/LucideIcons';
 import { useTranslations } from 'next-intl';
-import { bookingsApi } from '@/lib/api/endpoints';
+import { bookingsApi, mastersApi } from '@/lib/api/endpoints';
 import { getBookingsSocket } from '@/lib/bookings/socket';
+import { ApiError } from '@/lib/api/client';
 import { useRequireAuth } from '@/hooks/useRequireAuth';
-import { ClientPageHeader } from '@/components/client/ClientPageHeader';
-import type { Booking } from '@/lib/api/types';
-import { getAvatarUrl } from '@/lib/placeholders';
 import { useFavorites } from '@/hooks/useFavorites';
+import { DashboardLayout } from '@/components/layout/DashboardLayout';
+import { getAvatarUrl } from '@/lib/placeholders';
+import type { Booking, MasterPublic } from '@/lib/api/types';
 import { FilterContainer, FilterItem, InViewRow } from '@/components/ui/FilterAnimate';
 
 export default function ClientDashboardPage() {
@@ -21,6 +22,11 @@ export default function ClientDashboardPage() {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const [mastersMap, setMastersMap] = useState<Record<string, MasterPublic>>({});
+  const [mastersLoading, setMastersLoading] = useState(true);
+
+  const [selectedMaster, setSelectedMaster] = useState<MasterPublic | null>(null);
+
   useEffect(() => {
     bookingsApi
       .list({ limit: 20 })
@@ -29,12 +35,32 @@ export default function ClientDashboardPage() {
       .finally(() => setLoading(false));
   }, []);
 
+  useEffect(() => {
+    const masterIds = [...new Set(bookings.map((b) => b.masterId))];
+    if (masterIds.length === 0) {
+      setMastersLoading(false);
+      return;
+    }
+    setMastersLoading(true);
+    Promise.all(
+      masterIds.map((id) =>
+        mastersApi.byId(id).then((m) => [id, m] as [string, MasterPublic]).catch(() => null),
+      ),
+    )
+      .then((results) => {
+        const map: Record<string, MasterPublic> = {};
+        results.forEach((r) => {
+          if (r) map[r[0]] = r[1];
+        });
+        setMastersMap(map);
+      })
+      .catch(() => {})
+      .finally(() => setMastersLoading(false));
+  }, [bookings]);
+
   const completed = bookings.filter((b) => b.status === 'COMPLETED');
   const active = bookings.filter((b) => ['PENDING', 'ACCEPTED', 'IN_PROGRESS'].includes(b.status));
 
-  // Live status without a manual refresh — a master accepting/starting/completing a
-  // job should show up here without the client reloading the page. WebSocket push
-  // is primary (BookingsGateway); polling is the fallback while active.
   useEffect(() => {
     if (active.length === 0) return;
     const interval = setInterval(() => {
@@ -59,6 +85,7 @@ export default function ClientDashboardPage() {
       socket?.off('booking:update', onUpdate);
     };
   }, []);
+
   const totalSpent = completed.reduce((sum, b) => sum + (Number(b.price) || 0), 0);
 
   const metrics = [
@@ -69,24 +96,7 @@ export default function ClientDashboardPage() {
   ];
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
-
-      {/* Header */}
-      <ClientPageHeader
-        icon="sparkles"
-        eyebrow={t('overview')}
-        title={t('title')}
-        action={
-          <Link
-            href="/search"
-            className="px-6 py-3 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-lg transition btn-ripple flex items-center gap-2"
-          >
-            <Icon name="Calendar" size={16} />
-            <span>{t('newBooking')}</span>
-          </Link>
-        }
-      />
-
+    <DashboardLayout role="CLIENT" title={t('title')} subtitle={t('overview')}>
       {/* Metrics Grid */}
       <FilterContainer className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {metrics.map((m, idx) => (
@@ -129,7 +139,7 @@ export default function ClientDashboardPage() {
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-slate-800 font-semibold">
                 {bookings.map((b, idx) => (
-                  <InViewRow key={b.id} index={idx} className="hover:bg-slate-50 dark:hover:bg-slate-800/40">
+                  <InViewRow key={b.id} index={idx} className="hover:bg-slate-50 dark:hover:bg-slate-800/40 cursor-pointer" onClick={() => { const m = mastersMap[b.masterId]; if (m) setSelectedMaster(m); }}>
                     <td className="py-4 font-mono font-bold text-blue-600 dark:text-sky-400">{b.bookingNumber}</td>
                     <td className="py-4 text-slate-900 dark:text-white">{b.serviceTitle}</td>
                     <td className="py-4 flex items-center gap-2">
@@ -150,7 +160,7 @@ export default function ClientDashboardPage() {
                       </span>
                     </td>
                     <td className="py-4 text-right">
-                      <Link href={`/booking/${b.id}`} className="text-blue-600 hover:underline">
+                      <Link href={`/booking/${b.id}`} className="text-blue-600 hover:underline" onClick={(e) => e.stopPropagation()}>
                         {t('details')}
                       </Link>
                     </td>
@@ -162,6 +172,69 @@ export default function ClientDashboardPage() {
         )}
       </div>
 
-    </div>
+      {/* Master Profile Overlay */}
+      {selectedMaster && (
+        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setSelectedMaster(null)}>
+          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl w-full max-w-lg overflow-hidden" onClick={(e) => e.stopPropagation()}>
+            {selectedMaster.bannerUrl && (
+              <img src={selectedMaster.bannerUrl} alt="" className="w-full h-32 object-cover" />
+            )}
+            <div className="p-6 space-y-4">
+              <div className="flex items-center gap-4 -mt-12">
+                <img src={selectedMaster.avatarUrl ?? getAvatarUrl(selectedMaster.id, selectedMaster.displayName)} alt={selectedMaster.displayName} className="w-20 h-20 rounded-3xl object-cover border-4 border-white dark:border-slate-900 shadow-xl" />
+                <div>
+                  <h2 className="text-lg font-extrabold text-slate-900 dark:text-white">{selectedMaster.displayName}</h2>
+                  <p className="text-xs text-slate-500">{selectedMaster.cityName}</p>
+                  <p className="text-xs text-amber-500 font-bold">★ {selectedMaster.ratingAverage} ({selectedMaster.ratingCount})</p>
+                </div>
+              </div>
+
+              {selectedMaster.bio && (
+                <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">{selectedMaster.bio}</p>
+              )}
+
+              <div className="grid grid-cols-2 gap-3 text-xs">
+                <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800">
+                  <p className="text-slate-400 font-bold">Experience</p>
+                  <p className="font-extrabold text-slate-900 dark:text-white">{selectedMaster.yearsOfExperience} yrs</p>
+                </div>
+                <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800">
+                  <p className="text-slate-400 font-bold">Service Radius</p>
+                  <p className="font-extrabold text-slate-900 dark:text-white">{selectedMaster.serviceRadiusKm} km</p>
+                </div>
+                <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800">
+                  <p className="text-slate-400 font-bold">Completed</p>
+                  <p className="font-extrabold text-slate-900 dark:text-white">{selectedMaster.completedBookingsCount}</p>
+                </div>
+                <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800">
+                  <p className="text-slate-400 font-bold">Categories</p>
+                  <p className="font-extrabold text-slate-900 dark:text-white">{selectedMaster.categories.slice(0, 2).join(', ')}</p>
+                </div>
+              </div>
+
+              {selectedMaster.whatsappPhone && (
+                <a
+                  href={`https://wa.me/${selectedMaster.whatsappPhone.replace(/\D/g, '')}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center gap-2 w-full py-3 rounded-2xl bg-[#25D366] hover:bg-[#1ebe5d] text-white font-extrabold text-xs shadow transition"
+                >
+                  <Icon name="whatsapp" size={16} />
+                  Write on WhatsApp
+                </a>
+              )}
+
+              <Link
+                href={`/master/${selectedMaster.id}`}
+                className="flex items-center justify-center w-full py-3 rounded-2xl border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-extrabold text-xs hover:bg-slate-50 dark:hover:bg-slate-800 transition"
+                onClick={() => setSelectedMaster(null)}
+              >
+                View Full Profile
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
+    </DashboardLayout>
   );
 }

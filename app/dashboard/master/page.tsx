@@ -10,6 +10,7 @@ import { bookingsApi, citiesApi, masterCabinetApi, mastersApi } from '@/lib/api/
 import { ApiError } from '@/lib/api/client';
 import { revalidateMastersCache } from '@/lib/api/revalidate';
 import { getBookingsSocket } from '@/lib/bookings/socket';
+import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import type { Booking, City, MasterStats, WorkingDay } from '@/lib/api/types';
 import { getAvatarUrl } from '@/lib/placeholders';
 import { FilterContainer, FilterItem } from '@/components/ui/FilterAnimate';
@@ -213,36 +214,22 @@ export default function MasterDashboardPage() {
   const profileIncomplete = portfolioCount !== null && (missingAvatar || missingPortfolio);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
-
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="flex items-center gap-4">
-          <div className="hidden sm:flex w-12 h-12 shrink-0 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 text-white items-center justify-center shadow-lg shadow-amber-900/20">
-            <Icon name="sparkles" size={22} />
-          </div>
-          <div>
-            <span className="text-xs font-extrabold uppercase tracking-widest text-amber-600 dark:text-amber-400">
-              {t('badge')}
-            </span>
-            <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white mt-1">{t('title')}</h1>
-          </div>
-        </div>
-        <div className="flex items-center gap-3">
-          <Link
-            href="/settings/schedule"
-            className="px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
-          >
-            {t('manageSchedule')}
-          </Link>
-          <Link
-            href="/settings/services"
-            className="px-5 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs shadow-md"
-          >
-            {t('editServices')}
-          </Link>
-        </div>
+    <DashboardLayout role="MASTER" title={t('title')} subtitle={t('overview')} action={
+      <div className="flex items-center gap-3">
+        <Link
+          href="/settings/schedule"
+          className="px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
+        >
+          {t('manageSchedule')}
+        </Link>
+        <Link
+          href="/settings/services"
+          className="px-5 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs shadow-md"
+        >
+          {t('editServices')}
+        </Link>
       </div>
+    }>
 
       {error && (
         <div className="p-4 rounded-2xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 text-xs font-bold text-red-600 dark:text-red-400">
@@ -506,6 +493,6 @@ export default function MasterDashboardPage() {
 
       </div>
 
-    </div>
+    </DashboardLayout>
   );
 }

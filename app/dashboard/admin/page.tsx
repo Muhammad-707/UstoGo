@@ -3,12 +3,13 @@
 import React, { useEffect, useState } from 'react';
 import { Icon } from '@/components/icons/LucideIcons';
 import { useTranslations } from 'next-intl';
-import { adminApi, categoriesApi } from '@/lib/api/endpoints';
+import { adminApi, bookingsApi, categoriesApi } from '@/lib/api/endpoints';
 import { ApiError } from '@/lib/api/client';
 import { waLink } from '@/lib/whatsapp';
 import { useRequireAuth } from '@/hooks/useRequireAuth';
 import { revalidateMastersCache } from '@/lib/api/revalidate';
-import type { AdminMasterListItem, ApprovalStatus, Category, DashboardResponse } from '@/lib/api/types';
+import { DashboardLayout } from '@/components/layout/DashboardLayout';
+import type { AdminMasterListItem, ApprovalStatus, Booking, Category, DashboardResponse } from '@/lib/api/types';
 import { FilterContainer, FilterItem, InViewRow } from '@/components/ui/FilterAnimate';
 
 function flattenCategories(cats: Category[]): Category[] {
@@ -30,6 +31,10 @@ export default function AdminDashboardPage() {
   const [mastersLoading, setMastersLoading] = useState(true);
   const [mastersError, setMastersError] = useState<string | null>(null);
   const [actingId, setActingId] = useState<string | null>(null);
+
+  const [selectedMaster, setSelectedMaster] = useState<AdminMasterListItem | null>(null);
+  const [masterBookings, setMasterBookings] = useState<Booking[]>([]);
+  const [masterBookingsLoading, setMasterBookingsLoading] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -97,13 +102,34 @@ export default function AdminDashboardPage() {
     }
   };
 
+  const handleMasterClick = async (master: AdminMasterListItem) => {
+    setSelectedMaster(master);
+    setMasterBookingsLoading(true);
+    try {
+      const res = await bookingsApi.list({ limit: 50, status: 'ACCEPTED' });
+      const allBookings = res.items;
+      const allPages = [res];
+      let hasMore = res.meta.page < res.meta.totalPages;
+      let page = 2;
+      while (hasMore) {
+        const next = await bookingsApi.list({ limit: 50, status: 'ACCEPTED', page });
+        allPages.push(next);
+        hasMore = page < next.meta.totalPages;
+        page++;
+      }
+      const all = allPages.flatMap((p) => p.items);
+      setMasterBookings(all.filter((b) => b.masterId === master.id));
+    } catch {
+      setMasterBookings([]);
+    } finally {
+      setMasterBookingsLoading(false);
+    }
+  };
+
   const totalBookings = data
     ? data.bookings.pending + data.bookings.accepted + data.bookings.inProgress + data.bookings.completed + data.bookings.cancelled + data.bookings.expired
     : 0;
 
-  // Real backend response has no revenue/monthly-growth concept — show the metrics that do have a
-  // real source instead of fabricating revenue numbers. Counts come from `data.users` (clients /
-  // masters) and `data.masters` (moderation buckets), verified against the live Swagger.
   const metrics = data
     ? [
         { title: t('metricTotalClients'), value: data.users.clients.toLocaleString(), growth: t('metricTotalClientsGrowth', { count: data.users.blocked }), icon: 'Users', color: 'from-emerald-500 to-teal-500' },
@@ -116,21 +142,7 @@ export default function AdminDashboardPage() {
   const barMax = data && data.series.length ? Math.max(...data.series.map((s) => s.created), 1) : 1;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
-
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <span className="text-xs font-extrabold uppercase tracking-widest text-purple-600 dark:text-purple-400">
-            {t('badge')}
-          </span>
-          <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white mt-1">{t('title')}</h1>
-        </div>
-        <span className="px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 text-xs font-extrabold">
-          {t('platformHealth')}
-        </span>
-      </div>
-
+    <DashboardLayout role="ADMIN" title={t('title')} subtitle={t('platformHealth')}>
       {error && (
         <div className="p-4 rounded-2xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 text-xs font-bold text-red-600 dark:text-red-400">
           {error}
@@ -168,7 +180,6 @@ export default function AdminDashboardPage() {
           <span className="text-xs font-bold text-purple-600 dark:text-purple-400">{t('chartPeriod')}</span>
         </div>
 
-        {/* Visual Bar Chart */}
         {!loading && data && data.series.length > 0 && (
           <div className="h-48 flex items-end justify-between gap-3 pt-6 border-b border-slate-100 dark:border-slate-800">
             {data.series.map((s, idx) => (
@@ -254,7 +265,12 @@ export default function AdminDashboardPage() {
               </thead>
               <tbody>
                 {masters.map((m, idx) => (
-                  <InViewRow key={m.id} index={idx} className="border-b border-slate-50 dark:border-slate-800/60">
+                  <InViewRow
+                    key={m.id}
+                    index={idx}
+                    className="border-b border-slate-50 dark:border-slate-800/60 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/40 transition"
+                    onClick={() => handleMasterClick(m)}
+                  >
                     <td className="py-3 pr-4">
                       <div className="font-bold text-slate-900 dark:text-white">{m.displayName}</div>
                       <div className="text-slate-400">{m.email}</div>
@@ -262,28 +278,29 @@ export default function AdminDashboardPage() {
                     <td className="py-3 pr-4">{m.cityName ?? '—'}</td>
                     <td className="py-3 pr-4">{m.ratingAverage}</td>
                     <td className="py-3 pr-4">{m.completedBookingsCount}</td>
-                     <td className="py-3 pr-4">${m.totalEarnings}</td>
-                     <td className="py-3 pr-4">
-                        {m.whatsappPhone ? (
-                          <a
-                            href={waLink(m.whatsappPhone)!}
-                           target="_blank"
-                           rel="noopener noreferrer"
-                           className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-[#25D366] hover:bg-[#1ebe5d] text-white text-[10px] font-bold shadow transition"
-                         >
-                           <Icon name="whatsapp" size={14} />
-                           {t('tableWhatsAppOpen')}
-                         </a>
-                       ) : (
-                         <span className="text-slate-400">—</span>
-                       )}
-                     </td>
-                     <td className="py-3 pr-4">
+                    <td className="py-3 pr-4">${m.totalEarnings}</td>
+                    <td className="py-3 pr-4">
+                      {m.whatsappPhone ? (
+                        <a
+                          href={waLink(m.whatsappPhone)!}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-[#25D366] hover:bg-[#1ebe5d] text-white text-[10px] font-bold shadow transition"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <Icon name="whatsapp" size={14} />
+                          {t('tableWhatsAppOpen')}
+                        </a>
+                      ) : (
+                        <span className="text-slate-400">—</span>
+                      )}
+                    </td>
+                    <td className="py-3 pr-4">
                       <span className="px-2 py-1 rounded-full bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 font-bold text-[10px]">
                         {m.approvalStatus}
                       </span>
                     </td>
-                    <td className="py-3 pr-4">
+                    <td className="py-3 pr-4" onClick={(e) => e.stopPropagation()}>
                       {m.approvalStatus === 'PENDING' && (
                         <div className="flex gap-2">
                           <button
@@ -311,6 +328,69 @@ export default function AdminDashboardPage() {
         )}
       </div>
 
-    </div>
+      {/* Master Booking Details Overlay */}
+      {selectedMaster && (
+        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setSelectedMaster(null)}>
+          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl w-full max-w-2xl max-h-[80vh] overflow-y-auto p-6 sm:p-8 space-y-6" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-xl font-extrabold text-slate-900 dark:text-white">{selectedMaster.displayName}</h2>
+                <p className="text-xs text-slate-400">{selectedMaster.email}</p>
+              </div>
+              <button onClick={() => setSelectedMaster(null)} className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+                <Icon name="x" size={18} />
+              </button>
+            </div>
+
+            <div className="grid grid-cols-3 gap-4">
+              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 text-center">
+                <p className="text-[10px] font-bold text-slate-400 uppercase">Bookings</p>
+                <p className="text-xl font-extrabold text-slate-900 dark:text-white">{masterBookings.length}</p>
+              </div>
+              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 text-center">
+                <p className="text-[10px] font-bold text-slate-400 uppercase">Rating</p>
+                <p className="text-xl font-extrabold text-slate-900 dark:text-white">{selectedMaster.ratingAverage}</p>
+              </div>
+              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 text-center">
+                <p className="text-[10px] font-bold text-slate-400 uppercase">Earnings</p>
+                <p className="text-xl font-extrabold text-slate-900 dark:text-white">${selectedMaster.totalEarnings}</p>
+              </div>
+            </div>
+
+            {masterBookingsLoading ? (
+              <div className="space-y-2">
+                {Array.from({ length: 3 }).map((_, i) => (
+                  <div key={i} className="h-12 rounded-2xl bg-slate-50 dark:bg-slate-800 animate-pulse" />
+                ))}
+              </div>
+            ) : masterBookings.length === 0 ? (
+              <p className="text-xs text-slate-400 font-semibold text-center py-8">No active bookings for this master.</p>
+            ) : (
+              <div className="space-y-3">
+                <h3 className="text-sm font-bold text-slate-900 dark:text-white">Active Bookings</h3>
+                {masterBookings.map((b) => (
+                  <div key={b.id} className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700 flex items-center justify-between">
+                    <div>
+                      <p className="text-xs font-bold text-slate-900 dark:text-white">{b.bookingNumber}</p>
+                      <p className="text-[10px] text-slate-500">{b.serviceTitle}</p>
+                    </div>
+                    <div className="text-right">
+                      <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                        b.status === 'ACCEPTED' ? 'bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300' :
+                        b.status === 'IN_PROGRESS' ? 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300' :
+                        'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300'
+                      }`}>
+                        {b.status}
+                      </span>
+                      <p className="text-[10px] text-slate-400 mt-0.5">{b.clientName}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </DashboardLayout>
   );
 }
