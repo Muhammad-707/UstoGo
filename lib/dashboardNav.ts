@@ -14,6 +14,11 @@ export interface SidebarConfig {
   accentLight: string;
   gradientFrom: string;
   gradientTo: string;
+  glow: string;
+  activeBg: string;
+  activeText: string;
+  activeBar: string;
+  ring: string;
   icon: string;
   title: string;
   subtitle: string;
@@ -26,6 +31,11 @@ export const adminSidebar: SidebarConfig = {
   accentLight: 'purple-50',
   gradientFrom: 'from-purple-600',
   gradientTo: 'to-indigo-700',
+  glow: 'shadow-purple-500/30',
+  activeBg: 'bg-purple-50 dark:bg-purple-500/10',
+  activeText: 'text-purple-700 dark:text-purple-300',
+  activeBar: 'bg-gradient-to-b from-purple-500 to-indigo-600',
+  ring: 'ring-purple-500/40',
   icon: 'shieldcheck',
   title: 'Admin Panel',
   subtitle: 'Platform Control',
@@ -45,6 +55,11 @@ export const masterSidebar: SidebarConfig = {
   accentLight: 'amber-50',
   gradientFrom: 'from-amber-500',
   gradientTo: 'to-orange-600',
+  glow: 'shadow-amber-500/30',
+  activeBg: 'bg-amber-50 dark:bg-amber-500/10',
+  activeText: 'text-amber-700 dark:text-amber-300',
+  activeBar: 'bg-gradient-to-b from-amber-500 to-orange-600',
+  ring: 'ring-amber-500/40',
   icon: 'wrench',
   title: 'Master Panel',
   subtitle: 'Your Dashboard',
@@ -66,6 +81,11 @@ export const clientSidebar: SidebarConfig = {
   accentLight: 'blue-50',
   gradientFrom: 'from-blue-600',
   gradientTo: 'to-sky-600',
+  glow: 'shadow-blue-500/30',
+  activeBg: 'bg-blue-50 dark:bg-blue-500/10',
+  activeText: 'text-blue-700 dark:text-blue-300',
+  activeBar: 'bg-gradient-to-b from-blue-500 to-sky-600',
+  ring: 'ring-blue-500/40',
   icon: 'user',
   title: 'Client Panel',
   subtitle: 'Your Dashboard',

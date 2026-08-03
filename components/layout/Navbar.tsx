@@ -30,6 +30,7 @@ export const Navbar: React.FC = () => {
   const [notifOpen, setNotifOpen] = useState(false);
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
+  const isDashboard = pathname?.startsWith('/dashboard');
 
   useEffect(() => {
     if (!user) {
