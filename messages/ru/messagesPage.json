@@ -1,12 +1,9 @@
 {
-  "title": "Сообщения",
-  "onlineStatus": "В сети • Отвечает за ~5 мин",
-  "inputPlaceholder": "Напишите сообщение мастеру...",
-  "send": "Отправить",
-  "loading": "Загрузка…",
-  "empty": "Диалогов пока нет.",
-  "typing": "печатает…",
-  "deleteMessage": "Удалить сообщение",
-  "confirmDeleteMessage": "Удалить это сообщение? Оно исчезнет только из вашего вида.",
-  "selectConversation": "Выберите диалог"
+  "title": "Контакты WhatsApp",
+  "badge": "WhatsApp",
+  "subtitle": "Пишите напрямую в WhatsApp мастерам, с которыми работали",
+  "empty": "Пока нет бронирований. После первого бронирования здесь появятся контакты WhatsApp.",
+  "loginRequired": "Войдите, чтобы получить доступ к этой странице.",
+  "whatsappButton": "WhatsApp",
+  "whatsappButtonShort": "WA"
 }

@@ -10,5 +10,6 @@
   "totalPaid": "Total Paid",
   "serviceAddress": "Service Address:",
   "rateClient": "Rate Client",
-  "startJobTooEarly": "This booking can only be started at its scheduled time."
+  "startJobTooEarly": "This booking can only be started at its scheduled time.",
+  "writeToWhatsApp": "Write to WhatsApp",
 }

@@ -208,6 +208,8 @@ export const bookingsApi = {
   cancel: (id: string, reason?: string) => api.post<Booking>(`/bookings/${id}/cancel`, { reason }),
   start: (id: string) => api.post<Booking>(`/bookings/${id}/start`),
   complete: (id: string) => api.post<Booking>(`/bookings/${id}/complete`),
+  /** Fire-and-forget analytics: stamps whatsappLinkClickedAt once (P0). */
+  whatsappClick: (id: string) => api.post<void>(`/bookings/${id}/whatsapp-click`),
 };
 
 // ---- Reviews ----

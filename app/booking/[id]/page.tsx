@@ -7,6 +7,7 @@ import { useTranslations } from 'next-intl';
 import { Icon } from '@/components/icons/LucideIcons';
 import { bookingsApi, citiesApi, reviewsApi } from '@/lib/api/endpoints';
 import { ApiError } from '@/lib/api/client';
+import { waLink, waBookingText } from '@/lib/whatsapp';
 import { getBookingsSocket } from '@/lib/bookings/socket';
 import type { BookingDetail, City } from '@/lib/api/types';
 import { useAuth } from '@/contexts/AuthContext';
@@ -254,13 +255,21 @@ export default function BookingDetailsPage() {
             </Link>
           )}
 
-          <Link
-            href={`/messages?master=${booking.masterId}`}
-            className="px-5 py-3 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-md transition flex items-center gap-2"
-          >
-            <Icon name="MessageSquare" size={16} />
-            <span>{t('chatWithMaster')}</span>
-          </Link>
+          {booking.masterWhatsappPhone && ['ACCEPTED', 'IN_PROGRESS'].includes(booking.status) && (() => {
+            const link = waLink(booking.masterWhatsappPhone, waBookingText(booking.serviceTitle, booking.bookingNumber));
+            return link ? (
+              <a
+                href={link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-5 py-3 rounded-2xl bg-[#25D366] hover:bg-[#1ebe5d] text-white font-extrabold text-xs shadow-md transition flex items-center gap-2"
+                onClick={() => { bookingsApi.whatsappClick(booking.id).catch(() => {}); }}
+              >
+                <Icon name="whatsapp" size={16} />
+                <span>{t('writeToWhatsApp')}</span>
+              </a>
+            ) : null;
+          })()}
 
           {canClientCancel && (
             <button

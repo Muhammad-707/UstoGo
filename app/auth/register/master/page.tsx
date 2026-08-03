@@ -169,16 +169,17 @@ export default function RegisterMasterPage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1">
-              <label className="text-xs font-bold text-slate-700 dark:text-slate-300">{t('phoneLabel')}</label>
+              <label className="text-xs font-bold text-slate-700 dark:text-slate-300">{t('phoneWhatsappLabel')}</label>
               <input
                 type="tel"
-                placeholder={t('phonePlaceholder')}
+                placeholder={t('phoneWhatsappPlaceholder')}
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 className={`w-full p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border text-xs ${fieldErrors.phone ? 'border-red-500' : 'border-slate-200 dark:border-slate-700'}`}
                 required
               />
               {fieldErrors.phone && <p className="text-red-500 text-xs">{tv(fieldErrors.phone)}</p>}
+              <p className="text-[10px] text-slate-400">{t('phoneWhatsappHint')}</p>
             </div>
             <div className="space-y-1">
               <label className="text-xs font-bold text-slate-700 dark:text-slate-300">{t('cityLabel')}</label>

@@ -1,12 +1,9 @@
 {
-  "title": "Messages",
-  "onlineStatus": "Online • Responds in ~5m",
-  "inputPlaceholder": "Type your message to the master...",
-  "send": "Send",
-  "loading": "Loading…",
-  "empty": "No conversations yet.",
-  "typing": "typing…",
-  "deleteMessage": "Delete message",
-  "confirmDeleteMessage": "Delete this message? This only removes it from your view.",
-  "selectConversation": "Select a conversation"
+  "title": "WhatsApp Contacts",
+  "badge": "WhatsApp",
+  "subtitle": "Write directly on WhatsApp to the masters you've worked with",
+  "empty": "No bookings yet. After your first booking, WhatsApp contacts will appear here.",
+  "loginRequired": "Please log in to access this page.",
+  "whatsappButton": "WhatsApp",
+  "whatsappButtonShort": "WA"
 }

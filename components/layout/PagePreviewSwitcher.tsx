@@ -28,7 +28,7 @@ export const PagePreviewSwitcher: React.FC = () => {
       pages: [
         { name: t('ppBookingWizard'), path: '/booking' },
         { name: t('ppBookingLiveTracker'), path: '/booking/b-101' },
-        { name: t('ppMessagesChat'), path: '/messages' },
+        { name: t('ppWhatsAppContacts'), path: '/messages' },
         { name: t('ppNotificationsFeed'), path: '/notifications' },
         { name: t('ppSavedFavorites'), path: '/favorites' },
       ],

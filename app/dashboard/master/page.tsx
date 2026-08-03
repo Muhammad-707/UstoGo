@@ -189,7 +189,7 @@ export default function MasterDashboardPage() {
     { href: '/settings/portfolio', label: t('qaPortfolio'), icon: 'image', color: 'bg-violet-500' },
     { href: '/settings/certificates', label: t('qaCertificates'), icon: 'award', color: 'bg-amber-500' },
     { href: '/settings/profile', label: t('qaProfile'), icon: 'mappin', color: 'bg-rose-500' },
-    { href: '/messages', label: t('qaChat'), icon: 'messagesquare', color: 'bg-sky-500' },
+    { href: '/messages', label: t('qaWhatsApp'), icon: 'whatsapp', color: 'bg-[#25D366]' },
     { href: '/payments', label: t('qaPayments'), icon: 'creditcard', color: 'bg-fuchsia-500' },
   ];
 

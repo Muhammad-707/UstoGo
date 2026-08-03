@@ -3,6 +3,8 @@
   "yearsExperience": "{count} Years Experience",
   "jobsCompleted": "{count} Jobs Completed",
   "chat": "Chat",
+  "writeToWhatsApp": "Write on WhatsApp",
+  "writeToWhatsAppHint": "Without the platform intermediary — write directly on WhatsApp",
   "bookAppointment": "Book Appointment",
   "tabAbout": "About & Skills",
   "tabGallery": "Gallery ({count})",

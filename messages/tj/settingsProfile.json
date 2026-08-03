@@ -21,5 +21,14 @@
   "deleteAccount": "Нест кардани ҳисоб",
   "securitySettings": "Парол ва бехатарӣ",
   "confirmDelete": "Оё ҳисоби худро комилан нест кардани хостед? Ин амал бозгашт надорад.",
-  "deleteFailed": "Нест кардани ҳисоб номуваффақ шуд"
+  "deleteFailed": "Нест кардани ҳисоб номуваффақ шуд",
+  "whatsappSectionTitle": "Алоқаи WhatsApp",
+  "whatsappNumberLabel": "Рақами WhatsApp",
+  "whatsappNumberHint": "+992 90 123 4567 — танҳо рақами тоҷикӣ",
+  "whatsappEnabledLabel": "Дар профил нишон додан",
+  "whatsappEnabled": "Фаъол",
+  "whatsappDisabled": "Хомӯш",
+  "whatsappTest": "Санҷидан",
+  "whatsappChangeWarning": "Пас аз иваз, клиентҳо ба номери нав менавишанд",
+  "whatsappChanged": "Иваз шуд: {date}"
 }

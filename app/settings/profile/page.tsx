@@ -7,6 +7,7 @@ import { Icon } from '@/components/icons/LucideIcons';
 import { useAuth } from '@/contexts/AuthContext';
 import { citiesApi, usersApi } from '@/lib/api/endpoints';
 import { ApiError } from '@/lib/api/client';
+import { waLink } from '@/lib/whatsapp';
 import { revalidateMastersCache } from '@/lib/api/revalidate';
 import { resolveOwnFileUrl, uploadFile } from '@/lib/api/upload';
 import { getAvatarUrl, getCoverUrl } from '@/lib/placeholders';
@@ -26,6 +27,9 @@ export default function EditProfilePage() {
   const [cityId, setCityId] = useState('');
   const [yearsOfExperience, setYearsOfExperience] = useState('0');
   const [serviceRadiusKm, setServiceRadiusKm] = useState('15');
+  const [whatsappPhone, setWhatsappPhone] = useState('');
+  const [whatsappEnabled, setWhatsappEnabled] = useState(true);
+  const [whatsappChangedAt, setWhatsappChangedAt] = useState<string | null>(null);
   const [cities, setCities] = useState<City[]>([]);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -54,6 +58,11 @@ export default function EditProfilePage() {
     setCityId(profile?.cityId ?? '');
     setYearsOfExperience(String(user.masterProfile?.yearsOfExperience ?? 0));
     setServiceRadiusKm(String(user.masterProfile?.serviceRadiusKm ?? 15));
+    if (isMaster && user.masterProfile) {
+      setWhatsappPhone(user.masterProfile.whatsappPhone ?? '');
+      setWhatsappEnabled(user.masterProfile.whatsappEnabled);
+      setWhatsappChangedAt(user.masterProfile.whatsappChangedAt ?? null);
+    }
     setAvatarUrl(null);
     setBannerUrl(null);
     resolveOwnFileUrl(profile?.avatarFileId ?? null).then(setAvatarUrl);
@@ -124,6 +133,8 @@ export default function EditProfilePage() {
         data.bio = bio.trim() || undefined;
         data.yearsOfExperience = Number(yearsOfExperience) || 0;
         data.serviceRadiusKm = Number(serviceRadiusKm) || 15;
+        data.whatsappPhone = whatsappPhone.trim() || null;
+        data.whatsappEnabled = whatsappEnabled;
       }
       await usersApi.updateMe(data);
       await refreshUser();
@@ -320,6 +331,59 @@ export default function EditProfilePage() {
               onChange={(e) => setBio(e.target.value)}
               className="w-full p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-semibold"
             />
+          </div>
+        )}
+
+        {isMaster && (
+          <div className="space-y-6 p-6 rounded-3xl bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900/40">
+            <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+              <Icon name="whatsapp" size={18} className="text-[#25D366]" />
+              {t('whatsappSectionTitle')}
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-1">
+                <label className="font-bold text-slate-700 dark:text-slate-300">{t('whatsappNumberLabel')}</label>
+                <input
+                  type="tel"
+                  value={whatsappPhone}
+                  onChange={(e) => setWhatsappPhone(e.target.value)}
+                  placeholder="+992901234567"
+                  className="w-full p-3.5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-semibold text-xs"
+                />
+                <p className="text-[10px] text-slate-400">{t('whatsappNumberHint')}</p>
+              </div>
+              <div className="space-y-1">
+                <label className="font-bold text-slate-700 dark:text-slate-300">{t('whatsappEnabledLabel')}</label>
+                <button
+                  type="button"
+                  onClick={() => setWhatsappEnabled(!whatsappEnabled)}
+                  className={`w-full py-3 rounded-2xl text-xs font-bold transition ${
+                    whatsappEnabled
+                      ? 'bg-[#25D366] text-white hover:bg-[#1ebe5d]'
+                      : 'bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-400'
+                  }`}
+                >
+                  {whatsappEnabled ? t('whatsappEnabled') : t('whatsappDisabled')}
+                </button>
+                {whatsappChangedAt && (
+                  <p className="text-[10px] text-amber-600 dark:text-amber-400 font-semibold">
+                    {t('whatsappChanged', { date: new Date(whatsappChangedAt).toLocaleString() })}
+                  </p>
+                )}
+              </div>
+            </div>
+            {whatsappPhone && (
+              <a
+                href={waLink(whatsappPhone)!}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-[#25D366] hover:bg-[#1ebe5d] text-white text-xs font-bold shadow transition"
+              >
+                <Icon name="whatsapp" size={16} />
+                {t('whatsappTest')}
+              </a>
+            )}
+            <p className="text-[10px] text-slate-500 dark:text-slate-400">{t('whatsappChangeWarning')}</p>
           </div>
         )}
 

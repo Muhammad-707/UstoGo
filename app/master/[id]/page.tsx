@@ -8,6 +8,7 @@ import { Icon } from '@/components/icons/LucideIcons';
 import { mastersApi } from '@/lib/api/endpoints';
 import { ApiError } from '@/lib/api/client';
 import type { MasterPublic, MasterService, Review, WorkingDay, MasterCertificatePublic } from '@/lib/api/types';
+import { waLink, waBookingText } from '@/lib/whatsapp';
 import { getAvatarUrl, getCoverUrl, PLACEHOLDER_REVIEWER_AVATAR } from '@/lib/placeholders';
 import { FilterItem } from '@/components/ui/FilterAnimate';
 
@@ -199,13 +200,20 @@ export default function MasterProfilePage() {
           </div>
 
           <div className="flex items-center gap-3 justify-center">
-            <Link
-              href={`/messages?master=${master.id}`}
-              className="px-5 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center gap-2"
-            >
-              <Icon name="messagesquare" size={16} />
-              <span>{t('chat')}</span>
-            </Link>
+            {master.whatsappEnabled && master.whatsappPhone && (() => {
+            const link = waLink(master.whatsappPhone);
+            return link ? (
+              <a
+                href={link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-5 py-3 rounded-2xl bg-[#25D366] hover:bg-[#1ebe5d] text-white text-xs font-extrabold shadow-lg shadow-emerald-600/30 transition btn-ripple flex items-center gap-2"
+              >
+                <Icon name="whatsapp" size={16} />
+                <span>{t('writeToWhatsApp')}</span>
+              </a>
+            ) : null;
+          })()}
 
             <Link
               href={`/booking?master=${master.id}`}

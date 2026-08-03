@@ -3,6 +3,8 @@
   "yearsExperience": "{count} лет опыта",
   "jobsCompleted": "{count} выполненных работ",
   "chat": "Чат",
+  "writeToWhatsApp": "Написать в WhatsApp",
+  "writeToWhatsAppHint": "Без посредников — напишите напрямую в WhatsApp",
   "bookAppointment": "Записаться",
   "tabAbout": "О мастере и навыки",
   "tabGallery": "Галерея ({count})",

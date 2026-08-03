@@ -66,6 +66,11 @@ export interface MasterProfile {
   ratingAverage: string;
   ratingCount: number;
   completedBookingsCount: number;
+  /** LinkedIn-style WhatsApp number for the master (P0). */
+  whatsappPhone?: string | null;
+  whatsappEnabled: boolean;
+  /** Timestamp of the last number change — used to enforce the 24-hour cooldown. */
+  whatsappChangedAt?: string | null;
 }
 
 export interface UserProfile {
@@ -129,6 +134,9 @@ export interface MasterPublic {
   portfolioImageFileIds?: string[];
   isActive: boolean;
   approvalStatus: ApprovalStatus;
+  /** Public WhatsApp contact — the number is present only while whatsappEnabled is true (P0). */
+  whatsappEnabled: boolean;
+  whatsappPhone: string | null;
 }
 
 export interface MasterMedia {
@@ -223,6 +231,9 @@ export interface Booking {
   cancelledByType?: string | null;
   isLateCancellation: boolean;
   createdAt: string;
+  /** The master's WhatsApp contact — present (non-null) only while whatsappEnabled is true (P0). */
+  masterWhatsappEnabled?: boolean;
+  masterWhatsappPhone?: string | null;
 }
 
 export interface BookingHistoryEntry {
@@ -346,6 +357,8 @@ export interface AdminMasterListItem {
   createdAt: string;
   completedBookingsCount: number;
   totalEarnings: string;
+  /** Raw WhatsApp number regardless of whatsappEnabled — admin can always reach the master (P0). */
+  whatsappPhone: string | null;
 }
 
 export interface MasterStatus {

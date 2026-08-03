@@ -3,6 +3,8 @@
   "yearsExperience": "{count} сол таҷриба",
   "jobsCompleted": "{count} кори иҷрошуда",
   "chat": "Сӯҳбат",
+  "writeToWhatsApp": "Нависан ба WhatsApp",
+  "writeToWhatsAppHint": "Бе воситаи платформа, мустақим дар WhatsApp нависед",
   "bookAppointment": "Навбат гирифтан",
   "tabAbout": "Дар бораи усто ва малакаҳо",
   "tabGallery": "Галерея ({count})",

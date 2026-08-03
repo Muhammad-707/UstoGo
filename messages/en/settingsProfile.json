@@ -21,5 +21,14 @@
   "deleteAccount": "Delete Account",
   "securitySettings": "Password & Security",
   "confirmDelete": "Delete your account permanently? This action cannot be undone.",
-  "deleteFailed": "Failed to delete the account"
+  "deleteFailed": "Failed to delete the account",
+  "whatsappSectionTitle": "WhatsApp Contact",
+  "whatsappNumberLabel": "WhatsApp Number",
+  "whatsappNumberHint": "+992 90 123 4567 — Tajik number only",
+  "whatsappEnabledLabel": "Show on profile",
+  "whatsappEnabled": "Active",
+  "whatsappDisabled": "Disabled",
+  "whatsappTest": "Test",
+  "whatsappChangeWarning": "After changing, clients will write to the new number",
+  "whatsappChanged": "Changed: {date}"
 }

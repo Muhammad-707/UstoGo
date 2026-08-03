@@ -21,5 +21,14 @@
   "deleteAccount": "Удалить Аккаунт",
   "securitySettings": "Пароль и безопасность",
   "confirmDelete": "Удалить аккаунт навсегда? Это действие необратимо.",
-  "deleteFailed": "Не удалось удалить аккаунт"
+  "deleteFailed": "Не удалось удалить аккаунт",
+  "whatsappSectionTitle": "Связь WhatsApp",
+  "whatsappNumberLabel": "Номер WhatsApp",
+  "whatsappNumberHint": "+992 90 123 4567 — только таджикский номер",
+  "whatsappEnabledLabel": "Показывать в профиле",
+  "whatsappEnabled": "Активен",
+  "whatsappDisabled": "Отключён",
+  "whatsappTest": "Проверить",
+  "whatsappChangeWarning": "После изменения клиенты будут писать на новый номер",
+  "whatsappChanged": "Изменено: {date}"
 }

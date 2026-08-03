@@ -5,6 +5,7 @@ import { Icon } from '@/components/icons/LucideIcons';
 import { useTranslations } from 'next-intl';
 import { adminApi, categoriesApi } from '@/lib/api/endpoints';
 import { ApiError } from '@/lib/api/client';
+import { waLink } from '@/lib/whatsapp';
 import { useRequireAuth } from '@/hooks/useRequireAuth';
 import { revalidateMastersCache } from '@/lib/api/revalidate';
 import type { AdminMasterListItem, ApprovalStatus, Category, DashboardResponse } from '@/lib/api/types';
@@ -245,7 +246,8 @@ export default function AdminDashboardPage() {
                   <th className="py-3 pr-4">City</th>
                   <th className="py-3 pr-4">Rating</th>
                   <th className="py-3 pr-4">Bookings</th>
-                  <th className="py-3 pr-4">Earnings</th>
+                  <th className="py-3 pr-4">{t('tableEarnings')}</th>
+                  <th className="py-3 pr-4">{t('tableWhatsApp')}</th>
                   <th className="py-3 pr-4">{t('tableStatus')}</th>
                   <th className="py-3 pr-4">{t('tableActions')}</th>
                 </tr>
@@ -260,8 +262,23 @@ export default function AdminDashboardPage() {
                     <td className="py-3 pr-4">{m.cityName ?? '—'}</td>
                     <td className="py-3 pr-4">{m.ratingAverage}</td>
                     <td className="py-3 pr-4">{m.completedBookingsCount}</td>
-                    <td className="py-3 pr-4">${m.totalEarnings}</td>
-                    <td className="py-3 pr-4">
+                     <td className="py-3 pr-4">${m.totalEarnings}</td>
+                     <td className="py-3 pr-4">
+                        {m.whatsappPhone ? (
+                          <a
+                            href={waLink(m.whatsappPhone)!}
+                           target="_blank"
+                           rel="noopener noreferrer"
+                           className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-[#25D366] hover:bg-[#1ebe5d] text-white text-[10px] font-bold shadow transition"
+                         >
+                           <Icon name="whatsapp" size={14} />
+                           {t('tableWhatsAppOpen')}
+                         </a>
+                       ) : (
+                         <span className="text-slate-400">—</span>
+                       )}
+                     </td>
+                     <td className="py-3 pr-4">
                       <span className="px-2 py-1 rounded-full bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 font-bold text-[10px]">
                         {m.approvalStatus}
                       </span>
