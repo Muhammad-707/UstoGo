@@ -1,13 +1,12 @@
 'use client';
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { Icon } from '@/components/icons/LucideIcons';
 import { useTranslations } from 'next-intl';
 import type { Category, MasterPublic } from '@/lib/api/types';
 import { getCategoryVisual } from '@/lib/categoryVisuals';
 import { getAvatarUrl, getCoverUrl } from '@/lib/placeholders';
-import { filesApi } from '@/lib/api/endpoints';
 
 import HeroSlider from '@/components/layout/HeroSlider';
 import { FilterItem } from '@/components/ui/FilterAnimate';
@@ -36,7 +35,6 @@ export default function LandingClient({
   const t = useTranslations('common');
 
   const [categoryFilter, setCategoryFilter] = useState<'all' | 'popular'>('all');
-  const [bannerUrls, setBannerUrls] = useState<Record<string, string | null>>({});
 
   const leafCategories = useMemo(() => flattenLeafCategories(categories), [categories]);
 
@@ -60,33 +58,6 @@ export default function LandingClient({
     }
     return leafCategories;
   }, [leafCategories, categoryStats, categoryFilter]);
-
-  // Fetch banner URLs for masters that have bannerFileId
-  useEffect(() => {
-    const ids = topMasters.filter((m) => m.bannerFileId && !bannerUrls[m.id]).map((m) => m.id);
-    if (ids.length === 0) return;
-    let cancelled = false;
-    Promise.all(
-      ids.map((id) =>
-        filesApi
-          .url(id)
-          .then((res) => ({ id, url: res.url }))
-          .catch(() => ({ id, url: null }))
-      )
-    ).then((results) => {
-      if (cancelled) return;
-      setBannerUrls((prev) => {
-        const next = { ...prev };
-        for (const { id, url } of results) {
-          if (url) next[id] = url;
-        }
-        return next;
-      });
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, [topMasters, bannerUrls]);
 
   return (
     <div className="space-y-24 pb-24 overflow-hidden">
@@ -294,7 +265,7 @@ export default function LandingClient({
             <FilterItem key={master.id} index={idx % 3} className="glass-card rounded-3xl overflow-hidden border border-slate-200 dark:border-slate-800 group">
               {/* Cover Header */}
               <div className="h-32 relative">
-                <img src={bannerUrls[master.id] || master.bannerUrl || getCoverUrl(master.id)} alt={master.displayName} className="w-full h-full object-cover" />
+                <img src={master.bannerUrl || getCoverUrl(master.id)} alt={master.displayName} className="w-full h-full object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 to-transparent" />
                 <div className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-slate-900/80 backdrop-blur-md text-amber-400 text-xs font-bold flex items-center gap-1">
                   <Icon name="Star" size={14} className="fill-amber-400 text-amber-400" />
