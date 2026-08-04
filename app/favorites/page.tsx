@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 import { Icon } from '@/components/icons/LucideIcons';
 import { favoritesApi } from '@/lib/api/endpoints';
@@ -60,13 +61,14 @@ export default function FavoritesPage() {
           {masters.map((m, idx) => {
             const unavailable = m.approvalStatus !== 'APPROVED' || !m.isActive;
             return (
-              <FilterItem
-                key={m.id}
-                index={idx % 3}
-                className={`glass-card rounded-3xl p-6 border space-y-4 ${
+              <FilterItem key={m.id} index={idx % 3}>
+              <motion.div
+                whileHover={unavailable ? undefined : { y: -6 }}
+                transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+                className={`glass-card rounded-3xl p-6 border space-y-4 h-full ${
                   unavailable
                     ? 'border-slate-200 dark:border-slate-800 opacity-60'
-                    : 'border-slate-200 dark:border-slate-800'
+                    : 'border-slate-200 dark:border-slate-800 hover:shadow-2xl hover:shadow-blue-500/10 hover:border-blue-200 dark:hover:border-sky-900 transition-[box-shadow,border-color] duration-300'
                 }`}
               >
                 <div className="flex items-center gap-4">
@@ -100,6 +102,7 @@ export default function FavoritesPage() {
                     </Link>
                   )}
                 </div>
+              </motion.div>
               </FilterItem>
             );
           })}

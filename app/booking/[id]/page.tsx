@@ -91,7 +91,7 @@ export default function BookingDetailsPage() {
     if (!booking || user?.role !== 'CLIENT' || booking.status !== 'COMPLETED') return;
     reviewsApi
       .myReviews()
-      .then((reviews) => setAlreadyReviewed(reviews.some((r) => r.bookingId === booking.id)))
+      .then((res) => setAlreadyReviewed(res.items.some((r) => r.bookingId === booking.id)))
       .catch(() => {});
   }, [booking, user?.role]);
 
@@ -99,7 +99,7 @@ export default function BookingDetailsPage() {
     if (!booking || user?.role !== 'MASTER' || booking.status !== 'COMPLETED') return;
     reviewsApi
       .received()
-      .then((reviews) => setAlreadyClientRated(reviews.some((r) => r.bookingId === booking.id && r.clientRating != null)))
+      .then((res) => setAlreadyClientRated(res.items.some((r) => r.bookingId === booking.id && r.clientRating != null)))
       .catch(() => setAlreadyClientRated(false));
   }, [booking, user?.role]);
 
@@ -218,7 +218,7 @@ export default function BookingDetailsPage() {
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8">
 
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 glass-card p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl">
         <div>
           <div className="flex items-center gap-3">
             <span className="px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-sky-300 text-xs font-mono font-extrabold">
@@ -248,7 +248,7 @@ export default function BookingDetailsPage() {
           {isMaster && booking.status === 'COMPLETED' && !alreadyClientRated && (
             <Link
               href={`/reviews?booking=${booking.id}`}
-              className="px-5 py-3 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white font-extrabold text-xs shadow-md shadow-emerald-500/30 transition flex items-center gap-2"
+              className="btn-success px-5 py-3 rounded-2xl font-extrabold text-xs transition flex items-center gap-2"
             >
               <Icon name="Star" size={16} />
               <span>{t('rateClient')}</span>
@@ -262,7 +262,7 @@ export default function BookingDetailsPage() {
                 href={link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-5 py-3 rounded-2xl bg-[#25D366] hover:bg-[#1ebe5d] text-white font-extrabold text-xs shadow-md transition flex items-center gap-2"
+                className="btn-success px-5 py-3 rounded-2xl font-extrabold text-xs transition flex items-center gap-2"
                 onClick={() => { bookingsApi.whatsappClick(booking.id).catch(() => {}); }}
               >
                 <Icon name="whatsapp" size={16} />
@@ -285,7 +285,7 @@ export default function BookingDetailsPage() {
             <button
               onClick={() => runAction(() => bookingsApi.accept(booking.id))}
               disabled={actionPending}
-              className="px-5 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs shadow-md transition disabled:opacity-50"
+              className="btn-success px-5 py-3 rounded-2xl font-extrabold text-xs transition disabled:opacity-50"
             >
               Accept
             </button>
@@ -315,7 +315,7 @@ export default function BookingDetailsPage() {
             <button
               onClick={() => runAction(() => bookingsApi.complete(booking.id))}
               disabled={actionPending}
-              className="px-5 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs shadow-md transition disabled:opacity-50"
+              className="btn-success px-5 py-3 rounded-2xl font-extrabold text-xs transition disabled:opacity-50"
             >
               Mark Completed
             </button>
@@ -333,7 +333,7 @@ export default function BookingDetailsPage() {
         <div className="lg:col-span-2 space-y-8">
 
           {/* Stage Progress Timeline */}
-          <div className="bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-6 shadow-xl">
+          <div className="glass-card p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-6 shadow-xl">
             <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
               <Icon name="Clock" size={20} className="text-blue-600 dark:text-sky-400" />
               {t('liveTimeline')}
@@ -349,14 +349,16 @@ export default function BookingDetailsPage() {
               </div>
             ) : (
               <div className="relative pl-6 border-l-2 border-slate-200 dark:border-slate-800 space-y-8">
-                {timeline.map((item, idx) => (
+                {timeline.map((item, idx) => {
+                  const isCurrent = item.completed && (idx === timeline.length - 1 || !timeline[idx + 1].completed);
+                  return (
                   <div key={idx} className="relative">
                     <div
                       className={`absolute -left-[31px] top-0.5 w-4 h-4 rounded-full border-2 border-white dark:border-slate-900 ${
                         item.completed
                           ? 'bg-emerald-500 ring-4 ring-emerald-100 dark:ring-emerald-950'
                           : 'bg-slate-300 dark:bg-slate-700'
-                      }`}
+                      } ${isCurrent ? 'animate-pulse' : ''}`}
                     />
                     <div>
                       <h4
@@ -373,13 +375,14 @@ export default function BookingDetailsPage() {
                       </p>
                     </div>
                   </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>
 
           {/* Master Info Card */}
-          <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 flex items-center justify-between shadow-lg">
+          <div className="glass-card p-6 rounded-3xl border border-slate-200 dark:border-slate-800 flex items-center justify-between shadow-lg">
             <div className="flex items-center gap-4">
               <img src={getAvatarUrl(booking.masterId, booking.masterDisplayName)} alt={booking.masterDisplayName} className="w-14 h-14 rounded-2xl object-cover" />
               <div>
@@ -399,7 +402,7 @@ export default function BookingDetailsPage() {
 
         {/* Receipt Sidebar */}
         <div className="space-y-6">
-          <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-4 shadow-xl">
+          <div className="glass-card p-6 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-4 shadow-xl">
             <h3 className="text-sm font-bold uppercase tracking-wider text-slate-400">{t('paymentAndAddress')}</h3>
 
             <div className="space-y-3 text-xs">

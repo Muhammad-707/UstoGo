@@ -274,6 +274,14 @@ export const Icon: React.FC<IconProps> = ({ name, size = 20, className = '', ...
           <polyline points="12 5 19 12 12 19" />
         </svg>
       );
+    case 'arrowupright':
+    case 'arrow-up-right':
+      return (
+        <svg {...iconProps}>
+          <line x1="7" y1="17" x2="17" y2="7" />
+          <polyline points="7 7 17 7 17 17" />
+        </svg>
+      );
     case 'checkcircle2':
     case 'check-circle':
     case 'check':

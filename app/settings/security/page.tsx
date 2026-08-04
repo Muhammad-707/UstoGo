@@ -110,15 +110,20 @@ export default function SecuritySettingsPage() {
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
-      <div>
-        <span className="text-xs font-extrabold uppercase tracking-widest text-blue-600 dark:text-sky-400">
-          {t('accountSettings')}
-        </span>
-        <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white mt-1">{t('title')}</h1>
+      <div className="flex items-center gap-4">
+        <div className="hidden sm:flex w-12 h-12 shrink-0 rounded-2xl bg-gradient-to-br from-blue-600 to-sky-500 text-white items-center justify-center shadow-lg shadow-blue-900/20">
+          <Icon name="key" size={22} />
+        </div>
+        <div>
+          <span className="text-xs font-extrabold uppercase tracking-widest text-blue-600 dark:text-sky-400">
+            {t('accountSettings')}
+          </span>
+          <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white mt-0.5">{t('title')}</h1>
+        </div>
       </div>
 
       {/* Change Password */}
-      <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-xl space-y-4">
+      <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-xl space-y-4">
         <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
           <Icon name="key" size={18} />
           {t('changePasswordTitle')}
@@ -168,7 +173,7 @@ export default function SecuritySettingsPage() {
       </div>
 
       {/* Active Sessions */}
-      <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-xl space-y-4">
+      <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-xl space-y-4">
         <div className="flex items-center justify-between">
           <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
             <Icon name="wifi" size={18} />
@@ -220,7 +225,7 @@ export default function SecuritySettingsPage() {
       </div>
 
       {/* Data Export */}
-      <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-xl flex items-center justify-between gap-4">
+      <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-xl flex items-center justify-between gap-4">
         <div>
           <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
             <Icon name="filetext" size={18} />

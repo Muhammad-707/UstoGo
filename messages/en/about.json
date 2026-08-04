@@ -7,5 +7,14 @@
   "feature2Title": "Escrow Guarantee",
   "feature2Desc": "Your payment is safely held in escrow and released only after you inspect and approve the completed job.",
   "feature3Title": "Transparent Rates",
-  "feature3Desc": "No surprise fees or hidden add-ons. Upfront hourly rates and instant binding digital estimates."
+  "feature3Desc": "No surprise fees or hidden add-ons. Upfront hourly rates and instant binding digital estimates.",
+  "missionBadge": "Our Story",
+  "missionTitle": "Built by people who were tired of unreliable contractors",
+  "missionBody": "UstoGo started when our founders spent three weeks trying to find a licensed electrician who would actually show up on time. We built the platform we wished existed — one where every craftsman is vetted, every price is upfront, and every job is backed by a real guarantee.",
+  "missionPoint1": "Every master passes a background check before going live",
+  "missionPoint2": "Payments stay in escrow until you approve the finished work",
+  "missionPoint3": "Real humans review every dispute — no chatbots, no runaround",
+  "valuesBadge": "Why Homeowners Trust Us",
+  "valuesTitle": "What Makes UstoGo Different",
+  "statsBadge": "By The Numbers"
 }

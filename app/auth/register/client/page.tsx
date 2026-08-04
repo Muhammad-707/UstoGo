@@ -10,6 +10,7 @@ import { ApiError } from '@/lib/api/client';
 import type { City } from '@/lib/api/types';
 import { PasswordInput } from '@/components/ui/PasswordInput';
 import { validateEmail, validateName, validatePassword, validatePhone, normalizePhone, type ValidationErrorKey } from '@/lib/validation';
+import { AuthShell } from '@/components/auth/AuthShell';
 
 type FieldErrors = Partial<Record<'fullName' | 'email' | 'password' | 'phone' | 'cityId', ValidationErrorKey>>;
 
@@ -83,7 +84,7 @@ export default function RegisterClientPage() {
   };
 
   return (
-    <div className="min-h-[85vh] flex items-center justify-center p-4 sm:p-6">
+    <AuthShell minHeight="85vh">
       <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 sm:p-12 w-full max-w-md shadow-2xl space-y-6 animate-fade-in">
         <div className="text-center space-y-2">
           <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white">{t('title')}</h2>
@@ -169,6 +170,6 @@ export default function RegisterClientPage() {
           {t('alreadyHaveAccount')} <Link href="/auth/login" className="font-bold text-blue-600 hover:underline">{t('logIn')}</Link>
         </p>
       </div>
-    </div>
+    </AuthShell>
   );
 }

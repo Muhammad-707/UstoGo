@@ -125,7 +125,7 @@ export default function SearchClient({
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={t('searchPlaceholder')}
-            className="w-full pl-12 pr-4 py-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-blue-500 shadow-md transition"
+            className="w-full pl-12 pr-4 py-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 shadow-md transition"
           />
           {searchQuery && (
             <button
@@ -331,10 +331,10 @@ export default function SearchClient({
           ) : !error && viewMode === 'grid' ? (
             <AnimatedGrid animKey={filterKey} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {masters.map((m, idx) => (
-                <AnimatedCard key={m.id} index={idx % 3} className="glass-card rounded-3xl overflow-hidden border border-slate-200 dark:border-slate-800 flex flex-col justify-between group">
+                <AnimatedCard key={m.id} index={idx % 3} className="glass-card rounded-3xl overflow-hidden border border-slate-200 dark:border-slate-800 flex flex-col justify-between group hover:-translate-y-1.5 hover:shadow-2xl hover:shadow-blue-500/10 hover:border-blue-200 dark:hover:border-sky-900 transition-[transform,box-shadow,border-color] duration-300">
                   <div className="p-6 space-y-4">
                     <div className="flex items-center gap-4">
-                      <img src={m.avatarUrl ?? getAvatarUrl(m.id, m.displayName)} alt={m.displayName} className="w-16 h-16 rounded-2xl object-cover shadow-md" />
+                      <img src={m.avatarUrl ?? getAvatarUrl(m.id, m.displayName)} alt={m.displayName} className="w-16 h-16 rounded-2xl object-cover shadow-md group-hover:scale-105 transition-transform duration-300" />
                       <div>
                         <div className="flex items-center gap-1.5">
                           <h3 className="font-extrabold text-slate-900 dark:text-white text-base">{m.displayName}</h3>
@@ -386,7 +386,7 @@ export default function SearchClient({
           ) : !error ? (
             <AnimatedGrid animKey={filterKey} className="space-y-4">
               {masters.map((m, idx) => (
-                <AnimatedCard key={m.id} index={idx} className="glass-card rounded-3xl p-6 border border-slate-200 dark:border-slate-800 flex flex-col md:flex-row items-center justify-between gap-6">
+                <AnimatedCard key={m.id} index={idx} className="glass-card rounded-3xl p-6 border border-slate-200 dark:border-slate-800 flex flex-col md:flex-row items-center justify-between gap-6 hover:shadow-xl hover:border-blue-200 dark:hover:border-sky-900 transition-[box-shadow,border-color] duration-300">
                   <div className="flex items-center gap-6">
                     <img src={m.avatarUrl ?? getAvatarUrl(m.id, m.displayName)} alt={m.displayName} className="w-20 h-20 rounded-2xl object-cover shadow-md" />
                     <div className="space-y-1">

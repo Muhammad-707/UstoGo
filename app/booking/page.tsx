@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
 import { useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { Icon } from '@/components/icons/LucideIcons';
@@ -251,16 +252,25 @@ export default function BookingWizardPage() {
 
       {/* Step Progress Bar */}
       {!bookingConfirmed && (
-        <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-6 px-4">
+        <div className="relative flex items-center justify-between pb-6 px-4">
+          <div className="absolute left-8 right-8 top-4 h-0.5 bg-slate-200 dark:bg-slate-800 -z-10" />
+          <motion.div
+            className="absolute left-8 top-4 h-0.5 bg-gradient-to-r from-blue-600 to-emerald-500 -z-10"
+            initial={false}
+            animate={{ width: `calc(${((step - 1) / 3) * 100}% - ${((step - 1) / 3) * 4}rem)` }}
+            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+          />
           {[
             { num: 1, label: t('stepService') },
             { num: 2, label: t('stepSchedule') },
             { num: 3, label: t('stepLocation') },
             { num: 4, label: t('stepConfirmation') },
           ].map((s) => (
-            <div key={s.num} className="flex items-center gap-2">
-              <div
-                className={`w-8 h-8 rounded-full font-bold text-xs flex items-center justify-center transition ${
+            <div key={s.num} className="flex flex-col sm:flex-row items-center gap-2 bg-white dark:bg-slate-900 sm:bg-transparent sm:dark:bg-transparent px-1">
+              <motion.div
+                animate={{ scale: step === s.num ? 1.1 : 1 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 20 }}
+                className={`w-8 h-8 rounded-full font-bold text-xs flex items-center justify-center transition-colors ${
                   step === s.num
                     ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30'
                     : step > s.num
@@ -269,7 +279,7 @@ export default function BookingWizardPage() {
                 }`}
               >
                 {step > s.num ? '✓' : s.num}
-              </div>
+              </motion.div>
               <span className="text-xs font-bold text-slate-700 dark:text-slate-300 hidden sm:inline">
                 {s.label}
               </span>
@@ -280,10 +290,18 @@ export default function BookingWizardPage() {
 
       {/* Confirmation View Screen */}
       {bookingConfirmed ? (
-        <div className="bg-white dark:bg-slate-900 p-8 sm:p-12 rounded-3xl border border-slate-200 dark:border-slate-800 text-center space-y-6 shadow-2xl animate-fade-in">
-          <div className="w-20 h-20 bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 rounded-full flex items-center justify-center mx-auto shadow-lg">
-            <Icon name="CheckCircle2" size={48} />
-          </div>
+        <div className="glass-card p-8 sm:p-12 rounded-3xl border border-slate-200 dark:border-slate-800 text-center space-y-6 shadow-2xl animate-fade-in">
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 15, delay: 0.1 }}
+            className="relative w-20 h-20 mx-auto"
+          >
+            <div className="absolute inset-0 rounded-full bg-emerald-400/30 animate-ping" />
+            <div className="relative w-20 h-20 bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 rounded-full flex items-center justify-center shadow-lg">
+              <Icon name="CheckCircle2" size={48} />
+            </div>
+          </motion.div>
           <div className="space-y-2">
             <h2 className="text-3xl font-extrabold text-slate-900 dark:text-white">{t('confirmedTitle')}</h2>
             <p className="text-sm text-slate-500">{t('confirmedDesc')}</p>
@@ -325,7 +343,7 @@ export default function BookingWizardPage() {
         </div>
       ) : (
         /* Booking Step Form Wrapper */
-        <div className="bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl space-y-8">
+        <div className="glass-card p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl space-y-8">
 
           {/* STEP 1: Select Master & Service */}
           {step === 1 && (
@@ -369,10 +387,10 @@ export default function BookingWizardPage() {
                         key={svc.id}
                         type="button"
                         onClick={() => setSelectedServiceId(svc.id)}
-                        className={`p-3.5 rounded-2xl text-left text-xs font-bold border transition ${
+                        className={`p-3.5 rounded-2xl text-left text-xs font-bold border transition-all hover:-translate-y-0.5 ${
                           selectedServiceId === svc.id
-                            ? 'bg-blue-600 text-white border-blue-600 shadow-md'
-                            : 'bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700'
+                            ? 'bg-blue-600 text-white border-blue-600 shadow-md shadow-blue-600/20'
+                            : 'bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-blue-300 dark:hover:border-sky-800 hover:shadow-md'
                         }`}
                       >
                         <div>{svc.title}</div>
@@ -392,7 +410,7 @@ export default function BookingWizardPage() {
                   value={jobNotes}
                   onChange={(e) => setJobNotes(e.target.value)}
                   placeholder={t('jobDescriptionPlaceholder')}
-                  className="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs text-slate-900 dark:text-white focus:outline-none"
+                  className="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition"
                 />
               </div>
 
@@ -418,7 +436,7 @@ export default function BookingWizardPage() {
                   value={date}
                   min={new Date().toISOString().slice(0, 10)}
                   onChange={(e) => setDate(e.target.value)}
-                  className="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-900 dark:text-white focus:outline-none"
+                  className="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition"
                 />
               </div>
 
@@ -438,10 +456,10 @@ export default function BookingWizardPage() {
                       <button
                         key={slot}
                         onClick={() => setTimeSlot(slot)}
-                        className={`p-3.5 rounded-2xl text-xs font-bold border transition ${
+                        className={`p-3.5 rounded-2xl text-xs font-bold border transition-all hover:-translate-y-0.5 ${
                           timeSlot === slot
-                            ? 'bg-blue-600 text-white border-blue-600 shadow-md'
-                            : 'bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700'
+                            ? 'bg-blue-600 text-white border-blue-600 shadow-md shadow-blue-600/20'
+                            : 'bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-blue-300 dark:hover:border-sky-800 hover:shadow-md'
                         }`}
                       >
                         {formatSlotLabel(slot, selectedService?.durationMinutes)}
@@ -494,7 +512,7 @@ export default function BookingWizardPage() {
                       setCityId(e.target.value);
                       setDistrict('');
                     }}
-                    className="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-900 dark:text-white focus:outline-none"
+                    className="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition"
                   >
                     <option value="">{t('selectCity')}</option>
                     {cities.map((city) => (
@@ -531,7 +549,7 @@ export default function BookingWizardPage() {
                     value={street}
                     onChange={(e) => setStreet(e.target.value)}
                     placeholder={t('streetPlaceholder')}
-                    className="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-900 dark:text-white focus:outline-none"
+                    className="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition"
                   />
                 </div>
                 <div className="space-y-2">
@@ -543,7 +561,7 @@ export default function BookingWizardPage() {
                     value={house}
                     onChange={(e) => setHouse(e.target.value)}
                     placeholder={t('housePlaceholder')}
-                    className="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-900 dark:text-white focus:outline-none"
+                    className="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition"
                   />
                 </div>
               </div>
@@ -555,7 +573,7 @@ export default function BookingWizardPage() {
                     value={contactPhone}
                     onChange={(e) => setContactPhone(e.target.value)}
                     placeholder={user?.phone ?? '+992 __ ___-__-__'}
-                    className="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-900 dark:text-white focus:outline-none"
+                    className="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition"
                   />
                 <p className="text-[10px] text-slate-400">{t('phoneHint')}</p>
               </div>
@@ -636,7 +654,7 @@ export default function BookingWizardPage() {
               <button
                 onClick={handleConfirm}
                 disabled={submitting}
-                className="w-full py-4 rounded-2xl bg-emerald-600 hover:bg-emerald-700 disabled:opacity-60 text-white font-extrabold text-sm shadow-xl transition btn-ripple flex items-center justify-center gap-2"
+                className="btn-success w-full py-4 rounded-2xl disabled:opacity-60 font-extrabold text-sm transition btn-ripple flex items-center justify-center gap-2"
               >
                 {submitting && <Spinner className="w-4 h-4 border-white/40 border-t-white" />}
                 {t('confirmAndPay', { amount: totalPrice.toFixed(2) })}

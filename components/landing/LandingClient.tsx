@@ -2,6 +2,7 @@
 
 import React, { useMemo, useState } from 'react';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
 import { Icon } from '@/components/icons/LucideIcons';
 import { useTranslations } from 'next-intl';
 import type { Category, MasterPublic } from '@/lib/api/types';
@@ -10,6 +11,13 @@ import { getAvatarUrl, getCoverUrl } from '@/lib/placeholders';
 
 import HeroSlider from '@/components/layout/HeroSlider';
 import { FilterItem } from '@/components/ui/FilterAnimate';
+
+const STATS = [
+  { value: '50,000+', labelKey: 'completedJobs', icon: 'CheckCircle2', accent: 'text-sky-400', glow: 'shadow-sky-500/20', ring: 'from-sky-500/20' },
+  { value: '1,420+', labelKey: 'verifiedMasters', icon: 'ShieldCheck', accent: 'text-emerald-400', glow: 'shadow-emerald-500/20', ring: 'from-emerald-500/20' },
+  { value: '4.95 / 5', labelKey: 'avgRating', icon: 'Star', accent: 'text-amber-400', glow: 'shadow-amber-500/20', ring: 'from-amber-500/20' },
+  { value: '100%', labelKey: 'insuranceGuarantee', icon: 'ShieldCheck', accent: 'text-purple-400', glow: 'shadow-purple-500/20', ring: 'from-purple-500/20' },
+] as const;
 
 function flattenLeafCategories(categories: Category[]): Category[] {
   const out: Category[] = [];
@@ -66,29 +74,41 @@ export default function LandingClient({
       <HeroSlider />
 
       {/* 2. STATS BAR SECTION */}
-      <section className="bg-gradient-to-r from-blue-900 via-slate-900 to-blue-950 py-12 text-white shadow-xl relative overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
+      <section className="relative py-16 text-white shadow-2xl overflow-hidden bg-slate-950">
+        {/* Base gradient wash */}
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-900 via-slate-950 to-indigo-950" />
+        {/* Ambient glow orbs */}
+        <div className="absolute -top-24 -left-24 w-72 h-72 rounded-full bg-sky-500/20 blur-3xl animate-float" />
+        <div className="absolute -bottom-32 -right-16 w-80 h-80 rounded-full bg-purple-500/20 blur-3xl animate-float" style={{ animationDelay: '1.5s' }} />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full bg-emerald-500/10 blur-3xl" />
+        {/* Faint grid pattern */}
+        <div
+          className="absolute inset-0 opacity-[0.07]"
+          style={{
+            backgroundImage: 'linear-gradient(rgba(255,255,255,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.6) 1px, transparent 1px)',
+            backgroundSize: '48px 48px',
+          }}
+        />
 
-          <FilterItem index={0} className="space-y-1">
-            <div className="text-3xl sm:text-4xl font-extrabold text-sky-400">50,000+</div>
-            <p className="text-xs text-slate-300 font-medium uppercase tracking-wider">{t('completedJobs')}</p>
-          </FilterItem>
-
-          <FilterItem index={1} className="space-y-1">
-            <div className="text-3xl sm:text-4xl font-extrabold text-emerald-400">1,420+</div>
-            <p className="text-xs text-slate-300 font-medium uppercase tracking-wider">{t('verifiedMasters')}</p>
-          </FilterItem>
-
-          <FilterItem index={2} className="space-y-1">
-            <div className="text-3xl sm:text-4xl font-extrabold text-amber-400">4.95 / 5</div>
-            <p className="text-xs text-slate-300 font-medium uppercase tracking-wider">{t('avgRating')}</p>
-          </FilterItem>
-
-          <FilterItem index={3} className="space-y-1">
-            <div className="text-3xl sm:text-4xl font-extrabold text-purple-400">100%</div>
-            <p className="text-xs text-slate-300 font-medium uppercase tracking-wider">{t('insuranceGuarantee')}</p>
-          </FilterItem>
-
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          {STATS.map((s, idx) => (
+            <FilterItem key={s.labelKey} index={idx}>
+              <motion.div
+                whileHover={{ y: -6, scale: 1.03 }}
+                transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+                className={`group relative h-full rounded-3xl p-5 sm:p-6 text-center bg-white/[0.04] border border-white/10 backdrop-blur-md shadow-lg ${s.glow} hover:bg-white/[0.08] hover:border-white/20 transition-colors`}
+              >
+                <div className={`absolute inset-0 rounded-3xl bg-gradient-to-b ${s.ring} to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
+                <div className="relative space-y-1.5">
+                  <div className={`mx-auto mb-2 w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center ${s.accent} group-hover:scale-110 transition-transform duration-300`}>
+                    <Icon name={s.icon} size={18} />
+                  </div>
+                  <div className={`text-2xl sm:text-4xl font-extrabold ${s.accent} tracking-tight`}>{s.value}</div>
+                  <p className="text-[11px] sm:text-xs text-slate-300 font-medium uppercase tracking-wider">{t(s.labelKey)}</p>
+                </div>
+              </motion.div>
+            </FilterItem>
+          ))}
         </div>
       </section>
 
@@ -136,19 +156,30 @@ export default function LandingClient({
             const stat = categoryStats.get(cat.name);
             return (
               <FilterItem key={cat.id} index={idx % 5}>
+              <motion.div whileHover={{ y: -8 }} transition={{ type: 'spring', stiffness: 300, damping: 20 }} className="h-full">
               <Link
                 href={`/search?category=${cat.id}`}
                 className="glass-card rounded-3xl p-6 group flex flex-col justify-between h-56 transition-all duration-300 relative overflow-hidden"
               >
+                {/* Hover glow wash */}
+                <div className={`absolute inset-0 bg-gradient-to-br ${visual.bgGradient} opacity-0 group-hover:opacity-60 dark:group-hover:opacity-20 transition-opacity duration-500`} />
+                {/* Decorative oversized icon ghost */}
+                <div className="absolute -right-4 -bottom-4 text-slate-900/[0.03] dark:text-white/[0.04] group-hover:scale-110 group-hover:rotate-6 transition-transform duration-500">
+                  <Icon name={visual.iconName} size={112} />
+                </div>
+
                 {/* Top Icon */}
-                <div className="flex items-center justify-between">
-                  <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${visual.bgGradient} flex items-center justify-center text-blue-600 dark:text-sky-400 group-hover:scale-110 transition-transform duration-300`}>
+                <div className="relative flex items-center justify-between">
+                  <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${visual.bgGradient} flex items-center justify-center text-blue-600 dark:text-sky-400 shadow-sm group-hover:scale-110 group-hover:-rotate-6 transition-transform duration-300`}>
                     <Icon name={visual.iconName} size={24} />
+                  </div>
+                  <div className="w-8 h-8 rounded-full bg-white/80 dark:bg-slate-800/80 flex items-center justify-center text-slate-400 dark:text-slate-500 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
+                    <Icon name="ArrowUpRight" size={16} />
                   </div>
                 </div>
 
                 {/* Text info */}
-                <div className="space-y-1 mt-4">
+                <div className="relative space-y-1 mt-4">
                   <h3 className="font-bold text-slate-900 dark:text-white text-base group-hover:text-blue-600 dark:group-hover:text-sky-400 transition">
                     {cat.name}
                   </h3>
@@ -160,13 +191,14 @@ export default function LandingClient({
                 </div>
 
                 {/* Footer details */}
-                <div className="pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-xs text-slate-500">
+                <div className="relative pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-xs text-slate-500">
                   <span>{stat?.count ?? 0} устоҳо</span>
                   {stat?.minPrice != null && (
                     <span className="font-extrabold text-slate-900 dark:text-white">Аз ${stat.minPrice}/h</span>
                   )}
                 </div>
               </Link>
+              </motion.div>
               </FilterItem>
             );
           })}
@@ -202,38 +234,30 @@ export default function LandingClient({
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
 
-            {/* Step 1 */}
-            <FilterItem index={0} className="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-4 shadow-lg relative">
-              <div className="w-14 h-14 rounded-2xl bg-blue-600 text-white font-extrabold text-xl flex items-center justify-center shadow-lg shadow-blue-600/30">
-                01
-              </div>
-              <h3 className="text-xl font-extrabold text-slate-900 dark:text-white">{t('step1Title')}</h3>
-              <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-                {t('step1Desc')}
-              </p>
-            </FilterItem>
+            {/* Connecting line (desktop only) */}
+            <div className="hidden md:block absolute top-14 left-[16.5%] right-[16.5%] h-px bg-gradient-to-r from-blue-300 via-sky-300 to-emerald-300 dark:from-blue-800 dark:via-sky-800 dark:to-emerald-800" />
 
-            {/* Step 2 */}
-            <FilterItem index={1} className="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-4 shadow-lg relative">
-              <div className="w-14 h-14 rounded-2xl bg-sky-500 text-white font-extrabold text-xl flex items-center justify-center shadow-lg shadow-sky-500/30">
-                02
-              </div>
-              <h3 className="text-xl font-extrabold text-slate-900 dark:text-white">{t('step2Title')}</h3>
-              <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-                {t('step2Desc')}
-              </p>
-            </FilterItem>
-
-            {/* Step 3 */}
-            <FilterItem index={2} className="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-4 shadow-lg relative">
-              <div className="w-14 h-14 rounded-2xl bg-emerald-500 text-white font-extrabold text-xl flex items-center justify-center shadow-lg shadow-emerald-500/30">
-                03
-              </div>
-              <h3 className="text-xl font-extrabold text-slate-900 dark:text-white">{t('step3Title')}</h3>
-              <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-                {t('step3Desc')}
-              </p>
-            </FilterItem>
+            {[
+              { n: '01', titleKey: 'step1Title', descKey: 'step1Desc', color: 'bg-blue-600', shadow: 'shadow-blue-600/30', ring: 'group-hover:shadow-blue-500/30' },
+              { n: '02', titleKey: 'step2Title', descKey: 'step2Desc', color: 'bg-sky-500', shadow: 'shadow-sky-500/30', ring: 'group-hover:shadow-sky-400/30' },
+              { n: '03', titleKey: 'step3Title', descKey: 'step3Desc', color: 'bg-emerald-500', shadow: 'shadow-emerald-500/30', ring: 'group-hover:shadow-emerald-400/30' },
+            ].map((step, idx) => (
+              <FilterItem key={step.n} index={idx}>
+                <motion.div
+                  whileHover={{ y: -8 }}
+                  transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+                  className={`group relative bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-4 shadow-lg hover:shadow-2xl ${step.ring} transition-shadow duration-300 h-full`}
+                >
+                  <div className={`relative z-10 w-14 h-14 rounded-2xl ${step.color} text-white font-extrabold text-xl flex items-center justify-center shadow-lg ${step.shadow} group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300`}>
+                    {step.n}
+                  </div>
+                  <h3 className="text-xl font-extrabold text-slate-900 dark:text-white">{t(step.titleKey)}</h3>
+                  <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                    {t(step.descKey)}
+                  </p>
+                </motion.div>
+              </FilterItem>
+            ))}
 
           </div>
 
@@ -262,10 +286,15 @@ export default function LandingClient({
         {/* Master Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {topMasters.map((master, idx) => (
-            <FilterItem key={master.id} index={idx % 3} className="glass-card rounded-3xl overflow-hidden border border-slate-200 dark:border-slate-800 group">
+            <FilterItem key={master.id} index={idx % 3}>
+            <motion.div
+              whileHover={{ y: -8 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+              className="glass-card rounded-3xl overflow-hidden border border-slate-200 dark:border-slate-800 group hover:shadow-2xl hover:shadow-blue-500/10 dark:hover:shadow-sky-500/10 hover:border-blue-200 dark:hover:border-sky-900 transition-[box-shadow,border-color] duration-300"
+            >
               {/* Cover Header */}
-              <div className="h-32 relative">
-                <img src={master.bannerUrl || getCoverUrl(master.id)} alt={master.displayName} className="w-full h-full object-cover" />
+              <div className="h-32 relative overflow-hidden">
+                <img src={master.bannerUrl || getCoverUrl(master.id)} alt={master.displayName} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 ease-out" />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 to-transparent" />
                 <div className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-slate-900/80 backdrop-blur-md text-amber-400 text-xs font-bold flex items-center gap-1">
                   <Icon name="Star" size={14} className="fill-amber-400 text-amber-400" />
@@ -277,7 +306,8 @@ export default function LandingClient({
               <div className="p-6 relative pt-0">
                 <div className="-mt-12 flex items-end justify-between mb-4">
                   <div className="relative">
-                    <img src={master.avatarUrl || getAvatarUrl(master.id, master.displayName)} alt={master.displayName} className="w-20 h-20 rounded-2xl object-cover border-4 border-white dark:border-slate-900 shadow-xl" />
+                    <div className="absolute -inset-1 rounded-2xl bg-gradient-to-br from-blue-500 to-sky-400 opacity-0 group-hover:opacity-70 blur transition-opacity duration-300" />
+                    <img src={master.avatarUrl || getAvatarUrl(master.id, master.displayName)} alt={master.displayName} className="relative w-20 h-20 rounded-2xl object-cover border-4 border-white dark:border-slate-900 shadow-xl group-hover:scale-105 transition-transform duration-300" />
                     {master.hasCertificates && (
                       <div className="absolute -bottom-1 -right-1 p-1 bg-blue-600 text-white rounded-full">
                         <Icon name="ShieldCheck" size={14} />
@@ -328,6 +358,7 @@ export default function LandingClient({
                 </div>
 
               </div>
+            </motion.div>
             </FilterItem>
           ))}
         </div>
@@ -336,9 +367,20 @@ export default function LandingClient({
 
       {/* 6. CALL TO ACTION SECTION */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-800 rounded-3xl p-8 sm:p-14 text-white shadow-2xl relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-8">
+        <div className="bg-gradient-to-br from-blue-600 via-indigo-600 to-blue-800 rounded-3xl p-8 sm:p-14 text-white shadow-2xl shadow-blue-900/30 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-8">
 
-          <div className="max-w-xl space-y-4 text-center md:text-left">
+          {/* Decorative glows + pattern */}
+          <div className="absolute -top-20 -right-10 w-72 h-72 rounded-full bg-sky-400/20 blur-3xl animate-float" />
+          <div className="absolute -bottom-24 -left-10 w-72 h-72 rounded-full bg-purple-400/20 blur-3xl animate-float" style={{ animationDelay: '1s' }} />
+          <div
+            className="absolute inset-0 opacity-[0.06]"
+            style={{
+              backgroundImage: 'radial-gradient(rgba(255,255,255,0.9) 1.5px, transparent 1.5px)',
+              backgroundSize: '22px 22px',
+            }}
+          />
+
+          <div className="relative max-w-xl space-y-4 text-center md:text-left">
             <span className="px-3 py-1 text-xs font-bold bg-white/20 rounded-full uppercase tracking-wider">
               {t('readyToUpgrade')}
             </span>
@@ -350,19 +392,23 @@ export default function LandingClient({
             </p>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
-            <Link
-              href="/booking"
-              className="px-8 py-4 rounded-2xl bg-white text-blue-900 font-extrabold text-sm shadow-xl hover:bg-slate-100 transition text-center"
-            >
-              {t('bookService')}
-            </Link>
-            <Link
-              href="/auth/register/master"
-              className="px-8 py-4 rounded-2xl bg-blue-900/60 border border-blue-400/40 text-white font-extrabold text-sm hover:bg-blue-900/80 transition text-center"
-            >
-              {t('becomeMaster')}
-            </Link>
+          <div className="relative flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+            <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
+              <Link
+                href="/booking"
+                className="block px-8 py-4 rounded-2xl bg-white text-blue-900 font-extrabold text-sm shadow-xl hover:shadow-2xl hover:shadow-white/20 transition text-center"
+              >
+                {t('bookService')}
+              </Link>
+            </motion.div>
+            <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
+              <Link
+                href="/auth/register/master"
+                className="block px-8 py-4 rounded-2xl bg-blue-900/60 border border-blue-400/40 text-white font-extrabold text-sm hover:bg-blue-900/80 transition text-center"
+              >
+                {t('becomeMaster')}
+              </Link>
+            </motion.div>
           </div>
 
         </div>

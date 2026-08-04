@@ -41,7 +41,7 @@ export default function ReviewsPage() {
   useEffect(() => {
     const load = isMaster ? reviewsApi.received() : reviewsApi.myReviews();
     load
-      .then(setReviews)
+      .then((res) => setReviews(res.items))
       .catch(() => setReviews([]))
       .finally(() => setLoading(false));
   }, [isMaster]);
@@ -178,7 +178,7 @@ export default function ReviewsPage() {
           {isMaster && (
             <button
               onClick={openClientRatingModal}
-              className="px-6 py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs shadow-lg transition btn-ripple"
+              className="btn-success px-6 py-3.5 rounded-2xl font-extrabold text-xs transition btn-ripple"
             >
               {t('rateClient')}
             </button>
@@ -392,7 +392,7 @@ export default function ReviewsPage() {
                 <button
                   onClick={handleClientRatingSubmit}
                   disabled={clientRatingSubmitting}
-                  className="w-full py-4 rounded-2xl bg-emerald-600 text-white font-extrabold text-xs shadow-lg btn-ripple disabled:opacity-60"
+                  className="btn-success w-full py-4 rounded-2xl font-extrabold text-xs btn-ripple disabled:opacity-60"
                 >
                   {t('submitClientRating')}
                 </button>

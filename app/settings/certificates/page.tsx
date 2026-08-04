@@ -98,7 +98,7 @@ export default function CertificatesPage() {
       )}
 
       {showForm && (
-        <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 space-y-4 shadow-xl">
+        <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 p-6 space-y-4 shadow-xl">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
             <input
               placeholder={t('titlePlaceholder')}
@@ -145,7 +145,7 @@ export default function CertificatesPage() {
         </div>
       )}
 
-      <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 divide-y divide-slate-100 dark:divide-slate-800 shadow-xl overflow-hidden">
+      <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 divide-y divide-slate-100 dark:divide-slate-800 shadow-xl overflow-hidden">
         {loading && <div className="p-6 text-xs text-slate-400 font-semibold">{t('loading')}</div>}
         {!loading && certs.length === 0 && (
           <div className="p-12 text-center space-y-3">

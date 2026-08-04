@@ -126,7 +126,7 @@ export default function PortfolioPage() {
         </div>
       )}
 
-      <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-xl">
+      <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-xl">
         {loading && <p className="text-xs text-slate-400 font-semibold">{t('loading')}</p>}
         {!loading && images.length === 0 && (
           <div className="py-12 text-center space-y-3">

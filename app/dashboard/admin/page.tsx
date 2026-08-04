@@ -153,11 +153,11 @@ export default function AdminDashboardPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         {loading &&
           Array.from({ length: 4 }).map((_, idx) => (
-            <div key={idx} className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl h-[100px] animate-pulse" />
+            <div key={idx} className="glass-card p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl h-[100px] animate-pulse" />
           ))}
         {!loading &&
           metrics.map((m, idx) => (
-            <div key={idx} className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl flex items-center justify-between group hover:shadow-2xl hover:-translate-y-0.5 transition-all duration-300">
+            <div key={idx} className="glass-card p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl flex items-center justify-between group hover:shadow-2xl hover:-translate-y-0.5 transition-all duration-300">
               <div className="space-y-1">
                 <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{m.title}</span>
                 <h3 className="text-2xl font-extrabold text-slate-900 dark:text-white">{m.value}</h3>
@@ -173,7 +173,7 @@ export default function AdminDashboardPage() {
       {/* Chart + Quick Stats Row */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
         {/* Chart */}
-        <div className="lg:col-span-2 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-6 shadow-xl">
+        <div className="lg:col-span-2 glass-card rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-6 shadow-xl">
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-lg font-bold text-slate-900 dark:text-white">{t('chartTitle')}</h3>
@@ -202,7 +202,7 @@ export default function AdminDashboardPage() {
         </div>
 
         {/* Quick Stats */}
-        <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-xl space-y-4">
+        <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-xl space-y-4">
           <h3 className="text-sm font-bold text-slate-900 dark:text-white">{t('quickStats')}</h3>
           <div className="space-y-3">
             {[
@@ -226,7 +226,7 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* Master Verification Table */}
-      <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-6 shadow-xl">
+      <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-6 shadow-xl">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
             <h3 className="text-lg font-bold text-slate-900 dark:text-white">{t('verificationQueue')}</h3>
@@ -362,7 +362,7 @@ export default function AdminDashboardPage() {
                           <button
                             onClick={() => handleApprove(m.id)}
                             disabled={actingId === m.id}
-                            className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 disabled:opacity-60 text-white font-bold shadow-sm transition"
+                            className="btn-success px-3 py-1.5 rounded-xl disabled:opacity-60 font-bold transition"
                           >
                             Approve
                           </button>
@@ -387,7 +387,7 @@ export default function AdminDashboardPage() {
       {/* Master Booking Details Overlay */}
       {selectedMaster && (
         <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setSelectedMaster(null)}>
-          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl w-full max-w-2xl max-h-[85vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+          <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl w-full max-w-2xl max-h-[85vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
             <div className="bg-gradient-to-r from-purple-600 to-indigo-600 p-6 rounded-t-3xl">
               <div className="flex items-center justify-between">
                 <div>

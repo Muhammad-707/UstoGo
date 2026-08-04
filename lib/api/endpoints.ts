@@ -216,14 +216,14 @@ export const bookingsApi = {
 export const reviewsApi = {
    create: (data: { bookingId: string; rating: number; comment?: string }) =>
      api.post<Review>('/reviews', data),
-   myReviews: () => api.get<Review[]>('/reviews/me'),
-   received: () => api.get<Review[]>('/reviews/received'),
+   myReviews: () => api.get<Paginated<Review>>('/reviews/me'),
+   received: () => api.get<Paginated<Review>>('/reviews/received'),
    reply: (id: string, body: string) => api.post<Review>(`/reviews/${id}/reply`, { body }),
    update: (id: string, data: { rating?: number; comment?: string }) => api.patch<Review>(`/reviews/${id}`, data),
    rateClient: (data: { bookingId: string; rating: number; comment?: string }) =>
      api.post<Review>('/reviews/client-rating', data),
-   myClientRatings: () => api.get<Review[]>('/reviews/me/client-ratings'),
-   receivedClientRatings: () => api.get<Review[]>('/reviews/received/client-ratings'),
+   myClientRatings: () => api.get<Paginated<Review>>('/reviews/me/client-ratings'),
+   receivedClientRatings: () => api.get<Paginated<Review>>('/reviews/received/client-ratings'),
 };
 
 // ---- Notifications ----

@@ -27,6 +27,12 @@
 body {
   font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   background-color: var(--bg-light);
+  background-image:
+    radial-gradient(at 15% 0%, rgba(37, 99, 235, 0.09) 0, transparent 50%),
+    radial-gradient(at 85% 8%, rgba(56, 189, 248, 0.12) 0, transparent 50%),
+    radial-gradient(at 15% 90%, rgba(34, 197, 94, 0.06) 0, transparent 50%),
+    radial-gradient(at 90% 100%, rgba(37, 99, 235, 0.06) 0, transparent 50%);
+  background-attachment: fixed;
   color: var(--text-light);
   transition: background-color 0.3s ease, color 0.3s ease;
   overflow-x: hidden;
@@ -34,6 +40,12 @@ body {
 
 .dark body {
   background-color: var(--bg-dark);
+  background-image:
+    radial-gradient(at 12% 0%, rgba(37, 99, 235, 0.22) 0, transparent 45%),
+    radial-gradient(at 88% 12%, rgba(56, 189, 248, 0.16) 0, transparent 50%),
+    radial-gradient(at 10% 95%, rgba(34, 197, 94, 0.10) 0, transparent 50%),
+    radial-gradient(at 95% 100%, rgba(139, 92, 246, 0.10) 0, transparent 50%);
+  background-attachment: fixed;
   color: var(--text-dark);
 }
 
@@ -150,6 +162,29 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
+}
+
+/* Success / CTA green button — tuned separately for each theme so it
+   harmonizes with the surrounding surface in both light and dark mode */
+.btn-success {
+  background: linear-gradient(135deg, #10B981, #059669);
+  color: #fff;
+  box-shadow: 0 10px 24px -8px rgba(5, 150, 105, 0.45), 0 2px 6px -2px rgba(5, 150, 105, 0.25);
+}
+
+.btn-success:hover {
+  background: linear-gradient(135deg, #059669, #047857);
+  box-shadow: 0 12px 28px -8px rgba(5, 150, 105, 0.55), 0 3px 8px -2px rgba(5, 150, 105, 0.3);
+}
+
+.dark .btn-success {
+  background: linear-gradient(135deg, #34D399, #10B981);
+  box-shadow: 0 10px 26px -8px rgba(16, 185, 129, 0.35), 0 2px 8px -2px rgba(16, 185, 129, 0.2);
+}
+
+.dark .btn-success:hover {
+  background: linear-gradient(135deg, #6EE7B7, #34D399);
+  box-shadow: 0 12px 30px -8px rgba(16, 185, 129, 0.45), 0 3px 10px -2px rgba(16, 185, 129, 0.28);
 }
 
 /* Button ripple effect */

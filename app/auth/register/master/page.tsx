@@ -10,6 +10,7 @@ import { ApiError } from '@/lib/api/client';
 import type { City, Category } from '@/lib/api/types';
 import { PasswordInput } from '@/components/ui/PasswordInput';
 import { validateEmail, validateName, validatePassword, validatePhone, normalizePhone, type ValidationErrorKey } from '@/lib/validation';
+import { AuthShell } from '@/components/auth/AuthShell';
 
 function flattenCategories(cats: Category[]): Category[] {
   return cats.flatMap((c) => (c.isLeaf ? [c] : flattenCategories(c.children ?? [])));
@@ -102,7 +103,7 @@ export default function RegisterMasterPage() {
   };
 
   return (
-    <div className="min-h-[85vh] flex items-center justify-center p-4 sm:p-6">
+    <AuthShell minHeight="85vh">
       <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 sm:p-12 w-full max-w-lg shadow-2xl space-y-6 animate-fade-in">
         <div className="text-center space-y-2">
           <span className="px-3 py-1 rounded-full bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 text-xs font-bold uppercase">
@@ -236,6 +237,6 @@ export default function RegisterMasterPage() {
           {t('alreadyMaster')} <Link href="/auth/login" className="font-bold text-amber-500 hover:underline">{t('logIn')}</Link>
         </p>
       </div>
-    </div>
+    </AuthShell>
   );
 }

@@ -2,6 +2,7 @@
 
 import React, { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
 import { Icon } from '@/components/icons/LucideIcons';
 import { useTranslations } from 'next-intl';
 import { bookingsApi } from '@/lib/api/endpoints';
@@ -76,8 +77,10 @@ export default function ClientHomePage({
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
 
       {/* Welcome Banner */}
-      <div className="bg-gradient-to-r from-blue-900 via-slate-900 to-indigo-950 rounded-3xl p-8 text-white shadow-xl flex flex-col md:flex-row items-center justify-between gap-6 border border-slate-800">
-        <div className="space-y-2 max-w-xl">
+      <div className="relative overflow-hidden bg-gradient-to-br from-blue-900 via-slate-900 to-indigo-950 rounded-3xl p-8 text-white shadow-xl flex flex-col md:flex-row items-center justify-between gap-6 border border-slate-800">
+        <div className="absolute -top-16 -right-10 w-64 h-64 rounded-full bg-sky-500/20 blur-3xl animate-float" />
+        <div className="absolute -bottom-20 left-1/4 w-64 h-64 rounded-full bg-purple-500/10 blur-3xl animate-float" style={{ animationDelay: '1s' }} />
+        <div className="relative space-y-2 max-w-xl">
           <div className="flex items-center gap-2">
             <span className="px-3 py-1 rounded-full bg-blue-500/30 text-blue-200 text-xs font-bold border border-blue-400/30">
               {t('clientDashboard')}
@@ -91,7 +94,7 @@ export default function ClientHomePage({
           </p>
         </div>
 
-        <div className="flex items-center gap-3 w-full md:w-auto">
+        <div className="relative flex items-center gap-3 w-full md:w-auto">
           <Link
             href="/search"
             className="flex-1 md:flex-none px-6 py-3.5 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold shadow-lg shadow-blue-600/30 flex items-center justify-center gap-2 transition"
@@ -158,11 +161,12 @@ export default function ClientHomePage({
             const stat = categoryStats.get(cat.name);
             return (
               <FilterItem key={cat.id} index={idx % 4}>
+              <motion.div whileHover={{ y: -6 }} transition={{ type: 'spring', stiffness: 300, damping: 20 }}>
               <Link
                 href={`/search?category=${cat.id}`}
-                className="glass-card rounded-2xl p-5 text-center flex flex-col items-center gap-3 group transition"
+                className="glass-card rounded-2xl p-5 text-center flex flex-col items-center gap-3 group transition-shadow hover:shadow-xl"
               >
-                <div className="w-14 h-14 rounded-2xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-sky-400 flex items-center justify-center group-hover:scale-110 transition">
+                <div className="w-14 h-14 rounded-2xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-sky-400 flex items-center justify-center group-hover:scale-110 group-hover:-rotate-6 transition-transform duration-300">
                   <Icon name={visual.iconName} size={26} />
                 </div>
                 <div className="space-y-1">
@@ -174,6 +178,7 @@ export default function ClientHomePage({
                   </p>
                 </div>
               </Link>
+              </motion.div>
               </FilterItem>
             );
           })}
@@ -194,7 +199,12 @@ export default function ClientHomePage({
 
         <FilterContainer className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {topMasters.map((m, idx) => (
-            <FilterItem key={m.id} index={idx % 3} className="glass-card rounded-2xl p-5 space-y-4 flex flex-col justify-between border border-slate-200 dark:border-slate-800">
+            <FilterItem key={m.id} index={idx % 3}>
+            <motion.div
+              whileHover={{ y: -6 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+              className="glass-card rounded-2xl p-5 space-y-4 flex flex-col justify-between border border-slate-200 dark:border-slate-800 hover:shadow-xl hover:border-blue-200 dark:hover:border-sky-900 h-full transition-[box-shadow,border-color] duration-300"
+            >
               <div className="flex items-start gap-4">
                 <img src={m.avatarUrl || getAvatarUrl(m.id, m.displayName)} alt={m.displayName} className="w-16 h-16 rounded-2xl object-cover shadow" />
                 <div className="space-y-1">
@@ -226,6 +236,7 @@ export default function ClientHomePage({
                   {t('bookCraftsman')}
                 </Link>
               </div>
+            </motion.div>
             </FilterItem>
           ))}
         </FilterContainer>

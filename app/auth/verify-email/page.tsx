@@ -7,6 +7,7 @@ import { useTranslations } from 'next-intl';
 import { authApi } from '@/lib/api/endpoints';
 import { ApiError } from '@/lib/api/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { AuthShell } from '@/components/auth/AuthShell';
 
 function VerifyEmailContent() {
   const t = useTranslations('authVerifyEmail');
@@ -47,7 +48,7 @@ function VerifyEmailContent() {
   };
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center p-4 sm:p-6">
+    <AuthShell>
       <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 sm:p-12 w-full max-w-md shadow-2xl space-y-6 animate-fade-in text-center">
         {status === 'pending' && (
           <div className="space-y-4">
@@ -95,7 +96,7 @@ function VerifyEmailContent() {
           </div>
         )}
       </div>
-    </div>
+    </AuthShell>
   );
 }
 

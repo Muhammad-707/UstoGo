@@ -312,7 +312,7 @@ export default function MasterDashboardPage() {
       {/* Metrics Grid */}
       <FilterContainer className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {metrics.map((m, idx) => (
-          <FilterItem key={idx} index={idx} className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl flex items-center justify-between hover:shadow-2xl hover:-translate-y-0.5 transition">
+          <FilterItem key={idx} index={idx} className="glass-card p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl flex items-center justify-between hover:shadow-2xl hover:-translate-y-0.5 transition">
             <div className="space-y-1">
               <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">{m.title}</span>
               <h3 className="text-2xl font-extrabold text-slate-900 dark:text-white">{m.value}</h3>
@@ -336,7 +336,7 @@ export default function MasterDashboardPage() {
             <FilterItem key={qa.href} index={idx}>
               <Link
                 href={qa.href}
-                className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-md p-5 flex flex-col items-center gap-3 text-center hover:border-amber-400 hover:shadow-lg transition group"
+                className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 shadow-md p-5 flex flex-col items-center gap-3 text-center hover:border-amber-400 hover:shadow-lg transition group"
               >
                 <div className={`w-11 h-11 rounded-2xl ${qa.color} text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition`}>
                   <Icon name={qa.icon} size={20} />
@@ -349,7 +349,7 @@ export default function MasterDashboardPage() {
       </div>
 
       {/* Pending Job Requests */}
-      <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-6 shadow-xl">
+      <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-6 shadow-xl">
         <h3 className="text-lg font-bold text-slate-900 dark:text-white">{t('pendingApprovals')}</h3>
         {loading && <p className="text-xs text-slate-400 font-semibold">{t('loadingRequests')}</p>}
         {!loading && pending.length === 0 && (
@@ -398,7 +398,7 @@ export default function MasterDashboardPage() {
                 <button
                   disabled={actingId === b.id}
                   onClick={() => handleAccept(b.id)}
-                  className="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow transition disabled:opacity-50"
+                  className="btn-success px-5 py-2 rounded-xl text-xs font-bold transition disabled:opacity-50"
                 >
                   {t('acceptJob', { price: b.price })}
                 </button>
@@ -412,7 +412,7 @@ export default function MasterDashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
         {/* Upcoming Bookings */}
-        <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-4 shadow-xl">
+        <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-4 shadow-xl">
           <h3 className="text-lg font-bold text-slate-900 dark:text-white">{t('upcomingJobs')}</h3>
           {!loading && upcoming.length === 0 && (
             <p className="text-xs text-slate-400 font-semibold">{t('noUpcomingJobs')}</p>
@@ -447,7 +447,7 @@ export default function MasterDashboardPage() {
         </div>
 
         {/* Weekly Schedule Preview */}
-        <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-4 shadow-xl">
+        <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-4 shadow-xl">
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-bold text-slate-900 dark:text-white">{t('weeklySchedule')}</h3>
             <Link href="/settings/schedule" className="text-xs font-bold text-blue-600 dark:text-sky-400 hover:underline">

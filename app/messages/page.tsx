@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useCallback, useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 import { bookingsApi } from '@/lib/api/endpoints';
 import { Icon } from '@/components/icons/LucideIcons';
@@ -32,8 +33,12 @@ function WhatsAppContactCard({
   if (!phone) return null;
 
   return (
-    <div className="flex items-center gap-4 p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition">
-      <img src={getAvatarUrl(id, name)} alt={name} className="w-12 h-12 rounded-2xl object-cover" />
+    <motion.div
+      whileHover={{ y: -3 }}
+      transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+      className="flex items-center gap-4 p-4 rounded-2xl glass-card border border-slate-200 dark:border-slate-800 hover:shadow-lg hover:border-emerald-200 dark:hover:border-emerald-900 transition-[box-shadow,border-color]"
+    >
+      <img src={getAvatarUrl(id, name)} alt={name} className="w-12 h-12 rounded-2xl object-cover flex-shrink-0" />
       <div className="flex-1 min-w-0">
         <h4 className="text-sm font-bold text-slate-900 dark:text-white truncate">{name}</h4>
         <p className="text-xs text-slate-500 truncate mt-0.5">{booking.serviceTitle}</p>
@@ -44,14 +49,14 @@ function WhatsAppContactCard({
           href={link}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-[#25D366] hover:bg-[#1ebe5d] text-white text-xs font-bold shadow transition shrink-0"
+          className="btn-success flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-bold transition shrink-0"
         >
           <Icon name="whatsapp" size={16} />
           <span className="hidden sm:inline">{t('whatsappButton')}</span>
           <span className="sm:hidden">{t('whatsappButtonShort')}</span>
         </a>
       )}
-    </div>
+    </motion.div>
   );
 }
 

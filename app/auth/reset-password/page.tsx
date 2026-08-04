@@ -8,6 +8,7 @@ import { authApi } from '@/lib/api/endpoints';
 import { ApiError } from '@/lib/api/client';
 import { PasswordInput } from '@/components/ui/PasswordInput';
 import { validatePassword, type ValidationErrorKey } from '@/lib/validation';
+import { AuthShell } from '@/components/auth/AuthShell';
 
 function ResetPasswordForm() {
   const t = useTranslations('authResetPassword');
@@ -46,7 +47,7 @@ function ResetPasswordForm() {
   };
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center p-4 sm:p-6">
+    <AuthShell>
       <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 sm:p-12 w-full max-w-md shadow-2xl space-y-6 animate-fade-in text-center">
         {!token ? (
           <div className="space-y-4">
@@ -113,7 +114,7 @@ function ResetPasswordForm() {
           </>
         )}
       </div>
-    </div>
+    </AuthShell>
   );
 }
 

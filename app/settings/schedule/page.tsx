@@ -148,7 +148,7 @@ export default function WorkingSchedulePage() {
         </div>
       )}
 
-      <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-8 space-y-6 shadow-xl">
+      <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 p-8 space-y-6 shadow-xl">
         {loading && <p className="text-xs text-slate-400 font-semibold">{t('loading')}</p>}
         {!loading &&
           days.map((day) => (
@@ -212,7 +212,7 @@ export default function WorkingSchedulePage() {
       </div>
 
       {/* Exceptions */}
-      <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-8 space-y-6 shadow-xl">
+      <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 p-8 space-y-6 shadow-xl">
         <h2 className="text-sm font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
           <Icon name="calendar" size={16} className="text-amber-500" />
           {t('exceptionsTitle')}

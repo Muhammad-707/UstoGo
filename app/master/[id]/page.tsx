@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
 import { useParams } from 'next/navigation';
 import { useLocale, useTranslations } from 'next-intl';
 import { Icon } from '@/components/icons/LucideIcons';
@@ -207,7 +208,7 @@ export default function MasterProfilePage() {
                 href={link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-5 py-3 rounded-2xl bg-[#25D366] hover:bg-[#1ebe5d] text-white text-xs font-extrabold shadow-lg shadow-emerald-600/30 transition btn-ripple flex items-center gap-2"
+                className="btn-success px-5 py-3 rounded-2xl text-xs font-extrabold transition btn-ripple flex items-center gap-2"
               >
                 <Icon name="whatsapp" size={16} />
                 <span>{t('writeToWhatsApp')}</span>
@@ -246,11 +247,18 @@ export default function MasterProfilePage() {
                   onClick={() => setActiveTab(tab.id)}
                   className={`pb-4 text-sm font-bold transition whitespace-nowrap relative ${
                     activeTab === tab.id
-                      ? 'text-blue-600 dark:text-sky-400 border-b-2 border-blue-600 dark:border-sky-400'
+                      ? 'text-blue-600 dark:text-sky-400'
                       : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
                   }`}
                 >
                   {tab.label}
+                  {activeTab === tab.id && (
+                    <motion.span
+                      layoutId="masterProfileTabIndicator"
+                      className="absolute -bottom-px left-0 right-0 h-0.5 bg-blue-600 dark:bg-sky-400 rounded-full"
+                      transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                    />
+                  )}
                 </button>
               ))}
             </div>
@@ -358,7 +366,7 @@ export default function MasterProfilePage() {
                     <FilterItem
                       key={s.id}
                       index={idx}
-                      className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 flex items-center justify-between gap-4"
+                      className="glass-card p-6 rounded-3xl border border-slate-200 dark:border-slate-800 flex items-center justify-between gap-4 hover:shadow-lg hover:border-blue-200 dark:hover:border-sky-900 transition-[box-shadow,border-color] duration-300"
                     >
                       <div>
                         <h4 className="text-sm font-bold text-slate-900 dark:text-white">{s.title}</h4>
@@ -389,9 +397,14 @@ export default function MasterProfilePage() {
                     <FilterItem
                       key={item.fileId}
                       index={idx % 2}
-                      className="h-60 rounded-3xl overflow-hidden shadow-md border border-slate-200 dark:border-slate-800 group"
+                      className="h-60 rounded-3xl overflow-hidden shadow-md border border-slate-200 dark:border-slate-800 group relative"
                     >
-                      <img src={item.url} alt={item.caption || t('gallerySampleAlt', { index: idx + 1 })} className="w-full h-full object-cover hover:scale-105 transition duration-300" />
+                      <img src={item.url} alt={item.caption || t('gallerySampleAlt', { index: idx + 1 })} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 ease-out" />
+                      {item.caption && (
+                        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                          <p className="text-xs font-bold text-white">{item.caption}</p>
+                        </div>
+                      )}
                     </FilterItem>
                   ))
                 )}
@@ -413,7 +426,7 @@ export default function MasterProfilePage() {
                     <FilterItem
                       key={rev.id}
                       index={idx}
-                      className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-4"
+                      className="glass-card p-6 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-4 hover:shadow-lg transition-shadow duration-300"
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
@@ -473,7 +486,8 @@ export default function MasterProfilePage() {
 
           {/* Sticky Booking Sidebar Card */}
           <div>
-            <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl sticky top-24 space-y-6">
+            <div className="relative overflow-hidden bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl sticky top-24 space-y-6">
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 via-sky-400 to-emerald-400" />
               <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800">
                 <span className="text-xs font-bold text-slate-400 uppercase">{t('hourlyRate')}</span>
                 <span className="text-2xl font-extrabold text-slate-900 dark:text-white">

@@ -166,15 +166,20 @@ export default function EditProfilePage() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
-      <div>
-        <span className="text-xs font-extrabold uppercase tracking-widest text-amber-600 dark:text-amber-400">
-          {t('accountSettings')}
-        </span>
-        <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white mt-1">{t('editProfile')}</h1>
+      <div className="flex items-center gap-4">
+        <div className={`hidden sm:flex w-12 h-12 shrink-0 rounded-2xl bg-gradient-to-br ${isMaster ? 'from-amber-500 to-orange-600 shadow-amber-900/20' : 'from-blue-600 to-sky-500 shadow-blue-900/20'} text-white items-center justify-center shadow-lg`}>
+          <Icon name="User" size={22} />
+        </div>
+        <div>
+          <span className={`text-xs font-extrabold uppercase tracking-widest ${isMaster ? 'text-amber-600 dark:text-amber-400' : 'text-blue-600 dark:text-sky-400'}`}>
+            {t('accountSettings')}
+          </span>
+          <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white mt-0.5">{t('editProfile')}</h1>
+        </div>
       </div>
 
       {isMaster && (
-        <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-xl">
+        <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-xl">
           <div className="relative h-40 sm:h-52">
             <img src={effectiveBanner} alt="" className="w-full h-full object-cover" />
             <div className="absolute inset-0 bg-gradient-to-t from-slate-900/70 to-transparent" />
@@ -221,7 +226,7 @@ export default function EditProfilePage() {
         </div>
       )}
 
-      <div className="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-6 shadow-xl">
+      <div className="glass-card p-8 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-6 shadow-xl">
         {!isMaster && (
           <div className="flex items-center gap-6">
             <img src={effectiveAvatar} alt="" className="w-20 h-20 rounded-3xl object-cover border-2 border-amber-500" />

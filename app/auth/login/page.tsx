@@ -9,6 +9,7 @@ import { useAuth, dashboardPathFor } from '@/contexts/AuthContext';
 import { ApiError } from '@/lib/api/client';
 import { PasswordInput } from '@/components/ui/PasswordInput';
 import { validateEmail, validateRequired, type ValidationErrorKey } from '@/lib/validation';
+import { AuthShell } from '@/components/auth/AuthShell';
 
 export default function LoginPage() {
   const t = useTranslations('authLogin');
@@ -64,7 +65,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center p-4 sm:p-6">
+    <AuthShell>
       <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 sm:p-12 w-full max-w-md shadow-2xl space-y-8 animate-fade-in">
 
         {/* Brand */}
@@ -174,6 +175,6 @@ export default function LoginPage() {
         </div>
 
       </div>
-    </div>
+    </AuthShell>
   );
 }
