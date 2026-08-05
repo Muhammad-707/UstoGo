@@ -18,5 +18,8 @@
   "tablePrice": "Price",
   "tableStatus": "Status",
   "tableAction": "Action",
-  "details": "Details"
+  "details": "Details",
+  "recommendTitle": "Would you recommend your master?",
+  "recommendSubtitle": "Leave a quick rating for your completed jobs — it helps other clients choose.",
+  "recommendCta": "Leave feedback"
 }

@@ -1,0 +1,18 @@
+{
+  "title": "Certificate Moderation",
+  "subtitle": "Verify or reject the certificates masters have uploaded",
+  "back": "Back",
+  "filter": "Show",
+  "filterPending": "Pending",
+  "filterVerified": "Verified",
+  "filterAll": "All",
+  "noResults": "No certificates for this filter.",
+  "issuedBy": "Issued by {issuer}",
+  "viewFile": "View File",
+  "verify": "Verify",
+  "reject": "Reject",
+  "verified": "Verified",
+  "prev": "Previous",
+  "next": "Next",
+  "pageOf": "Page {page} of {total}"
+}

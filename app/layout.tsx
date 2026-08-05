@@ -6,6 +6,7 @@ import './globals.css';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { PagePreviewSwitcher } from '@/components/layout/PagePreviewSwitcher';
+import { ServiceWorkerRegister } from '@/components/pwa/ServiceWorkerRegister';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { SITE_URL } from '@/lib/seo';
 
@@ -66,6 +67,7 @@ export default async function RootLayout({
             <main className="flex-1 w-full">{children}</main>
             <Footer />
             <PagePreviewSwitcher />
+            <ServiceWorkerRegister />
           </AuthProvider>
         </NextIntlClientProvider>
       </body>

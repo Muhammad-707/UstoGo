@@ -1,0 +1,18 @@
+{
+  "title": "Master Statistics",
+  "subtitle": "Per-master performance for admin oversight",
+  "back": "Back",
+  "openWhatsApp": "Open WhatsApp",
+  "totalClientsServed": "Clients Served",
+  "completedJobs": "Completed Jobs",
+  "unfinishedJobs": "Unfinished Jobs",
+  "avgRating": "Avg. Rating",
+  "npsLabel": "NPS",
+  "npsResponses": "Based on {count} NPS responses",
+  "reviewsBreakdown": "Review Distribution",
+  "topServices": "Top Services by Revenue",
+  "noServices": "No completed services yet.",
+  "completedCount": "{count} completed",
+  "monthlySeries": "Last 6 Months",
+  "noMonthlyData": "No booking activity in the last 6 months."
+}

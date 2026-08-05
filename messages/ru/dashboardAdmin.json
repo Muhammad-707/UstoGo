@@ -31,5 +31,14 @@
   "yearsExperience": "{years} лет",
   "verifiedLicense": "Лицензия Подтверждена",
   "approved": "Одобрено",
-  "manage": "Управление"
+  "manage": "Управление",
+  "tableStats": "Статистика",
+  "npsTitle": "NPS Платформы",
+  "npsSubtitle": "Насколько вероятно, что клиенты порекомендуют мастеров UstoGo",
+  "npsOverall": "Общий NPS",
+  "npsPromoters": "Промоутеры",
+  "npsPassives": "Нейтральные",
+  "npsDetractors": "Критики",
+  "npsResponses": "{count} ответов",
+  "npsNoData": "Пока нет ответов NPS."
 }

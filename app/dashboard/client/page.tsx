@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Icon } from '@/components/icons/LucideIcons';
 import { useTranslations } from 'next-intl';
-import { bookingsApi, mastersApi } from '@/lib/api/endpoints';
+import { bookingsApi, mastersApi, reviewsApi } from '@/lib/api/endpoints';
 import { getBookingsSocket } from '@/lib/bookings/socket';
 import { ApiError } from '@/lib/api/client';
 import { useRequireAuth } from '@/hooks/useRequireAuth';
@@ -26,6 +26,14 @@ export default function ClientDashboardPage() {
   const [mastersLoading, setMastersLoading] = useState(true);
 
   const [selectedMaster, setSelectedMaster] = useState<MasterPublic | null>(null);
+  const [reviewedBookingIds, setReviewedBookingIds] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    reviewsApi
+      .myReviews()
+      .then((res) => setReviewedBookingIds(new Set(res.items.map((r) => r.bookingId))))
+      .catch(() => setReviewedBookingIds(new Set()));
+  }, []);
 
   useEffect(() => {
     bookingsApi
@@ -87,6 +95,7 @@ export default function ClientDashboardPage() {
   }, []);
 
   const totalSpent = completed.reduce((sum, b) => sum + (Number(b.price) || 0), 0);
+  const unreviewedCompleted = completed.filter((b) => !reviewedBookingIds.has(b.id));
 
   const metrics = [
     { title: t('metricTotalSpent'), value: `$${totalSpent.toFixed(2)}`, icon: 'DollarSign', color: 'from-blue-600 to-sky-500' },
@@ -97,6 +106,24 @@ export default function ClientDashboardPage() {
 
   return (
     <DashboardLayout role="CLIENT" title={t('title')} subtitle={t('overview')}>
+      {unreviewedCompleted.length > 0 && (
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-2xl bg-gradient-to-r from-blue-50 to-sky-50 dark:from-blue-950/30 dark:to-sky-950/20 border border-blue-200 dark:border-blue-900">
+          <div className="flex items-start gap-3">
+            <Icon name="star" size={20} className="text-blue-500 shrink-0 mt-0.5" />
+            <div>
+              <p className="text-xs font-extrabold text-blue-900 dark:text-blue-200">{t('recommendTitle')}</p>
+              <p className="text-[11px] text-blue-700/80 dark:text-blue-300/80 mt-0.5">{t('recommendSubtitle')}</p>
+            </div>
+          </div>
+          <Link
+            href={`/reviews?booking=${unreviewedCompleted[0].id}`}
+            className="shrink-0 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-md transition"
+          >
+            {t('recommendCta')}
+          </Link>
+        </div>
+      )}
+
       {/* Metrics Grid */}
       <FilterContainer className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         {metrics.map((m, idx) => (

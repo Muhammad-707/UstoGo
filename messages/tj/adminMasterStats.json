@@ -1,0 +1,18 @@
+{
+  "title": "Статистикаи Усто",
+  "subtitle": "Натиҷаи ҳар усто барои назорати админ",
+  "back": "Бозгашт",
+  "openWhatsApp": "WhatsApp кушодан",
+  "totalClientsServed": "Мизоҷони Хидматрасонидашуда",
+  "completedJobs": "Корҳои Анҷомдода",
+  "unfinishedJobs": "Корҳои Нотамом",
+  "avgRating": "Баҳои Миёна",
+  "npsLabel": "NPS",
+  "npsResponses": "Дар асоси {count} ҷавоби NPS",
+  "reviewsBreakdown": "Тақсимоти Баҳодиҳиҳо",
+  "topServices": "Хидматҳои Беҳтарин аз рӯи Даромад",
+  "noServices": "Ҳанӯз хидмати анҷомдодашуда нест.",
+  "completedCount": "{count} анҷомдодашуда",
+  "monthlySeries": "6 Моҳи Охир",
+  "noMonthlyData": "Дар 6 моҳи охир фаъолияти фармоиш нест."
+}

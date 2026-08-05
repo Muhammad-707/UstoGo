@@ -31,5 +31,14 @@
   "yearsExperience": "{years} сол",
   "verifiedLicense": "Иҷозатномаи Тасдиқшуда",
   "approved": "Тасдиқшуда",
-  "manage": "Идора кардан"
+  "manage": "Идора кардан",
+  "tableStats": "Статистика",
+  "npsTitle": "NPS-и Платформа",
+  "npsSubtitle": "Эҳтимоли тавсия додани устоҳои UstoGo аз ҷониби мизоҷон",
+  "npsOverall": "NPS-и Умумӣ",
+  "npsPromoters": "Тавсиядиҳандагон",
+  "npsPassives": "Бетараф",
+  "npsDetractors": "Норозиён",
+  "npsResponses": "{count} ҷавоб",
+  "npsNoData": "Ҳанӯз ҷавоби NPS нест."
 }

@@ -27,5 +27,15 @@
   "sortRating": "Высокий рейтинг",
   "sortPriceAsc": "Цена: по возрастанию",
   "sortPriceDesc": "Цена: по убыванию",
-  "sortNewest": "Сначала новые"
+  "sortNewest": "Сначала новые",
+  "sortDistance": "Сначала ближайшие",
+  "mapView": "Вид на карте",
+  "nearMe": "Рядом со мной",
+  "nearMeActive": "Используется ваше местоположение",
+  "locating": "Определение местоположения…",
+  "locationError": "Не удалось определить ваше местоположение.",
+  "radiusLabel": "Радиус поиска",
+  "radiusValue": "{km} км",
+  "distanceAway": "{km} км от вас",
+  "clearLocation": "Очистить"
 }

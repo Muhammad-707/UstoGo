@@ -46,6 +46,9 @@ export const adminSidebar: SidebarConfig = {
     { href: '/dashboard/admin', label: 'Reviews', icon: 'star', color: 'bg-purple-500' },
     { href: '/dashboard/admin', label: 'Notifications', icon: 'bell', color: 'bg-purple-500' },
     { href: '/dashboard/admin', label: 'Platform', icon: 'globe', color: 'bg-purple-500' },
+    { href: '/dashboard/admin/users', label: 'Users', icon: 'user', color: 'bg-purple-500' },
+    { href: '/dashboard/admin/reports', label: 'Reports', icon: 'filetext', color: 'bg-purple-500' },
+    { href: '/dashboard/admin/certificates', label: 'Certificates', icon: 'award', color: 'bg-purple-500' },
   ],
 };
 

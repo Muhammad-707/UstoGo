@@ -27,5 +27,15 @@
   "sortRating": "Рейтинги баланд",
   "sortPriceAsc": "Нарх: аз кам ба зиёд",
   "sortPriceDesc": "Нарх: аз зиёд ба кам",
-  "sortNewest": "Навтарин"
+  "sortNewest": "Навтарин",
+  "sortDistance": "Наздиктарин",
+  "mapView": "Намоиши харита",
+  "nearMe": "Наздики ман",
+  "nearMeActive": "Ҷойгиршавии ман истифода мешавад",
+  "locating": "Ҷустуҷӯи ҷойгиршавӣ…",
+  "locationError": "Ҷойгиршавии шумо муайян нашуд.",
+  "radiusLabel": "Радиуси ҷустуҷӯ",
+  "radiusValue": "{km} км",
+  "distanceAway": "{km} км дуртар",
+  "clearLocation": "Тоза кардан"
 }

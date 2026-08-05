@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { Icon } from '@/components/icons/LucideIcons';
 import { useTranslations } from 'next-intl';
 import { adminApi, bookingsApi, categoriesApi } from '@/lib/api/endpoints';
@@ -9,7 +10,7 @@ import { waLink } from '@/lib/whatsapp';
 import { useRequireAuth } from '@/hooks/useRequireAuth';
 import { revalidateMastersCache } from '@/lib/api/revalidate';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
-import type { AdminMasterListItem, ApprovalStatus, Booking, Category, DashboardResponse } from '@/lib/api/types';
+import type { AdminMasterListItem, ApprovalStatus, Booking, Category, DashboardResponse, PlatformNps } from '@/lib/api/types';
 import { FilterContainer, FilterItem, InViewRow } from '@/components/ui/FilterAnimate';
 
 function flattenCategories(cats: Category[]): Category[] {
@@ -36,6 +37,9 @@ export default function AdminDashboardPage() {
   const [masterBookings, setMasterBookings] = useState<Booking[]>([]);
   const [masterBookingsLoading, setMasterBookingsLoading] = useState(false);
 
+  const [nps, setNps] = useState<PlatformNps | null>(null);
+  const [npsLoading, setNpsLoading] = useState(true);
+
   useEffect(() => {
     let cancelled = false;
     (async () => {
@@ -51,6 +55,7 @@ export default function AdminDashboardPage() {
       }
     })();
     categoriesApi.tree().then((cats) => setCategories(flattenCategories(cats))).catch(() => setCategories([]));
+    adminApi.nps().then(setNps).catch(() => setNps(null)).finally(() => setNpsLoading(false));
     return () => {
       cancelled = true;
     };
@@ -225,6 +230,39 @@ export default function AdminDashboardPage() {
         </div>
       </div>
 
+      {/* Platform NPS */}
+      <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-6 shadow-xl">
+        <div>
+          <h3 className="text-lg font-bold text-slate-900 dark:text-white">{t('npsTitle')}</h3>
+          <p className="text-[10px] text-slate-400 font-semibold mt-0.5">{t('npsSubtitle')}</p>
+        </div>
+        {npsLoading && <div className="h-24 rounded-2xl bg-slate-50 dark:bg-slate-800/40 animate-pulse" />}
+        {!npsLoading && (!nps || nps.responseCount === 0) && (
+          <p className="text-xs text-slate-400 font-semibold">{t('npsNoData')}</p>
+        )}
+        {!npsLoading && nps && nps.responseCount > 0 && (
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <div className="p-4 rounded-2xl bg-blue-50 dark:bg-blue-950/20 text-center">
+              <p className="text-[10px] font-bold text-blue-400 uppercase">{t('npsOverall')}</p>
+              <p className="text-2xl font-extrabold text-blue-600 dark:text-blue-400">{nps.overallNps ?? '—'}</p>
+              <p className="text-[10px] text-slate-400">{t('npsResponses', { count: nps.responseCount })}</p>
+            </div>
+            <div className="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/20 text-center">
+              <p className="text-[10px] font-bold text-emerald-400 uppercase">{t('npsPromoters')}</p>
+              <p className="text-2xl font-extrabold text-emerald-600 dark:text-emerald-400">{nps.promoters}</p>
+            </div>
+            <div className="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/20 text-center">
+              <p className="text-[10px] font-bold text-amber-400 uppercase">{t('npsPassives')}</p>
+              <p className="text-2xl font-extrabold text-amber-600 dark:text-amber-400">{nps.passives}</p>
+            </div>
+            <div className="p-4 rounded-2xl bg-red-50 dark:bg-red-950/20 text-center">
+              <p className="text-[10px] font-bold text-red-400 uppercase">{t('npsDetractors')}</p>
+              <p className="text-2xl font-extrabold text-red-600 dark:text-red-400">{nps.detractors}</p>
+            </div>
+          </div>
+        )}
+      </div>
+
       {/* Master Verification Table */}
       <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-6 shadow-xl">
         <div className="flex flex-wrap items-center justify-between gap-4">
@@ -357,24 +395,32 @@ export default function AdminDashboardPage() {
                       </span>
                     </td>
                     <td className="py-3 pr-4" onClick={(e) => e.stopPropagation()}>
-                      {m.approvalStatus === 'PENDING' && (
-                        <div className="flex gap-2">
-                          <button
-                            onClick={() => handleApprove(m.id)}
-                            disabled={actingId === m.id}
-                            className="btn-success px-3 py-1.5 rounded-xl disabled:opacity-60 font-bold transition"
-                          >
-                            Approve
-                          </button>
-                          <button
-                            onClick={() => handleReject(m.id)}
-                            disabled={actingId === m.id}
-                            className="px-3 py-1.5 rounded-xl bg-red-600 hover:bg-red-700 disabled:opacity-60 text-white font-bold shadow-sm transition"
-                          >
-                            Reject
-                          </button>
-                        </div>
-                      )}
+                      <div className="flex gap-2">
+                        {m.approvalStatus === 'PENDING' && (
+                          <>
+                            <button
+                              onClick={() => handleApprove(m.id)}
+                              disabled={actingId === m.id}
+                              className="btn-success px-3 py-1.5 rounded-xl disabled:opacity-60 font-bold transition"
+                            >
+                              Approve
+                            </button>
+                            <button
+                              onClick={() => handleReject(m.id)}
+                              disabled={actingId === m.id}
+                              className="px-3 py-1.5 rounded-xl bg-red-600 hover:bg-red-700 disabled:opacity-60 text-white font-bold shadow-sm transition"
+                            >
+                              Reject
+                            </button>
+                          </>
+                        )}
+                        <Link
+                          href={`/dashboard/admin/masters/${m.id}`}
+                          className="px-3 py-1.5 rounded-xl bg-purple-100 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 font-bold shadow-sm transition hover:bg-purple-200 dark:hover:bg-purple-900/60"
+                        >
+                          {t('tableStats')}
+                        </Link>
+                      </div>
                     </td>
                   </InViewRow>
                 ))}

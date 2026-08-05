@@ -1,0 +1,21 @@
+{
+  "title": "Reports & Moderation",
+  "subtitle": "Complaints filed by clients and masters against each other",
+  "back": "Back",
+  "status": "Status",
+  "allStatuses": "All Statuses",
+  "noResults": "No reports for this filter.",
+  "reporter": "Reporter",
+  "reported": "Reported User",
+  "type": "Type",
+  "description": "Description",
+  "adminNote": "Admin Note",
+  "resolvedBy": "Resolved By",
+  "resolve": "Resolve",
+  "reject": "Dismiss",
+  "adminNotePrompt": "Optional note for this decision:",
+  "blockThisUser": "Block Reported User",
+  "prev": "Previous",
+  "next": "Next",
+  "pageOf": "Page {page} of {total}"
+}

@@ -1,6 +1,10 @@
 import { api } from './client';
 import type {
+  AdminCertificate,
   AdminMasterListItem,
+  AdminMasterStats,
+  AdminReport,
+  AdminUserListItem,
   AuthResponse,
   Banner,
   Booking,
@@ -12,6 +16,7 @@ import type {
   DashboardResponse,
   MasterCertificatePublic,
   MasterMedia,
+  MasterNps,
   MasterPublic,
   MasterService,
   MasterStats,
@@ -19,7 +24,9 @@ import type {
   Message,
   NotificationItem,
   Paginated,
+  PlatformNps,
   PortfolioImage,
+  Report,
   Review,
   ScheduleException,
   Session,
@@ -120,6 +127,9 @@ export const mastersApi = {
     hasCertificates?: boolean;
     sort?: string;
     availableOn?: string;
+    lat?: number;
+    lng?: number;
+    radiusKm?: number;
   }) => api.get<Paginated<MasterPublic>>('/masters', query, false),
 
   byId: (id: string) => api.get<MasterPublic>(`/masters/${id}`, undefined, false),
@@ -142,6 +152,8 @@ export const mastersApi = {
 
   reviews: (id: string, page = 1, limit = 10, sort: 'recency' | 'rating' = 'recency') =>
     api.get<Paginated<Review>>(`/masters/${id}/reviews`, { page, limit, sort }, false),
+
+  myNps: () => api.get<MasterNps>('/masters/me/nps'),
 };
 
 // ---- Master cabinet (self-service, role: MASTER) ----
@@ -214,7 +226,7 @@ export const bookingsApi = {
 
 // ---- Reviews ----
 export const reviewsApi = {
-   create: (data: { bookingId: string; rating: number; comment?: string }) =>
+   create: (data: { bookingId: string; rating: number; comment?: string; npsScore?: number; wouldRecommend?: boolean }) =>
      api.post<Review>('/reviews', data),
    myReviews: () => api.get<Paginated<Review>>('/reviews/me'),
    received: () => api.get<Paginated<Review>>('/reviews/received'),
@@ -313,7 +325,9 @@ export const adminApi = {
     reject: (id: string, reason: string) => api.post<MasterStatus>(`/admin/masters/${id}/reject`, { reason }),
     activate: (id: string) => api.post<MasterStatus>(`/admin/masters/${id}/activate`),
     deactivate: (id: string, reason: string) => api.post<MasterStatus>(`/admin/masters/${id}/deactivate`, { reason }),
+    stats: (id: string) => api.get<AdminMasterStats>(`/admin/masters/${id}/stats`),
   },
+  nps: (query: { from?: string; to?: string } = {}) => api.get<PlatformNps>('/admin/nps', query),
   bookings: {
     list: (query: Record<string, string | number | boolean | undefined> = {}) =>
       api.get<Paginated<Booking>>('/admin/bookings', query),
@@ -325,4 +339,37 @@ export const adminApi = {
     hide: (id: string) => api.post(`/admin/reviews/${id}/hide`),
     unhide: (id: string) => api.post(`/admin/reviews/${id}/unhide`),
   },
+  users: {
+    list: (query: {
+      page?: number;
+      limit?: number;
+      role?: string;
+      status?: string;
+      cityId?: string;
+      search?: string;
+      registeredFrom?: string;
+      registeredTo?: string;
+    } = {}) => api.get<Paginated<AdminUserListItem>>('/admin/users', query),
+    getById: (id: string) => api.get<UserProfile>(`/admin/users/${id}`),
+    block: (id: string, reason: string) => api.post<UserProfile>(`/admin/users/${id}/block`, { reason }),
+    unblock: (id: string) => api.post<UserProfile>(`/admin/users/${id}/unblock`),
+  },
+  reports: {
+    list: (query: { page?: number; limit?: number; status?: string } = {}) =>
+      api.get<Paginated<AdminReport>>('/admin/reports', query),
+    resolve: (id: string, data: { status: 'RESOLVED' | 'REJECTED'; adminNote?: string }) =>
+      api.post<AdminReport>(`/admin/reports/${id}/resolve`, data),
+  },
+  certificates: {
+    list: (query: { page?: number; limit?: number; verified?: boolean } = {}) =>
+      api.get<Paginated<AdminCertificate>>('/admin/certificates', query),
+    verify: (id: string) => api.post<AdminCertificate>(`/admin/certificates/${id}/verify`),
+    reject: (id: string) => api.post<AdminCertificate>(`/admin/certificates/${id}/reject`),
+  },
+};
+
+// ---- Reports (any client/master) ----
+export const reportsApi = {
+  create: (data: { reportedUserId: string; type: string; description: string }) =>
+    api.post<Report>('/reports', data),
 };

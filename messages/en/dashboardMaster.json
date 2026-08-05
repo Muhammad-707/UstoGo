@@ -52,5 +52,12 @@
   "editSchedule": "Edit",
   "noScheduleSet": "No working hours set. Add them in Schedule settings.",
   "dayOff": "Day off",
-  "startJobTooEarly": "This booking can only be started at its scheduled time."
+  "startJobTooEarly": "This booking can only be started at its scheduled time.",
+  "myNpsTitle": "My NPS",
+  "myNpsSubtitle": "How likely your clients are to recommend you",
+  "npsPromoters": "Promoters",
+  "npsPassives": "Passives",
+  "npsDetractors": "Detractors",
+  "npsNoData": "No NPS responses yet.",
+  "unfinishedJobsWarning": "You have {count} unfinished job(s). Check your pending and accepted bookings."
 }

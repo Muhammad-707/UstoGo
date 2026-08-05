@@ -31,5 +31,14 @@
   "yearsExperience": "{years} Years",
   "verifiedLicense": "Verified License",
   "approved": "Approved",
-  "manage": "Manage"
+  "manage": "Manage",
+  "tableStats": "Stats",
+  "npsTitle": "Platform NPS",
+  "npsSubtitle": "How likely clients are to recommend UstoGo masters",
+  "npsOverall": "Overall NPS",
+  "npsPromoters": "Promoters",
+  "npsPassives": "Passives",
+  "npsDetractors": "Detractors",
+  "npsResponses": "{count} responses",
+  "npsNoData": "No NPS responses yet."
 }

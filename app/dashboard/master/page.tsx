@@ -11,7 +11,7 @@ import { ApiError } from '@/lib/api/client';
 import { revalidateMastersCache } from '@/lib/api/revalidate';
 import { getBookingsSocket } from '@/lib/bookings/socket';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
-import type { Booking, City, MasterStats, WorkingDay } from '@/lib/api/types';
+import type { Booking, City, MasterNps, MasterStats, WorkingDay } from '@/lib/api/types';
 import { getAvatarUrl } from '@/lib/placeholders';
 import { FilterContainer, FilterItem } from '@/components/ui/FilterAnimate';
 import { AnalyticsSection } from '@/components/master/AnalyticsSection';
@@ -37,6 +37,7 @@ export default function MasterDashboardPage() {
   const [actingId, setActingId] = useState<string | null>(null);
   const [stats, setStats] = useState<MasterStats | null>(null);
   const [statsLoading, setStatsLoading] = useState(true);
+  const [nps, setNps] = useState<MasterNps | null>(null);
 
   useEffect(() => {
     citiesApi.list().then((list) => setCities(list)).catch(() => setCities([]));
@@ -48,6 +49,7 @@ export default function MasterDashboardPage() {
       .then(setStats)
       .catch(() => setStats(null))
       .finally(() => setStatsLoading(false));
+    mastersApi.myNps().then(setNps).catch(() => setNps(null));
   }, []);
 
   useEffect(() => {
@@ -212,6 +214,7 @@ export default function MasterDashboardPage() {
   const missingAvatar = avatarUrl === null;
   const missingPortfolio = portfolioCount !== null && portfolioCount < MIN_PORTFOLIO_PHOTOS;
   const profileIncomplete = portfolioCount !== null && (missingAvatar || missingPortfolio);
+  const unfinishedJobsCount = (stats?.pendingCount ?? 0) + (stats?.acceptedCount ?? 0);
 
   return (
     <DashboardLayout role="MASTER" title={t('title')} subtitle={t('overview')} action={
@@ -234,6 +237,15 @@ export default function MasterDashboardPage() {
       {error && (
         <div className="p-4 rounded-2xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 text-xs font-bold text-red-600 dark:text-red-400">
           {error}
+        </div>
+      )}
+
+      {!statsLoading && unfinishedJobsCount > 0 && (
+        <div className="flex items-center gap-3 p-4 rounded-2xl bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900">
+          <Icon name="clock" size={18} className="text-blue-500 shrink-0" />
+          <p className="text-xs font-bold text-blue-800 dark:text-blue-300">
+            {t('unfinishedJobsWarning', { count: unfinishedJobsCount })}
+          </p>
         </div>
       )}
 
@@ -327,6 +339,36 @@ export default function MasterDashboardPage() {
 
       {/* Analytics */}
       <AnalyticsSection stats={stats} loading={statsLoading} />
+
+      {/* My NPS */}
+      <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-4 shadow-xl">
+        <div>
+          <h3 className="text-sm font-bold text-slate-900 dark:text-white">{t('myNpsTitle')}</h3>
+          <p className="text-[10px] text-slate-400 font-semibold mt-0.5">{t('myNpsSubtitle')}</p>
+        </div>
+        {!nps || nps.responseCount === 0 ? (
+          <p className="text-xs text-slate-400 font-semibold">{t('npsNoData')}</p>
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <div className="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/20 text-center">
+              <p className="text-[10px] font-bold text-amber-400 uppercase">NPS</p>
+              <p className="text-2xl font-extrabold text-amber-600 dark:text-amber-400">{nps.nps ?? '—'}</p>
+            </div>
+            <div className="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/20 text-center">
+              <p className="text-[10px] font-bold text-emerald-400 uppercase">{t('npsPromoters')}</p>
+              <p className="text-2xl font-extrabold text-emerald-600 dark:text-emerald-400">{nps.promoters}</p>
+            </div>
+            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 text-center">
+              <p className="text-[10px] font-bold text-slate-400 uppercase">{t('npsPassives')}</p>
+              <p className="text-2xl font-extrabold text-slate-600 dark:text-slate-300">{nps.passives}</p>
+            </div>
+            <div className="p-4 rounded-2xl bg-red-50 dark:bg-red-950/20 text-center">
+              <p className="text-[10px] font-bold text-red-400 uppercase">{t('npsDetractors')}</p>
+              <p className="text-2xl font-extrabold text-red-600 dark:text-red-400">{nps.detractors}</p>
+            </div>
+          </div>
+        )}
+      </div>
 
       {/* Quick Actions */}
       <div>

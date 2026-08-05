@@ -27,5 +27,15 @@
   "sortRating": "Top Rated",
   "sortPriceAsc": "Price: Low to High",
   "sortPriceDesc": "Price: High to Low",
-  "sortNewest": "Newest First"
+  "sortNewest": "Newest First",
+  "sortDistance": "Nearest First",
+  "mapView": "Map View",
+  "nearMe": "Near Me",
+  "nearMeActive": "Using my location",
+  "locating": "Locating…",
+  "locationError": "Could not get your location.",
+  "radiusLabel": "Search Radius",
+  "radiusValue": "{km} km",
+  "distanceAway": "{km} km away",
+  "clearLocation": "Clear"
 }

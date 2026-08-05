@@ -125,6 +125,9 @@ export interface MasterPublic {
   yearsOfExperience: number;
   serviceRadiusKm: number;
   cityName: string;
+  cityLatitude?: number | null;
+  cityLongitude?: number | null;
+  distanceKm?: number | null;
   categories: string[];
   ratingAverage: string;
   ratingCount: number;
@@ -283,10 +286,122 @@ export interface Review {
    clientRating?: number | null;
    comment?: string | null;
    clientComment?: string | null;
+   npsScore?: number | null;
+   wouldRecommend?: boolean | null;
    status: string;
    editedAt?: string | null;
    createdAt: string;
    reply?: { body: string; createdAt: string } | null;
+}
+
+export interface MasterNps {
+  nps: number | null;
+  promoters: number;
+  passives: number;
+  detractors: number;
+  responseCount: number;
+}
+
+export interface NpsByCategory {
+  categoryId: string;
+  categoryName: string;
+  nps: number | null;
+  responseCount: number;
+}
+
+export interface NpsByMaster {
+  masterId: string;
+  displayName: string;
+  nps: number | null;
+  responseCount: number;
+}
+
+export interface PlatformNps {
+  overallNps: number | null;
+  promoters: number;
+  passives: number;
+  detractors: number;
+  responseCount: number;
+  byCategory: NpsByCategory[];
+  byMaster: NpsByMaster[];
+}
+
+export interface MasterStatsMonthPoint {
+  month: string;
+  bookings: number;
+  completed: number;
+  revenue: string;
+}
+
+export interface MasterStatsTopService {
+  serviceId: string;
+  title: string;
+  completedCount: number;
+  revenue: string;
+}
+
+export interface AdminMasterStats {
+  masterId: string;
+  totalClientsServed: number;
+  completedJobs: number;
+  unfinishedJobs: number;
+  avgRating: number;
+  ratingCount: number;
+  nps: number | null;
+  npsResponseCount: number;
+  reviewsBreakdown: Record<'1' | '2' | '3' | '4' | '5', number>;
+  monthlySeries: MasterStatsMonthPoint[];
+  topServices: MasterStatsTopService[];
+}
+
+export interface AdminUserListItem {
+  id: string;
+  email: string;
+  phone?: string | null;
+  role: UserRole;
+  status: UserStatus;
+  displayName: string;
+  createdAt: string;
+  lastLoginAt?: string | null;
+}
+
+export type ReportType = 'SPAM' | 'FRAUD' | 'ABUSE' | 'OTHER';
+export type ReportStatus = 'OPEN' | 'REVIEWED' | 'RESOLVED' | 'REJECTED';
+
+export interface Report {
+  id: string;
+  reportedUserId: string;
+  type: ReportType;
+  description: string;
+  status: ReportStatus;
+  createdAt: string;
+}
+
+export interface AdminReport {
+  id: string;
+  reporterUserId: string;
+  reporterEmail: string;
+  reportedUserId: string;
+  reportedEmail: string;
+  type: ReportType;
+  description: string;
+  status: ReportStatus;
+  adminNote?: string | null;
+  resolvedByEmail?: string | null;
+  resolvedAt?: string | null;
+  createdAt: string;
+}
+
+export interface AdminCertificate {
+  id: string;
+  masterId: string;
+  masterDisplayName: string;
+  fileId: string;
+  title: string;
+  issuedBy?: string | null;
+  issuedAt?: string | null;
+  verifiedAt?: string | null;
+  createdAt: string;
 }
 
 export interface NotificationItem {

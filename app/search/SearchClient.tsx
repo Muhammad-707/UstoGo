@@ -2,6 +2,7 @@
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import { useTranslations } from 'next-intl';
 import { Icon } from '@/components/icons/LucideIcons';
 import { mastersApi, citiesApi } from '@/lib/api/endpoints';
@@ -9,6 +10,13 @@ import { flattenCategories, resolveCategoryId } from '@/lib/api/category-utils';
 import type { Category, City, MasterPublic } from '@/lib/api/types';
 import { getAvatarUrl } from '@/lib/placeholders';
 import { FilterContainer, FilterItem, FilterButton, AnimatedGrid, AnimatedCard } from '@/components/ui/FilterAnimate';
+
+const SearchMap = dynamic(() => import('@/components/search/SearchMap'), {
+  ssr: false,
+  loading: () => (
+    <div className="h-[520px] w-full rounded-3xl bg-slate-50 dark:bg-slate-800/40 animate-pulse" />
+  ),
+});
 
 export default function SearchClient({
   categories,
@@ -39,7 +47,11 @@ export default function SearchClient({
   const [selectedCity, setSelectedCity] = useState<string>('');
   const [sortBy, setSortBy] = useState<string>('');
   const [cities, setCities] = useState<City[]>([]);
-  const [viewMode, setViewModeState] = useState<'grid' | 'list'>('grid');
+  const [viewMode, setViewModeState] = useState<'grid' | 'list' | 'map'>('grid');
+  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [radiusKm, setRadiusKm] = useState<number>(25);
+  const [locating, setLocating] = useState(false);
+  const [locationError, setLocationError] = useState(false);
 
   useEffect(() => {
     citiesApi.list().then(setCities).catch(() => {});
@@ -47,15 +59,35 @@ export default function SearchClient({
 
   useEffect(() => {
     const stored = localStorage.getItem('search:viewMode');
-    if (stored === 'grid' || stored === 'list') setViewModeState(stored);
+    if (stored === 'grid' || stored === 'list' || stored === 'map') setViewModeState(stored);
   }, []);
 
-  const setViewMode = (mode: 'grid' | 'list') => {
+  const setViewMode = (mode: 'grid' | 'list' | 'map') => {
     setViewModeState(mode);
     localStorage.setItem('search:viewMode', mode);
   };
 
-  const filterKey = `${selectedCategory}|${verifiedOnly}|${minRating}|${maxPrice}|${searchQuery}|${selectedCity}|${sortBy}|${viewMode}`;
+  const handleFindNearMe = () => {
+    if (!navigator.geolocation) {
+      setLocationError(true);
+      return;
+    }
+    setLocating(true);
+    setLocationError(false);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setUserLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+        setLocating(false);
+      },
+      () => {
+        setLocationError(true);
+        setLocating(false);
+      },
+      { enableHighAccuracy: true, timeout: 10_000 },
+    );
+  };
+
+  const filterKey = `${selectedCategory}|${verifiedOnly}|${minRating}|${maxPrice}|${searchQuery}|${selectedCity}|${sortBy}|${viewMode}|${userLocation ? `${userLocation.lat},${userLocation.lng},${radiusKm}` : ''}`;
 
   const [masters, setMasters] = useState<MasterPublic[]>(initialMasters);
   const [page, setPage] = useState(1);
@@ -70,7 +102,7 @@ export default function SearchClient({
   // Reset pagination whenever a filter (other than page itself) changes.
   useEffect(() => {
     setPage(1);
-  }, [searchQuery, selectedCategory, verifiedOnly, minRating, maxPrice, selectedCity, sortBy]);
+  }, [searchQuery, selectedCategory, verifiedOnly, minRating, maxPrice, selectedCity, sortBy, userLocation, radiusKm]);
 
   useEffect(() => {
     if (firstRun.current) {
@@ -89,7 +121,10 @@ export default function SearchClient({
           minRating: minRating || undefined,
           maxPrice: maxPrice || undefined,
           hasCertificates: verifiedOnly || undefined,
-          sort: sortBy || undefined,
+          sort: sortBy || (userLocation ? 'distance:asc' : undefined),
+          lat: userLocation?.lat,
+          lng: userLocation?.lng,
+          radiusKm: userLocation ? radiusKm : undefined,
           page,
           limit: 20,
         })
@@ -103,7 +138,7 @@ export default function SearchClient({
     }, 400);
 
     return () => clearTimeout(timeout);
-  }, [searchQuery, selectedCategory, verifiedOnly, minRating, maxPrice, selectedCity, sortBy, page]);
+  }, [searchQuery, selectedCategory, verifiedOnly, minRating, maxPrice, selectedCity, sortBy, page, userLocation, radiusKm]);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
@@ -198,6 +233,47 @@ export default function SearchClient({
             </select>
           </FilterItem>
 
+          {/* Near Me */}
+          <FilterItem className="space-y-2">
+            <label className="text-xs font-bold uppercase tracking-wider text-slate-400">{t('nearMe')}</label>
+            {userLocation ? (
+              <div className="space-y-3">
+                <div className="flex items-center justify-between p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/20 text-[11px] font-bold text-emerald-700 dark:text-emerald-400">
+                  <span className="flex items-center gap-1.5">
+                    <Icon name="MapPin" size={13} />
+                    {t('nearMeActive')}
+                  </span>
+                  <button onClick={() => setUserLocation(null)} className="text-slate-400 hover:text-red-500">
+                    <Icon name="X" size={13} />
+                  </button>
+                </div>
+                <div className="flex justify-between text-[11px] font-bold text-slate-500">
+                  <span>{t('radiusLabel')}</span>
+                  <span className="text-slate-900 dark:text-white">{t('radiusValue', { km: radiusKm })}</span>
+                </div>
+                <input
+                  type="range"
+                  min="5"
+                  max="200"
+                  step="5"
+                  value={radiusKm}
+                  onChange={(e) => setRadiusKm(Number(e.target.value))}
+                  className="w-full accent-blue-600 cursor-pointer"
+                />
+              </div>
+            ) : (
+              <button
+                onClick={handleFindNearMe}
+                disabled={locating}
+                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-700 dark:text-slate-300 hover:border-blue-500 transition disabled:opacity-60"
+              >
+                <Icon name="MapPin" size={14} />
+                {locating ? t('locating') : t('nearMe')}
+              </button>
+            )}
+            {locationError && <p className="text-[10px] font-bold text-red-500">{t('locationError')}</p>}
+          </FilterItem>
+
           {/* Sort */}
           <FilterItem className="space-y-2">
             <label className="text-xs font-bold uppercase tracking-wider text-slate-400">{t('sortBy')}</label>
@@ -211,6 +287,7 @@ export default function SearchClient({
               <option value="price:asc">{t('sortPriceAsc')}</option>
               <option value="price:desc">{t('sortPriceDesc')}</option>
               <option value="createdAt:desc">{t('sortNewest')}</option>
+              {userLocation && <option value="distance:asc">{t('sortDistance')}</option>}
             </select>
           </FilterItem>
 
@@ -302,10 +379,25 @@ export default function SearchClient({
               >
                 <Icon name="Menu" size={18} />
               </FilterButton>
+              <FilterButton
+                onClick={() => setViewMode('map')}
+                className={`p-2 rounded-lg transition ${
+                  viewMode === 'map'
+                    ? 'bg-blue-600 text-white'
+                    : 'text-slate-400 hover:text-slate-600 dark:hover:text-white'
+                }`}
+                title={t('mapView')}
+              >
+                <Icon name="MapPin" size={18} />
+              </FilterButton>
             </div>
           </FilterContainer>
 
-          {loading && page === 1 && (
+          {viewMode === 'map' && !error && (
+            <SearchMap masters={masters} userLocation={userLocation} />
+          )}
+
+          {viewMode !== 'map' && loading && page === 1 && (
             <div className="glass-card rounded-3xl p-12 text-center text-sm text-slate-500 dark:text-slate-400 font-medium">
               Loading masters...
             </div>
@@ -318,7 +410,7 @@ export default function SearchClient({
           )}
 
           {/* Master Cards Grid / List */}
-          {!error && !(loading && page === 1) && masters.length === 0 ? (
+          {viewMode !== 'map' && (!error && !(loading && page === 1) && masters.length === 0 ? (
             <div className="glass-card rounded-3xl p-12 text-center space-y-4">
               <div className="w-16 h-16 rounded-2xl bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-sky-400 mx-auto flex items-center justify-center">
                 <Icon name="Search" size={32} />
@@ -428,9 +520,9 @@ export default function SearchClient({
                 </AnimatedCard>
               ))}
             </AnimatedGrid>
-          ) : null}
+          ) : null)}
 
-          {!error && page < totalPages && (
+          {viewMode !== 'map' && !error && page < totalPages && (
             <div className="text-center pt-2">
               <button
                 onClick={() => setPage((p) => p + 1)}

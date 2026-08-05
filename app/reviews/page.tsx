@@ -30,6 +30,8 @@ export default function ReviewsPage() {
   const [clientRating, setClientRating] = useState(5);
   const [comment, setComment] = useState('');
   const [clientComment, setClientComment] = useState('');
+  const [npsScore, setNpsScore] = useState<number | null>(null);
+  const [wouldRecommend, setWouldRecommend] = useState<boolean | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [clientRatingSubmitting, setClientRatingSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -107,10 +109,18 @@ export default function ReviewsPage() {
     setSubmitting(true);
     setError(null);
     try {
-      const created = await reviewsApi.create({ bookingId, rating, comment: comment || undefined });
+      const created = await reviewsApi.create({
+        bookingId,
+        rating,
+        comment: comment || undefined,
+        npsScore: npsScore ?? undefined,
+        wouldRecommend: wouldRecommend ?? undefined,
+      });
       setReviews((prev) => [created, ...prev]);
       setModalOpen(false);
       setComment('');
+      setNpsScore(null);
+      setWouldRecommend(null);
     } catch (err) {
       setError(err instanceof ApiError ? err.message : 'Failed to submit review.');
     } finally {
@@ -304,6 +314,58 @@ export default function ReviewsPage() {
                         className={`cursor-pointer hover:scale-110 transition ${s <= rating ? 'fill-amber-400' : ''}`}
                       />
                     ))}
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-slate-400">{t('npsLabel')}</label>
+                  <div className="flex gap-1">
+                    {Array.from({ length: 11 }, (_, s) => s).map((s) => (
+                      <button
+                        key={s}
+                        type="button"
+                        onClick={() => setNpsScore(s)}
+                        className={`flex-1 h-8 rounded-lg text-[10px] font-bold transition ${
+                          npsScore === s
+                            ? 'bg-blue-600 text-white shadow'
+                            : 'bg-slate-50 dark:bg-slate-800 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700'
+                        }`}
+                      >
+                        {s}
+                      </button>
+                    ))}
+                  </div>
+                  <div className="flex justify-between text-[10px] text-slate-400 font-semibold">
+                    <span>{t('npsLow')}</span>
+                    <span>{t('npsHigh')}</span>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-slate-400">{t('wouldRecommendLabel')}</label>
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setWouldRecommend(true)}
+                      className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition ${
+                        wouldRecommend === true
+                          ? 'btn-success'
+                          : 'bg-slate-50 dark:bg-slate-800 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700'
+                      }`}
+                    >
+                      {t('yes')}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setWouldRecommend(false)}
+                      className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition ${
+                        wouldRecommend === false
+                          ? 'bg-red-600 text-white shadow'
+                          : 'bg-slate-50 dark:bg-slate-800 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700'
+                      }`}
+                    >
+                      {t('no')}
+                    </button>
                   </div>
                 </div>
 

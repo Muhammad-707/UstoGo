@@ -18,5 +18,8 @@
   "tablePrice": "Нарх",
   "tableStatus": "Статус",
   "tableAction": "Амал",
-  "details": "Тафсилот"
+  "details": "Тафсилот",
+  "recommendTitle": "Оё усторо тавсия медиҳед?",
+  "recommendSubtitle": "Барои корҳои анҷомдодаатон баҳо гузоред — ин ба дигар мизоҷон дар интихоб кӯмак мекунад.",
+  "recommendCta": "Баҳо гузоштан"
 }

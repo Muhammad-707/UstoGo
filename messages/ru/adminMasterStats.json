@@ -1,0 +1,18 @@
+{
+  "title": "Статистика Мастера",
+  "subtitle": "Показатели мастера для контроля администратором",
+  "back": "Назад",
+  "openWhatsApp": "Открыть WhatsApp",
+  "totalClientsServed": "Обслужено Клиентов",
+  "completedJobs": "Выполненные Заказы",
+  "unfinishedJobs": "Незавершённые Заказы",
+  "avgRating": "Средняя Оценка",
+  "npsLabel": "NPS",
+  "npsResponses": "На основе {count} ответов NPS",
+  "reviewsBreakdown": "Распределение Отзывов",
+  "topServices": "Лучшие Услуги по Доходу",
+  "noServices": "Пока нет выполненных услуг.",
+  "completedCount": "{count} выполнено",
+  "monthlySeries": "Последние 6 Месяцев",
+  "noMonthlyData": "Нет активности заказов за последние 6 месяцев."
+}
