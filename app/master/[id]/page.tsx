@@ -1,529 +1,78 @@
-'use client';
-
-import React, { useEffect, useState } from 'react';
-import Link from 'next/link';
-import { motion } from 'framer-motion';
-import { useParams } from 'next/navigation';
-import { useLocale, useTranslations } from 'next-intl';
-import { Icon } from '@/components/icons/LucideIcons';
+import type { Metadata } from 'next';
 import { mastersApi } from '@/lib/api/endpoints';
-import { ApiError } from '@/lib/api/client';
-import type { MasterPublic, MasterService, Review, WorkingDay, MasterCertificatePublic } from '@/lib/api/types';
-import { waLink, waBookingText } from '@/lib/whatsapp';
-import { getAvatarUrl, getCoverUrl, PLACEHOLDER_REVIEWER_AVATAR } from '@/lib/placeholders';
-import { FilterItem } from '@/components/ui/FilterAnimate';
+import { getAvatarUrl } from '@/lib/placeholders';
+import MasterProfileClient from './MasterProfileClient';
 
-type TabId = 'about' | 'services' | 'gallery' | 'reviews' | 'hours';
+type MasterPageProps = {
+  params: Promise<{ id: string }>;
+};
 
-const WEEKDAYS = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'] as const;
+export async function generateMetadata({ params }: MasterPageProps): Promise<Metadata> {
+  const { id } = await params;
 
-export default function MasterProfilePage() {
-  const t = useTranslations('masterDetail');
-  const locale = useLocale();
-  const params = useParams();
-  const masterId = params?.id as string;
+  try {
+    const master = await mastersApi.byId(id);
+    const title = `${master.displayName} — ${master.categories[0] ?? ''} in ${master.cityName}`.trim();
+    const description =
+      master.bio ??
+      `${master.displayName} on UstoGo: ${master.categories.join(', ') || 'home services'} in ${master.cityName}. Rated ${master.ratingAverage} (${master.ratingCount} reviews).`;
+    const image = master.avatarUrl ?? getAvatarUrl(master.id, master.displayName);
 
-  const [master, setMaster] = useState<MasterPublic | null>(null);
-  const [services, setServices] = useState<MasterService[]>([]);
-  const [reviews, setReviews] = useState<Review[]>([]);
-  const [certificates, setCertificates] = useState<MasterCertificatePublic[]>([]);
-  const [schedule, setSchedule] = useState<WorkingDay[]>([]);
-  const [media, setMedia] = useState<{ avatarUrl: string | null; bannerUrl: string | null; portfolio: { fileId: string; caption: string | null; url: string }[] }>({ avatarUrl: null, bannerUrl: null, portfolio: [] });
-  const [loading, setLoading] = useState(true);
-  const [notFound, setNotFound] = useState(false);
-
-  const [activeTab, setActiveTab] = useState<TabId>('about');
-
-  useEffect(() => {
-    if (!masterId) return;
-    let cancelled = false;
-    setLoading(true);
-    setNotFound(false);
-
-    mastersApi
-      .byId(masterId)
-      .then((data) => {
-        if (cancelled) return;
-        setMaster(data);
-      })
-      .catch((err) => {
-        if (cancelled) return;
-        if (err instanceof ApiError && err.status === 404) {
-          setNotFound(true);
-        }
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
-      });
-
-    mastersApi.services(masterId).then((data) => {
-      if (!cancelled) setServices(data);
-    }).catch(() => {});
-
-    mastersApi.reviews(masterId).then((data) => {
-      if (!cancelled) setReviews(data.items);
-    }).catch(() => {});
-
-    mastersApi.media(masterId).then((data) => {
-      if (!cancelled) setMedia(data);
-    }).catch(() => {});
-
-    mastersApi.certificates(masterId).then((data) => {
-      if (!cancelled) setCertificates(data);
-    }).catch(() => {});
-
-    mastersApi.schedule(masterId).then((data) => {
-      if (!cancelled) setSchedule(data);
-    }).catch(() => {});
-
-    return () => {
-      cancelled = true;
+    return {
+      title,
+      description,
+      alternates: { canonical: `/master/${id}` },
+      openGraph: { title, description, url: `/master/${id}`, images: [{ url: image }] },
+      twitter: { card: 'summary', title, description, images: [image] },
     };
-  }, [masterId]);
-
-  if (loading) {
-    return (
-      <div className="min-h-[60vh] flex items-center justify-center text-sm text-slate-500 dark:text-slate-400 font-medium">
-        {t('loading')}
-      </div>
-    );
+  } catch {
+    // A 404/network error here just falls back to the default title from the root
+    // layout — MasterProfileClient renders the actual not-found UI for the visitor.
+    return { alternates: { canonical: `/master/${id}` } };
   }
+}
 
-  if (notFound || !master) {
-    return (
-      <div className="min-h-[75vh] flex flex-col items-center justify-center text-center p-4 sm:p-6 space-y-6">
-        <div className="w-24 h-24 rounded-3xl bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-sky-400 flex items-center justify-center shadow-xl">
-          <Icon name="shieldcheck" size={48} />
-        </div>
-        <div className="space-y-2 max-w-md">
-          <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white">{t('notFoundTitle')}</h1>
-          <p className="text-xs text-slate-500">{t('notFoundBody')}</p>
-        </div>
-        <Link
-          href="/search"
-          className="px-8 py-3.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-lg transition btn-ripple"
-        >
-          {t('backToSearch')}
-        </Link>
-      </div>
-    );
+/** LocalBusiness structured data (§6.12) — the map/reviews/price signals search
+ *  engines can actually surface as a rich result, at city-level granularity since
+ *  that is the only address precision this schema collects. */
+const buildStructuredData = async (id: string): Promise<string | null> => {
+  try {
+    const master = await mastersApi.byId(id);
+    const json = {
+      '@context': 'https://schema.org',
+      '@type': 'LocalBusiness',
+      name: master.displayName,
+      image: master.avatarUrl ?? getAvatarUrl(master.id, master.displayName),
+      description: master.bio ?? undefined,
+      address: { '@type': 'PostalAddress', addressLocality: master.cityName, addressCountry: 'TJ' },
+      ...(master.ratingCount > 0
+        ? {
+            aggregateRating: {
+              '@type': 'AggregateRating',
+              ratingValue: master.ratingAverage,
+              reviewCount: master.ratingCount,
+            },
+          }
+        : {}),
+      ...(master.priceFrom !== null ? { priceRange: `From ${master.priceFrom}` } : {}),
+    };
+
+    return JSON.stringify(json);
+  } catch {
+    return null;
   }
+};
 
-  const avatarUrl = media?.avatarUrl || getAvatarUrl(master.id, master.displayName);
-  const bannerUrl = media?.bannerUrl || getCoverUrl(master.id);
-
-  const orderedSchedule = [...schedule].sort((a, b) => {
-    const today = new Date().getDay();
-    const rot = (w: number) => (w - today + 7) % 7;
-    return rot(a.weekday) - rot(b.weekday);
-  });
-
-  const weekdayLabel = (weekday: number) => {
-    const d = new Date(2024, 0, weekday);
-    return d.toLocaleDateString(locale, { weekday: 'long' });
-  };
-
-  const formatTime = (time: string) => time.slice(0, 5);
-
-  const renderStars = (rating: number) => (
-    <div className="flex items-center gap-0.5 text-amber-500">
-      {[1, 2, 3, 4, 5].map((i) => (
-        <Icon key={i} name="star" size={13} className={i <= Math.round(rating) ? 'fill-amber-400' : 'text-slate-300 dark:text-slate-600'} />
-      ))}
-    </div>
-  );
+export default async function MasterProfilePage({ params }: MasterPageProps) {
+  const { id } = await params;
+  const structuredData = await buildStructuredData(id);
 
   return (
-    <div className="pb-24 space-y-8">
-
-      {/* Cover Image Banner */}
-      <div className="h-72 sm:h-96 relative w-full overflow-hidden bg-slate-900">
-        <img src={bannerUrl} alt={master.displayName} className="w-full h-full object-cover opacity-80" />
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
-      </div>
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-24 relative z-10">
-
-        {/* Profile Header Card */}
-        <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-2xl flex flex-col md:flex-row md:items-end justify-between gap-6">
-
-          <div className="flex flex-col sm:flex-row items-center sm:items-end gap-6 text-center sm:text-left">
-            <div className="relative -mt-16 sm:-mt-20">
-              <img src={avatarUrl} alt={master.displayName} className="w-32 h-32 rounded-3xl object-cover border-4 border-white dark:border-slate-900 shadow-2xl" />
-              {master.hasCertificates && (
-                <div className="absolute -bottom-2 -right-2 p-1.5 bg-blue-600 text-white rounded-full shadow-lg" title={t('verifiedMaster')}>
-                  <Icon name="shieldcheck" size={18} />
-                </div>
-              )}
-            </div>
-
-            <div className="space-y-1.5">
-              <div className="flex items-center justify-center sm:justify-start gap-2 flex-wrap">
-                <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white">{master.displayName}</h1>
-                <span className="px-2.5 py-0.5 rounded-full bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 text-xs font-bold">
-                  ★ {master.ratingAverage} ({master.ratingCount})
-                </span>
-              </div>
-
-              <div className="flex flex-wrap items-center justify-center sm:justify-start gap-4 text-xs text-slate-500 pt-1">
-                <span className="flex items-center gap-1">
-                  <Icon name="mappin" size={14} />
-                  {master.cityName}
-                </span>
-                {master.yearsOfExperience > 0 && (
-                  <span className="flex items-center gap-1">
-                    <Icon name="award" size={14} />
-                    {t('yearsExperience', { count: master.yearsOfExperience })}
-                  </span>
-                )}
-                {master.serviceRadiusKm > 0 && (
-                  <span className="flex items-center gap-1">
-                    <Icon name="clock" size={14} />
-                    {t('serviceRadius', { count: master.serviceRadiusKm })}
-                  </span>
-                )}
-                <span className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-bold">
-                  <Icon name="checkcircle2" size={14} />
-                  {t('jobsCompleted', { count: master.completedBookingsCount })}
-                </span>
-              </div>
-
-              {master.categories.length > 0 && (
-                <div className="flex flex-wrap items-center justify-center sm:justify-start gap-1.5 pt-1">
-                  {master.categories.map((cat) => (
-                    <span key={cat} className="px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-sky-300 text-[11px] font-bold">
-                      {cat}
-                    </span>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3 justify-center">
-            {master.whatsappEnabled && master.whatsappPhone && (() => {
-            const link = waLink(master.whatsappPhone);
-            return link ? (
-              <a
-                href={link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn-success px-5 py-3 rounded-2xl text-xs font-extrabold transition btn-ripple flex items-center gap-2"
-              >
-                <Icon name="whatsapp" size={16} />
-                <span>{t('writeToWhatsApp')}</span>
-              </a>
-            ) : null;
-          })()}
-
-            <Link
-              href={`/booking?master=${master.id}`}
-              className="px-8 py-3 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-extrabold shadow-lg shadow-blue-600/30 transition btn-ripple flex items-center gap-2"
-            >
-              <Icon name="calendar" size={16} />
-              <span>{t('bookAppointment')}</span>
-            </Link>
-          </div>
-
-        </div>
-
-        {/* Profile Content Layout (Tabs + Sticky Sidebar Card) */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-8">
-
-          {/* Main Info Columns */}
-          <div className="lg:col-span-2 space-y-8">
-
-            {/* Tab Navigation */}
-            <div className="flex border-b border-slate-200 dark:border-slate-800 gap-6 overflow-x-auto">
-              {[
-                { id: 'about' as TabId, label: t('tabAbout') },
-                { id: 'services' as TabId, label: t('servicesTab', { count: services.length }) },
-                { id: 'gallery' as TabId, label: t('tabGallery', { count: media.portfolio.length }) },
-                { id: 'reviews' as TabId, label: t('tabReviews', { count: reviews.length }) },
-                { id: 'hours' as TabId, label: t('tabHours') },
-              ].map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`pb-4 text-sm font-bold transition whitespace-nowrap relative ${
-                    activeTab === tab.id
-                      ? 'text-blue-600 dark:text-sky-400'
-                      : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
-                  }`}
-                >
-                  {tab.label}
-                  {activeTab === tab.id && (
-                    <motion.span
-                      layoutId="masterProfileTabIndicator"
-                      className="absolute -bottom-px left-0 right-0 h-0.5 bg-blue-600 dark:bg-sky-400 rounded-full"
-                      transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-                    />
-                  )}
-                </button>
-              ))}
-            </div>
-
-            {/* Tab 1: About & Skills */}
-            {activeTab === 'about' && (
-              <div className="space-y-8 animate-fade-in">
-                {master.bio && (
-                  <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-3">
-                    <h3 className="text-lg font-bold text-slate-900 dark:text-white">{t('professionalBio')}</h3>
-                    <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-line">{master.bio}</p>
-                  </div>
-                )}
-
-                {master.categories.length > 0 && (
-                  <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-4">
-                    <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                      <Icon name="award" size={20} className="text-blue-600 dark:text-sky-400" />
-                      {t('specializations')}
-                    </h3>
-                    <div className="flex flex-wrap gap-2">
-                      {master.categories.map((cat) => (
-                        <span key={cat} className="px-3 py-1.5 rounded-full bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-sky-300 text-xs font-bold">
-                          {cat}
-                        </span>
-                      ))}
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-                      {master.yearsOfExperience > 0 && (
-                        <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 flex items-center gap-3">
-                          <Icon name="award" size={20} className="text-amber-500" />
-                          <div>
-                            <p className="text-xs text-slate-400">{t('experience')}</p>
-                            <p className="text-sm font-bold text-slate-900 dark:text-white">{master.yearsOfExperience} {t('years')}</p>
-                          </div>
-                        </div>
-                      )}
-                      {master.serviceRadiusKm > 0 && (
-                        <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 flex items-center gap-3">
-                          <Icon name="mappin" size={20} className="text-blue-600 dark:text-sky-400" />
-                          <div>
-                            <p className="text-xs text-slate-400">{t('serviceArea')}</p>
-                            <p className="text-sm font-bold text-slate-900 dark:text-white">{t('serviceRadius', { count: master.serviceRadiusKm })}</p>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                )}
-
-                {/* Verified Certificates */}
-                {certificates.length > 0 && (
-                  <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-4">
-                    <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                      <Icon name="award" size={20} className="text-amber-500" />
-                      {t('verifiedCertificates')}
-                    </h3>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      {certificates.map((cert) => (
-                        <div key={cert.id} className="p-4 rounded-2xl border border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40 space-y-1">
-                          <div className="flex items-start justify-between gap-2">
-                            <p className="text-sm font-bold text-slate-900 dark:text-white">{cert.title}</p>
-                            {cert.verifiedAt && (
-                              <span className="px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 text-[10px] font-bold whitespace-nowrap flex items-center gap-1">
-                                <Icon name="checkcircle2" size={11} />
-                                {t('verified')}
-                              </span>
-                            )}
-                          </div>
-                          {cert.issuedBy && (
-                            <p className="text-xs text-slate-500">{t('issuedBy', { issuer: cert.issuedBy })}</p>
-                          )}
-                          {cert.issuedAt && (
-                            <p className="text-[11px] text-slate-400">{new Date(cert.issuedAt).getFullYear()}</p>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {!master.bio && master.categories.length === 0 && certificates.length === 0 && (
-                  <div className="bg-white dark:bg-slate-900 p-12 rounded-3xl border border-slate-200 dark:border-slate-800 text-center space-y-3">
-                    <div className="w-14 h-14 rounded-2xl bg-blue-50 dark:bg-blue-950/40 text-blue-500 dark:text-sky-400 mx-auto flex items-center justify-center">
-                      <Icon name="user" size={26} />
-                    </div>
-                    <p className="text-xs text-slate-400 font-semibold">{t('noAbout')}</p>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* Tab 2: Services */}
-            {activeTab === 'services' && (
-              <div className="space-y-4 animate-fade-in">
-                {services.length === 0 ? (
-                  <div className="bg-white dark:bg-slate-900 p-12 rounded-3xl border border-slate-200 dark:border-slate-800 text-center space-y-3">
-                    <div className="w-14 h-14 rounded-2xl bg-blue-50 dark:bg-blue-950/40 text-blue-500 dark:text-sky-400 mx-auto flex items-center justify-center">
-                      <Icon name="briefcase" size={26} />
-                    </div>
-                    <p className="text-xs text-slate-400 font-semibold">{t('noServices')}</p>
-                  </div>
-                ) : (
-                  services.map((s, idx) => (
-                    <FilterItem
-                      key={s.id}
-                      index={idx}
-                      className="glass-card p-6 rounded-3xl border border-slate-200 dark:border-slate-800 flex items-center justify-between gap-4 hover:shadow-lg hover:border-blue-200 dark:hover:border-sky-900 transition-[box-shadow,border-color] duration-300"
-                    >
-                      <div>
-                        <h4 className="text-sm font-bold text-slate-900 dark:text-white">{s.title}</h4>
-                        {s.description && <p className="text-xs text-slate-500 mt-1">{s.description}</p>}
-                        <p className="text-xs text-slate-400 mt-1">{s.durationMinutes} {t('minutes')}</p>
-                      </div>
-                      <span className="text-sm font-extrabold text-slate-900 dark:text-white whitespace-nowrap">
-                        {s.price} {s.currency}
-                      </span>
-                    </FilterItem>
-                  ))
-                )}
-              </div>
-            )}
-
-            {/* Tab: Gallery */}
-            {activeTab === 'gallery' && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 animate-fade-in">
-                {media.portfolio.length === 0 ? (
-                  <div className="sm:col-span-2 bg-white dark:bg-slate-900 p-12 rounded-3xl border border-slate-200 dark:border-slate-800 text-center space-y-3">
-                    <div className="w-14 h-14 rounded-2xl bg-blue-50 dark:bg-blue-950/40 text-blue-500 dark:text-sky-400 mx-auto flex items-center justify-center">
-                      <Icon name="image" size={26} />
-                    </div>
-                    <p className="text-xs text-slate-400 font-semibold">{t('noGallery')}</p>
-                  </div>
-                ) : (
-                  media.portfolio.map((item, idx) => (
-                    <FilterItem
-                      key={item.fileId}
-                      index={idx % 2}
-                      className="h-60 rounded-3xl overflow-hidden shadow-md border border-slate-200 dark:border-slate-800 group relative"
-                    >
-                      <img src={item.url} alt={item.caption || t('gallerySampleAlt', { index: idx + 1 })} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 ease-out" />
-                      {item.caption && (
-                        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
-                          <p className="text-xs font-bold text-white">{item.caption}</p>
-                        </div>
-                      )}
-                    </FilterItem>
-                  ))
-                )}
-              </div>
-            )}
-
-            {/* Tab: Reviews */}
-            {activeTab === 'reviews' && (
-              <div className="space-y-6 animate-fade-in">
-                {reviews.length === 0 ? (
-                  <div className="bg-white dark:bg-slate-900 p-12 rounded-3xl border border-slate-200 dark:border-slate-800 text-center space-y-3">
-                    <div className="w-14 h-14 rounded-2xl bg-blue-50 dark:bg-blue-950/40 text-blue-500 dark:text-sky-400 mx-auto flex items-center justify-center">
-                      <Icon name="star" size={26} />
-                    </div>
-                    <p className="text-xs text-slate-400 font-semibold">{t('noReviews')}</p>
-                  </div>
-                ) : (
-                  reviews.map((rev, idx) => (
-                    <FilterItem
-                      key={rev.id}
-                      index={idx}
-                      className="glass-card p-6 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-4 hover:shadow-lg transition-shadow duration-300"
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <img src={PLACEHOLDER_REVIEWER_AVATAR} alt={rev.clientName ?? ''} className="w-10 h-10 rounded-full object-cover" />
-                          <div>
-                            <h4 className="text-sm font-bold text-slate-900 dark:text-white">{rev.clientName ?? t('anonymousClient')}</h4>
-                            <p className="text-xs text-slate-400">{new Date(rev.createdAt).toLocaleDateString(locale)}</p>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-1.5">
-                          {renderStars(Number(rev.rating))}
-                          <span className="text-xs font-bold text-slate-700 dark:text-slate-200">{rev.rating}.0</span>
-                        </div>
-                      </div>
-                      {rev.comment && (
-                        <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">{rev.comment}</p>
-                      )}
-                      {rev.reply && (
-                        <div className="p-4 rounded-2xl bg-blue-50 dark:bg-slate-800 text-xs text-slate-700 dark:text-slate-300 space-y-1">
-                          <span className="font-bold text-blue-600 dark:text-sky-400">{t('responseFrom', { name: master.displayName })}</span>
-                          <p>{rev.reply.body}</p>
-                        </div>
-                      )}
-                    </FilterItem>
-                  ))
-                )}
-              </div>
-            )}
-
-            {/* Tab: Working Hours */}
-            {activeTab === 'hours' && (
-              <div className="space-y-6 animate-fade-in">
-                <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-4">
-                  <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                    <Icon name="clock" size={20} className="text-blue-600 dark:text-sky-400" />
-                    {t('weeklyAvailability')}
-                  </h3>
-                  {orderedSchedule.length === 0 ? (
-                    <p className="text-xs text-slate-500 dark:text-slate-400">{t('noSchedule')}</p>
-                  ) : (
-                    <div className="space-y-2">
-                      {orderedSchedule.map((day) => (
-                        <div key={`${day.weekday}-${day.startTime}`} className="flex items-center justify-between py-2 border-b border-slate-100 dark:border-slate-800 last:border-0">
-                          <span className="text-sm font-semibold text-slate-700 dark:text-slate-200 capitalize">{weekdayLabel(day.weekday)}</span>
-                          <span className="text-sm font-bold text-slate-900 dark:text-white">
-                            {formatTime(day.startTime)} – {formatTime(day.endTime)}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-
-          </div>
-
-          {/* Sticky Booking Sidebar Card */}
-          <div>
-            <div className="relative overflow-hidden bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl sticky top-24 space-y-6">
-              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 via-sky-400 to-emerald-400" />
-              <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800">
-                <span className="text-xs font-bold text-slate-400 uppercase">{t('hourlyRate')}</span>
-                <span className="text-2xl font-extrabold text-slate-900 dark:text-white">
-                  {master.priceFrom ? `$${master.priceFrom}/hr` : '—'}
-                </span>
-              </div>
-
-              <div className="space-y-3 text-xs text-slate-600 dark:text-slate-300">
-                <div className="flex items-center justify-between">
-                  <span>{t('serviceGuarantee')}</span>
-                  <span className="font-bold text-emerald-600 dark:text-emerald-400">{t('insured')}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span>{t('avgResponseTime')}</span>
-                  <span className="font-bold text-emerald-600 dark:text-emerald-400">{t('underMinutes', { count: 30 })}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span>{t('travelFee')}</span>
-                  <span className="font-bold text-emerald-600 dark:text-emerald-400">{t('free')}</span>
-                </div>
-              </div>
-
-              <Link
-                href={`/booking?master=${master.id}`}
-                className="w-full py-3.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-sm shadow-lg shadow-blue-600/30 transition btn-ripple flex items-center justify-center gap-2"
-              >
-                <Icon name="calendar" size={18} />
-                <span>{t('bookThisMaster')}</span>
-              </Link>
-            </div>
-          </div>
-
-        </div>
-
-      </div>
-
-    </div>
+    <>
+      {structuredData !== null && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: structuredData }} />
+      )}
+      <MasterProfileClient />
+    </>
   );
 }

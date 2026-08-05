@@ -7,6 +7,7 @@ import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { PagePreviewSwitcher } from '@/components/layout/PagePreviewSwitcher';
 import { AuthProvider } from '@/contexts/AuthContext';
+import { SITE_URL } from '@/lib/seo';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -16,9 +17,28 @@ const inter = Inter({
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('common');
+  const title = t('metaTitle');
+  const description = t('metaDescription');
+
   return {
-    title: t('metaTitle'),
-    description: t('metaDescription'),
+    metadataBase: new URL(SITE_URL),
+    title: { default: title, template: `%s | UstoGo` },
+    description,
+    manifest: '/manifest.webmanifest',
+    openGraph: {
+      type: 'website',
+      siteName: 'UstoGo',
+      title,
+      description,
+      url: SITE_URL,
+      images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: title }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: ['/opengraph-image'],
+    },
   };
 }
 
