@@ -245,6 +245,16 @@ export default function BookingDetailsPage() {
             </Link>
           )}
 
+          {isClient && booking.status === 'COMPLETED' && (
+            <Link
+              href={`/booking?master=${booking.masterId}&service=${booking.serviceId}`}
+              className="px-5 py-3 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-md transition flex items-center gap-2"
+            >
+              <Icon name="Calendar" size={16} />
+              <span>{t('bookAgain')}</span>
+            </Link>
+          )}
+
           {isMaster && booking.status === 'COMPLETED' && !alreadyClientRated && (
             <Link
               href={`/reviews?booking=${booking.id}`}

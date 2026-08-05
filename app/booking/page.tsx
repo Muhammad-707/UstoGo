@@ -38,6 +38,7 @@ export default function BookingWizardPage() {
   const t = useTranslations('booking');
   const searchParams = useSearchParams();
   const preselectedMasterId = searchParams.get('master');
+  const preselectedServiceId = searchParams.get('service');
   const { user } = useRequireAuth(['CLIENT']);
 
   const [step, setStep] = useState<number>(1);
@@ -122,7 +123,10 @@ export default function BookingWizardPage() {
       .then((list) => {
         if (cancelled) return;
         setServices(list);
-        if (list.length > 0) setSelectedServiceId((prev) => prev || list[0].id);
+        const preselected = preselectedServiceId && list.some((s) => s.id === preselectedServiceId)
+          ? preselectedServiceId
+          : list[0]?.id;
+        if (preselected) setSelectedServiceId((prev) => prev || preselected);
       })
       .catch(() => {
         if (!cancelled) setServices([]);
@@ -133,7 +137,7 @@ export default function BookingWizardPage() {
     return () => {
       cancelled = true;
     };
-  }, [preselectedMasterId]);
+  }, [preselectedMasterId, preselectedServiceId]);
 
   // Load availability for the selected date + service
   useEffect(() => {

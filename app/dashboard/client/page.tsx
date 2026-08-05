@@ -187,9 +187,20 @@ export default function ClientDashboardPage() {
                       </span>
                     </td>
                     <td className="py-4 text-right">
-                      <Link href={`/booking/${b.id}`} className="text-blue-600 hover:underline" onClick={(e) => e.stopPropagation()}>
-                        {t('details')}
-                      </Link>
+                      <div className="flex items-center justify-end gap-3">
+                        {b.status === 'COMPLETED' && (
+                          <Link
+                            href={`/booking?master=${b.masterId}&service=${b.serviceId}`}
+                            className="text-emerald-600 dark:text-emerald-400 hover:underline"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            {t('bookAgain')}
+                          </Link>
+                        )}
+                        <Link href={`/booking/${b.id}`} className="text-blue-600 hover:underline" onClick={(e) => e.stopPropagation()}>
+                          {t('details')}
+                        </Link>
+                      </div>
                     </td>
                   </InViewRow>
                 ))}
