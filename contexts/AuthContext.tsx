@@ -18,6 +18,7 @@ interface AuthContextValue {
     lastName: string;
     phone: string;
     cityId: string;
+    referralCode?: string;
   }) => Promise<void>;
   registerMaster: (data: {
     email: string;

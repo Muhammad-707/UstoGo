@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useAuth } from '@/contexts/AuthContext';
 import { citiesApi } from '@/lib/api/endpoints';
@@ -18,6 +18,8 @@ export default function RegisterClientPage() {
   const t = useTranslations('authRegisterClient');
   const tv = useTranslations('validation');
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const referralCode = searchParams?.get('ref') ?? undefined;
   const { registerClient } = useAuth();
 
   const [fullName, setFullName] = useState('');
@@ -74,6 +76,7 @@ export default function RegisterClientPage() {
         lastName: valid.lastName,
         phone: valid.normalizedPhone,
         cityId,
+        referralCode,
       });
       router.push('/dashboard/client');
     } catch (err) {

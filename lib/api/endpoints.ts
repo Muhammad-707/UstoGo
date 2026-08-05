@@ -22,6 +22,7 @@ import type {
   MasterStats,
   MasterStatus,
   Message,
+  MyReferral,
   NotificationItem,
   Paginated,
   PlatformNps,
@@ -43,6 +44,7 @@ export const authApi = {
     lastName: string;
     phone: string;
     cityId: string;
+    referralCode?: string;
   }) => api.post<AuthResponse>('/auth/register/client', data, false),
 
   registerMaster: (data: {
@@ -261,6 +263,11 @@ export const conversationsApi = {
 // ---- Messages ----
 export const messagesApi = {
   remove: (id: string) => api.delete<void>(`/messages/${id}`),
+};
+
+// ---- Referrals (client) ----
+export const referralApi = {
+  mine: () => api.get<MyReferral>('/me/referral'),
 };
 
 // ---- Favorites ----

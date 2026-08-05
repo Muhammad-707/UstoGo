@@ -354,6 +354,13 @@ export interface AdminMasterStats {
   topServices: MasterStatsTopService[];
 }
 
+export interface MyReferral {
+  code: string;
+  referredCount: number;
+  rewardCount: number;
+  totalBonus: number;
+}
+
 export interface AdminUserListItem {
   id: string;
   email: string;

@@ -22,5 +22,13 @@
   "recommendTitle": "Порекомендуете ли вы мастера?",
   "recommendSubtitle": "Оставьте оценку за выполненные заказы — это поможет другим клиентам с выбором.",
   "recommendCta": "Оставить отзыв",
-  "bookAgain": "Заказать снова"
+  "bookAgain": "Заказать снова",
+  "referralTitle": "Пригласить Друга",
+  "referralSubtitle": "Поделитесь своим кодом — когда друг сделает первый заказ, вы оба получите бонус.",
+  "referralCopyLink": "Скопировать Ссылку",
+  "referralCopied": "Скопировано!",
+  "referralShareWhatsApp": "Поделиться в WhatsApp",
+  "referralShareText": "Присоединяйтесь к UstoGo по моей реферальной ссылке и найдите проверенных мастеров: {link}",
+  "referralStatReferred": "Друзей Присоединилось",
+  "referralStatBonus": "Заработано Бонусов"
 }

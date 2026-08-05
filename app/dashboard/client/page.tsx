@@ -4,14 +4,14 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Icon } from '@/components/icons/LucideIcons';
 import { useTranslations } from 'next-intl';
-import { bookingsApi, mastersApi, reviewsApi } from '@/lib/api/endpoints';
+import { bookingsApi, mastersApi, referralApi, reviewsApi } from '@/lib/api/endpoints';
 import { getBookingsSocket } from '@/lib/bookings/socket';
 import { ApiError } from '@/lib/api/client';
 import { useRequireAuth } from '@/hooks/useRequireAuth';
 import { useFavorites } from '@/hooks/useFavorites';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { getAvatarUrl } from '@/lib/placeholders';
-import type { Booking, MasterPublic } from '@/lib/api/types';
+import type { Booking, MasterPublic, MyReferral } from '@/lib/api/types';
 import { FilterContainer, FilterItem, InViewRow } from '@/components/ui/FilterAnimate';
 
 export default function ClientDashboardPage() {
@@ -27,13 +27,28 @@ export default function ClientDashboardPage() {
 
   const [selectedMaster, setSelectedMaster] = useState<MasterPublic | null>(null);
   const [reviewedBookingIds, setReviewedBookingIds] = useState<Set<string>>(new Set());
+  const [referral, setReferral] = useState<MyReferral | null>(null);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     reviewsApi
       .myReviews()
       .then((res) => setReviewedBookingIds(new Set(res.items.map((r) => r.bookingId))))
       .catch(() => setReviewedBookingIds(new Set()));
+    referralApi.mine().then(setReferral).catch(() => setReferral(null));
   }, []);
+
+  const referralLink = referral && typeof window !== 'undefined'
+    ? `${window.location.origin}/auth/register/client?ref=${referral.code}`
+    : '';
+
+  const handleCopyReferralLink = () => {
+    if (!referralLink) return;
+    navigator.clipboard.writeText(referralLink).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }).catch(() => {});
+  };
 
   useEffect(() => {
     bookingsApi
@@ -138,6 +153,55 @@ export default function ClientDashboardPage() {
           </FilterItem>
         ))}
       </FilterContainer>
+
+      {/* Referral */}
+      {referral && (
+        <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-xl flex flex-col lg:flex-row lg:items-center gap-6 justify-between bg-gradient-to-r from-violet-50/60 to-fuchsia-50/60 dark:from-violet-950/20 dark:to-fuchsia-950/10">
+          <div className="flex items-start gap-4">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-violet-500 to-fuchsia-500 text-white flex items-center justify-center shadow-lg shrink-0">
+              <Icon name="Heart" size={22} />
+            </div>
+            <div>
+              <h3 className="text-sm font-extrabold text-slate-900 dark:text-white">{t('referralTitle')}</h3>
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 max-w-md">{t('referralSubtitle')}</p>
+              <div className="flex items-center gap-4 mt-3">
+                <div>
+                  <span className="text-lg font-extrabold text-slate-900 dark:text-white">{referral.referredCount}</span>
+                  <span className="text-[10px] text-slate-400 font-bold uppercase block">{t('referralStatReferred')}</span>
+                </div>
+                <div>
+                  <span className="text-lg font-extrabold text-emerald-600 dark:text-emerald-400">{referral.totalBonus}</span>
+                  <span className="text-[10px] text-slate-400 font-bold uppercase block">{t('referralStatBonus')}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-3 shrink-0">
+            <div className="px-4 py-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-mono font-extrabold text-sm text-slate-900 dark:text-white tracking-widest text-center">
+              {referral.code}
+            </div>
+            <button
+              onClick={handleCopyReferralLink}
+              className="px-4 py-2.5 rounded-xl bg-slate-900 dark:bg-white hover:opacity-90 text-white dark:text-slate-900 text-xs font-bold shadow transition flex items-center justify-center gap-2"
+            >
+              <Icon name={copied ? 'checkcircle2' : 'filetext'} size={14} />
+              {copied ? t('referralCopied') : t('referralCopyLink')}
+            </button>
+            {referralLink && (
+              <a
+                href={`https://wa.me/?text=${encodeURIComponent(t('referralShareText', { link: referralLink }))}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-4 py-2.5 rounded-xl bg-[#25D366] hover:bg-[#1ebe5d] text-white text-xs font-bold shadow transition flex items-center justify-center gap-2"
+              >
+                <Icon name="whatsapp" size={14} />
+                {t('referralShareWhatsApp')}
+              </a>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Recent Bookings Table */}
       <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-6 shadow-xl">

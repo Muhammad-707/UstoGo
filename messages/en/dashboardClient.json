@@ -22,5 +22,13 @@
   "recommendTitle": "Would you recommend your master?",
   "recommendSubtitle": "Leave a quick rating for your completed jobs — it helps other clients choose.",
   "recommendCta": "Leave feedback",
-  "bookAgain": "Book Again"
+  "bookAgain": "Book Again",
+  "referralTitle": "Refer a Friend",
+  "referralSubtitle": "Share your code — when a friend books their first job, you both earn a bonus.",
+  "referralCopyLink": "Copy Link",
+  "referralCopied": "Copied!",
+  "referralShareWhatsApp": "Share on WhatsApp",
+  "referralShareText": "Join UstoGo with my referral link and find trusted craftsmen: {link}",
+  "referralStatReferred": "Friends Joined",
+  "referralStatBonus": "Bonus Earned"
 }

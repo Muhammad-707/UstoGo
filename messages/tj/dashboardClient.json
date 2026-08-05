@@ -22,5 +22,13 @@
   "recommendTitle": "Оё усторо тавсия медиҳед?",
   "recommendSubtitle": "Барои корҳои анҷомдодаатон баҳо гузоред — ин ба дигар мизоҷон дар интихоб кӯмак мекунад.",
   "recommendCta": "Баҳо гузоштан",
-  "bookAgain": "Боз ҳам фармоиш"
+  "bookAgain": "Боз ҳам фармоиш",
+  "referralTitle": "Дӯстро Даъват кунед",
+  "referralSubtitle": "Кодатонро паҳн кунед — вақте дӯстатон аввалин фармоишашро мекунад, ҳарду шумо бонус мегиред.",
+  "referralCopyLink": "Нусхабардории Линк",
+  "referralCopied": "Нусхабардорӣ шуд!",
+  "referralShareWhatsApp": "Дар WhatsApp паҳн кардан",
+  "referralShareText": "Ба UstoGo бо линки даъвати ман ҳамроҳ шавед ва устоҳои боэътимодро ёбед: {link}",
+  "referralStatReferred": "Дӯстони Ҳамроҳшуда",
+  "referralStatBonus": "Бонуси Бадастомада"
 }
