@@ -74,13 +74,13 @@ export default function LandingClient({
       <HeroSlider /> 
 
       {/* 2. STATS BAR SECTION */}
-      <section className="relative py-16 text-slate-900 dark:text-white shadow-xl dark:shadow-2xl overflow-hidden bg-gradient-to-br from-blue-100 via-sky-50 to-violet-100 dark:bg-slate-950 dark:from-transparent dark:via-transparent dark:to-transparent">
+      <section className="relative py-16 text-slate-900 dark:text-white shadow-xl dark:shadow-2xl overflow-hidden bg-slate-50 dark:bg-slate-950">
         {/* Base gradient wash */}
-        <div className="absolute inset-0 bg-gradient-to-br dark:from-blue-900 dark:via-slate-950 dark:to-indigo-950" />
+        <div className="absolute inset-0 bg-gradient-to-b from-white via-slate-50 to-white dark:from-blue-900 dark:via-slate-950 dark:to-indigo-950" />
         {/* Ambient glow orbs */}
-        <div className="absolute -top-24 -left-24 w-80 h-80 rounded-full bg-sky-400/30 dark:bg-sky-500/20 blur-3xl animate-float" />
-        <div className="absolute -bottom-32 -right-16 w-96 h-96 rounded-full bg-purple-400/30 dark:bg-purple-500/20 blur-3xl animate-float" style={{ animationDelay: '1.5s' }} />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full bg-emerald-300/20 dark:bg-emerald-500/10 blur-3xl" />
+        <div className="absolute -top-24 -left-24 w-80 h-80 rounded-full bg-sky-300/15 dark:bg-sky-500/20 blur-3xl animate-float" />
+        <div className="absolute -bottom-32 -right-16 w-96 h-96 rounded-full bg-purple-300/15 dark:bg-purple-500/20 blur-3xl animate-float" style={{ animationDelay: '1.5s' }} />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full bg-emerald-200/10 dark:bg-emerald-500/10 blur-3xl" />
         {/* Faint grid pattern */}
         <div
           className="absolute inset-0 opacity-[0.06] dark:opacity-[0.07]"
