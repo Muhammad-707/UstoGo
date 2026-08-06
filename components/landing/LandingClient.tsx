@@ -105,7 +105,11 @@ export default function LandingClient({
                 transition={{ type: 'spring', stiffness: 300, damping: 20 }}
                 className={`group relative h-full rounded-3xl p-5 sm:p-6 text-center bg-gradient-to-b ${s.tint} dark:bg-white/[0.04] border ${s.border} backdrop-blur-md shadow-lg ${s.glow} hover:shadow-xl hover:border-opacity-60 dark:hover:bg-white/[0.08] dark:hover:border-white/20 transition-all`}
               >
-                <div className={`absolute inset-0 rounded-3xl bg-gradient-to-b ${s.ring} to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
+                <motion.div
+                  className={`absolute inset-0 rounded-3xl bg-gradient-to-b ${s.ring} to-transparent`}
+                  animate={{ opacity: [0.25, 0.9, 0.25] }}
+                  transition={{ duration: 2.6, repeat: Infinity, ease: 'easeInOut', delay: idx * 0.35 }}
+                />
                 <div className="relative space-y-1.5">
                   <div className={`mx-auto mb-2 w-9 h-9 rounded-xl ${s.iconBg} flex items-center justify-center ${s.accent} group-hover:scale-110 transition-transform duration-300`}>
                     <Icon name={s.icon} size={18} />
@@ -168,8 +172,12 @@ export default function LandingClient({
                 href={`/search?category=${cat.id}`}
                 className="glass-card rounded-3xl p-6 group flex flex-col justify-between h-56 transition-all duration-300 relative overflow-hidden"
               >
-                {/* Hover glow wash */}
-                <div className={`absolute inset-0 bg-gradient-to-br ${visual.bgGradient} opacity-0 group-hover:opacity-60 dark:group-hover:opacity-20 transition-opacity duration-500`} />
+                {/* Animated color wash */}
+                <motion.div
+                  className={`absolute inset-0 bg-gradient-to-br ${visual.bgGradient}`}
+                  animate={{ opacity: [0.2, 0.75, 0.2] }}
+                  transition={{ duration: 2.8, repeat: Infinity, ease: 'easeInOut', delay: idx * 0.25 }}
+                />
                 {/* Decorative oversized icon ghost */}
                 <div className="absolute -right-4 -bottom-4 text-slate-900/[0.03] dark:text-white/[0.04] group-hover:scale-110 group-hover:rotate-6 transition-transform duration-500">
                   <Icon name={visual.iconName} size={112} />
@@ -255,8 +263,15 @@ export default function LandingClient({
                   transition={{ type: 'spring', stiffness: 300, damping: 20 }}
                   className={`group relative bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-4 shadow-lg hover:shadow-2xl ${step.ring} transition-shadow duration-300 h-full`}
                 >
-                  <div className={`relative z-10 w-14 h-14 rounded-2xl ${step.color} text-white font-extrabold text-xl flex items-center justify-center shadow-lg ${step.shadow} group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300`}>
-                    {step.n}
+                  <div className="relative w-14 h-14">
+                    <motion.div
+                      className={`absolute -inset-2 rounded-2xl ${step.color} blur-lg`}
+                      animate={{ opacity: [0.15, 0.6, 0.15] }}
+                      transition={{ duration: 2.6, repeat: Infinity, ease: 'easeInOut', delay: idx * 0.4 }}
+                    />
+                    <div className={`relative z-10 w-14 h-14 rounded-2xl ${step.color} text-white font-extrabold text-xl flex items-center justify-center shadow-lg ${step.shadow} group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300`}>
+                      {step.n}
+                    </div>
                   </div>
                   <h3 className="text-xl font-extrabold text-slate-900 dark:text-white">{t(step.titleKey)}</h3>
                   <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
@@ -313,7 +328,11 @@ export default function LandingClient({
               <div className="p-6 relative pt-0">
                 <div className="-mt-12 flex items-end justify-between mb-4">
                   <div className="relative">
-                    <div className="absolute -inset-1 rounded-2xl bg-gradient-to-br from-blue-500 to-sky-400 opacity-0 group-hover:opacity-70 blur transition-opacity duration-300" />
+                    <motion.div
+                      className="absolute -inset-1 rounded-2xl bg-gradient-to-br from-blue-500 to-sky-400 blur"
+                      animate={{ opacity: [0.35, 0.85, 0.35] }}
+                      transition={{ duration: 2.6, repeat: Infinity, ease: 'easeInOut', delay: idx * 0.3 }}
+                    />
                     <img src={master.avatarUrl || getAvatarUrl(master.id, master.displayName)} alt={master.displayName} className="relative w-20 h-20 rounded-2xl object-cover border-4 border-white dark:border-slate-900 shadow-xl group-hover:scale-105 transition-transform duration-300" />
                     {master.hasCertificates && (
                       <div className="absolute -bottom-1 -right-1 p-1 bg-blue-600 text-white rounded-full">
