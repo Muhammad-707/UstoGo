@@ -13,10 +13,10 @@ import HeroSlider from '@/components/layout/HeroSlider';
 import { FilterItem } from '@/components/ui/FilterAnimate';
 
 const STATS = [
-  { value: '50,000+', labelKey: 'completedJobs', icon: 'CheckCircle2', accent: 'text-sky-600 dark:text-sky-400', glow: 'shadow-sky-500/10 dark:shadow-sky-500/20', ring: 'from-sky-500/10 dark:from-sky-500/20' },
-  { value: '1,420+', labelKey: 'verifiedMasters', icon: 'ShieldCheck', accent: 'text-emerald-600 dark:text-emerald-400', glow: 'shadow-emerald-500/10 dark:shadow-emerald-500/20', ring: 'from-emerald-500/10 dark:from-emerald-500/20' },
-  { value: '4.95 / 5', labelKey: 'avgRating', icon: 'Star', accent: 'text-amber-600 dark:text-amber-400', glow: 'shadow-amber-500/10 dark:shadow-amber-500/20', ring: 'from-amber-500/10 dark:from-amber-500/20' },
-  { value: '100%', labelKey: 'insuranceGuarantee', icon: 'ShieldCheck', accent: 'text-purple-600 dark:text-purple-400', glow: 'shadow-purple-500/10 dark:shadow-purple-500/20', ring: 'from-purple-500/10 dark:from-purple-500/20' },
+  { value: '50,000+', labelKey: 'completedJobs', icon: 'CheckCircle2', accent: 'text-sky-600 dark:text-sky-400', glow: 'shadow-sky-500/10 dark:shadow-sky-500/20', ring: 'from-sky-500/10 dark:from-sky-500/20', tint: 'from-sky-50 to-white dark:from-transparent dark:to-transparent', iconBg: 'bg-sky-100 dark:bg-white/10', border: 'border-sky-100 dark:border-white/10' },
+  { value: '1,420+', labelKey: 'verifiedMasters', icon: 'ShieldCheck', accent: 'text-emerald-600 dark:text-emerald-400', glow: 'shadow-emerald-500/10 dark:shadow-emerald-500/20', ring: 'from-emerald-500/10 dark:from-emerald-500/20', tint: 'from-emerald-50 to-white dark:from-transparent dark:to-transparent', iconBg: 'bg-emerald-100 dark:bg-white/10', border: 'border-emerald-100 dark:border-white/10' },
+  { value: '4.95 / 5', labelKey: 'avgRating', icon: 'Star', accent: 'text-amber-600 dark:text-amber-400', glow: 'shadow-amber-500/10 dark:shadow-amber-500/20', ring: 'from-amber-500/10 dark:from-amber-500/20', tint: 'from-amber-50 to-white dark:from-transparent dark:to-transparent', iconBg: 'bg-amber-100 dark:bg-white/10', border: 'border-amber-100 dark:border-white/10' },
+  { value: '100%', labelKey: 'insuranceGuarantee', icon: 'ShieldCheck', accent: 'text-purple-600 dark:text-purple-400', glow: 'shadow-purple-500/10 dark:shadow-purple-500/20', ring: 'from-purple-500/10 dark:from-purple-500/20', tint: 'from-purple-50 to-white dark:from-transparent dark:to-transparent', iconBg: 'bg-purple-100 dark:bg-white/10', border: 'border-purple-100 dark:border-white/10' },
 ] as const;
 
 function flattenLeafCategories(categories: Category[]): Category[] {
@@ -71,21 +71,21 @@ export default function LandingClient({
     <div className="space-y-24 pb-24 overflow-hidden">
 
       {/* 1. HERO SECTION (CINEMATIC FULLSCREEN SLIDER) */}
-      <HeroSlider />
+      <HeroSlider /> 
 
       {/* 2. STATS BAR SECTION */}
-      <section className="relative py-16 text-slate-900 dark:text-white shadow-xl dark:shadow-2xl overflow-hidden bg-white dark:bg-slate-950">
+      <section className="relative py-16 text-slate-900 dark:text-white shadow-xl dark:shadow-2xl overflow-hidden bg-gradient-to-br from-blue-100 via-sky-50 to-violet-100 dark:bg-slate-950 dark:from-transparent dark:via-transparent dark:to-transparent">
         {/* Base gradient wash */}
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-sky-50/60 to-indigo-50 dark:from-blue-900 dark:via-slate-950 dark:to-indigo-950" />
+        <div className="absolute inset-0 bg-gradient-to-br dark:from-blue-900 dark:via-slate-950 dark:to-indigo-950" />
         {/* Ambient glow orbs */}
-        <div className="absolute -top-24 -left-24 w-72 h-72 rounded-full bg-sky-400/10 dark:bg-sky-500/20 blur-3xl animate-float" />
-        <div className="absolute -bottom-32 -right-16 w-80 h-80 rounded-full bg-purple-400/10 dark:bg-purple-500/20 blur-3xl animate-float" style={{ animationDelay: '1.5s' }} />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full bg-emerald-400/5 dark:bg-emerald-500/10 blur-3xl" />
+        <div className="absolute -top-24 -left-24 w-80 h-80 rounded-full bg-sky-400/30 dark:bg-sky-500/20 blur-3xl animate-float" />
+        <div className="absolute -bottom-32 -right-16 w-96 h-96 rounded-full bg-purple-400/30 dark:bg-purple-500/20 blur-3xl animate-float" style={{ animationDelay: '1.5s' }} />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full bg-emerald-300/20 dark:bg-emerald-500/10 blur-3xl" />
         {/* Faint grid pattern */}
         <div
-          className="absolute inset-0 opacity-[0.05] dark:opacity-[0.07]"
+          className="absolute inset-0 opacity-[0.06] dark:opacity-[0.07]"
           style={{
-            backgroundImage: 'linear-gradient(rgba(15,23,42,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(15,23,42,0.6) 1px, transparent 1px)',
+            backgroundImage: 'linear-gradient(rgba(15,23,42,0.7) 1px, transparent 1px), linear-gradient(90deg, rgba(15,23,42,0.7) 1px, transparent 1px)',
             backgroundSize: '48px 48px',
           }}
         />
@@ -103,11 +103,11 @@ export default function LandingClient({
               <motion.div
                 whileHover={{ y: -6, scale: 1.03 }}
                 transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-                className={`group relative h-full rounded-3xl p-5 sm:p-6 text-center bg-white/80 dark:bg-white/[0.04] border border-slate-200/70 dark:border-white/10 backdrop-blur-md shadow-lg ${s.glow} hover:bg-white dark:hover:bg-white/[0.08] hover:border-slate-300 dark:hover:border-white/20 transition-colors`}
+                className={`group relative h-full rounded-3xl p-5 sm:p-6 text-center bg-gradient-to-b ${s.tint} dark:bg-white/[0.04] border ${s.border} backdrop-blur-md shadow-lg ${s.glow} hover:shadow-xl hover:border-opacity-60 dark:hover:bg-white/[0.08] dark:hover:border-white/20 transition-all`}
               >
                 <div className={`absolute inset-0 rounded-3xl bg-gradient-to-b ${s.ring} to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
                 <div className="relative space-y-1.5">
-                  <div className={`mx-auto mb-2 w-9 h-9 rounded-xl bg-slate-900/5 dark:bg-white/10 flex items-center justify-center ${s.accent} group-hover:scale-110 transition-transform duration-300`}>
+                  <div className={`mx-auto mb-2 w-9 h-9 rounded-xl ${s.iconBg} flex items-center justify-center ${s.accent} group-hover:scale-110 transition-transform duration-300`}>
                     <Icon name={s.icon} size={18} />
                   </div>
                   <div className={`text-2xl sm:text-4xl font-extrabold ${s.accent} tracking-tight`}>{s.value}</div>
