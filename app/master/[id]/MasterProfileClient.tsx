@@ -9,13 +9,11 @@ import { Icon } from '@/components/icons/LucideIcons';
 import { mastersApi } from '@/lib/api/endpoints';
 import { ApiError } from '@/lib/api/client';
 import type { MasterPublic, MasterService, Review, WorkingDay, MasterCertificatePublic } from '@/lib/api/types';
-import { waLink, waBookingText } from '@/lib/whatsapp';
+import { waLink } from '@/lib/whatsapp';
 import { getAvatarUrl, getCoverUrl, PLACEHOLDER_REVIEWER_AVATAR } from '@/lib/placeholders';
 import { FilterItem } from '@/components/ui/FilterAnimate';
 
 type TabId = 'about' | 'services' | 'gallery' | 'reviews' | 'hours';
-
-const WEEKDAYS = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'] as const;
 
 export default function MasterProfileClient() {
   const t = useTranslations('masterDetail');
@@ -37,6 +35,7 @@ export default function MasterProfileClient() {
   useEffect(() => {
     if (!masterId) return;
     let cancelled = false;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- resets loading state before an async fetch
     setLoading(true);
     setNotFound(false);
 

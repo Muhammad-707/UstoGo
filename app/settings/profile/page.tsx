@@ -17,7 +17,6 @@ export default function EditProfilePage() {
   const t = useTranslations('settingsProfile');
   const { user, refreshUser, logout } = useAuth();
   const isMaster = user?.role === 'MASTER';
-  const masterProfile = user?.masterProfile ?? null;
 
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -50,6 +49,7 @@ export default function EditProfilePage() {
   useEffect(() => {
     if (!user) return;
     const profile = user.clientProfile ?? user.masterProfile;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- hydrates form fields from the loaded user
     setFirstName(profile?.firstName ?? '');
     setLastName(profile?.lastName ?? '');
     setDisplayName(user.masterProfile?.displayName ?? '');

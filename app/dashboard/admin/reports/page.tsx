@@ -44,10 +44,7 @@ export default function AdminReportsPage() {
   };
 
   useEffect(() => {
-    setPage(1);
-  }, [status]);
-
-  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- fetches reports on status/page change
     load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status, page]);
@@ -99,7 +96,7 @@ export default function AdminReportsPage() {
       <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-6 shadow-xl">
         <select
           value={status}
-          onChange={(e) => setStatus(e.target.value as ReportStatus | '')}
+          onChange={(e) => { setStatus(e.target.value as ReportStatus | ''); setPage(1); }}
           className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold w-fit"
         >
           <option value="">{t('allStatuses')}</option>

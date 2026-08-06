@@ -78,6 +78,7 @@ export default function MasterServicesPage() {
   }, [t]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- fetches services on mount
     load();
   }, [load]);
 

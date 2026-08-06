@@ -84,6 +84,7 @@ export default function BookingDetailsPage() {
   }, [bookingId]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- fetches the booking on mount/id change
     load();
   }, [load]);
 
@@ -211,6 +212,7 @@ export default function BookingDetailsPage() {
   const canClientCancel = isClient && ['PENDING', 'ACCEPTED'].includes(booking.status);
   const canMasterAccept = isMaster && booking.status === 'PENDING';
   const canMasterReject = isMaster && booking.status === 'PENDING';
+  // eslint-disable-next-line react-hooks/purity -- one-off UI gate; the backend re-validates the schedule on accept
   const canMasterStart = isMaster && booking.status === 'ACCEPTED' && new Date(booking.scheduledAt).getTime() <= Date.now();
   const canMasterComplete = isMaster && booking.status === 'IN_PROGRESS';
 

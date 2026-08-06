@@ -59,6 +59,7 @@ export default function SearchClient({
 
   useEffect(() => {
     const stored = localStorage.getItem('search:viewMode');
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- hydrates view mode from localStorage (unavailable during SSR)
     if (stored === 'grid' || stored === 'list' || stored === 'map') setViewModeState(stored);
   }, []);
 
@@ -101,6 +102,7 @@ export default function SearchClient({
 
   // Reset pagination whenever a filter (other than page itself) changes.
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- resets pagination when any filter changes
     setPage(1);
   }, [searchQuery, selectedCategory, verifiedOnly, minRating, maxPrice, selectedCity, sortBy, userLocation, radiusKm]);
 

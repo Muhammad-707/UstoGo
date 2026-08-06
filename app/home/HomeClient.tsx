@@ -62,6 +62,7 @@ export default function ClientHomePage({
 
   useEffect(() => {
     if (!user) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- clears stale booking on logout
       setActiveBooking(null);
       return;
     }

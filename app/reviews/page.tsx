@@ -81,6 +81,7 @@ export default function ReviewsPage() {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- opens the review modal for a deep-linked booking
     if (deepLinkedBookingId && !isMaster) openModal();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [deepLinkedBookingId, isMaster]);

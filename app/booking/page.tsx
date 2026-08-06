@@ -44,7 +44,7 @@ export default function BookingWizardPage() {
   const [step, setStep] = useState<number>(1);
 
   const [master, setMaster] = useState<MasterPublic | null>(null);
-  const [masterLoading, setMasterLoading] = useState(true);
+  const [masterLoading, setMasterLoading] = useState(!!preselectedMasterId);
   const [masterError, setMasterError] = useState<string | null>(null);
 
   const [services, setServices] = useState<MasterService[]>([]);
@@ -90,11 +90,9 @@ export default function BookingWizardPage() {
 
   // Load the preselected master
   useEffect(() => {
-    if (!preselectedMasterId) {
-      setMasterLoading(false);
-      return;
-    }
+    if (!preselectedMasterId) return;
     let cancelled = false;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- resets loading state before an async fetch
     setMasterLoading(true);
     setMasterError(null);
     mastersApi
@@ -117,6 +115,7 @@ export default function BookingWizardPage() {
   useEffect(() => {
     if (!preselectedMasterId) return;
     let cancelled = false;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- resets loading state before an async fetch
     setServicesLoading(true);
     mastersApi
       .services(preselectedMasterId)
@@ -143,6 +142,7 @@ export default function BookingWizardPage() {
   useEffect(() => {
     if (!preselectedMasterId || !date || !selectedServiceId) return;
     let cancelled = false;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- resets loading state before an async fetch
     setSlotsLoading(true);
     setTimeSlot('');
     mastersApi

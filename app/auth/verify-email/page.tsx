@@ -22,6 +22,7 @@ function VerifyEmailContent() {
 
   useEffect(() => {
     if (!token) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- derives status from the URL token on mount
       setStatus('error');
       setError(t('missingToken'));
       return;

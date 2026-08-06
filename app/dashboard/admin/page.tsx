@@ -75,6 +75,7 @@ export default function AdminDashboardPage() {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- fetches masters on filter change
     loadMasters();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [approvalStatus, categoryId]);
@@ -112,7 +113,6 @@ export default function AdminDashboardPage() {
     setMasterBookingsLoading(true);
     try {
       const res = await bookingsApi.list({ limit: 50, status: 'ACCEPTED' });
-      const allBookings = res.items;
       const allPages = [res];
       let hasMore = res.meta.page < res.meta.totalPages;
       let page = 2;

@@ -6,7 +6,6 @@ import { Icon } from '@/components/icons/LucideIcons';
 import { useTranslations } from 'next-intl';
 import { bookingsApi, mastersApi, referralApi, reviewsApi } from '@/lib/api/endpoints';
 import { getBookingsSocket } from '@/lib/bookings/socket';
-import { ApiError } from '@/lib/api/client';
 import { useRequireAuth } from '@/hooks/useRequireAuth';
 import { useFavorites } from '@/hooks/useFavorites';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
@@ -23,7 +22,6 @@ export default function ClientDashboardPage() {
   const [loading, setLoading] = useState(true);
 
   const [mastersMap, setMastersMap] = useState<Record<string, MasterPublic>>({});
-  const [mastersLoading, setMastersLoading] = useState(true);
 
   const [selectedMaster, setSelectedMaster] = useState<MasterPublic | null>(null);
   const [reviewedBookingIds, setReviewedBookingIds] = useState<Set<string>>(new Set());
@@ -60,11 +58,7 @@ export default function ClientDashboardPage() {
 
   useEffect(() => {
     const masterIds = [...new Set(bookings.map((b) => b.masterId))];
-    if (masterIds.length === 0) {
-      setMastersLoading(false);
-      return;
-    }
-    setMastersLoading(true);
+    if (masterIds.length === 0) return;
     Promise.all(
       masterIds.map((id) =>
         mastersApi.byId(id).then((m) => [id, m] as [string, MasterPublic]).catch(() => null),
@@ -77,8 +71,7 @@ export default function ClientDashboardPage() {
         });
         setMastersMap(map);
       })
-      .catch(() => {})
-      .finally(() => setMastersLoading(false));
+      .catch(() => {});
   }, [bookings]);
 
   const completed = bookings.filter((b) => b.status === 'COMPLETED');

@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // One-off CommonJS dev utility, not part of the app build.
+    "copy_images.js",
   ]),
 ]);
 

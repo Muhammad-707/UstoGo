@@ -42,8 +42,8 @@ export function BottomNav() {
                     transition={{ type: "spring", stiffness: 400, damping: 30 }}
                   />
                 )}
-                <Icon 
-                  name={item.icon as any} 
+                <Icon
+                  name={item.icon}
                   size={20} 
                   className={`relative z-10 transition-colors duration-200 ${
                     isActive 

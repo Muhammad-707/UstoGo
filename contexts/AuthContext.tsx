@@ -67,6 +67,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- checks the session on mount
     refreshUser();
   }, [refreshUser]);
 

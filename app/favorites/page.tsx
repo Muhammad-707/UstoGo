@@ -24,6 +24,7 @@ export default function FavoritesPage() {
     // up here — with isActive/approvalStatus so the UI can explain why instead of
     // just silently dropping them.
     let cancelled = false;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- resets loading state before an async fetch
     setLoading(true);
     favoritesApi
       .list()

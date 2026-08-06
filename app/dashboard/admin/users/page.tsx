@@ -56,10 +56,6 @@ export default function AdminUsersPage() {
   };
 
   useEffect(() => {
-    setPage(1);
-  }, [search, role, status]);
-
-  useEffect(() => {
     const timeout = setTimeout(load, 300);
     return () => clearTimeout(timeout);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -130,14 +126,14 @@ export default function AdminUsersPage() {
             <Icon name="search" size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
             <input
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => { setSearch(e.target.value); setPage(1); }}
               placeholder={t('searchPlaceholder')}
               className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold"
             />
           </div>
           <select
             value={role}
-            onChange={(e) => setRole(e.target.value as UserRole | '')}
+            onChange={(e) => { setRole(e.target.value as UserRole | ''); setPage(1); }}
             className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold"
           >
             <option value="">{t('allRoles')}</option>
@@ -147,7 +143,7 @@ export default function AdminUsersPage() {
           </select>
           <select
             value={status}
-            onChange={(e) => setStatus(e.target.value as UserStatus | '')}
+            onChange={(e) => { setStatus(e.target.value as UserStatus | ''); setPage(1); }}
             className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold"
           >
             <option value="">{t('allStatuses')}</option>

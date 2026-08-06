@@ -29,6 +29,7 @@ export function useFavorites() {
   const [favoriteIds, setFavoriteIds] = useState<string[]>([]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- hydrates from localStorage (unavailable during SSR)
     setFavoriteIds(readFavorites());
   }, []);
 

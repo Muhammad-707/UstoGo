@@ -32,8 +32,6 @@ export default function CategoriesClient() {
 
   useEffect(() => {
     let cancelled = false;
-    setLoading(true);
-    setError(false);
     categoriesApi
       .tree()
       .then((data) => {

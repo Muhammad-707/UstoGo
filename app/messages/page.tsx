@@ -84,6 +84,7 @@ export default function WhatsAppContactsPage() {
   }, [user]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- fetches bookings on mount/user change
     load();
   }, [load]);
 

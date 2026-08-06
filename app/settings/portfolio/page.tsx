@@ -40,6 +40,7 @@ export default function PortfolioPage() {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- fetches portfolio on mount
     load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

@@ -40,6 +40,7 @@ export default function SecuritySettingsPage() {
   }, []);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- fetches sessions on mount
     loadSessions();
   }, [loadSessions]);
 

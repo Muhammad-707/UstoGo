@@ -41,10 +41,7 @@ export default function AdminCertificatesPage() {
   };
 
   useEffect(() => {
-    setPage(1);
-  }, [filter]);
-
-  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- fetches certificates on filter/page change
     load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter, page]);
@@ -108,7 +105,7 @@ export default function AdminCertificatesPage() {
           {(['pending', 'verified', 'all'] as const).map((f) => (
             <button
               key={f}
-              onClick={() => setFilter(f)}
+              onClick={() => { setFilter(f); setPage(1); }}
               className={`px-4 py-2 rounded-xl text-xs font-bold transition ${
                 filter === f
                   ? 'bg-purple-600 text-white'

@@ -30,10 +30,10 @@ export const Navbar: React.FC = () => {
   const [notifOpen, setNotifOpen] = useState(false);
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
-  const isDashboard = pathname?.startsWith('/dashboard');
 
   useEffect(() => {
     if (!user) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- clears stale notifications on logout
       setNotifications([]);
       setUnreadCount(0);
       return;
@@ -52,6 +52,7 @@ export const Navbar: React.FC = () => {
     if (typeof window !== 'undefined') {
       const stored = localStorage.getItem('ustogo-theme');
       if (stored === 'dark' || (!stored && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- hydrates theme from localStorage (unavailable during SSR)
         setDarkMode(true);
         document.documentElement.classList.add('dark');
       } else {
