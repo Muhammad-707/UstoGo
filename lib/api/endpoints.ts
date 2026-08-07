@@ -15,6 +15,7 @@ import type {
   City,
   Conversation,
   DashboardResponse,
+  LeaderboardEntry,
   MasterCertificatePublic,
   MasterMedia,
   MasterNps,
@@ -34,6 +35,7 @@ import type {
   QuickReply,
   Quote,
   QuoteStatus,
+  ScheduleOptimizerResult,
   Report,
   Review,
   SavedAddress,
@@ -194,6 +196,9 @@ export const mastersApi = {
 
   myNps: () => api.get<MasterNps>('/masters/me/nps'),
 
+  leaderboard: (query: { cityId?: string; categoryId?: string } = {}) =>
+    api.get<LeaderboardEntry[]>('/masters/leaderboard', query, false),
+
   /** Fire-and-forget analytics — feeds `myRecentlyViewed`. Idempotent, bumps `viewedAt`. */
   recordView: (id: string) => api.post<void>(`/masters/${id}/view`),
   myRecentlyViewed: () => api.get<MasterPublic[]>('/masters/me/recently-viewed'),
@@ -260,6 +265,9 @@ export const bookingsApi = {
   byId: (id: string) => api.get<BookingDetail>(`/bookings/${id}`),
 
   myStats: () => api.get<MasterStats>('/bookings/me/stats'),
+
+  scheduleOptimizer: (date: string) =>
+    api.get<ScheduleOptimizerResult>('/bookings/me/schedule-optimizer', { date }),
 
   create: (data: {
     masterId: string;

@@ -224,6 +224,7 @@ export default function MasterDashboardPage() {
     { href: '/settings/profile', label: t('qaProfile'), icon: 'mappin', color: 'bg-rose-500' },
     { href: '/messages', label: t('qaWhatsApp'), icon: 'whatsapp', color: 'bg-[#25D366]' },
     { href: '/quotes', label: t('qaQuotes'), icon: 'calculator', color: 'bg-cyan-500' },
+    { href: '/dashboard/master/schedule-optimizer', label: t('qaRouteOptimizer'), icon: 'compass', color: 'bg-teal-500' },
     { href: '/settings/quick-replies', label: t('qaQuickReplies'), icon: 'message', color: 'bg-indigo-500' },
     { href: '/payments', label: t('qaPayments'), icon: 'creditcard', color: 'bg-fuchsia-500' },
   ];

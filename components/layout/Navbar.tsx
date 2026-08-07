@@ -79,6 +79,7 @@ export const Navbar: React.FC = () => {
     { href: '/home', label: t('home') },
     { href: '/categories', label: t('categories') },
     { href: '/search', label: t('searchMasters') },
+    { href: '/leaderboard', label: t('leaderboard') },
     { href: '/reviews', label: t('reviews') },
     { href: '/about', label: t('about') },
   ];

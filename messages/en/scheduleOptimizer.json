@@ -1,0 +1,10 @@
+{
+  "badge": "Route Planning",
+  "title": "Schedule Optimizer",
+  "pageHint": "The most efficient order to visit today's jobs, nearest stop first.",
+  "loading": "Loading…",
+  "loadFailed": "Could not load a route for that date.",
+  "empty": "No jobs scheduled on this date.",
+  "savingsAmount": "Save ~{km} km",
+  "savingsHint": "Optimized route: {optimized} km vs {chronological} km in booking order."
+}

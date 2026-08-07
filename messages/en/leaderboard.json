@@ -1,0 +1,15 @@
+{
+  "badge": "Top Craftsmen",
+  "title": "Masters Leaderboard",
+  "subtitle": "Ranked by rating among masters with a track record of completed jobs.",
+  "allCities": "All cities",
+  "loading": "Loading…",
+  "empty": "No ranked masters yet.",
+  "reviewsCount": "{count} reviews",
+  "badgeLabel": {
+    "TOP_RATED": "Top Rated",
+    "MOST_BOOKED": "Most Booked",
+    "FAST_RESPONDER": "Fast Responder",
+    "RISING_STAR": "Rising Star"
+  }
+}

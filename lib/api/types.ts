@@ -155,6 +155,14 @@ export interface MasterPublic {
   whatsappPhone: string | null;
 }
 
+export type LeaderboardBadge = 'TOP_RATED' | 'MOST_BOOKED' | 'FAST_RESPONDER' | 'RISING_STAR';
+
+export interface LeaderboardEntry {
+  rank: number;
+  badges: LeaderboardBadge[];
+  master: MasterPublic;
+}
+
 export interface MasterMedia {
   avatarUrl: string | null;
   bannerUrl: string | null;
@@ -318,6 +326,23 @@ export interface CategoryEarning {
   categoryName: string;
   total: string;
   completedCount: number;
+}
+
+export interface OptimizedStop {
+  order: number;
+  bookingId: string;
+  bookingNumber: string;
+  serviceTitle: string;
+  scheduledAt: string;
+  district: string;
+}
+
+export interface ScheduleOptimizerResult {
+  date: string;
+  stops: OptimizedStop[];
+  totalDistanceKm: number;
+  chronologicalDistanceKm: number;
+  estimatedSavingsKm: number;
 }
 
 export interface MasterStats {
