@@ -41,5 +41,8 @@
   "rescheduleModalConfirm": "Подтвердить новое время",
   "rescheduling": "Перенос…",
   "viewCertificate": "Посмотреть сертификат",
-  "loadingCertificate": "Загрузка сертификата…"
+  "loadingCertificate": "Загрузка сертификата…",
+  "liveTrackingTitle": "В пути",
+  "liveTrackingMasterPin": "Текущее местоположение мастера",
+  "liveTrackingDestinationPin": "Ваш адрес"
 }

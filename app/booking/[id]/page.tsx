@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import { useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { Icon } from '@/components/icons/LucideIcons';
@@ -9,6 +10,11 @@ import { bookingsApi, citiesApi, mastersApi, reviewsApi } from '@/lib/api/endpoi
 import { ApiError } from '@/lib/api/client';
 import { downloadFile } from '@/lib/api/download';
 import { CertificateCard } from '@/components/certificates/CertificateCard';
+
+const LiveTrackingMap = dynamic(() => import('@/components/booking/LiveTrackingMap'), {
+  ssr: false,
+  loading: () => <div className="h-[320px] w-full rounded-3xl bg-slate-50 dark:bg-slate-800/40 animate-pulse" />,
+});
 import { waLink, waBookingText } from '@/lib/whatsapp';
 import { getBookingsSocket } from '@/lib/bookings/socket';
 import { CANCELLATION_REASON_CODES, type BookingDetail, type CancellationReasonCode, type City, type CompletionCertificate } from '@/lib/api/types';
@@ -74,6 +80,8 @@ export default function BookingDetailsPage() {
   const [certificate, setCertificate] = useState<CompletionCertificate | null>(null);
   const [certificateLoading, setCertificateLoading] = useState(false);
   const [showCertificateModal, setShowCertificateModal] = useState(false);
+  const [masterLiveLocation, setMasterLiveLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const lastEmitRef = useRef(0);
 
   const handleViewCertificate = async () => {
     setShowCertificateModal(true);
@@ -188,6 +196,57 @@ export default function BookingDetailsPage() {
       socket?.off('booking:update', onUpdate);
     };
   }, [bookingId]);
+
+  // Master side: while the job is IN_PROGRESS, relay the device's position over the
+  // socket ("on my way" tracking) — throttled, since watchPosition can fire far more
+  // often than the relay needs.
+  useEffect(() => {
+    if (!bookingId || user?.role !== 'MASTER' || booking?.status !== 'IN_PROGRESS') return;
+    if (typeof navigator === 'undefined' || !navigator.geolocation) return;
+
+    const socket = getBookingsSocket();
+    const LOCATION_EMIT_INTERVAL_MS = 10_000;
+    const watchId = navigator.geolocation.watchPosition(
+      (position) => {
+        const now = Date.now();
+        if (now - lastEmitRef.current < LOCATION_EMIT_INTERVAL_MS) return;
+        lastEmitRef.current = now;
+        socket?.emit('location:update', {
+          bookingId,
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        });
+      },
+      () => {
+        // Permission denied or unavailable — "on my way" tracking is best-effort,
+        // never blocks the rest of the booking flow.
+      },
+      { enableHighAccuracy: true, maximumAge: 15_000, timeout: 15_000 },
+    );
+
+    return () => {
+      navigator.geolocation.clearWatch(watchId);
+    };
+  }, [bookingId, user?.role, booking?.status]);
+
+  // Client side: while the job is IN_PROGRESS, listen for the master's relayed position.
+  useEffect(() => {
+    if (!bookingId || user?.role !== 'CLIENT' || booking?.status !== 'IN_PROGRESS') {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- clears a stale marker once the job leaves IN_PROGRESS
+      setMasterLiveLocation(null);
+      return;
+    }
+    const socket = getBookingsSocket();
+    const onLocation = (payload: { bookingId: string; lat: number; lng: number }) => {
+      if (payload.bookingId === bookingId) {
+        setMasterLiveLocation({ lat: payload.lat, lng: payload.lng });
+      }
+    };
+    socket?.on('location:update', onLocation);
+    return () => {
+      socket?.off('location:update', onLocation);
+    };
+  }, [bookingId, user?.role, booking?.status]);
 
   const runAction = async (fn: () => Promise<unknown>) => {
     setActionPending(true);
@@ -548,6 +607,24 @@ export default function BookingDetailsPage() {
               </div>
             )}
           </div>
+
+          {/* Live "On My Way" Tracking */}
+          {isClient && booking.status === 'IN_PROGRESS' && masterLiveLocation && (
+            <div className="glass-card p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-4 shadow-xl">
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                <Icon name="mappin" size={20} className="text-blue-600 dark:text-sky-400" />
+                {t('liveTrackingTitle')}
+              </h3>
+              <LiveTrackingMap
+                masterLocation={masterLiveLocation}
+                destination={
+                  booking.latitude != null && booking.longitude != null
+                    ? { lat: booking.latitude, lng: booking.longitude }
+                    : null
+                }
+              />
+            </div>
+          )}
 
           {/* Master Info Card */}
           <div className="glass-card p-6 rounded-3xl border border-slate-200 dark:border-slate-800 flex items-center justify-between shadow-lg">

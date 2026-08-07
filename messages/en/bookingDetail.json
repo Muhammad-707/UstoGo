@@ -41,5 +41,8 @@
   "rescheduleModalConfirm": "Confirm new time",
   "rescheduling": "Rescheduling…",
   "viewCertificate": "View Certificate",
-  "loadingCertificate": "Loading certificate…"
+  "loadingCertificate": "Loading certificate…",
+  "liveTrackingTitle": "On the way",
+  "liveTrackingMasterPin": "Master's current location",
+  "liveTrackingDestinationPin": "Your address"
 }

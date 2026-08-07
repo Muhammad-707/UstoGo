@@ -41,5 +41,8 @@
   "rescheduleModalConfirm": "Тасдиқи вақти нав",
   "rescheduling": "Гузаронидан…",
   "viewCertificate": "Дидани Сертификат",
-  "loadingCertificate": "Боркунии сертификат…"
+  "loadingCertificate": "Боркунии сертификат…",
+  "liveTrackingTitle": "Дар роҳ",
+  "liveTrackingMasterPin": "Ҷои ҳозираи усто",
+  "liveTrackingDestinationPin": "Суроғаи шумо"
 }
