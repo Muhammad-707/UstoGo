@@ -258,8 +258,15 @@ export const bookingsApi = {
     scheduledAt: string;
     address: { cityId: string; district: string; line: string; contactPhone?: string; latitude?: number; longitude?: number };
     note?: string;
+    attachmentKeys?: string[];
   }) => api.post<Booking>('/bookings', data),
 
+  /** B-54 — a confirmed BOOKING_ATTACHMENT file's signed read URL, scoped to booking participancy. */
+  attachmentUrl: (id: string, fileId: string) =>
+    api.get<{ url: string; expiresAt: string }>(`/bookings/${id}/attachments/${fileId}/url`),
+
+  reschedule: (id: string, scheduledAt: string) =>
+    api.post<Booking>(`/bookings/${id}/reschedule`, { scheduledAt }),
   accept: (id: string) => api.post<Booking>(`/bookings/${id}/accept`),
   reject: (id: string, reason: string) => api.post<Booking>(`/bookings/${id}/reject`, { reason }),
   cancel: (id: string, reason?: string, reasonCode?: CancellationReasonCode) =>

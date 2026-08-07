@@ -30,5 +30,14 @@
     "UNRESPONSIVE_OTHER_PARTY": "Другая сторона не отвечает",
     "EMERGENCY": "Чрезвычайная ситуация",
     "OTHER": "Другое"
-  }
+  },
+  "rescheduleButton": "Перенести",
+  "rescheduleModalTitle": "Перенести этот заказ",
+  "rescheduleModalHint": "Заказ можно перенести только один раз и только пока до текущего времени остаётся 24 часа или больше.",
+  "rescheduleDateLabel": "Новая дата",
+  "rescheduleSlotLabel": "Доступное время",
+  "loadingSlots": "Загрузка доступного времени…",
+  "noSlotsAvailable": "На эту дату нет свободного времени.",
+  "rescheduleModalConfirm": "Подтвердить новое время",
+  "rescheduling": "Перенос…"
 }

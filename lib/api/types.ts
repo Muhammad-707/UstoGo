@@ -260,6 +260,8 @@ export interface Booking {
   cancellationReasonCode?: CancellationReasonCode | null;
   cancelledByType?: string | null;
   isLateCancellation: boolean;
+  rescheduleCount: number;
+  attachmentFileIds: string[];
   createdAt: string;
   /** The master's WhatsApp contact — present (non-null) only while whatsappEnabled is true (P0). */
   masterWhatsappEnabled?: boolean;

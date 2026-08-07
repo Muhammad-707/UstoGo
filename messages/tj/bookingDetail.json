@@ -30,5 +30,14 @@
     "UNRESPONSIVE_OTHER_PARTY": "Тарафи дигар ҷавоб намедиҳад",
     "EMERGENCY": "Ҳолати фавқулодда",
     "OTHER": "Дигар"
-  }
+  },
+  "rescheduleButton": "Гузарондан",
+  "rescheduleModalTitle": "Ин фармоишро ба вақти дигар гузаронед",
+  "rescheduleModalHint": "Фармоишро танҳо як бор ва танҳо вақте ки то вақти ҷории он ≥24 соат мондааст, гузаронидан мумкин аст.",
+  "rescheduleDateLabel": "Санаи нав",
+  "rescheduleSlotLabel": "Вақтҳои дастрас",
+  "loadingSlots": "Боркунии вақтҳои дастрас…",
+  "noSlotsAvailable": "Дар ин сана вақти холӣ нест.",
+  "rescheduleModalConfirm": "Тасдиқи вақти нав",
+  "rescheduling": "Гузаронидан…"
 }

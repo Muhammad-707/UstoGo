@@ -30,5 +30,14 @@
     "UNRESPONSIVE_OTHER_PARTY": "Other party unresponsive",
     "EMERGENCY": "Emergency",
     "OTHER": "Other"
-  }
+  },
+  "rescheduleButton": "Reschedule",
+  "rescheduleModalTitle": "Reschedule this booking",
+  "rescheduleModalHint": "You can reschedule a booking once, and only while its current slot is still 24 hours or more away.",
+  "rescheduleDateLabel": "New date",
+  "rescheduleSlotLabel": "Available times",
+  "loadingSlots": "Loading available times…",
+  "noSlotsAvailable": "No available times on this date.",
+  "rescheduleModalConfirm": "Confirm new time",
+  "rescheduling": "Rescheduling…"
 }

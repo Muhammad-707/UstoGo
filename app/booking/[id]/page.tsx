@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { Icon } from '@/components/icons/LucideIcons';
-import { bookingsApi, citiesApi, reviewsApi } from '@/lib/api/endpoints';
+import { bookingsApi, citiesApi, mastersApi, reviewsApi } from '@/lib/api/endpoints';
 import { ApiError } from '@/lib/api/client';
 import { downloadFile } from '@/lib/api/download';
 import { waLink, waBookingText } from '@/lib/whatsapp';
@@ -62,6 +62,36 @@ export default function BookingDetailsPage() {
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [cancelReasonCode, setCancelReasonCode] = useState<CancellationReasonCode | ''>('');
   const [cancelReasonText, setCancelReasonText] = useState('');
+  const [showRescheduleModal, setShowRescheduleModal] = useState(false);
+  const [rescheduleDate, setRescheduleDate] = useState('');
+  const [rescheduleSlots, setRescheduleSlots] = useState<string[]>([]);
+  const [rescheduleSlotsLoading, setRescheduleSlotsLoading] = useState(false);
+  const [selectedRescheduleSlot, setSelectedRescheduleSlot] = useState('');
+  const [rescheduleError, setRescheduleError] = useState<string | null>(null);
+  const [rescheduling, setRescheduling] = useState(false);
+  const [attachmentUrls, setAttachmentUrls] = useState<{ fileId: string; url: string }[]>([]);
+
+  useEffect(() => {
+    if (!booking || booking.attachmentFileIds.length === 0) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- clears stale URLs when a booking has no (or no longer resolved) attachments
+      setAttachmentUrls([]);
+      return;
+    }
+    let cancelled = false;
+    Promise.all(
+      booking.attachmentFileIds.map((fileId) =>
+        bookingsApi
+          .attachmentUrl(booking.id, fileId)
+          .then((res) => ({ fileId, url: res.url }))
+          .catch(() => null),
+      ),
+    ).then((results) => {
+      if (!cancelled) setAttachmentUrls(results.filter((r): r is { fileId: string; url: string } => r !== null));
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [booking?.id, booking?.attachmentFileIds]);
   const [alreadyReviewed, setAlreadyReviewed] = useState(false);
   const [alreadyClientRated, setAlreadyClientRated] = useState(false);
 
@@ -165,6 +195,53 @@ export default function BookingDetailsPage() {
     setShowCancelModal(true);
   };
 
+  const handleOpenReschedule = () => {
+    setRescheduleDate('');
+    setRescheduleSlots([]);
+    setSelectedRescheduleSlot('');
+    setRescheduleError(null);
+    setShowRescheduleModal(true);
+  };
+
+  useEffect(() => {
+    if (!showRescheduleModal || !rescheduleDate || !booking) return;
+    let cancelled = false;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- resets slot selection/loading before an async fetch
+    setRescheduleSlotsLoading(true);
+    setSelectedRescheduleSlot('');
+    mastersApi
+      .availability(booking.masterId, rescheduleDate, rescheduleDate, booking.serviceId)
+      .then((days) => {
+        if (cancelled) return;
+        const day = days.find((d) => d.date === rescheduleDate);
+        setRescheduleSlots(day?.free ?? []);
+      })
+      .catch(() => {
+        if (!cancelled) setRescheduleSlots([]);
+      })
+      .finally(() => {
+        if (!cancelled) setRescheduleSlotsLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [showRescheduleModal, rescheduleDate, booking]);
+
+  const confirmReschedule = async () => {
+    if (!selectedRescheduleSlot) return;
+    setRescheduling(true);
+    setRescheduleError(null);
+    try {
+      const updated = await bookingsApi.reschedule(bookingId, selectedRescheduleSlot);
+      setBooking((prev) => (prev ? { ...prev, ...updated } : prev));
+      setShowRescheduleModal(false);
+    } catch (err) {
+      setRescheduleError(err instanceof ApiError ? err.message : 'Failed to reschedule.');
+    } finally {
+      setRescheduling(false);
+    }
+  };
+
   const confirmCancel = () => {
     setShowCancelModal(false);
     runAction(() =>
@@ -238,6 +315,8 @@ export default function BookingDetailsPage() {
   const isClient = user?.role === 'CLIENT';
   const isMaster = user?.role === 'MASTER';
   const canClientCancel = isClient && ['PENDING', 'ACCEPTED'].includes(booking.status);
+  const canClientReschedule =
+    isClient && ['PENDING', 'ACCEPTED'].includes(booking.status) && booking.rescheduleCount === 0;
   const canMasterAccept = isMaster && booking.status === 'PENDING';
   const canMasterReject = isMaster && booking.status === 'PENDING';
   // eslint-disable-next-line react-hooks/purity -- one-off UI gate; the backend re-validates the schedule on accept
@@ -321,6 +400,17 @@ export default function BookingDetailsPage() {
               </a>
             ) : null;
           })()}
+
+          {canClientReschedule && (
+            <button
+              onClick={handleOpenReschedule}
+              disabled={actionPending}
+              className="px-5 py-3 rounded-2xl border border-blue-200 dark:border-sky-900 text-blue-600 dark:text-sky-400 font-extrabold text-xs hover:bg-blue-50 dark:hover:bg-sky-950/40 transition disabled:opacity-50 flex items-center gap-2"
+            >
+              <Icon name="calendar" size={16} />
+              {t('rescheduleButton')}
+            </button>
+          )}
 
           {canClientCancel && (
             <button
@@ -489,11 +579,97 @@ export default function BookingDetailsPage() {
               {booking.clientNote && (
                 <p className="pt-2 text-slate-600 dark:text-slate-300 italic">{booking.clientNote}</p>
               )}
+              {attachmentUrls.length > 0 && (
+                <div className="pt-2 flex flex-wrap gap-2">
+                  {attachmentUrls.map(({ fileId, url }) => (
+                    <a
+                      key={fileId}
+                      href={url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-16 h-16 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 block"
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element -- short-lived signed URL, not worth Next/Image optimization */}
+                      <img src={url} alt="" className="w-full h-full object-cover" />
+                    </a>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>
 
       </div>
+
+      {showRescheduleModal && (
+        <div
+          className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4"
+          onClick={() => setShowRescheduleModal(false)}
+        >
+          <div
+            className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl w-full max-w-md p-6 sm:p-8 space-y-4"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="text-lg font-extrabold text-slate-900 dark:text-white">{t('rescheduleModalTitle')}</h3>
+            <p className="text-[11px] text-slate-400">{t('rescheduleModalHint')}</p>
+            <label className="block space-y-1.5">
+              <span className="text-xs font-bold text-slate-700 dark:text-slate-300">{t('rescheduleDateLabel')}</span>
+              <input
+                type="date"
+                value={rescheduleDate}
+                min={new Date().toISOString().slice(0, 10)}
+                onChange={(e) => setRescheduleDate(e.target.value)}
+                className="w-full p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold"
+              />
+            </label>
+
+            {rescheduleDate && (
+              <div className="space-y-1.5">
+                <span className="text-xs font-bold text-slate-700 dark:text-slate-300">{t('rescheduleSlotLabel')}</span>
+                {rescheduleSlotsLoading ? (
+                  <p className="text-xs text-slate-400">{t('loadingSlots')}</p>
+                ) : rescheduleSlots.length === 0 ? (
+                  <p className="text-xs text-slate-400">{t('noSlotsAvailable')}</p>
+                ) : (
+                  <div className="grid grid-cols-3 gap-2">
+                    {rescheduleSlots.map((slot) => (
+                      <button
+                        key={slot}
+                        onClick={() => setSelectedRescheduleSlot(slot)}
+                        className={`px-3 py-2 rounded-xl text-xs font-bold border transition ${
+                          selectedRescheduleSlot === slot
+                            ? 'bg-blue-600 border-blue-600 text-white'
+                            : 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:border-blue-300 dark:hover:border-sky-700'
+                        }`}
+                      >
+                        {new Date(slot).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {rescheduleError && <p className="text-xs font-bold text-red-600 dark:text-red-400">{rescheduleError}</p>}
+
+            <div className="flex items-center justify-end gap-3 pt-2">
+              <button
+                onClick={() => setShowRescheduleModal(false)}
+                className="px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-extrabold text-xs hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+              >
+                {t('cancelModalDismiss')}
+              </button>
+              <button
+                onClick={confirmReschedule}
+                disabled={!selectedRescheduleSlot || rescheduling}
+                className="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow transition disabled:opacity-60"
+              >
+                {rescheduling ? t('rescheduling') : t('rescheduleModalConfirm')}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {showCancelModal && (
         <div

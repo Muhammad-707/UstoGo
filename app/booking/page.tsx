@@ -8,7 +8,10 @@ import { useTranslations } from 'next-intl';
 import { Icon } from '@/components/icons/LucideIcons';
 import { mastersApi, bookingsApi, citiesApi, savedAddressesApi } from '@/lib/api/endpoints';
 import { ApiError } from '@/lib/api/client';
+import { uploadFile } from '@/lib/api/upload';
 import type { City, MasterPublic, MasterService, SavedAddress } from '@/lib/api/types';
+
+const MAX_ATTACHMENTS = 5;
 import { useRequireAuth } from '@/hooks/useRequireAuth';
 import { getAvatarUrl } from '@/lib/placeholders';
 
@@ -58,6 +61,10 @@ export default function BookingWizardPage() {
   const [timeSlot, setTimeSlot] = useState<string>('');
 
   const [jobNotes, setJobNotes] = useState('');
+  const [attachmentFileIds, setAttachmentFileIds] = useState<string[]>([]);
+  const [attachmentPreviews, setAttachmentPreviews] = useState<string[]>([]);
+  const [uploadingAttachment, setUploadingAttachment] = useState(false);
+  const [attachmentError, setAttachmentError] = useState<string | null>(null);
   const [bookingConfirmed, setBookingConfirmed] = useState(false);
   const [createdBookingId, setCreatedBookingId] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -191,6 +198,35 @@ export default function BookingWizardPage() {
   const selectedService = services.find((s) => s.id === selectedServiceId) || null;
   const totalPrice = selectedService ? Number(selectedService.price) || 0 : 0;
 
+  const handleAttachmentUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+    if (attachmentFileIds.length >= MAX_ATTACHMENTS) {
+      setAttachmentError(t('attachmentsLimitReached'));
+      return;
+    }
+    setUploadingAttachment(true);
+    setAttachmentError(null);
+    try {
+      const fileId = await uploadFile(file, 'BOOKING_ATTACHMENT');
+      setAttachmentFileIds((prev) => [...prev, fileId]);
+      setAttachmentPreviews((prev) => [...prev, URL.createObjectURL(file)]);
+    } catch (err) {
+      setAttachmentError(err instanceof ApiError ? err.message : t('attachmentUploadFailed'));
+    } finally {
+      setUploadingAttachment(false);
+    }
+  };
+
+  const removeAttachment = (index: number) => {
+    setAttachmentFileIds((prev) => prev.filter((_, i) => i !== index));
+    setAttachmentPreviews((prev) => {
+      URL.revokeObjectURL(prev[index]);
+      return prev.filter((_, i) => i !== index);
+    });
+  };
+
   const handleConfirm = async () => {
     if (!preselectedMasterId || !selectedServiceId || !timeSlot) return;
     setSubmitting(true);
@@ -207,6 +243,7 @@ export default function BookingWizardPage() {
           ...(contactPhone.trim() ? { contactPhone: contactPhone.trim() } : {}),
         },
         note: jobNotes || undefined,
+        attachmentKeys: attachmentFileIds.length > 0 ? attachmentFileIds : undefined,
       });
       setCreatedBookingId(created.id);
       setBookingConfirmed(true);
@@ -436,6 +473,42 @@ export default function BookingWizardPage() {
                   placeholder={t('jobDescriptionPlaceholder')}
                   className="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition"
                 />
+              </div>
+
+              <div className="space-y-3">
+                <label className="text-xs font-bold uppercase tracking-wider text-slate-400">{t('attachPhotosLabel')}</label>
+                <div className="flex flex-wrap gap-3">
+                  {attachmentPreviews.map((src, index) => (
+                    <div key={src} className="relative w-20 h-20 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-700">
+                      {/* eslint-disable-next-line @next/next/no-img-element -- transient local object URL, not an optimizable remote asset */}
+                      <img src={src} alt="" className="w-full h-full object-cover" />
+                      <button
+                        onClick={() => removeAttachment(index)}
+                        className="absolute top-1 right-1 w-5 h-5 rounded-full bg-black/60 text-white flex items-center justify-center"
+                      >
+                        <Icon name="X" size={10} />
+                      </button>
+                    </div>
+                  ))}
+                  {attachmentFileIds.length < MAX_ATTACHMENTS && (
+                    <label className="w-20 h-20 rounded-2xl border-2 border-dashed border-slate-300 dark:border-slate-700 flex items-center justify-center cursor-pointer hover:border-blue-400 transition text-slate-400">
+                      {uploadingAttachment ? (
+                        <Spinner />
+                      ) : (
+                        <Icon name="image" size={20} />
+                      )}
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        disabled={uploadingAttachment}
+                        onChange={handleAttachmentUpload}
+                      />
+                    </label>
+                  )}
+                </div>
+                {attachmentError && <p className="text-[10px] font-bold text-red-600 dark:text-red-400">{attachmentError}</p>}
+                <p className="text-[10px] text-slate-400">{t('attachPhotosHint', { max: MAX_ATTACHMENTS })}</p>
               </div>
 
               <button
