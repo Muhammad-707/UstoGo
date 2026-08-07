@@ -21,6 +21,7 @@
   "priceTypeHOURLY": "Почасовая",
   "priceTypeFROM": "От ... (от)",
   "priceLabel": "Цена",
+  "pricingSuggestionHint": "Другие берут {min}–{max} за это — нажмите, чтобы использовать медиану",
   "durationLabel": "Длительность (минут)",
   "save": "Сохранить",
   "saving": "Сохранение...",

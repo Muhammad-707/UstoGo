@@ -21,6 +21,7 @@
   "priceTypeHOURLY": "Бо соат",
   "priceTypeFROM": "Аз ... (аз)",
   "priceLabel": "Нарх",
+  "pricingSuggestionHint": "Дигарон барои ин {min}–{max} мегиранд — барои истифодаи миёна зер кунед",
   "durationLabel": "Давомнокӣ (дақиқа)",
   "save": "Захира кардан",
   "saving": "Захира идома дорад...",

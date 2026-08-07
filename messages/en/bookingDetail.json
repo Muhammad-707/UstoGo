@@ -14,5 +14,21 @@
   "writeToWhatsApp": "Write to WhatsApp",
   "bookAgain": "Book Again",
   "downloadReceipt": "Download Receipt",
-  "downloadingReceipt": "Preparing…"
+  "downloadingReceipt": "Preparing…",
+  "cancelModalTitle": "Cancel this booking?",
+  "cancelReasonLabel": "Reason",
+  "cancelReasonPlaceholder": "Select a reason",
+  "cancelDetailsLabel": "Details (optional)",
+  "cancelModalDismiss": "Keep booking",
+  "cancelModalConfirm": "Cancel booking",
+  "cancelReasonCode": {
+    "CHANGED_MIND": "Changed my mind",
+    "FOUND_ANOTHER_PROVIDER": "Found another provider",
+    "PRICE_TOO_HIGH": "Price too high",
+    "SCHEDULING_CONFLICT": "Scheduling conflict",
+    "NO_LONGER_NEEDED": "No longer needed",
+    "UNRESPONSIVE_OTHER_PARTY": "Other party unresponsive",
+    "EMERGENCY": "Emergency",
+    "OTHER": "Other"
+  }
 }

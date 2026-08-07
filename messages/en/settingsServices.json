@@ -21,6 +21,7 @@
   "priceTypeHOURLY": "Per hour",
   "priceTypeFROM": "From ... (starting at)",
   "priceLabel": "Price",
+  "pricingSuggestionHint": "Others charge {min}–{max} for this — tap to use the median",
   "durationLabel": "Duration (minutes)",
   "save": "Save",
   "saving": "Saving...",

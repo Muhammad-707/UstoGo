@@ -10,7 +10,7 @@ import { ApiError } from '@/lib/api/client';
 import { downloadFile } from '@/lib/api/download';
 import { waLink, waBookingText } from '@/lib/whatsapp';
 import { getBookingsSocket } from '@/lib/bookings/socket';
-import type { BookingDetail, City } from '@/lib/api/types';
+import { CANCELLATION_REASON_CODES, type BookingDetail, type CancellationReasonCode, type City } from '@/lib/api/types';
 import { useAuth } from '@/contexts/AuthContext';
 import { getAvatarUrl } from '@/lib/placeholders';
 
@@ -59,6 +59,9 @@ export default function BookingDetailsPage() {
   const [actionPending, setActionPending] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
   const [downloadingReceipt, setDownloadingReceipt] = useState(false);
+  const [showCancelModal, setShowCancelModal] = useState(false);
+  const [cancelReasonCode, setCancelReasonCode] = useState<CancellationReasonCode | ''>('');
+  const [cancelReasonText, setCancelReasonText] = useState('');
   const [alreadyReviewed, setAlreadyReviewed] = useState(false);
   const [alreadyClientRated, setAlreadyClientRated] = useState(false);
 
@@ -157,8 +160,20 @@ export default function BookingDetailsPage() {
   };
 
   const handleCancel = () => {
-    const reason = window.prompt('Reason for cancellation (optional):') ?? undefined;
-    runAction(() => bookingsApi.cancel(bookingId, reason || undefined));
+    setCancelReasonCode('');
+    setCancelReasonText('');
+    setShowCancelModal(true);
+  };
+
+  const confirmCancel = () => {
+    setShowCancelModal(false);
+    runAction(() =>
+      bookingsApi.cancel(
+        bookingId,
+        cancelReasonText.trim() || undefined,
+        cancelReasonCode || undefined,
+      ),
+    );
   };
 
   const handleDownloadReceipt = async () => {
@@ -479,6 +494,58 @@ export default function BookingDetailsPage() {
         </div>
 
       </div>
+
+      {showCancelModal && (
+        <div
+          className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4"
+          onClick={() => setShowCancelModal(false)}
+        >
+          <div
+            className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl w-full max-w-md p-6 sm:p-8 space-y-4"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="text-lg font-extrabold text-slate-900 dark:text-white">{t('cancelModalTitle')}</h3>
+            <label className="block space-y-1.5">
+              <span className="text-xs font-bold text-slate-700 dark:text-slate-300">{t('cancelReasonLabel')}</span>
+              <select
+                value={cancelReasonCode}
+                onChange={(e) => setCancelReasonCode(e.target.value as CancellationReasonCode | '')}
+                className="w-full p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold"
+              >
+                <option value="">{t('cancelReasonPlaceholder')}</option>
+                {CANCELLATION_REASON_CODES.map((code) => (
+                  <option key={code} value={code}>{t(`cancelReasonCode.${code}`)}</option>
+                ))}
+              </select>
+            </label>
+            <label className="block space-y-1.5">
+              <span className="text-xs font-bold text-slate-700 dark:text-slate-300">{t('cancelDetailsLabel')}</span>
+              <textarea
+                value={cancelReasonText}
+                onChange={(e) => setCancelReasonText(e.target.value)}
+                rows={3}
+                maxLength={500}
+                className="w-full p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold"
+              />
+            </label>
+            <div className="flex items-center justify-end gap-3 pt-2">
+              <button
+                onClick={() => setShowCancelModal(false)}
+                className="px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-extrabold text-xs hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+              >
+                {t('cancelModalDismiss')}
+              </button>
+              <button
+                onClick={confirmCancel}
+                disabled={actionPending}
+                className="px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-extrabold text-xs shadow transition disabled:opacity-60"
+              >
+                {t('cancelModalConfirm')}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );

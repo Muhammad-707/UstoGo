@@ -14,5 +14,21 @@
   "writeToWhatsApp": "Нависан ба WhatsApp",
   "bookAgain": "Боз ҳам фармоиш",
   "downloadReceipt": "Боргирии Расид",
-  "downloadingReceipt": "Омодасозӣ…"
+  "downloadingReceipt": "Омодасозӣ…",
+  "cancelModalTitle": "Ин фармоишро бекор кунед?",
+  "cancelReasonLabel": "Сабаб",
+  "cancelReasonPlaceholder": "Сабабро интихоб кунед",
+  "cancelDetailsLabel": "Тафсилот (ихтиёрӣ)",
+  "cancelModalDismiss": "Фармоишро нигоҳ доштан",
+  "cancelModalConfirm": "Бекор кардани фармоиш",
+  "cancelReasonCode": {
+    "CHANGED_MIND": "Фикрамро иваз кардам",
+    "FOUND_ANOTHER_PROVIDER": "Устои дигар ёфтам",
+    "PRICE_TOO_HIGH": "Нарх хеле баланд аст",
+    "SCHEDULING_CONFLICT": "Мухолифати вақт",
+    "NO_LONGER_NEEDED": "Дигар лозим нест",
+    "UNRESPONSIVE_OTHER_PARTY": "Тарафи дигар ҷавоб намедиҳад",
+    "EMERGENCY": "Ҳолати фавқулодда",
+    "OTHER": "Дигар"
+  }
 }

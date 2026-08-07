@@ -85,6 +85,19 @@ export interface UserProfile {
   masterProfile?: MasterProfile | null;
 }
 
+export interface SavedAddress {
+  id: string;
+  label: string;
+  cityId: string;
+  addressLine: string;
+  addressDistrict: string;
+  contactPhone?: string | null;
+  latitude?: number | null;
+  longitude?: number | null;
+  isDefault: boolean;
+  createdAt: string;
+}
+
 export interface District {
   id: string;
   name: string;
@@ -202,6 +215,19 @@ export interface ScheduleException {
   note?: string | null;
 }
 
+export const CANCELLATION_REASON_CODES = [
+  'CHANGED_MIND',
+  'FOUND_ANOTHER_PROVIDER',
+  'PRICE_TOO_HIGH',
+  'SCHEDULING_CONFLICT',
+  'NO_LONGER_NEEDED',
+  'UNRESPONSIVE_OTHER_PARTY',
+  'EMERGENCY',
+  'OTHER',
+] as const;
+
+export type CancellationReasonCode = (typeof CANCELLATION_REASON_CODES)[number];
+
 export interface Booking {
   id: string;
   bookingNumber: string;
@@ -231,6 +257,7 @@ export interface Booking {
   completedAt?: string | null;
   cancelledAt?: string | null;
   cancellationReason?: string | null;
+  cancellationReasonCode?: CancellationReasonCode | null;
   cancelledByType?: string | null;
   isLateCancellation: boolean;
   createdAt: string;
@@ -510,6 +537,14 @@ export interface AdminMasterListItem {
   totalEarnings: string;
   /** Raw WhatsApp number regardless of whatsappEnabled — admin can always reach the master (P0). */
   whatsappPhone: string | null;
+}
+
+export interface PricingSuggestion {
+  basis: 'CITY' | 'CATEGORY_WIDE';
+  sampleSize: number;
+  suggestedMin: string | null;
+  suggestedMedian: string | null;
+  suggestedMax: string | null;
 }
 
 export interface MasterStatus {

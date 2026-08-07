@@ -9,6 +9,7 @@ import type {
   Banner,
   Booking,
   BookingDetail,
+  CancellationReasonCode,
   Category,
   Certificate,
   City,
@@ -29,8 +30,10 @@ import type {
   Paginated,
   PlatformNps,
   PortfolioImage,
+  PricingSuggestion,
   Report,
   Review,
+  SavedAddress,
   ScheduleException,
   Session,
   UserProfile,
@@ -104,6 +107,35 @@ export const usersApi = {
   setAvatar: (fileId: string) => api.patch<UserProfile>('/users/me/avatar', { fileId }),
   setBanner: (fileId: string) => api.patch<UserProfile>('/users/me/banner', { fileId }),
   exportMe: () => api.get<Record<string, unknown>>('/users/me/export'),
+};
+
+// ---- Saved addresses (B-50, CLIENT) ----
+export const savedAddressesApi = {
+  list: () => api.get<SavedAddress[]>('/users/me/addresses'),
+  create: (data: {
+    label: string;
+    cityId: string;
+    line: string;
+    district: string;
+    contactPhone?: string;
+    latitude?: number;
+    longitude?: number;
+    isDefault?: boolean;
+  }) => api.post<SavedAddress>('/users/me/addresses', data),
+  update: (
+    id: string,
+    data: Partial<{
+      label: string;
+      cityId: string;
+      line: string;
+      district: string;
+      contactPhone: string;
+      latitude: number;
+      longitude: number;
+      isDefault: boolean;
+    }>,
+  ) => api.patch<SavedAddress>(`/users/me/addresses/${id}`, data),
+  remove: (id: string) => api.delete<void>(`/users/me/addresses/${id}`),
 };
 
 // ---- Cities ----
@@ -202,6 +234,9 @@ export const masterCabinetApi = {
   mySchedule: () => api.get<WorkingDay[]>('/masters/me/schedule'),
   replaceSchedule: (days: WorkingDay[]) => api.put<WorkingDay[]>('/masters/me/schedule', { days }),
 
+  pricingSuggestion: (categoryId: string) =>
+    api.get<PricingSuggestion>('/masters/me/pricing-suggestion', { categoryId }),
+
   myScheduleExceptions: () => api.get<ScheduleException[]>('/masters/me/schedule/exceptions'),
   addScheduleException: (data: { date: string; isDayOff: boolean; startTime?: string; endTime?: string; note?: string }) =>
     api.post<ScheduleException>('/masters/me/schedule/exceptions', data),
@@ -227,7 +262,8 @@ export const bookingsApi = {
 
   accept: (id: string) => api.post<Booking>(`/bookings/${id}/accept`),
   reject: (id: string, reason: string) => api.post<Booking>(`/bookings/${id}/reject`, { reason }),
-  cancel: (id: string, reason?: string) => api.post<Booking>(`/bookings/${id}/cancel`, { reason }),
+  cancel: (id: string, reason?: string, reasonCode?: CancellationReasonCode) =>
+    api.post<Booking>(`/bookings/${id}/cancel`, { reason, reasonCode }),
   start: (id: string) => api.post<Booking>(`/bookings/${id}/start`),
   complete: (id: string) => api.post<Booking>(`/bookings/${id}/complete`),
   /** Fire-and-forget analytics: stamps whatsappLinkClickedAt once (P0). */

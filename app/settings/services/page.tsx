@@ -6,7 +6,7 @@ import { Icon } from '@/components/icons/LucideIcons';
 import { categoriesApi, masterCabinetApi } from '@/lib/api/endpoints';
 import { ApiError } from '@/lib/api/client';
 import { revalidateMastersCache } from '@/lib/api/revalidate';
-import type { Category, MasterService } from '@/lib/api/types';
+import type { Category, MasterService, PricingSuggestion } from '@/lib/api/types';
 import { MasterPageHeader } from '@/components/master/MasterPageHeader';
 
 type PriceType = 'FIXED' | 'HOURLY' | 'FROM';
@@ -49,6 +49,27 @@ export default function MasterServicesPage() {
 
   const [form, setForm] = useState<ServiceFormState>(EMPTY_FORM);
   const [attachCategoryId, setAttachCategoryId] = useState('');
+  const [priceSuggestion, setPriceSuggestion] = useState<PricingSuggestion | null>(null);
+
+  useEffect(() => {
+    if (!showForm || !form.categoryId) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- clears a stale suggestion when the form closes or the category changes
+      setPriceSuggestion(null);
+      return;
+    }
+    let cancelled = false;
+    masterCabinetApi
+      .pricingSuggestion(form.categoryId)
+      .then((data) => {
+        if (!cancelled) setPriceSuggestion(data.sampleSize > 0 ? data : null);
+      })
+      .catch(() => {
+        if (!cancelled) setPriceSuggestion(null);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [showForm, form.categoryId]);
 
   const myCategories = useMemo(() => {
     const byId = new Map(allCategories.map((c) => [c.id, c]));
@@ -340,6 +361,18 @@ export default function MasterServicesPage() {
                 onChange={(e) => setForm((f) => ({ ...f, price: e.target.value }))}
                 className="w-full p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-semibold"
               />
+              {priceSuggestion?.suggestedMedian && (
+                <button
+                  type="button"
+                  onClick={() => setForm((f) => ({ ...f, price: priceSuggestion.suggestedMedian as string }))}
+                  className="text-[10px] text-blue-600 dark:text-sky-400 font-bold hover:underline text-left"
+                >
+                  {t('pricingSuggestionHint', {
+                    min: priceSuggestion.suggestedMin ?? '—',
+                    max: priceSuggestion.suggestedMax ?? '—',
+                  })}
+                </button>
+              )}
             </label>
             <label className="space-y-1">
               <span className="font-bold text-slate-500">{t('durationLabel')}</span>

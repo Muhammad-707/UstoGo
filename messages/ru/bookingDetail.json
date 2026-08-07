@@ -14,5 +14,21 @@
   "writeToWhatsApp": "Написать в WhatsApp",
   "bookAgain": "Заказать снова",
   "downloadReceipt": "Скачать квитанцию",
-  "downloadingReceipt": "Подготовка…"
+  "downloadingReceipt": "Подготовка…",
+  "cancelModalTitle": "Отменить этот заказ?",
+  "cancelReasonLabel": "Причина",
+  "cancelReasonPlaceholder": "Выберите причину",
+  "cancelDetailsLabel": "Подробности (необязательно)",
+  "cancelModalDismiss": "Оставить заказ",
+  "cancelModalConfirm": "Отменить заказ",
+  "cancelReasonCode": {
+    "CHANGED_MIND": "Передумал(а)",
+    "FOUND_ANOTHER_PROVIDER": "Нашёл(шла) другого исполнителя",
+    "PRICE_TOO_HIGH": "Слишком высокая цена",
+    "SCHEDULING_CONFLICT": "Конфликт по времени",
+    "NO_LONGER_NEEDED": "Больше не нужно",
+    "UNRESPONSIVE_OTHER_PARTY": "Другая сторона не отвечает",
+    "EMERGENCY": "Чрезвычайная ситуация",
+    "OTHER": "Другое"
+  }
 }

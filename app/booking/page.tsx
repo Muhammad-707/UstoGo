@@ -6,9 +6,9 @@ import { motion } from 'framer-motion';
 import { useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { Icon } from '@/components/icons/LucideIcons';
-import { mastersApi, bookingsApi, citiesApi } from '@/lib/api/endpoints';
+import { mastersApi, bookingsApi, citiesApi, savedAddressesApi } from '@/lib/api/endpoints';
 import { ApiError } from '@/lib/api/client';
-import type { City, MasterPublic, MasterService } from '@/lib/api/types';
+import type { City, MasterPublic, MasterService, SavedAddress } from '@/lib/api/types';
 import { useRequireAuth } from '@/hooks/useRequireAuth';
 import { getAvatarUrl } from '@/lib/placeholders';
 
@@ -70,6 +70,17 @@ export default function BookingWizardPage() {
   const [street, setStreet] = useState('');
   const [house, setHouse] = useState('');
   const [contactPhone, setContactPhone] = useState('');
+  const [savedAddresses, setSavedAddresses] = useState<SavedAddress[]>([]);
+  const [selectedSavedAddressId, setSelectedSavedAddressId] = useState<string | null>(null);
+
+  const applySavedAddress = (address: SavedAddress) => {
+    setSelectedSavedAddressId(address.id);
+    setCityId(address.cityId);
+    setDistrict(address.addressDistrict);
+    setStreet(address.addressLine);
+    setHouse('');
+    if (address.contactPhone) setContactPhone(address.contactPhone);
+  };
 
   useEffect(() => {
     citiesApi
@@ -82,6 +93,15 @@ export default function BookingWizardPage() {
         }
       })
       .catch(() => setCities([]));
+    savedAddressesApi
+      .list()
+      .then((list) => {
+        setSavedAddresses(list);
+        const defaultAddress = list.find((a) => a.isDefault);
+        if (defaultAddress) applySavedAddress(defaultAddress);
+      })
+      .catch(() => setSavedAddresses([]));
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- applySavedAddress is a stable local setter chain, not worth memoizing
   }, [user?.clientProfile?.cityId]);
 
   const activeCity = cities.find((city) => city.id === cityId) ?? null;
@@ -507,6 +527,27 @@ export default function BookingWizardPage() {
             <div className="space-y-6 animate-fade-in">
               <h3 className="text-lg font-bold text-slate-900 dark:text-white">{t('step3Heading')}</h3>
 
+              {savedAddresses.length > 0 && (
+                <div className="space-y-2">
+                  <span className="text-xs font-bold uppercase tracking-wider text-slate-400">{t('savedAddressesLabel')}</span>
+                  <div className="flex flex-wrap gap-2">
+                    {savedAddresses.map((address) => (
+                      <button
+                        key={address.id}
+                        onClick={() => applySavedAddress(address)}
+                        className={`px-4 py-2 rounded-xl text-xs font-bold border transition ${
+                          selectedSavedAddressId === address.id
+                            ? 'bg-blue-600 border-blue-600 text-white'
+                            : 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:border-blue-300 dark:hover:border-sky-700'
+                        }`}
+                      >
+                        {address.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label className="text-xs font-bold uppercase tracking-wider text-slate-400">{t('cityLabel')}</label>
@@ -515,6 +556,7 @@ export default function BookingWizardPage() {
                     onChange={(e) => {
                       setCityId(e.target.value);
                       setDistrict('');
+                      setSelectedSavedAddressId(null);
                     }}
                     className="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition"
                   >
