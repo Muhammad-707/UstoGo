@@ -1,0 +1,13 @@
+{
+  "badge": "Сертификати Иҷроиш",
+  "title": "Дар UstoGo Тасдиқшуда",
+  "qrAlt": "Барои санҷиши сертификат сканер кунед",
+  "bookingNumber": "Фармоиши {number}",
+  "masterLabel": "Усто",
+  "clientLabel": "Мизоҷ",
+  "completedLabel": "Анҷомёфта",
+  "codeLabel": "Код",
+  "loading": "Боркунӣ…",
+  "notFoundTitle": "Сертификат ёфт нашуд",
+  "notFoundBody": "Ин код бо ягон сертификати иҷроиш дар UstoGo мувофиқат намекунад."
+}

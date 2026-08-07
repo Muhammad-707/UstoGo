@@ -1,0 +1,13 @@
+{
+  "badge": "Сертификат Выполнения",
+  "title": "Подтверждено на UstoGo",
+  "qrAlt": "Отсканируйте для проверки сертификата",
+  "bookingNumber": "Заказ {number}",
+  "masterLabel": "Мастер",
+  "clientLabel": "Клиент",
+  "completedLabel": "Завершено",
+  "codeLabel": "Код",
+  "loading": "Загрузка…",
+  "notFoundTitle": "Сертификат не найден",
+  "notFoundBody": "Этот код не соответствует ни одному сертификату выполнения на UstoGo."
+}

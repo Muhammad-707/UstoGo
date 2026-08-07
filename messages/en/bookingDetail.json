@@ -39,5 +39,7 @@
   "loadingSlots": "Loading available times…",
   "noSlotsAvailable": "No available times on this date.",
   "rescheduleModalConfirm": "Confirm new time",
-  "rescheduling": "Rescheduling…"
+  "rescheduling": "Rescheduling…",
+  "viewCertificate": "View Certificate",
+  "loadingCertificate": "Loading certificate…"
 }

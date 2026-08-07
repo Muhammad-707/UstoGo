@@ -1,0 +1,13 @@
+{
+  "badge": "Completion Certificate",
+  "title": "Verified on UstoGo",
+  "qrAlt": "Scan to verify this certificate",
+  "bookingNumber": "Booking {number}",
+  "masterLabel": "Master",
+  "clientLabel": "Client",
+  "completedLabel": "Completed",
+  "codeLabel": "Code",
+  "loading": "Loading…",
+  "notFoundTitle": "Certificate not found",
+  "notFoundBody": "This code doesn't match a completion certificate on UstoGo."
+}

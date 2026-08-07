@@ -8,9 +8,10 @@ import { Icon } from '@/components/icons/LucideIcons';
 import { bookingsApi, citiesApi, mastersApi, reviewsApi } from '@/lib/api/endpoints';
 import { ApiError } from '@/lib/api/client';
 import { downloadFile } from '@/lib/api/download';
+import { CertificateCard } from '@/components/certificates/CertificateCard';
 import { waLink, waBookingText } from '@/lib/whatsapp';
 import { getBookingsSocket } from '@/lib/bookings/socket';
-import { CANCELLATION_REASON_CODES, type BookingDetail, type CancellationReasonCode, type City } from '@/lib/api/types';
+import { CANCELLATION_REASON_CODES, type BookingDetail, type CancellationReasonCode, type City, type CompletionCertificate } from '@/lib/api/types';
 import { useAuth } from '@/contexts/AuthContext';
 import { getAvatarUrl } from '@/lib/placeholders';
 
@@ -70,6 +71,22 @@ export default function BookingDetailsPage() {
   const [rescheduleError, setRescheduleError] = useState<string | null>(null);
   const [rescheduling, setRescheduling] = useState(false);
   const [attachmentUrls, setAttachmentUrls] = useState<{ fileId: string; url: string }[]>([]);
+  const [certificate, setCertificate] = useState<CompletionCertificate | null>(null);
+  const [certificateLoading, setCertificateLoading] = useState(false);
+  const [showCertificateModal, setShowCertificateModal] = useState(false);
+
+  const handleViewCertificate = async () => {
+    setShowCertificateModal(true);
+    if (certificate) return;
+    setCertificateLoading(true);
+    try {
+      setCertificate(await bookingsApi.certificate(bookingId));
+    } catch {
+      // ignore — modal shows a loading state indefinitely if this fails, acceptable for a best-effort view
+    } finally {
+      setCertificateLoading(false);
+    }
+  };
 
   useEffect(() => {
     if (!booking || booking.attachmentFileIds.length === 0) {
@@ -385,6 +402,16 @@ export default function BookingDetailsPage() {
             </button>
           )}
 
+          {(isClient || isMaster) && booking.status === 'COMPLETED' && (
+            <button
+              onClick={handleViewCertificate}
+              className="px-5 py-3 rounded-2xl border border-amber-200 dark:border-amber-900 text-amber-600 dark:text-amber-400 font-extrabold text-xs hover:bg-amber-50 dark:hover:bg-amber-950/40 transition flex items-center gap-2"
+            >
+              <Icon name="shieldcheck" size={16} />
+              <span>{t('viewCertificate')}</span>
+            </button>
+          )}
+
           {booking.masterWhatsappPhone && ['ACCEPTED', 'IN_PROGRESS'].includes(booking.status) && (() => {
             const link = waLink(booking.masterWhatsappPhone, waBookingText(booking.serviceTitle, booking.bookingNumber));
             return link ? (
@@ -600,6 +627,29 @@ export default function BookingDetailsPage() {
         </div>
 
       </div>
+
+      {showCertificateModal && (
+        <div
+          className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4"
+          onClick={() => setShowCertificateModal(false)}
+        >
+          <div className="w-full max-w-md" onClick={(e) => e.stopPropagation()}>
+            {certificateLoading || !certificate ? (
+              <div className="glass-card rounded-3xl p-12 text-center">
+                <p className="text-xs text-slate-400 font-semibold">{t('loadingCertificate')}</p>
+              </div>
+            ) : (
+              <CertificateCard certificate={certificate} />
+            )}
+            <button
+              onClick={() => setShowCertificateModal(false)}
+              className="w-full mt-4 px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-extrabold text-xs hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+            >
+              {t('cancelModalDismiss')}
+            </button>
+          </div>
+        </div>
+      )}
 
       {showRescheduleModal && (
         <div

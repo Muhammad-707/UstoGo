@@ -39,5 +39,7 @@
   "loadingSlots": "Загрузка доступного времени…",
   "noSlotsAvailable": "На эту дату нет свободного времени.",
   "rescheduleModalConfirm": "Подтвердить новое время",
-  "rescheduling": "Перенос…"
+  "rescheduling": "Перенос…",
+  "viewCertificate": "Посмотреть сертификат",
+  "loadingCertificate": "Загрузка сертификата…"
 }

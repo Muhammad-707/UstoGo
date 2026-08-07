@@ -13,6 +13,7 @@ import type {
   Category,
   Certificate,
   City,
+  CompletionCertificate,
   Conversation,
   DashboardResponse,
   LeaderboardEntry,
@@ -292,6 +293,13 @@ export const bookingsApi = {
   complete: (id: string) => api.post<Booking>(`/bookings/${id}/complete`),
   /** Fire-and-forget analytics: stamps whatsappLinkClickedAt once (P0). */
   whatsappClick: (id: string) => api.post<void>(`/bookings/${id}/whatsapp-click`),
+  certificate: (id: string) => api.get<CompletionCertificate>(`/bookings/${id}/certificate`),
+};
+
+// ---- Completion certificates (public verification) ----
+export const certificatesApi = {
+  verify: (code: string) =>
+    api.get<CompletionCertificate>(`/certificates/verify/${encodeURIComponent(code)}`, undefined, false),
 };
 
 // ---- Reviews ----

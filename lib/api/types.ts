@@ -328,6 +328,17 @@ export interface CategoryEarning {
   completedCount: number;
 }
 
+export interface CompletionCertificate {
+  verificationCode: string;
+  verifyPath: string;
+  issuedAt: string;
+  bookingNumber: string;
+  serviceTitle: string;
+  masterDisplayName: string;
+  clientName: string;
+  completedAt: string;
+}
+
 export interface OptimizedStop {
   order: number;
   bookingId: string;
