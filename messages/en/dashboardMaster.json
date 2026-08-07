@@ -42,6 +42,8 @@
   "qaCertificates": "Certificates",
   "qaProfile": "Profile & Banner",
   "qaWhatsApp": "WhatsApp",
+  "qaQuotes": "Quote Requests",
+  "qaQuickReplies": "Quick Replies",
   "qaPayments": "Payments",
   "loadingRequests": "Loading pending requests…",
   "noPendingRequests": "No pending requests right now.",

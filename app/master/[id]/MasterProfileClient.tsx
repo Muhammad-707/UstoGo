@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 import { useParams } from 'next/navigation';
 import { useLocale, useTranslations } from 'next-intl';
 import { Icon } from '@/components/icons/LucideIcons';
-import { mastersApi } from '@/lib/api/endpoints';
+import { mastersApi, quotesApi } from '@/lib/api/endpoints';
 import { ApiError } from '@/lib/api/client';
 import { useAuth } from '@/contexts/AuthContext';
 import type { MasterPublic, MasterService, Review, WorkingDay, MasterCertificatePublic } from '@/lib/api/types';
@@ -33,6 +33,12 @@ export default function MasterProfileClient() {
   const [notFound, setNotFound] = useState(false);
 
   const [activeTab, setActiveTab] = useState<TabId>('about');
+  const [showQuoteModal, setShowQuoteModal] = useState(false);
+  const [quoteServiceId, setQuoteServiceId] = useState('');
+  const [quoteDescription, setQuoteDescription] = useState('');
+  const [quoteSubmitting, setQuoteSubmitting] = useState(false);
+  const [quoteError, setQuoteError] = useState<string | null>(null);
+  const [quoteSent, setQuoteSent] = useState(false);
 
   useEffect(() => {
     if (!masterId) return;
@@ -89,6 +95,27 @@ export default function MasterProfileClient() {
     // silently ignored.
     mastersApi.recordView(masterId).catch(() => {});
   }, [masterId, user?.role]);
+
+  const submitQuoteRequest = async () => {
+    if (quoteDescription.trim().length < 10) {
+      setQuoteError(t('quoteValidationTooShort'));
+      return;
+    }
+    setQuoteSubmitting(true);
+    setQuoteError(null);
+    try {
+      await quotesApi.create({
+        masterId,
+        serviceId: quoteServiceId || undefined,
+        description: quoteDescription.trim(),
+      });
+      setQuoteSent(true);
+    } catch (err) {
+      setQuoteError(err instanceof ApiError ? err.message : t('quoteSendFailed'));
+    } finally {
+      setQuoteSubmitting(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -232,6 +259,22 @@ export default function MasterProfileClient() {
               <Icon name="calendar" size={16} />
               <span>{t('bookAppointment')}</span>
             </Link>
+
+            {user?.role === 'CLIENT' && (
+              <button
+                onClick={() => {
+                  setShowQuoteModal(true);
+                  setQuoteSent(false);
+                  setQuoteError(null);
+                  setQuoteDescription('');
+                  setQuoteServiceId('');
+                }}
+                className="px-6 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-xs font-extrabold hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center gap-2"
+              >
+                <Icon name="calculator" size={16} />
+                <span>{t('requestQuote')}</span>
+              </button>
+            )}
           </div>
 
         </div>
@@ -532,6 +575,81 @@ export default function MasterProfileClient() {
         </div>
 
       </div>
+
+      {showQuoteModal && (
+        <div
+          className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4"
+          onClick={() => setShowQuoteModal(false)}
+        >
+          <div
+            className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl w-full max-w-md p-6 sm:p-8 space-y-4"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {quoteSent ? (
+              <div className="text-center space-y-3 py-4">
+                <div className="w-12 h-12 rounded-2xl bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-300 flex items-center justify-center mx-auto">
+                  <Icon name="checkcircle2" size={22} />
+                </div>
+                <h3 className="text-base font-extrabold text-slate-900 dark:text-white">{t('quoteSentTitle')}</h3>
+                <p className="text-xs text-slate-400">{t('quoteSentBody')}</p>
+                <Link
+                  href="/quotes"
+                  className="inline-block mt-2 text-xs font-bold text-blue-600 dark:text-sky-400 hover:underline"
+                >
+                  {t('viewMyQuotes')}
+                </Link>
+              </div>
+            ) : (
+              <>
+                <h3 className="text-lg font-extrabold text-slate-900 dark:text-white">{t('requestQuoteTitle')}</h3>
+                {services.length > 0 && (
+                  <label className="block space-y-1.5">
+                    <span className="text-xs font-bold text-slate-700 dark:text-slate-300">{t('quoteServiceLabel')}</span>
+                    <select
+                      value={quoteServiceId}
+                      onChange={(e) => setQuoteServiceId(e.target.value)}
+                      className="w-full p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold"
+                    >
+                      <option value="">{t('quoteServiceAny')}</option>
+                      {services.map((s) => (
+                        <option key={s.id} value={s.id}>{s.title}</option>
+                      ))}
+                    </select>
+                  </label>
+                )}
+                <label className="block space-y-1.5">
+                  <span className="text-xs font-bold text-slate-700 dark:text-slate-300">{t('quoteDescriptionLabel')}</span>
+                  <textarea
+                    value={quoteDescription}
+                    onChange={(e) => setQuoteDescription(e.target.value)}
+                    rows={4}
+                    minLength={10}
+                    maxLength={1000}
+                    placeholder={t('quoteDescriptionPlaceholder')}
+                    className="w-full p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold"
+                  />
+                </label>
+                {quoteError && <p className="text-xs font-bold text-red-600 dark:text-red-400">{quoteError}</p>}
+                <div className="flex items-center justify-end gap-3 pt-2">
+                  <button
+                    onClick={() => setShowQuoteModal(false)}
+                    className="px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-extrabold text-xs hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+                  >
+                    {t('cancelAction')}
+                  </button>
+                  <button
+                    onClick={submitQuoteRequest}
+                    disabled={quoteSubmitting}
+                    className="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow transition disabled:opacity-60"
+                  >
+                    {quoteSubmitting ? t('sendingQuote') : t('sendQuoteRequest')}
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
 
     </div>
   );

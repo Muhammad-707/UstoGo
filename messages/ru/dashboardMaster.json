@@ -42,6 +42,8 @@
   "qaCertificates": "Сертификаты",
   "qaProfile": "Профиль и баннер",
   "qaWhatsApp": "WhatsApp",
+  "qaQuotes": "Запросы на смету",
+  "qaQuickReplies": "Быстрые ответы",
   "qaPayments": "Платежи",
   "loadingRequests": "Загрузка заявок…",
   "noPendingRequests": "Новых заявок сейчас нет.",

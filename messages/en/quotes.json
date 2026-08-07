@@ -1,0 +1,30 @@
+{
+  "badge": "Estimates",
+  "title": "Quotes",
+  "pageHint": "Price estimates you've requested or received before booking.",
+  "loading": "Loading…",
+  "loadFailed": "Could not load your quotes.",
+  "saveFailed": "Could not save that. Try again.",
+  "empty": "No quotes yet.",
+  "status": {
+    "PENDING": "Awaiting response",
+    "RESPONDED": "Responded",
+    "DECLINED": "Declined"
+  },
+  "priceType": {
+    "FIXED": "Fixed price",
+    "HOURLY": "Per hour",
+    "FROM": "Starting at"
+  },
+  "bookNow": "Book now →",
+  "respond": "Respond",
+  "decline": "Decline",
+  "estimatedPriceLabel": "Estimated price",
+  "noteLabel": "Note to client (optional)",
+  "sendResponse": "Send estimate",
+  "declineReasonLabel": "Reason for declining",
+  "sendDecline": "Send decline",
+  "cancelAction": "Cancel",
+  "validationPriceInvalid": "Enter a valid price greater than 0.",
+  "validationReasonTooShort": "Give a reason of at least 10 characters."
+}

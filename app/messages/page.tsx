@@ -3,9 +3,9 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
-import { bookingsApi } from '@/lib/api/endpoints';
+import { bookingsApi, masterCabinetApi } from '@/lib/api/endpoints';
 import { Icon } from '@/components/icons/LucideIcons';
-import type { Booking, UserRole } from '@/lib/api/types';
+import type { Booking, QuickReply, UserRole } from '@/lib/api/types';
 import { useAuth } from '@/contexts/AuthContext';
 import { getAvatarUrl } from '@/lib/placeholders';
 import { waLink, waBookingText } from '@/lib/whatsapp';
@@ -15,11 +15,14 @@ const WHATSAPP_STATUSES = new Set(['ACCEPTED', 'IN_PROGRESS', 'COMPLETED']);
 function WhatsAppContactCard({
   booking,
   role,
+  quickReplies,
 }: {
   booking: Booking;
   role: UserRole;
+  quickReplies: QuickReply[];
 }) {
   const t = useTranslations('messagesPage');
+  const [selectedReplyId, setSelectedReplyId] = useState('');
   const phone =
     role === 'CLIENT'
       ? booking.masterWhatsappPhone
@@ -28,7 +31,9 @@ function WhatsAppContactCard({
         : booking.masterWhatsappPhone;
   const name = role === 'CLIENT' ? booking.masterDisplayName : role === 'MASTER' ? booking.clientName : booking.masterDisplayName;
   const id = role === 'CLIENT' ? booking.masterId : role === 'MASTER' ? booking.clientId : booking.masterId;
-  const link = phone ? waLink(phone, waBookingText(booking.serviceTitle, booking.bookingNumber)) : null;
+  const selectedReply = quickReplies.find((r) => r.id === selectedReplyId);
+  const messageText = selectedReply?.text ?? waBookingText(booking.serviceTitle, booking.bookingNumber);
+  const link = phone ? waLink(phone, messageText) : null;
 
   if (!phone) return null;
 
@@ -44,6 +49,18 @@ function WhatsAppContactCard({
         <p className="text-xs text-slate-500 truncate mt-0.5">{booking.serviceTitle}</p>
         <span className="text-[10px] text-slate-400 mt-0.5 block">{booking.bookingNumber}</span>
       </div>
+      {role === 'MASTER' && quickReplies.length > 0 && (
+        <select
+          value={selectedReplyId}
+          onChange={(e) => setSelectedReplyId(e.target.value)}
+          className="hidden md:block max-w-[160px] p-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[10px] font-bold text-slate-700 dark:text-slate-200"
+        >
+          <option value="">{t('quickReplyDefault')}</option>
+          {quickReplies.map((r) => (
+            <option key={r.id} value={r.id}>{r.text.slice(0, 40)}</option>
+          ))}
+        </select>
+      )}
       {link && (
         <a
           href={link}
@@ -67,6 +84,7 @@ export default function WhatsAppContactsPage() {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [quickReplies, setQuickReplies] = useState<QuickReply[]>([]);
 
   const load = useCallback(async () => {
     if (!user) return;
@@ -87,6 +105,11 @@ export default function WhatsAppContactsPage() {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- fetches bookings on mount/user change
     load();
   }, [load]);
+
+  useEffect(() => {
+    if (user?.role !== 'MASTER') return;
+    masterCabinetApi.myQuickReplies().then(setQuickReplies).catch(() => setQuickReplies([]));
+  }, [user?.role]);
 
   const isClient = user?.role === 'CLIENT';
   const isMaster = user?.role === 'MASTER';
@@ -138,7 +161,7 @@ export default function WhatsAppContactsPage() {
       {!loading && contacts.length > 0 && (
         <div className="space-y-4">
           {contacts.map((b) => (
-            <WhatsAppContactCard key={b.id} booking={b} role={user.role} />
+            <WhatsAppContactCard key={b.id} booking={b} role={user.role} quickReplies={quickReplies} />
           ))}
         </div>
       )}

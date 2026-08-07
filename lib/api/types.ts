@@ -182,6 +182,13 @@ export interface MasterService {
   isActive?: boolean;
 }
 
+export interface QuickReply {
+  id: string;
+  text: string;
+  sortOrder: number;
+  createdAt: string;
+}
+
 export interface Certificate {
   id: string;
   title: string;
@@ -227,6 +234,28 @@ export const CANCELLATION_REASON_CODES = [
 ] as const;
 
 export type CancellationReasonCode = (typeof CANCELLATION_REASON_CODES)[number];
+
+export type PriceType = 'FIXED' | 'HOURLY' | 'FROM';
+
+export type QuoteStatus = 'PENDING' | 'RESPONDED' | 'DECLINED';
+
+export interface Quote {
+  id: string;
+  masterId: string;
+  masterDisplayName: string;
+  clientId: string;
+  clientName: string;
+  serviceId: string | null;
+  serviceTitle: string | null;
+  description: string;
+  status: QuoteStatus;
+  estimatedPrice: string | null;
+  priceType: string | null;
+  masterNote: string | null;
+  declineReason: string | null;
+  respondedAt: string | null;
+  createdAt: string;
+}
 
 export interface Booking {
   id: string;

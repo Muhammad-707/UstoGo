@@ -1,0 +1,13 @@
+{
+  "badge": "Chat Tools",
+  "title": "Quick Replies",
+  "pageHint": "Canned messages you can insert into chat with one tap — up to 20.",
+  "loading": "Loading…",
+  "loadFailed": "Could not load your quick replies.",
+  "saveFailed": "Could not save that reply. Try again.",
+  "deleteFailed": "Could not remove that reply. Try again.",
+  "newReplyPlaceholder": "I'm running about 15 minutes late...",
+  "add": "Add",
+  "limitReached": "You've reached the limit of 20 quick replies.",
+  "empty": "No quick replies yet."
+}

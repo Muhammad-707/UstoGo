@@ -5,5 +5,6 @@
   "empty": "No bookings yet. After your first booking, WhatsApp contacts will appear here.",
   "loginRequired": "Please log in to access this page.",
   "whatsappButton": "WhatsApp",
-  "whatsappButtonShort": "WA"
+  "whatsappButtonShort": "WA",
+  "quickReplyDefault": "Default message"
 }

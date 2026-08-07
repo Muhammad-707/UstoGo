@@ -31,6 +31,9 @@ import type {
   PlatformNps,
   PortfolioImage,
   PricingSuggestion,
+  QuickReply,
+  Quote,
+  QuoteStatus,
   Report,
   Review,
   SavedAddress,
@@ -237,6 +240,12 @@ export const masterCabinetApi = {
   pricingSuggestion: (categoryId: string) =>
     api.get<PricingSuggestion>('/masters/me/pricing-suggestion', { categoryId }),
 
+  myQuickReplies: () => api.get<QuickReply[]>('/masters/me/quick-replies'),
+  createQuickReply: (text: string) => api.post<QuickReply>('/masters/me/quick-replies', { text }),
+  updateQuickReply: (id: string, text: string) =>
+    api.patch<QuickReply>(`/masters/me/quick-replies/${id}`, { text }),
+  removeQuickReply: (id: string) => api.delete<void>(`/masters/me/quick-replies/${id}`),
+
   myScheduleExceptions: () => api.get<ScheduleException[]>('/masters/me/schedule/exceptions'),
   addScheduleException: (data: { date: string; isDayOff: boolean; startTime?: string; endTime?: string; note?: string }) =>
     api.post<ScheduleException>('/masters/me/schedule/exceptions', data),
@@ -427,6 +436,18 @@ export const adminApi = {
     verify: (id: string) => api.post<AdminCertificate>(`/admin/certificates/${id}/verify`),
     reject: (id: string) => api.post<AdminCertificate>(`/admin/certificates/${id}/reject`),
   },
+};
+
+// ---- Quotes (B-44) ----
+export const quotesApi = {
+  create: (data: { masterId: string; serviceId?: string; description: string }) =>
+    api.post<Quote>('/quotes', data),
+  list: (query: { page?: number; limit?: number; status?: QuoteStatus } = {}) =>
+    api.get<Paginated<Quote>>('/quotes', query),
+  byId: (id: string) => api.get<Quote>(`/quotes/${id}`),
+  respond: (id: string, data: { estimatedPrice: number; priceType: string; note?: string }) =>
+    api.post<Quote>(`/quotes/${id}/respond`, data),
+  decline: (id: string, reason: string) => api.post<Quote>(`/quotes/${id}/decline`, { reason }),
 };
 
 // ---- Reports (any client/master) ----

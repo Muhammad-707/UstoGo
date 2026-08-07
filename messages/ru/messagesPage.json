@@ -5,5 +5,6 @@
   "empty": "Пока нет бронирований. После первого бронирования здесь появятся контакты WhatsApp.",
   "loginRequired": "Войдите, чтобы получить доступ к этой странице.",
   "whatsappButton": "WhatsApp",
-  "whatsappButtonShort": "WA"
+  "whatsappButtonShort": "WA",
+  "quickReplyDefault": "Сообщение по умолчанию"
 }
