@@ -24,6 +24,8 @@ import type {
   Message,
   MyReferral,
   NotificationItem,
+  NotificationPreferences,
+  NotificationType,
   Paginated,
   PlatformNps,
   PortfolioImage,
@@ -156,13 +158,19 @@ export const mastersApi = {
     api.get<Paginated<Review>>(`/masters/${id}/reviews`, { page, limit, sort }, false),
 
   myNps: () => api.get<MasterNps>('/masters/me/nps'),
+
+  /** Fire-and-forget analytics — feeds `myRecentlyViewed`. Idempotent, bumps `viewedAt`. */
+  recordView: (id: string) => api.post<void>(`/masters/${id}/view`),
+  myRecentlyViewed: () => api.get<MasterPublic[]>('/masters/me/recently-viewed'),
 };
 
 // ---- Master cabinet (self-service, role: MASTER) ----
 export const masterCabinetApi = {
+  myStatus: () => api.get<MasterStatus>('/masters/me/status'),
   submit: () => api.post<MasterStatus>('/masters/me/submit'),
   resubmit: () => api.post<MasterStatus>('/masters/me/resubmit'),
   setAvailability: (isActive: boolean) => api.patch<MasterStatus>('/masters/me/availability', { isActive }),
+  setInstantBook: (enabled: boolean) => api.patch<MasterStatus>('/masters/me/instant-book', { enabled }),
 
   myCategories: () => api.get<string[]>('/masters/me/categories'),
   attachCategory: (categoryId: string) => api.post<void>('/masters/me/categories', { categoryId }),
@@ -247,6 +255,9 @@ export const notificationsApi = {
   unreadCount: () => api.get<{ count: number }>('/notifications/unread-count'),
   markRead: (id: string) => api.patch<void>(`/notifications/${id}/read`),
   markAllRead: () => api.patch<void>('/notifications/read-all'),
+  preferences: () => api.get<NotificationPreferences>('/notifications/preferences'),
+  updatePreferences: (preferences: { type: NotificationType; enabled: boolean }[]) =>
+    api.patch<NotificationPreferences>('/notifications/preferences', { preferences }),
 };
 
 // ---- Conversations / Messages ----

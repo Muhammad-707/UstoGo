@@ -12,5 +12,7 @@
   "serviceAddress": "Адрес услуги:",
   "startJobTooEarly": "Эту работу можно начать только в назначенное время.",
   "writeToWhatsApp": "Написать в WhatsApp",
-  "bookAgain": "Заказать снова"
+  "bookAgain": "Заказать снова",
+  "downloadReceipt": "Скачать квитанцию",
+  "downloadingReceipt": "Подготовка…"
 }

@@ -27,6 +27,7 @@ export default function ClientDashboardPage() {
   const [reviewedBookingIds, setReviewedBookingIds] = useState<Set<string>>(new Set());
   const [referral, setReferral] = useState<MyReferral | null>(null);
   const [copied, setCopied] = useState(false);
+  const [recentlyViewed, setRecentlyViewed] = useState<MasterPublic[]>([]);
 
   useEffect(() => {
     reviewsApi
@@ -34,6 +35,7 @@ export default function ClientDashboardPage() {
       .then((res) => setReviewedBookingIds(new Set(res.items.map((r) => r.bookingId))))
       .catch(() => setReviewedBookingIds(new Set()));
     referralApi.mine().then(setReferral).catch(() => setReferral(null));
+    mastersApi.myRecentlyViewed().then(setRecentlyViewed).catch(() => setRecentlyViewed([]));
   }, []);
 
   const referralLink = referral && typeof window !== 'undefined'
@@ -192,6 +194,35 @@ export default function ClientDashboardPage() {
                 {t('referralShareWhatsApp')}
               </a>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* Recently Viewed Masters */}
+      {recentlyViewed.length > 0 && (
+        <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-4 shadow-xl">
+          <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <Icon name="eye" size={18} />
+            {t('recentlyViewed')}
+          </h3>
+          <div className="flex gap-4 overflow-x-auto pb-1 -mx-1 px-1">
+            {recentlyViewed.map((m) => (
+              <Link
+                key={m.id}
+                href={`/master/${m.id}`}
+                className="shrink-0 w-40 rounded-2xl border border-slate-100 dark:border-slate-800 p-3 hover:border-blue-200 dark:hover:border-sky-900 hover:shadow-lg transition space-y-2"
+              >
+                <img
+                  src={m.avatarUrl ?? getAvatarUrl(m.id, m.displayName)}
+                  alt={m.displayName}
+                  className="w-full h-24 rounded-xl object-cover"
+                />
+                <div>
+                  <p className="text-xs font-extrabold text-slate-900 dark:text-white truncate">{m.displayName}</p>
+                  <p className="text-[10px] text-amber-500 font-bold">★ {m.ratingAverage}</p>
+                </div>
+              </Link>
+            ))}
           </div>
         </div>
       )}

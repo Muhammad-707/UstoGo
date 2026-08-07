@@ -12,5 +12,7 @@
   "rateClient": "Rate Client",
   "startJobTooEarly": "This booking can only be started at its scheduled time.",
   "writeToWhatsApp": "Write to WhatsApp",
-  "bookAgain": "Book Again"
+  "bookAgain": "Book Again",
+  "downloadReceipt": "Download Receipt",
+  "downloadingReceipt": "Preparing…"
 }

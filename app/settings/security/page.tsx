@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useCallback, useEffect, useState } from 'react';
+import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { Icon } from '@/components/icons/LucideIcons';
 import { useAuth } from '@/contexts/AuthContext';
@@ -242,6 +243,20 @@ export default function SecuritySettingsPage() {
           {exporting ? t('exporting') : t('exportDataButton')}
         </button>
       </div>
+
+      <Link
+        href="/settings/notifications"
+        className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-xl flex items-center justify-between gap-4 hover:border-blue-300 dark:hover:border-sky-700 transition"
+      >
+        <div>
+          <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <Icon name="bell" size={18} />
+            {t('notificationPreferencesTitle')}
+          </h3>
+          <p className="text-xs text-slate-400 mt-1">{t('notificationPreferencesDesc')}</p>
+        </div>
+        <Icon name="arrowright" size={18} className="shrink-0 text-slate-400" />
+      </Link>
     </div>
   );
 }

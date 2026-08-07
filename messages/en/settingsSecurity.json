@@ -22,5 +22,7 @@
   "exportDataTitle": "Export My Data",
   "exportDataDesc": "Download your account, bookings, reviews and notifications as a JSON file.",
   "exportDataButton": "Download",
-  "exporting": "Preparing…"
+  "exporting": "Preparing…",
+  "notificationPreferencesTitle": "Notification Preferences",
+  "notificationPreferencesDesc": "Choose which notifications you want to receive."
 }

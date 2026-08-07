@@ -22,5 +22,7 @@
   "exportDataTitle": "Экспорт моих данных",
   "exportDataDesc": "Скачайте аккаунт, бронирования, отзывы и уведомления в виде JSON-файла.",
   "exportDataButton": "Скачать",
-  "exporting": "Подготовка…"
+  "exporting": "Подготовка…",
+  "notificationPreferencesTitle": "Уведомления",
+  "notificationPreferencesDesc": "Выберите, какие уведомления вы хотите получать."
 }

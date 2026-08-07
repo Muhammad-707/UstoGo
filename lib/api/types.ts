@@ -419,6 +419,35 @@ export interface NotificationItem {
   createdAt: string;
 }
 
+/** B-36 — every `NotificationType` -> enabled. Absence of an override means enabled. */
+export const NOTIFICATION_TYPES = [
+  'BOOKING_CREATED',
+  'BOOKING_ACCEPTED',
+  'BOOKING_REJECTED',
+  'BOOKING_STARTED',
+  'BOOKING_COMPLETED',
+  'BOOKING_CANCELLED',
+  'BOOKING_EXPIRED',
+  'BOOKING_RESCHEDULED',
+  'MASTER_REGISTERED',
+  'MASTER_APPROVED',
+  'MASTER_REJECTED',
+  'MASTER_DEACTIVATED',
+  'REVIEW_RECEIVED',
+  'REVIEW_REPLIED',
+  'REVIEW_INVITATION',
+  'BOOKING_REMINDER',
+  'MESSAGE_RECEIVED',
+  'SYSTEM_ANNOUNCEMENT',
+  'QUOTE_REQUESTED',
+  'QUOTE_RESPONDED',
+  'QUOTE_DECLINED',
+] as const;
+
+export type NotificationType = (typeof NOTIFICATION_TYPES)[number];
+
+export type NotificationPreferences = Record<NotificationType, boolean>;
+
 export interface Conversation {
   id: string;
   participantUserId: string;
@@ -488,6 +517,10 @@ export interface MasterStatus {
   approvalStatus: ApprovalStatus;
   isActive: boolean;
   rejectionReason?: string | null;
+  /** B-15 — null until the master has any resolved (completed/master-cancelled) booking. */
+  reliabilityScore: string | null;
+  /** B-24 — opted in to auto-accepting eligible bookings (also needs reliabilityScore >= 90). */
+  instantBookEnabled: boolean;
 }
 
 export interface Session {

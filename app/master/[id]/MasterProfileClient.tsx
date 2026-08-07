@@ -8,6 +8,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import { Icon } from '@/components/icons/LucideIcons';
 import { mastersApi } from '@/lib/api/endpoints';
 import { ApiError } from '@/lib/api/client';
+import { useAuth } from '@/contexts/AuthContext';
 import type { MasterPublic, MasterService, Review, WorkingDay, MasterCertificatePublic } from '@/lib/api/types';
 import { waLink } from '@/lib/whatsapp';
 import { getAvatarUrl, getCoverUrl, PLACEHOLDER_REVIEWER_AVATAR } from '@/lib/placeholders';
@@ -20,6 +21,7 @@ export default function MasterProfileClient() {
   const locale = useLocale();
   const params = useParams();
   const masterId = params?.id as string;
+  const { user } = useAuth();
 
   const [master, setMaster] = useState<MasterPublic | null>(null);
   const [services, setServices] = useState<MasterService[]>([]);
@@ -79,6 +81,14 @@ export default function MasterProfileClient() {
       cancelled = true;
     };
   }, [masterId]);
+
+  useEffect(() => {
+    if (!masterId || user?.role !== 'CLIENT') return;
+    // Fire-and-forget analytics for GET /masters/me/recently-viewed — never blocks or
+    // affects this page, so failures (e.g. a 404 race on a deactivated master) are
+    // silently ignored.
+    mastersApi.recordView(masterId).catch(() => {});
+  }, [masterId, user?.role]);
 
   if (loading) {
     return (

@@ -22,5 +22,7 @@
   "exportDataTitle": "Содироти Маълумоти Ман",
   "exportDataDesc": "Ҳисоб, фармоишҳо, тақризҳо ва огоҳиномаҳои худро ҳамчун файли JSON боргирӣ кунед.",
   "exportDataButton": "Боргирӣ",
-  "exporting": "Омодасозӣ…"
+  "exporting": "Омодасозӣ…",
+  "notificationPreferencesTitle": "Огоҳиномаҳо",
+  "notificationPreferencesDesc": "Интихоб кунед, кадом огоҳиномаҳоро мехоҳед қабул кунед."
 }

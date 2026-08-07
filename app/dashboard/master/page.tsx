@@ -8,10 +8,11 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useRequireAuth } from '@/hooks/useRequireAuth';
 import { bookingsApi, citiesApi, masterCabinetApi, mastersApi } from '@/lib/api/endpoints';
 import { ApiError } from '@/lib/api/client';
+import { downloadFile } from '@/lib/api/download';
 import { revalidateMastersCache } from '@/lib/api/revalidate';
 import { getBookingsSocket } from '@/lib/bookings/socket';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
-import type { Booking, City, MasterNps, MasterStats, WorkingDay } from '@/lib/api/types';
+import type { Booking, City, MasterNps, MasterStats, MasterStatus, WorkingDay } from '@/lib/api/types';
 import { getAvatarUrl } from '@/lib/placeholders';
 import { FilterContainer, FilterItem } from '@/components/ui/FilterAnimate';
 import { AnalyticsSection } from '@/components/master/AnalyticsSection';
@@ -33,11 +34,25 @@ export default function MasterDashboardPage() {
   const [schedule, setSchedule] = useState<WorkingDay[]>([]);
   const [activeServicesCount, setActiveServicesCount] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [exportingSchedule, setExportingSchedule] = useState(false);
+
+  const handleExportSchedule = useCallback(async () => {
+    setExportingSchedule(true);
+    try {
+      await downloadFile('/bookings/me/schedule.ics', 'ustogo-schedule.ics');
+    } catch {
+      // best-effort — no toast system wired up here yet
+    } finally {
+      setExportingSchedule(false);
+    }
+  }, []);
   const [error, setError] = useState<string | null>(null);
   const [actingId, setActingId] = useState<string | null>(null);
   const [stats, setStats] = useState<MasterStats | null>(null);
   const [statsLoading, setStatsLoading] = useState(true);
   const [nps, setNps] = useState<MasterNps | null>(null);
+  const [status, setStatus] = useState<MasterStatus | null>(null);
+  const [togglingInstantBook, setTogglingInstantBook] = useState(false);
 
   useEffect(() => {
     citiesApi.list().then((list) => setCities(list)).catch(() => setCities([]));
@@ -50,7 +65,21 @@ export default function MasterDashboardPage() {
       .catch(() => setStats(null))
       .finally(() => setStatsLoading(false));
     mastersApi.myNps().then(setNps).catch(() => setNps(null));
+    masterCabinetApi.myStatus().then(setStatus).catch(() => setStatus(null));
   }, []);
+
+  const handleToggleInstantBook = async () => {
+    if (!status) return;
+    setTogglingInstantBook(true);
+    try {
+      const updated = await masterCabinetApi.setInstantBook(!status.instantBookEnabled);
+      setStatus(updated);
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : 'Failed to update instant-book.');
+    } finally {
+      setTogglingInstantBook(false);
+    }
+  };
 
   useEffect(() => {
     if (!masterProfile?.id) return;
@@ -322,6 +351,46 @@ export default function MasterDashboardPage() {
         </FilterContainer>
       )}
 
+      {/* Reliability & Instant Book */}
+      {status && masterProfile?.approvalStatus === 'APPROVED' && (
+        <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-500 text-white flex items-center justify-center shadow-lg shrink-0">
+              <Icon name="shieldcheck" size={22} />
+            </div>
+            <div>
+              <h3 className="text-sm font-extrabold text-slate-900 dark:text-white">{t('reliabilityScoreTitle')}</h3>
+              <p className="text-2xl font-extrabold text-slate-900 dark:text-white mt-0.5">
+                {status.reliabilityScore !== null ? `${Number(status.reliabilityScore).toFixed(0)}%` : '—'}
+              </p>
+              <p className="text-[11px] text-slate-400 mt-0.5 max-w-sm">{t('reliabilityScoreDesc')}</p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3 shrink-0">
+            <div className="text-right">
+              <p className="text-xs font-bold text-slate-900 dark:text-white">{t('instantBookTitle')}</p>
+              <p className="text-[10px] text-slate-400 max-w-[160px]">{t('instantBookDesc')}</p>
+            </div>
+            <button
+              onClick={handleToggleInstantBook}
+              disabled={togglingInstantBook}
+              role="switch"
+              aria-checked={status.instantBookEnabled}
+              className={`relative w-11 h-6 rounded-full shrink-0 transition disabled:opacity-60 ${
+                status.instantBookEnabled ? 'bg-emerald-500' : 'bg-slate-300 dark:bg-slate-700'
+              }`}
+            >
+              <span
+                className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform ${
+                  status.instantBookEnabled ? 'translate-x-5' : 'translate-x-0'
+                }`}
+              />
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Metrics Grid */}
       <FilterContainer className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {metrics.map((m, idx) => (
@@ -493,9 +562,19 @@ export default function MasterDashboardPage() {
         <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-4 shadow-xl">
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-bold text-slate-900 dark:text-white">{t('weeklySchedule')}</h3>
-            <Link href="/settings/schedule" className="text-xs font-bold text-blue-600 dark:text-sky-400 hover:underline">
-              {t('editSchedule')}
-            </Link>
+            <div className="flex items-center gap-4">
+              <button
+                onClick={handleExportSchedule}
+                disabled={exportingSchedule}
+                className="text-xs font-bold text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-sky-400 disabled:opacity-60 flex items-center gap-1.5"
+              >
+                <Icon name="calendar" size={13} />
+                {exportingSchedule ? t('exportingSchedule') : t('exportSchedule')}
+              </button>
+              <Link href="/settings/schedule" className="text-xs font-bold text-blue-600 dark:text-sky-400 hover:underline">
+                {t('editSchedule')}
+              </Link>
+            </div>
           </div>
           {orderedSchedule.length === 0 ? (
             <p className="text-xs text-slate-400 font-semibold">{t('noScheduleSet')}</p>

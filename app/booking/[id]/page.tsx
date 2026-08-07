@@ -7,6 +7,7 @@ import { useTranslations } from 'next-intl';
 import { Icon } from '@/components/icons/LucideIcons';
 import { bookingsApi, citiesApi, reviewsApi } from '@/lib/api/endpoints';
 import { ApiError } from '@/lib/api/client';
+import { downloadFile } from '@/lib/api/download';
 import { waLink, waBookingText } from '@/lib/whatsapp';
 import { getBookingsSocket } from '@/lib/bookings/socket';
 import type { BookingDetail, City } from '@/lib/api/types';
@@ -57,6 +58,7 @@ export default function BookingDetailsPage() {
   const [error, setError] = useState<string | null>(null);
   const [actionPending, setActionPending] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
+  const [downloadingReceipt, setDownloadingReceipt] = useState(false);
   const [alreadyReviewed, setAlreadyReviewed] = useState(false);
   const [alreadyClientRated, setAlreadyClientRated] = useState(false);
 
@@ -157,6 +159,17 @@ export default function BookingDetailsPage() {
   const handleCancel = () => {
     const reason = window.prompt('Reason for cancellation (optional):') ?? undefined;
     runAction(() => bookingsApi.cancel(bookingId, reason || undefined));
+  };
+
+  const handleDownloadReceipt = async () => {
+    setDownloadingReceipt(true);
+    try {
+      await downloadFile(`/bookings/${bookingId}/receipt.pdf`, `ustogo-receipt-${bookingId}.pdf`);
+    } catch {
+      // best-effort — no toast system wired up here yet
+    } finally {
+      setDownloadingReceipt(false);
+    }
   };
 
   if (loading) {
@@ -265,6 +278,17 @@ export default function BookingDetailsPage() {
               <Icon name="Star" size={16} />
               <span>{t('rateClient')}</span>
             </Link>
+          )}
+
+          {(isClient || isMaster) && booking.status === 'COMPLETED' && (
+            <button
+              onClick={handleDownloadReceipt}
+              disabled={downloadingReceipt}
+              className="px-5 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-extrabold text-xs hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center gap-2 disabled:opacity-60"
+            >
+              <Icon name="filetext" size={16} />
+              <span>{downloadingReceipt ? t('downloadingReceipt') : t('downloadReceipt')}</span>
+            </button>
           )}
 
           {booking.masterWhatsappPhone && ['ACCEPTED', 'IN_PROGRESS'].includes(booking.status) && (() => {
