@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { useTranslations } from 'next-intl';
@@ -14,14 +14,53 @@ const ShopMap = dynamic(() => import('@/components/marketplace/ShopMap'), {
   loading: () => <div className="h-[520px] w-full rounded-3xl bg-slate-50 dark:bg-slate-800/40 animate-pulse" />,
 });
 
+type Origin = { lat: number; lng: number };
+
 export default function ShopsPage() {
   const t = useTranslations('shops');
   const [shops, setShops] = useState<MarketplaceShop[]>([]);
   const [loading, setLoading] = useState(true);
+  const [origin, setOrigin] = useState<Origin | null>(null);
+  const [locating, setLocating] = useState(false);
+  const [geoDenied, setGeoDenied] = useState(false);
+
+  // Bare on first paint (the whole map), re-fetched with lat/lng once the user asks
+  // for "near me" — the backend does the distance sort, so the list re-orders itself.
+  const load = useCallback((at: Origin | null) => {
+    setLoading(true);
+    marketplaceShopsApi
+      .list(at ? { lat: at.lat, lng: at.lng } : {})
+      .then(setShops)
+      .catch(() => setShops([]))
+      .finally(() => setLoading(false));
+  }, []);
 
   useEffect(() => {
-    marketplaceShopsApi.list().then(setShops).catch(() => setShops([])).finally(() => setLoading(false));
-  }, []);
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- fetches the full pin set on mount
+    load(null);
+  }, [load]);
+
+  const handleNearMe = () => {
+    if (!navigator.geolocation) {
+      setGeoDenied(true);
+      return;
+    }
+    setLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const at = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+        setOrigin(at);
+        setGeoDenied(false);
+        setLocating(false);
+        load(at);
+      },
+      () => {
+        setGeoDenied(true);
+        setLocating(false);
+      },
+      { enableHighAccuracy: true, timeout: 8000 },
+    );
+  };
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8">
@@ -35,22 +74,40 @@ export default function ShopsPage() {
               {t('badge')}
             </span>
             <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white mt-0.5">{t('title')}</h1>
-            <p className="text-xs text-slate-400 font-semibold mt-1">{t('subtitle')}</p>
+            <p className="text-xs text-slate-400 font-semibold mt-1">
+              {origin ? t('nearYouSubtitle', { count: shops.length }) : t('subtitle')}
+            </p>
           </div>
         </div>
-        <Link
-          href="/marketplace"
-          className="shrink-0 flex items-center gap-2 px-5 py-3 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-xs font-bold shadow-lg shadow-emerald-600/25 transition"
-        >
-          <Icon name="shoppingbag" size={16} />
-          {t('browseShop')}
-        </Link>
+        <div className="flex items-center gap-2 shrink-0">
+          <button
+            onClick={handleNearMe}
+            disabled={locating}
+            className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold disabled:opacity-60 transition"
+          >
+            <Icon name="navigation" size={16} className={locating ? 'animate-pulse' : ''} />
+            {locating ? t('locating') : t('nearMe')}
+          </button>
+          <Link
+            href="/marketplace"
+            className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-xs font-bold shadow-lg shadow-emerald-600/25 transition"
+          >
+            <Icon name="shoppingbag" size={16} />
+            {t('browseShop')}
+          </Link>
+        </div>
       </div>
+
+      {geoDenied && (
+        <div className="px-5 py-4 rounded-2xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900 text-xs font-semibold text-amber-700 dark:text-amber-400">
+          {t('geoDenied')}
+        </div>
+      )}
 
       {loading ? (
         <div className="h-[520px] w-full rounded-3xl bg-slate-50 dark:bg-slate-800/40 animate-pulse" />
       ) : (
-        <ShopMap shops={shops} />
+        <ShopMap shops={shops} origin={origin} />
       )}
 
       {!loading && shops.length === 0 && (
@@ -68,12 +125,26 @@ export default function ShopsPage() {
                   <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
                     <Icon name="store" size={18} />
                   </div>
-                  <div className="min-w-0">
+                  <div className="min-w-0 flex-1">
                     <h3 className="font-extrabold text-slate-900 dark:text-white text-sm truncate">{shop.name}</h3>
                     <p className="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold">{shop.cityName}</p>
                   </div>
+                  {shop.distanceKm != null && (
+                    <span className="shrink-0 px-2.5 py-1 rounded-full bg-emerald-600 text-white text-[10px] font-extrabold">
+                      {t('kmAway', { km: shop.distanceKm })}
+                    </span>
+                  )}
                 </div>
+                {shop.description && (
+                  <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">{shop.description}</p>
+                )}
                 <p className="text-xs text-slate-500 dark:text-slate-400">{shop.address}</p>
+                {shop.workingHours && (
+                  <p className="flex items-center gap-1.5 text-[11px] text-slate-500 dark:text-slate-400 font-semibold">
+                    <Icon name="clock" size={12} />
+                    {shop.workingHours}
+                  </p>
+                )}
                 {shop.phone && (
                   <a href={`tel:${shop.phone}`} className="flex items-center gap-1.5 text-xs font-bold text-slate-700 dark:text-slate-200">
                     <Icon name="user" size={12} />

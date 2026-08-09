@@ -746,13 +746,18 @@ export interface Product {
 export interface MarketplaceShop {
   id: string;
   name: string;
+  /** What this branch stocks — free text the admin writes next to the pin. */
+  description: string | null;
   address: string;
   cityId: string;
   cityName: string;
   latitude: number;
   longitude: number;
   phone: string | null;
+  workingHours: string | null;
   isActive: boolean;
+  /** Present only when the request carried a `lat`/`lng` geolocation fix. */
+  distanceKm?: number | null;
   createdAt: string;
 }
 

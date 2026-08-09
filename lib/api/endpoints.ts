@@ -400,7 +400,13 @@ export const bannersApi = {
 
 // ---- Marketplace shops (public shop-locator map) ----
 export const marketplaceShopsApi = {
-  list: () => api.get<MarketplaceShop[]>('/marketplace-shops', undefined, false),
+  /**
+   * Called bare this is the whole map — every active branch. Passing `lat`/`lng` (the
+   * browser geolocation fix) turns it into "shops near you": each result gains
+   * `distanceKm` and the list comes back ordered nearest-first.
+   */
+  list: (query: { lat?: number; lng?: number; radiusKm?: number; cityId?: string; limit?: number } = {}) =>
+    api.get<MarketplaceShop[]>('/marketplace-shops', query, false),
 };
 
 // ---- Product categories (public) ----
@@ -568,20 +574,24 @@ export const adminApi = {
     list: () => api.get<MarketplaceShop[]>('/admin/marketplace-shops'),
     create: (data: {
       name: string;
+      description?: string;
       address: string;
       cityId: string;
       latitude: number;
       longitude: number;
       phone?: string;
+      workingHours?: string;
       isActive?: boolean;
     }) => api.post<MarketplaceShop>('/admin/marketplace-shops', data),
     update: (id: string, data: Partial<{
       name: string;
+      description: string;
       address: string;
       cityId: string;
       latitude: number;
       longitude: number;
       phone: string;
+      workingHours: string;
       isActive: boolean;
     }>) => api.patch<MarketplaceShop>(`/admin/marketplace-shops/${id}`, data),
     remove: (id: string) => api.delete<void>(`/admin/marketplace-shops/${id}`),

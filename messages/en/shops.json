@@ -4,5 +4,10 @@
   "subtitle": "Physical retail partners stocking the UstoGo catalogue",
   "browseShop": "Browse the Shop",
   "noShops": "No shops listed yet.",
-  "openInMaps": "Open in Maps"
+  "openInMaps": "Open in Maps",
+  "nearMe": "Near me",
+  "locating": "Locating...",
+  "geoDenied": "Could not determine your location. Allow geolocation in your browser.",
+  "nearYouSubtitle": "{count} shops near you, nearest first",
+  "kmAway": "{km} km"
 }

@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Circle } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useTranslations } from 'next-intl';
@@ -27,26 +27,51 @@ const shopPin = pinIcon('#059669');
 
 interface ShopMapProps {
   shops: MarketplaceShop[];
+  /** The caller's own position, once they have asked for "shops near me". */
+  origin?: { lat: number; lng: number } | null;
 }
 
-export default function ShopMap({ shops }: ShopMapProps) {
+export default function ShopMap({ shops, origin }: ShopMapProps) {
   const t = useTranslations('shops');
-  const center: [number, number] = shops[0] ? [shops[0].latitude, shops[0].longitude] : DUSHANBE_CENTER;
+
+  // With a geolocation fix the map opens tight on the user; otherwise it frames the
+  // whole country, since the branches span Khorog to Panjakent.
+  const center: [number, number] = origin
+    ? [origin.lat, origin.lng]
+    : shops[0]
+      ? [shops[0].latitude, shops[0].longitude]
+      : DUSHANBE_CENTER;
 
   return (
     <div className="h-[520px] w-full rounded-3xl overflow-hidden border border-slate-200 dark:border-slate-800 shadow-sm relative z-0">
-      <MapContainer center={center} zoom={shops.length ? 6 : 6} className="h-full w-full">
+      <MapContainer center={center} zoom={origin ? 11 : 6} className="h-full w-full">
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
+
+        {origin && (
+          <Circle
+            center={[origin.lat, origin.lng]}
+            radius={600}
+            pathOptions={{ color: '#2563eb', fillColor: '#3b82f6', fillOpacity: 0.25, weight: 2 }}
+          />
+        )}
+
         {shops.map((shop) => (
           <Marker key={shop.id} position={[shop.latitude, shop.longitude]} icon={shopPin}>
             <Popup>
-              <div className="space-y-1.5 min-w-[180px]">
+              <div className="space-y-1.5 min-w-[190px]">
                 <p className="text-xs font-bold text-slate-900">{shop.name}</p>
+                {shop.distanceKm != null && (
+                  <p className="text-[10px] font-extrabold text-emerald-600">
+                    {t('kmAway', { km: shop.distanceKm })}
+                  </p>
+                )}
+                {shop.description && <p className="text-[10px] text-slate-600">{shop.description}</p>}
                 <p className="text-[10px] text-slate-500">{shop.address}</p>
                 <p className="text-[10px] text-slate-500">{shop.cityName}</p>
+                {shop.workingHours && <p className="text-[10px] text-slate-500">{shop.workingHours}</p>}
                 {shop.phone && (
                   <a href={`tel:${shop.phone}`} className="block text-[10px] font-bold text-emerald-600">
                     {shop.phone}

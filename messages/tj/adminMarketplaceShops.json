@@ -7,8 +7,6 @@
   "nameLabel": "Ном",
   "selectCity": "Шаҳрро интихоб кунед",
   "addressLabel": "Суроға",
-  "latitudeLabel": "Арз (Latitude)",
-  "longitudeLabel": "Тӯл (Longitude)",
   "phoneLabel": "Телефон",
   "isActiveLabel": "Фаъол",
   "save": "Захира кардан",
@@ -20,5 +18,11 @@
   "loadFailed": "Боркунии мағозаҳо номуваффақ шуд",
   "saveFailed": "Захираи мағоза номуваффақ шуд",
   "deleteFailed": "Нест кардани мағоза номуваффақ шуд",
-  "confirmDelete": "Ин мағозаро нест кунем?"
+  "confirmDelete": "Ин мағозаро нест кунем?",
+  "descriptionLabel": "Тавсифи мағоза (чӣ мефурӯшад, расонидан ва ғ.)",
+  "workingHoursLabel": "Вақти корӣ (мас. Ҳар рӯз 08:00–19:00)",
+  "pickPointLabel": "Ҷойи мағоза дар харита",
+  "pickPointHint": "Ба харита зер кунед ё нишонаро кашед, то ҷойи дақиқи мағозаро интихоб кунед.",
+  "noPointYet": "Ҳанӯз нуқта интихоб нашудааст",
+  "pickPointFirst": "Аввал ҷойи мағозаро дар харита интихоб кунед."
 }

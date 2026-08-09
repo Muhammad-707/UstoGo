@@ -7,8 +7,6 @@
   "nameLabel": "Name",
   "selectCity": "Select city",
   "addressLabel": "Address",
-  "latitudeLabel": "Latitude",
-  "longitudeLabel": "Longitude",
   "phoneLabel": "Phone",
   "isActiveLabel": "Active",
   "save": "Save",
@@ -20,5 +18,11 @@
   "loadFailed": "Failed to load shops",
   "saveFailed": "Failed to save the shop",
   "deleteFailed": "Failed to delete the shop",
-  "confirmDelete": "Delete this shop?"
+  "confirmDelete": "Delete this shop?",
+  "descriptionLabel": "Shop description (what it stocks, delivery, etc.)",
+  "workingHoursLabel": "Working hours (e.g. Daily 08:00–19:00)",
+  "pickPointLabel": "Shop location on the map",
+  "pickPointHint": "Click the map or drag the pin to place the shop exactly.",
+  "noPointYet": "No point picked yet",
+  "pickPointFirst": "Pick the shop location on the map first."
 }
