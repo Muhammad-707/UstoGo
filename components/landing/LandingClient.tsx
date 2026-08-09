@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Icon } from '@/components/icons/LucideIcons';
 import { useTranslations } from 'next-intl';
+
+import { useMoney } from '@/lib/money';
 import type { Category, MasterPublic } from '@/lib/api/types';
 import { getCategoryVisual } from '@/lib/categoryVisuals';
 import { getAvatarUrl, getCoverUrl } from '@/lib/placeholders';
@@ -41,6 +43,7 @@ export default function LandingClient({
   allMasters: MasterPublic[];
 }) {
   const t = useTranslations('common');
+  const { perHour } = useMoney();
   const tCategories = useTranslations('categories');
 
   const [categoryFilter, setCategoryFilter] = useState<'all' | 'popular'>('all');
@@ -344,7 +347,7 @@ export default function LandingClient({
                   <div className="text-right">
                     <span className="text-xs text-slate-500 dark:text-slate-400">{t('hourlyRate')}</span>
                     <p className="text-xl font-extrabold text-slate-900 dark:text-white">
-                      {master.priceFrom ? `$${master.priceFrom}/h` : '—'}
+                      {master.priceFrom ? perHour(master.priceFrom) : '—'}
                     </p>
                   </div>
                 </div>

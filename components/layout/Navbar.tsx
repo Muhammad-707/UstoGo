@@ -9,13 +9,14 @@ import { setLocale } from '@/i18n/actions';
 import { locales, localeMeta, type Locale } from '@/i18n/locales';
 import { useAuth, dashboardPathFor } from '@/contexts/AuthContext';
 import { cartApi, notificationsApi } from '@/lib/api/endpoints';
-import type { NotificationItem } from '@/lib/api/types';
+import { NOTIFICATION_TYPES, type NotificationItem } from '@/lib/api/types';
 
 export const Navbar: React.FC = () => {
   const pathname = usePathname();
   const router = useRouter();
   const lang = useLocale() as Locale;
   const t = useTranslations('common');
+  const tn = useTranslations('notificationTypes');
   const [, startTransition] = useTransition();
   const setLang = (l: Locale) => {
     startTransition(() => {
@@ -79,6 +80,26 @@ export const Navbar: React.FC = () => {
     }
   };
 
+  /** A guest is shown the client's chrome — that is who the signup funnel is for. */
+  const isClientView = !user || user.role === 'CLIENT';
+
+  /** `tj` is not a language tag (Tajik is `tg`), so dates need the mapped one. */
+  const intlLocale = ({ tj: 'tg-TJ', ru: 'ru-RU', en: 'en-US' } as Record<string, string>)[lang] ?? 'en-US';
+
+  const notificationTitle = (type: string): string => {
+    const known = (NOTIFICATION_TYPES as readonly string[]).includes(type);
+    return known ? tn(type) : tn('fallback');
+  };
+
+  const notificationIcon = (type: string): string => {
+    if (type.startsWith('BOOKING')) return 'Clock';
+    if (type.startsWith('REVIEW')) return 'Star';
+    if (type.startsWith('QUOTE')) return 'FileText';
+    if (type === 'MESSAGE_RECEIVED') return 'MessageSquare';
+    if (type === 'ORDER_PLACED') return 'shoppingbag';
+    return 'CheckCircle2';
+  };
+
   const navLinks = [
     { href: '/', label: t('landing') },
     { href: '/home', label: t('home') },
@@ -140,15 +161,6 @@ export const Navbar: React.FC = () => {
             );
           })}
 
-          {/* Dashboard link (only the user's own dashboard, when logged in) */}
-          {user && (
-            <Link
-              href={dashboardPathFor(user.role)}
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white hover:bg-slate-100/60 dark:hover:bg-slate-800/60 transition-all"
-            >
-              {t('myDashboard')}
-            </Link>
-          )}
         </nav>
 
         {/* Right Header Actions */}
@@ -221,21 +233,43 @@ export const Navbar: React.FC = () => {
                         <p className="py-4 text-center text-xs text-slate-400">{t('noNotifications')}</p>
                       )}
                       {notifications.map((n) => {
-                        const title = (n.payload?.title as string) || '';
+                        // Only a few notification types carry a prebuilt title/message in
+                        // their payload; the rest arrived as a bare timestamp with two
+                        // empty lines above it. The type itself is always present and is
+                        // enough to say what happened, in the reader's own language.
+                        const title = (n.payload?.title as string) || notificationTitle(n.type);
                         const message = (n.payload?.message as string) || '';
+
                         return (
-                          <div key={n.id} className="py-3 flex gap-3 items-start hover:bg-slate-50 dark:hover:bg-slate-800/40 px-2 rounded-xl transition">
-                            <div className="p-2 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-sky-400 mt-0.5">
-                              <Icon name={n.type === 'booking' ? 'Clock' : n.type === 'promo' ? 'Sparkles' : 'CheckCircle2'} size={16} />
+                          <div
+                            key={n.id}
+                            className={`py-3 flex gap-3 items-start px-2 rounded-xl transition ${
+                              n.isRead
+                                ? 'hover:bg-slate-50 dark:hover:bg-slate-800/40'
+                                : 'bg-blue-50/60 dark:bg-blue-950/30 hover:bg-blue-50 dark:hover:bg-blue-950/50'
+                            }`}
+                          >
+                            <div className="p-2 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-sky-400 mt-0.5 shrink-0">
+                              <Icon name={notificationIcon(n.type)} size={16} />
                             </div>
-                            <div>
-                              <p className="text-xs font-bold text-slate-900 dark:text-slate-100">{title}</p>
-                              <p className="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-2 mt-0.5">{message}</p>
-                              <span className="text-[10px] text-slate-400 mt-1 block">{new Date(n.createdAt).toLocaleString()}</span>
+                            <div className="min-w-0 flex-1">
+                              <div className="flex items-start gap-2">
+                                <p className="text-xs font-bold text-slate-900 dark:text-slate-100 flex-1">{title}</p>
+                                {!n.isRead && <span className="mt-1 w-2 h-2 rounded-full bg-blue-600 shrink-0" />}
+                              </div>
+                              {message && (
+                                <p className="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-2 mt-0.5">{message}</p>
+                              )}
+                              <span className="text-[10px] text-slate-400 mt-1 block">
+                                {new Date(n.createdAt).toLocaleString(intlLocale)}
+                              </span>
                             </div>
                           </div>
                         );
                       })}
+                      {notifications.length === 0 && (
+                        <p className="py-8 text-center text-xs font-semibold text-slate-400">{tn('empty')}</p>
+                      )}
                     </div>
                   </div>
                 )}
@@ -318,14 +352,18 @@ export const Navbar: React.FC = () => {
               )
             )}
 
-            <Link
-              href="/booking"
-              className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white text-xs font-bold shadow-lg shadow-blue-600/25 btn-ripple transition duration-200 flex items-center gap-2"
-            >
-              <Icon name="Calendar" size={16} />
-              <span className="hidden sm:inline">{t('bookService')}</span>
-              <span className="sm:hidden">{t('bookShort')}</span>
-            </Link>
+            {/* Booking is a client action: a master fulfils jobs and an admin moderates
+                them, so neither has any use for "book a service" in their own header. */}
+            {isClientView && (
+              <Link
+                href="/booking"
+                className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white text-xs font-bold shadow-lg shadow-blue-600/25 btn-ripple transition duration-200 flex items-center gap-2"
+              >
+                <Icon name="Calendar" size={16} />
+                <span className="hidden sm:inline">{t('bookService')}</span>
+                <span className="sm:hidden">{t('bookShort')}</span>
+              </Link>
+            )}
           </div>
 
           {/* Mobile Menu Button */}

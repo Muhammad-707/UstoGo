@@ -4,6 +4,8 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Icon } from '@/components/icons/LucideIcons';
 import { useTranslations } from 'next-intl';
+
+import { useMoney } from '@/lib/money';
 import { bookingsApi, mastersApi, referralApi, reviewsApi } from '@/lib/api/endpoints';
 import { getBookingsSocket } from '@/lib/bookings/socket';
 import { useRequireAuth } from '@/hooks/useRequireAuth';
@@ -15,6 +17,7 @@ import { FilterContainer, FilterItem, InViewRow } from '@/components/ui/FilterAn
 
 export default function ClientDashboardPage() {
   const t = useTranslations('dashboardClient');
+  const { money } = useMoney();
   useRequireAuth(['CLIENT']);
   const { favoriteIds } = useFavorites();
 
@@ -108,7 +111,7 @@ export default function ClientDashboardPage() {
   const unreviewedCompleted = completed.filter((b) => !reviewedBookingIds.has(b.id));
 
   const metrics = [
-    { title: t('metricTotalSpent'), value: `$${totalSpent.toFixed(2)}`, icon: 'DollarSign', color: 'from-blue-600 to-sky-500' },
+    { title: t('metricTotalSpent'), value: money(totalSpent), icon: 'DollarSign', color: 'from-blue-600 to-sky-500' },
     { title: t('metricActiveBookings'), value: t('metricActiveBookingsValue', { count: active.length }), icon: 'Clock', color: 'from-amber-500 to-orange-500' },
     { title: t('metricCompletedProjects'), value: t('metricCompletedProjectsValue', { count: completed.length }), icon: 'CheckCircle2', color: 'from-emerald-500 to-teal-500' },
     { title: t('metricSavedMasters'), value: t('metricSavedMastersValue', { count: favoriteIds.length }), icon: 'Heart', color: 'from-purple-500 to-pink-500' },

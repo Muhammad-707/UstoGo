@@ -3,6 +3,8 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
+
+import { useMoney } from '@/lib/money';
 import { Icon } from '@/components/icons/LucideIcons';
 import { bannersApi, mastersApi } from '@/lib/api/endpoints';
 import type { Banner, MasterPublic } from '@/lib/api/types';
@@ -65,6 +67,7 @@ export const HERO_SLIDES: SlideData[] = [
 
 export default function HeroSlider() {
   const t = useTranslations('common');
+  const { perHour } = useMoney();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -324,7 +327,7 @@ export default function HeroSlider() {
                 </div>
               </div>
               <div className="mt-4 pt-3 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs">
-                <span className="font-bold text-slate-900 dark:text-white">{master.priceFrom ? `$${master.priceFrom}/hr` : '—'}</span>
+                <span className="font-bold text-slate-900 dark:text-white">{master.priceFrom ? perHour(master.priceFrom) : '—'}</span>
                 <Link href={`/master/${master.id}`} className="text-blue-600 dark:text-sky-400 font-bold hover:underline flex items-center gap-1">
                   <span>{t('viewDetails')}</span>
                   <Icon name="ChevronRight" size={14} />

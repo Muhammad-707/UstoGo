@@ -4,6 +4,8 @@ import React, { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Icon } from '@/components/icons/LucideIcons';
 import { useTranslations } from 'next-intl';
+
+import { useWeekdays } from '@/lib/datetime';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRequireAuth } from '@/hooks/useRequireAuth';
 import { bookingsApi, citiesApi, masterCabinetApi, mastersApi } from '@/lib/api/endpoints';
@@ -21,6 +23,7 @@ const WEEKDAYS = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'frida
 
 export default function MasterDashboardPage() {
   const t = useTranslations('dashboardMaster');
+  const weekdays = useWeekdays();
   useRequireAuth(['MASTER']);
   const { user, refreshUser } = useAuth();
   const masterProfile = user?.masterProfile;
@@ -679,7 +682,7 @@ export default function MasterDashboardPage() {
                   >
                     <div className="flex items-center gap-3">
                       <div className="w-10 text-center">
-                        <p className="text-[10px] font-bold uppercase text-slate-400">{d.toLocaleDateString([], { weekday: 'short' })}</p>
+                        <p className="text-[10px] font-bold uppercase text-slate-400">{weekdays.ofDate(d)}</p>
                         <p className="text-sm font-extrabold text-slate-900 dark:text-white">{d.getDate()}</p>
                       </div>
                       <span className="text-xs font-bold capitalize text-slate-700 dark:text-slate-300">

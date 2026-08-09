@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Icon } from '@/components/icons/LucideIcons';
 import { useTranslations } from 'next-intl';
+
+import { useMoney } from '@/lib/money';
 import { bookingsApi } from '@/lib/api/endpoints';
 import type { Category, MasterPublic, Booking } from '@/lib/api/types';
 import { getCategoryVisual } from '@/lib/categoryVisuals';
@@ -34,6 +36,7 @@ export default function ClientHomePage({
   allMasters: MasterPublic[];
 }) {
   const t = useTranslations('common');
+  const { perHour } = useMoney();
   const { user } = useAuth();
 
   const [activeBooking, setActiveBooking] = useState<Booking | null>(null);
@@ -175,7 +178,7 @@ export default function ClientHomePage({
                     {cat.name}
                   </h4>
                   <p className="text-[10px] text-slate-400 font-semibold">
-                    {stat ? `${t('mastersCountShort', { count: stat.count })}${stat.minPrice ? ` · $${stat.minPrice}/h` : ''}` : ' '}
+                    {stat ? `${t('mastersCountShort', { count: stat.count })}${stat.minPrice ? ` · ${perHour(stat.minPrice)}` : ''}` : ' '}
                   </p>
                 </div>
               </Link>
@@ -227,7 +230,7 @@ export default function ClientHomePage({
                 <div>
                   <span className="text-[10px] text-slate-400 uppercase font-bold block">{t('hourlyRate')}</span>
                   <span className="text-sm font-extrabold text-slate-900 dark:text-white">
-                    {m.priceFrom ? `$${m.priceFrom}/hr` : '—'}
+                    {m.priceFrom ? perHour(m.priceFrom) : '—'}
                   </span>
                 </div>
                 <Link

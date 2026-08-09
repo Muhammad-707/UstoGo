@@ -3,7 +3,9 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
+
+import { formatAmount } from '@/lib/money';
 import { Icon } from '@/components/icons/LucideIcons';
 import { favoritesApi } from '@/lib/api/endpoints';
 import type { MasterPublic } from '@/lib/api/types';
@@ -14,6 +16,7 @@ import { ClientPageHeader } from '@/components/client/ClientPageHeader';
 
 export default function FavoritesPage() {
   const t = useTranslations('favorites');
+  const locale = useLocale();
   const { favoriteIds, toggleFavorite } = useFavorites();
   const [masters, setMasters] = useState<MasterPublic[]>([]);
   const [loading, setLoading] = useState(true);
@@ -96,7 +99,7 @@ export default function FavoritesPage() {
                 )}
                 <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex justify-between items-center text-xs">
                   <span className="font-bold text-slate-900 dark:text-white">
-                    {m.priceFrom ? t('hourlyRate', { rate: `$${m.priceFrom}` }) : '—'}
+                    {m.priceFrom ? t('hourlyRate', { rate: formatAmount(m.priceFrom, locale) }) : '—'}
                   </span>
                   {unavailable ? (
                     <span className="px-4 py-2 rounded-xl bg-slate-200 dark:bg-slate-800 text-slate-500 font-bold cursor-not-allowed">

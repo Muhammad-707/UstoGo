@@ -1,7 +1,7 @@
 'use client';
 
 import { motion, AnimatePresence, type Variants } from 'framer-motion';
-import { createContext, useContext, type ReactNode } from 'react';
+import { Children, createContext, useContext, type ReactNode } from 'react';
 
 // Smooth, non-bouncy stagger: children fade/slide in one after another.
 export const staggerContainerVariants: Variants = {
@@ -50,9 +50,17 @@ export function FilterContainer({
   className?: string;
   children: ReactNode;
 }) {
+  // Keyed on the child count so a batch that arrives *after* the container scrolled into
+  // view still animates. `viewport.once` fires exactly once, and a container that was
+  // empty at that moment — which is every list still waiting on its fetch — would leave
+  // every later child parked at `hidden`, i.e. `opacity: 0`. That is why the marketplace
+  // rendered a blank gap where its category chips should be: they were there, invisible.
+  const count = Children.count(children);
+
   return (
     <StaggerContext.Provider value={true}>
       <motion.div
+        key={count}
         initial="hidden"
         whileInView="show"
         viewport={VIEWPORT}

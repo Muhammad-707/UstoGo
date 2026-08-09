@@ -9,7 +9,7 @@
   "verifiedOnly": "Танҳо устоҳои санҷидашуда",
   "minRating": "Баҳои ҳадди ақал",
   "maxRate": "Нархи ҳадди аксар",
-  "perHour": "${price}/соат",
+  "perHour": "{price} сомонӣ/соат",
   "showingResults": "Намоиш дода мешавад <highlight>{count}</highlight> усто",
   "gridView": "Намоиши тахтача",
   "listView": "Намоиши рӯйхат",

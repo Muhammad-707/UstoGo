@@ -167,7 +167,8 @@ export const citiesApi = {
 
 // ---- Categories ----
 export const categoriesApi = {
-  tree: () => api.get<Category[]>('/categories', undefined, false),
+  /** `locale` is only needed by server components, which cannot read the cookie. */
+  tree: (locale?: string) => api.get<Category[]>('/categories', undefined, false, locale),
   bySlug: (slug: string) => api.get<Category>(`/categories/${slug}`, undefined, false),
 };
 
@@ -188,7 +189,7 @@ export const mastersApi = {
     lat?: number;
     lng?: number;
     radiusKm?: number;
-  }) => api.get<Paginated<MasterPublic>>('/masters', query, false),
+  }, locale?: string) => api.get<Paginated<MasterPublic>>('/masters', query, false, locale),
 
   byId: (id: string) => api.get<MasterPublic>(`/masters/${id}`, undefined, false),
 

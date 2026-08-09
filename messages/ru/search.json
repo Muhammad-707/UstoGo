@@ -9,7 +9,7 @@
   "verifiedOnly": "Только проверенные мастера",
   "minRating": "Минимальный рейтинг",
   "maxRate": "Макс. ставка",
-  "perHour": "${price}/ч",
+  "perHour": "{price} сомони/ч",
   "showingResults": "Показано <highlight>{count}</highlight> мастеров",
   "gridView": "Плитка",
   "listView": "Список",

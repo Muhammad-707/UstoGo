@@ -5,6 +5,9 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { useParams } from 'next/navigation';
 import { useLocale, useTranslations } from 'next-intl';
+
+import { useWeekdays } from '@/lib/datetime';
+import { useMoney } from '@/lib/money';
 import { Icon } from '@/components/icons/LucideIcons';
 import { mastersApi, quotesApi } from '@/lib/api/endpoints';
 import { ApiError } from '@/lib/api/client';
@@ -19,6 +22,8 @@ type TabId = 'about' | 'services' | 'gallery' | 'reviews' | 'hours';
 
 export default function MasterProfileClient() {
   const t = useTranslations('masterDetail');
+  const { perHour } = useMoney();
+  const weekdays = useWeekdays();
   const locale = useLocale();
   const params = useParams();
   const masterId = params?.id as string;
@@ -183,10 +188,7 @@ export default function MasterProfileClient() {
     return rot(a.weekday) - rot(b.weekday);
   });
 
-  const weekdayLabel = (weekday: number) => {
-    const d = new Date(2024, 0, weekday);
-    return d.toLocaleDateString(locale, { weekday: 'long' });
-  };
+  const weekdayLabel = (weekday: number) => weekdays.long(weekday);
 
   const formatTime = (time: string) => time.slice(0, 5);
 
@@ -574,7 +576,7 @@ export default function MasterProfileClient() {
               <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800">
                 <span className="text-xs font-bold text-slate-400 uppercase">{t('hourlyRate')}</span>
                 <span className="text-2xl font-extrabold text-slate-900 dark:text-white">
-                  {master.priceFrom ? `$${master.priceFrom}/hr` : '—'}
+                  {master.priceFrom ? perHour(master.priceFrom) : '—'}
                 </span>
               </div>
 

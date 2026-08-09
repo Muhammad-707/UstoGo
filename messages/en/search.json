@@ -9,7 +9,7 @@
   "verifiedOnly": "Verified Masters Only",
   "minRating": "Minimum Rating",
   "maxRate": "Max Rate",
-  "perHour": "${price}/hr",
+  "perHour": "{price} TJS/hr",
   "showingResults": "Showing <highlight>{count}</highlight> craftsman masters",
   "gridView": "Grid View",
   "listView": "List View",

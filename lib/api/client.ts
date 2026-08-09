@@ -158,6 +158,13 @@ interface RequestOptions {
   method?: string;
   body?: unknown;
   auth?: boolean;
+  /**
+   * Overrides the cookie-derived locale. A server component has no `document`, so
+   * `getLocale()` there always answers `en` — which is why category and service names
+   * rendered on the server came back English whatever language the viewer picked.
+   * Server-side callers read the cookie through `next/headers` and pass it in.
+   */
+  locale?: string;
   query?: Record<string, string | number | boolean | undefined | null>;
   /** false = never use the cache; number = custom TTL in ms (default 30s). */
   cache?: boolean | number;
@@ -211,7 +218,10 @@ async function fetchWithAuth<T>(
   retried: boolean
 ): Promise<T> {
   const { method = 'GET', body, auth = true } = options;
-  const headers: Record<string, string> = { 'Content-Type': 'application/json', 'X-Locale': getLocale() };
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+    'X-Locale': options.locale ?? getLocale(),
+  };
 
   if (auth) {
     const token = getAccessToken();
@@ -281,7 +291,7 @@ export async function apiRequest<T>(path: string, options: RequestOptions = {}, 
   const { method = 'GET', auth = true } = options;
   const fullUrl = `${API_URL}${path}${buildQuery(options.query)}`;
   const scope = auth ? (getAccessToken() ?? 'anon') : 'public';
-  const key = `${scope}|${getLocale()}|${method}|${fullUrl}`;
+  const key = `${scope}|${options.locale ?? getLocale()}|${method}|${fullUrl}`;
   const cache = method === 'GET' && options.cache !== false;
   const ttl = typeof options.cache === 'number' ? options.cache : DEFAULT_TTL;
 
@@ -317,8 +327,8 @@ export async function apiRequest<T>(path: string, options: RequestOptions = {}, 
 }
 
 export const api = {
-  get: <T>(path: string, query?: RequestOptions['query'], auth = true) =>
-    apiRequest<T>(path, { method: 'GET', query, auth }),
+  get: <T>(path: string, query?: RequestOptions['query'], auth = true, locale?: string) =>
+    apiRequest<T>(path, { method: 'GET', query, auth, ...(locale ? { locale } : {}) }),
   post: <T>(path: string, body?: unknown, auth = true) =>
     apiRequest<T>(path, { method: 'POST', body, auth }),
   patch: <T>(path: string, body?: unknown, auth = true) =>

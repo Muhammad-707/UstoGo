@@ -1,7 +1,7 @@
 {
   "badge": "Сохраненные Специалисты",
   "title": "Мои Любимые Мастера",
-  "hourlyRate": "{rate}/ч",
+  "hourlyRate": "{rate} сомони/ч",
   "bookService": "Заказать Услугу",
   "unavailablePending": "Больше не одобрен — сейчас забронировать нельзя",
   "unavailableInactive": "Сейчас не принимает заказы",
