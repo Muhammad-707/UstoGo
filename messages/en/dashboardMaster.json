@@ -68,5 +68,13 @@
   "npsPassives": "Passives",
   "npsDetractors": "Detractors",
   "npsNoData": "No NPS responses yet.",
-  "unfinishedJobsWarning": "You have {count} unfinished job(s). Check your pending and accepted bookings."
+  "unfinishedJobsWarning": "You have {count} unfinished job(s). Check your pending and accepted bookings.",
+  "moderationPendingTitle": "Profile under review",
+  "moderationPendingHint": "A moderator is checking your profile. You'll be able to receive bookings as soon as it is approved.",
+  "moderationRejectedTitle": "Profile was not approved",
+  "moderationRejectedHint": "Fix what the moderator flagged, then send it back for review.",
+  "moderationReasonLabel": "Moderator's reason",
+  "moderationEditProfile": "Edit profile",
+  "moderationResubmit": "Resubmit for review",
+  "resubmitFailed": "Could not resubmit the profile."
 }

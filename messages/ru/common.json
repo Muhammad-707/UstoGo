@@ -94,6 +94,7 @@
   "monthlyBookings": "Заказов в месяц",
   "completionRate": "Процент успешности",
   "exploreAllCategories": "Посмотреть все {count} категорий",
+  "mastersCountShort": "{count} усто",
   "ctaTitle": "Получите расчет стоимости и забронируйте сертифицированных мастеров сегодня",
   "tagPlumber": "Сантехник",
   "tagElectrician": "Электрик",
@@ -181,5 +182,6 @@
   "myDashboard": "Моя Панель",
   "logOut": "Выйти",
   "noNotifications": "Пока нет уведомлений",
-  "ppPortfolio": "Портфолио и Галерея"
+  "ppPortfolio": "Портфолио и Галерея",
+  "cart": "Корзина"
 }

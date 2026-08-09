@@ -8,6 +8,7 @@ import { Footer } from '@/components/layout/Footer';
 import { PagePreviewSwitcher } from '@/components/layout/PagePreviewSwitcher';
 import { ServiceWorkerRegister } from '@/components/pwa/ServiceWorkerRegister';
 import { AuthProvider } from '@/contexts/AuthContext';
+import { FavoritesProvider } from '@/contexts/FavoritesContext';
 import { SITE_URL } from '@/lib/seo';
 
 const inter = Inter({
@@ -63,11 +64,13 @@ export default async function RootLayout({
       <body className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-300" suppressHydrationWarning>
         <NextIntlClientProvider locale={locale} messages={messages}>
           <AuthProvider>
-            <Navbar />
-            <main className="flex-1 w-full">{children}</main>
-            <Footer />
-            <PagePreviewSwitcher />
-            <ServiceWorkerRegister />
+            <FavoritesProvider>
+              <Navbar />
+              <main className="flex-1 w-full">{children}</main>
+              <Footer />
+              <PagePreviewSwitcher />
+              <ServiceWorkerRegister />
+            </FavoritesProvider>
           </AuthProvider>
         </NextIntlClientProvider>
       </body>

@@ -403,6 +403,76 @@ export const Icon: React.FC<IconProps> = ({ name, size = 20, className = '', ...
           <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
         </svg>
       );
+    case 'shoppingcart':
+    case 'shopping-cart':
+      return (
+        <svg {...iconProps}>
+          <circle cx="8" cy="21" r="1" />
+          <circle cx="19" cy="21" r="1" />
+          <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12" />
+        </svg>
+      );
+    case 'shoppingbag':
+    case 'shopping-bag':
+      return (
+        <svg {...iconProps}>
+          <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" />
+          <path d="M3 6h18" />
+          <path d="M16 10a4 4 0 0 1-8 0" />
+        </svg>
+      );
+    case 'store':
+      return (
+        <svg {...iconProps}>
+          <path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7" />
+          <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
+          <path d="M2 7h20v3a2 2 0 0 1-2 2v0a2 2 0 0 1-2-2 2 2 0 0 1-2 2v0a2 2 0 0 1-2-2 2 2 0 0 1-2 2v0a2 2 0 0 1-2-2 2 2 0 0 1-2 2v0a2 2 0 0 1-2-2 2 2 0 0 1-2 2v0a2 2 0 0 1-2-2V7Z" />
+        </svg>
+      );
+    case 'plus':
+      return (
+        <svg {...iconProps}>
+          <line x1="12" y1="5" x2="12" y2="19" />
+          <line x1="5" y1="12" x2="19" y2="12" />
+        </svg>
+      );
+    case 'minus':
+      return (
+        <svg {...iconProps}>
+          <line x1="5" y1="12" x2="19" y2="12" />
+        </svg>
+      );
+    case 'trash':
+    case 'trash2':
+      return (
+        <svg {...iconProps}>
+          <polyline points="3 6 5 6 21 6" />
+          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+          <line x1="10" y1="11" x2="10" y2="17" />
+          <line x1="14" y1="11" x2="14" y2="17" />
+        </svg>
+      );
+    case 'package':
+      return (
+        <svg {...iconProps}>
+          <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4a2 2 0 0 0 1-1.73Z" />
+          <path d="m3.3 7 8.7 5 8.7-5" />
+          <path d="M12 22V12" />
+        </svg>
+      );
+    case 'tag':
+      return (
+        <svg {...iconProps}>
+          <path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z" />
+          <circle cx="7.5" cy="7.5" r="1.5" />
+        </svg>
+      );
+    case 'navigation':
+      return (
+        <svg {...iconProps}>
+          <polygon points="3 11 22 2 13 21 11 13 3 11" />
+        </svg>
+      );
     case 'calculator':
       return (
         <svg {...iconProps}>

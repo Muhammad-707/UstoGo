@@ -1,0 +1,22 @@
+{
+  "title": "Журнал Действий",
+  "subtitle": "Каждое привилегированное действие, только добавление",
+  "back": "Назад",
+  "actionLabel": "Действие",
+  "allActions": "Все действия",
+  "entityTypeLabel": "Тип объекта",
+  "fromLabel": "С",
+  "toLabel": "По",
+  "resetFilters": "Сбросить фильтры",
+  "resultsCount": "{count} записей",
+  "noResults": "Нет записей по этим фильтрам.",
+  "actorLabel": "Исполнитель",
+  "entityIdLabel": "ID объекта",
+  "reasonLabel": "Причина",
+  "beforeLabel": "До (отправлено)",
+  "afterLabel": "После (результат)",
+  "loadFailed": "Не удалось загрузить журнал",
+  "prev": "Назад",
+  "next": "Вперёд",
+  "pageOf": "Страница {page} из {total}"
+}

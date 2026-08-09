@@ -1,0 +1,12 @@
+{
+  "badge": "Cart",
+  "title": "Your Cart",
+  "empty": "Your cart is empty.",
+  "browseShop": "Browse the Shop",
+  "itemUnavailable": "No longer available",
+  "unavailableNote": "{count} item(s) in your cart are no longer available and will be skipped at checkout.",
+  "total": "Total",
+  "checkout": "Checkout",
+  "updateFailed": "Failed to update the cart",
+  "checkoutFailed": "Checkout failed"
+}

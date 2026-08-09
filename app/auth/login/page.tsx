@@ -65,7 +65,7 @@ export default function LoginPage() {
   };
 
   return (
-    <AuthShell>
+    <AuthShell image="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=2400&q=90">
       <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 sm:p-12 w-full max-w-md shadow-2xl space-y-8 animate-fade-in">
 
         {/* Brand */}

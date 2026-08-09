@@ -94,6 +94,7 @@
   "monthlyBookings": "Monthly Bookings",
   "completionRate": "Completion Rate",
   "exploreAllCategories": "Explore All {count} Categories",
+  "mastersCountShort": "{count} masters",
   "ctaTitle": "Get Instant Quotes & Book Certified Craftsmen Today",
   "tagPlumber": "Plumber",
   "tagElectrician": "Electrician",
@@ -181,5 +182,6 @@
   "myDashboard": "My Dashboard",
   "logOut": "Log Out",
   "noNotifications": "No notifications yet",
-  "ppPortfolio": "Portfolio & Gallery"
+  "ppPortfolio": "Portfolio & Gallery",
+  "cart": "Cart"
 }

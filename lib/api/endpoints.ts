@@ -5,11 +5,14 @@ import type {
   AdminMasterStats,
   AdminReport,
   AdminUserListItem,
+  AuditLog,
   AuthResponse,
   Banner,
+  BannerPosition,
   Booking,
   BookingDetail,
   CancellationReasonCode,
+  Cart,
   Category,
   Certificate,
   City,
@@ -17,6 +20,7 @@ import type {
   Conversation,
   DashboardResponse,
   LeaderboardEntry,
+  MarketplaceShop,
   MasterCertificatePublic,
   MasterMedia,
   MasterNps,
@@ -29,10 +33,13 @@ import type {
   NotificationItem,
   NotificationPreferences,
   NotificationType,
+  Order,
   Paginated,
   PlatformNps,
   PortfolioImage,
   PricingSuggestion,
+  Product,
+  ProductCategory,
   QuickReply,
   Quote,
   QuoteStatus,
@@ -42,7 +49,9 @@ import type {
   SavedAddress,
   ScheduleException,
   Session,
+  TwoFactorSetup,
   UserProfile,
+  UserRole,
   WorkingDay,
 } from './types';
 
@@ -102,6 +111,13 @@ export const authApi = {
   sessions: {
     list: () => api.get<Session[]>('/auth/sessions'),
     revoke: (id: string) => api.delete<void>(`/auth/sessions/${id}`),
+  },
+
+  /** TOTP enrolment — ADMIN-only on the backend; `verify` above is the login-time exchange. */
+  twoFactor: {
+    setup: () => api.post<TwoFactorSetup>('/auth/2fa/setup'),
+    enable: (code: string) => api.post<void>('/auth/2fa/enable', { code }),
+    disable: (code: string) => api.post<void>('/auth/2fa/disable', { code }),
   },
 };
 
@@ -256,6 +272,10 @@ export const masterCabinetApi = {
   addScheduleException: (data: { date: string; isDayOff: boolean; startTime?: string; endTime?: string; note?: string }) =>
     api.post<ScheduleException>('/masters/me/schedule/exceptions', data),
   removeScheduleException: (id: string) => api.delete<void>(`/masters/me/schedule/exceptions/${id}`),
+
+  /** Self-service precise map pin — optional, usable before approval. Pass nulls to clear. */
+  setLocation: (latitude: number | null, longitude: number | null) =>
+    api.patch<MasterStatus>('/masters/me/location', { latitude, longitude }),
 };
 
 // ---- Bookings ----
@@ -294,6 +314,14 @@ export const bookingsApi = {
   /** Fire-and-forget analytics: stamps whatsappLinkClickedAt once (P0). */
   whatsappClick: (id: string) => api.post<void>(`/bookings/${id}/whatsapp-click`),
   certificate: (id: string) => api.get<CompletionCertificate>(`/bookings/${id}/certificate`),
+
+  /**
+   * FR-7.7 — records what actually changed hands off-platform (ADR-8), not a payment.
+   * Client-owner only, once, COMPLETED only. A `note` is required when paidAmount is
+   * below the agreed price; above it is recorded as a tip.
+   */
+  confirmPayment: (id: string, paidAmount: number, note?: string) =>
+    api.post<Booking>(`/bookings/${id}/confirm-payment`, { paidAmount, note }),
 };
 
 // ---- Completion certificates (public verification) ----
@@ -310,10 +338,6 @@ export const reviewsApi = {
    received: () => api.get<Paginated<Review>>('/reviews/received'),
    reply: (id: string, body: string) => api.post<Review>(`/reviews/${id}/reply`, { body }),
    update: (id: string, data: { rating?: number; comment?: string }) => api.patch<Review>(`/reviews/${id}`, data),
-   rateClient: (data: { bookingId: string; rating: number; comment?: string }) =>
-     api.post<Review>('/reviews/client-rating', data),
-   myClientRatings: () => api.get<Paginated<Review>>('/reviews/me/client-ratings'),
-   receivedClientRatings: () => api.get<Paginated<Review>>('/reviews/received/client-ratings'),
 };
 
 // ---- Notifications ----
@@ -369,7 +393,48 @@ export const filesApi = {
 
 // ---- Banners ----
 export const bannersApi = {
-  list: () => api.get<Banner[]>('/banners', undefined, false),
+  /** Public. Already filtered to the active window; `imageUrl` is signed server-side. */
+  list: (position?: BannerPosition) =>
+    api.get<Banner[]>('/banners', position ? { position } : undefined, false),
+};
+
+// ---- Marketplace shops (public shop-locator map) ----
+export const marketplaceShopsApi = {
+  list: () => api.get<MarketplaceShop[]>('/marketplace-shops', undefined, false),
+};
+
+// ---- Product categories (public) ----
+export const productCategoriesApi = {
+  list: () => api.get<ProductCategory[]>('/product-categories', undefined, false),
+};
+
+// ---- Products (public shop browse) ----
+export const productsApi = {
+  list: (query: { page?: number; limit?: number; categoryId?: string; search?: string } = {}) =>
+    api.get<Paginated<Product>>('/products', query, false),
+  byId: (id: string) => api.get<Product>(`/products/${id}`, undefined, false),
+};
+
+// ---- Cart (CLIENT) ----
+export const cartApi = {
+  get: () => api.get<Cart>('/cart'),
+  addItem: (productId: string, quantity = 1) => api.post<Cart>('/cart/items', { productId, quantity }),
+  setQuantity: (productId: string, quantity: number) => api.patch<Cart>(`/cart/items/${productId}`, { quantity }),
+  removeItem: (productId: string) => api.delete<void>(`/cart/items/${productId}`),
+};
+
+// ---- Wishlist (CLIENT) ----
+export const wishlistApi = {
+  list: () => api.get<Product[]>('/wishlist'),
+  add: (productId: string) => api.post<void>(`/wishlist/${productId}`, undefined),
+  remove: (productId: string) => api.delete<void>(`/wishlist/${productId}`),
+};
+
+// ---- Orders (CLIENT) ----
+export const ordersApi = {
+  checkout: () => api.post<Order>('/orders/checkout'),
+  list: (query: { page?: number; limit?: number } = {}) => api.get<Paginated<Order>>('/orders', query),
+  byId: (id: string) => api.get<Order>(`/orders/${id}`),
 };
 
 // ---- Admin ----
@@ -417,7 +482,54 @@ export const adminApi = {
   bookings: {
     list: (query: Record<string, string | number | boolean | undefined> = {}) =>
       api.get<Paginated<Booking>>('/admin/bookings', query),
+    byId: (id: string) => api.get<BookingDetail>(`/admin/bookings/${id}`),
     cancel: (id: string, reason: string) => api.post(`/admin/bookings/${id}/cancel`, { reason }),
+  },
+  banners: {
+    list: (query: { page?: number; limit?: number } = {}) =>
+      api.get<Paginated<Banner>>('/admin/banners', query),
+    byId: (id: string) => api.get<Banner>(`/admin/banners/${id}`),
+    create: (data: {
+      title: string;
+      subtitle?: string;
+      imageKey: string;
+      linkUrl?: string;
+      position: string;
+      sortOrder?: number;
+      startsAt?: string;
+      endsAt?: string;
+      isActive?: boolean;
+    }) => api.post<Banner>('/admin/banners', data),
+    update: (id: string, data: Partial<{
+      title: string;
+      subtitle: string | null;
+      imageKey: string;
+      linkUrl: string | null;
+      position: string;
+      sortOrder: number;
+      startsAt: string | null;
+      endsAt: string | null;
+      isActive: boolean;
+    }>) => api.patch<Banner>(`/admin/banners/${id}`, data),
+    remove: (id: string) => api.delete<void>(`/admin/banners/${id}`),
+  },
+  auditLogs: (query: {
+    page?: number;
+    limit?: number;
+    actorUserId?: string;
+    action?: string;
+    entityType?: string;
+    entityId?: string;
+    from?: string;
+    to?: string;
+  } = {}) => api.get<Paginated<AuditLog>>('/admin/audit-logs', query),
+  /** Every recipient gets one notification; the Idempotency-Key guard lives on the backend. */
+  broadcast: (data: { role?: UserRole; userIds?: string[]; type: NotificationType; payload: Record<string, unknown> }) =>
+    api.post<{ recipients: number }>('/admin/notifications/broadcast', data),
+  conversations: {
+    /** Audited on every call (CONVERSATION_ACCESSED) — admin dispute review only. */
+    messages: (id: string, cursor?: string, limit = 30) =>
+      api.get<{ items: Message[]; nextCursor: string | null }>(`/admin/conversations/${id}/messages`, { cursor, limit }),
   },
   reviews: {
     list: (query: Record<string, string | number | boolean | undefined> = {}) =>
@@ -451,6 +563,65 @@ export const adminApi = {
       api.get<Paginated<AdminCertificate>>('/admin/certificates', query),
     verify: (id: string) => api.post<AdminCertificate>(`/admin/certificates/${id}/verify`),
     reject: (id: string) => api.post<AdminCertificate>(`/admin/certificates/${id}/reject`),
+  },
+  marketplaceShops: {
+    list: () => api.get<MarketplaceShop[]>('/admin/marketplace-shops'),
+    create: (data: {
+      name: string;
+      address: string;
+      cityId: string;
+      latitude: number;
+      longitude: number;
+      phone?: string;
+      isActive?: boolean;
+    }) => api.post<MarketplaceShop>('/admin/marketplace-shops', data),
+    update: (id: string, data: Partial<{
+      name: string;
+      address: string;
+      cityId: string;
+      latitude: number;
+      longitude: number;
+      phone: string;
+      isActive: boolean;
+    }>) => api.patch<MarketplaceShop>(`/admin/marketplace-shops/${id}`, data),
+    remove: (id: string) => api.delete<void>(`/admin/marketplace-shops/${id}`),
+  },
+  productCategories: {
+    list: () => api.get<ProductCategory[]>('/admin/product-categories'),
+    create: (data: { name: string; slug: string; sortOrder?: number; isActive?: boolean }) =>
+      api.post<ProductCategory>('/admin/product-categories', data),
+    update: (id: string, data: Partial<{ name: string; sortOrder: number; isActive: boolean }>) =>
+      api.patch<ProductCategory>(`/admin/product-categories/${id}`, data),
+    remove: (id: string) => api.delete<void>(`/admin/product-categories/${id}`),
+  },
+  products: {
+    list: (query: { page?: number; limit?: number; categoryId?: string; search?: string } = {}) =>
+      api.get<Paginated<Product>>('/admin/products', query),
+    byId: (id: string) => api.get<Product>(`/admin/products/${id}`),
+    create: (data: {
+      categoryId: string;
+      name: string;
+      description: string;
+      price: number;
+      oldPrice?: number;
+      imageUrls: string[];
+      isActive?: boolean;
+    }) => api.post<Product>('/admin/products', data),
+    update: (id: string, data: Partial<{
+      categoryId: string;
+      name: string;
+      description: string;
+      price: number;
+      oldPrice: number | null;
+      imageUrls: string[];
+      isActive: boolean;
+    }>) => api.patch<Product>(`/admin/products/${id}`, data),
+    remove: (id: string) => api.delete<void>(`/admin/products/${id}`),
+  },
+  orders: {
+    list: (query: { page?: number; limit?: number } = {}) => api.get<Paginated<Order>>('/admin/orders', query),
+    byId: (id: string) => api.get<Order>(`/admin/orders/${id}`),
+    cancel: (id: string) => api.post<Order>(`/admin/orders/${id}/cancel`),
   },
 };
 

@@ -30,5 +30,12 @@
   "whatsappDisabled": "Хомӯш",
   "whatsappTest": "Санҷидан",
   "whatsappChangeWarning": "Пас аз иваз, клиентҳо ба номери нав менавишанд",
-  "whatsappChanged": "Иваз шуд: {date}"
+  "whatsappChanged": "Иваз шуд: {date}",
+  "locationSectionTitle": "Ҷойгиршавии дақиқ дар харита",
+  "locationHint": "Барои муайян кардани ҷои дақиқи худ ба харита клик кунед ё нишонаро гиред. Клиентҳо инро ба ҷои шаҳр мебинанд — агар танзим нашуда бошад, марказки шаҳр истифода мешавад.",
+  "useMyLocation": "Ҷои Ҳозираи Ман",
+  "locating": "Ҷустуҷӯ...",
+  "saveLocation": "Захира кардани Ҷой",
+  "clearLocation": "Пок кардан",
+  "locationSaveFailed": "Захираи ҷойгиршавӣ номуваффақ шуд"
 }

@@ -103,7 +103,7 @@ export default function RegisterMasterPage() {
   };
 
   return (
-    <AuthShell minHeight="85vh">
+    <AuthShell minHeight="85vh" image="https://images.unsplash.com/photo-1621905252507-b35492cc74b4?auto=format&fit=crop&w=2400&q=90">
       <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 sm:p-12 w-full max-w-lg shadow-2xl space-y-6 animate-fade-in">
         <div className="text-center space-y-2">
           <span className="px-3 py-1 rounded-full bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 text-xs font-bold uppercase">

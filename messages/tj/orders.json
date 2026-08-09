@@ -1,0 +1,16 @@
+{
+  "badge": "Фармоишҳо",
+  "title": "Фармоишҳои Ман",
+  "noOrders": "Шумо то ҳол ягон фармоиш надодаед.",
+  "browseShop": "Тамошои Мағоза",
+  "orderItems": "{count} маҳсулот",
+  "prev": "Қаблӣ",
+  "next": "Навбатӣ",
+  "pageOf": "Саҳифаи {page} аз {total}",
+  "orderNotFound": "Фармоиш ёфт нашуд.",
+  "backToOrders": "Бозгашт ба Фармоишҳо",
+  "orderPlaced": "Дода шуд",
+  "unitPriceXQuantity": "{price} × {quantity}",
+  "total": "Ҷамъ",
+  "mockPaymentNote": "Пардохт озмоишӣ аст — ягон маълумоти корт ҷамъоварӣ нашудааст."
+}

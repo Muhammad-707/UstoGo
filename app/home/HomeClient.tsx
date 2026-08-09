@@ -175,7 +175,7 @@ export default function ClientHomePage({
                     {cat.name}
                   </h4>
                   <p className="text-[10px] text-slate-400 font-semibold">
-                    {stat ? `${stat.count} усто${stat.minPrice ? ` · $${stat.minPrice}/h` : ''}` : ' '}
+                    {stat ? `${t('mastersCountShort', { count: stat.count })}${stat.minPrice ? ` · $${stat.minPrice}/h` : ''}` : ' '}
                   </p>
                 </div>
               </Link>

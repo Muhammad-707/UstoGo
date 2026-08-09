@@ -81,6 +81,9 @@ export interface UserProfile {
   status: UserStatus;
   lastLoginAt?: string | null;
   createdAt: string;
+  /** TOTP enrolment confirmed. ADMIN-only feature on the backend. */
+  totpEnabled?: boolean;
+  emailVerified?: boolean;
   clientProfile?: ClientProfile | null;
   masterProfile?: MasterProfile | null;
 }
@@ -140,6 +143,9 @@ export interface MasterPublic {
   cityName: string;
   cityLatitude?: number | null;
   cityLongitude?: number | null;
+  /** The master's own precise pin, self-reported via `PATCH /masters/me/location`. Prefer this over cityLatitude/cityLongitude when present. */
+  latitude?: number | null;
+  longitude?: number | null;
   distanceKm?: number | null;
   categories: string[];
   ratingAverage: string;
@@ -153,6 +159,7 @@ export interface MasterPublic {
   /** Public WhatsApp contact — the number is present only while whatsappEnabled is true (P0). */
   whatsappEnabled: boolean;
   whatsappPhone: string | null;
+  isFastResponder?: boolean;
 }
 
 export type LeaderboardBadge = 'TOP_RATED' | 'MOST_BOOKED' | 'FAST_RESPONDER' | 'RISING_STAR';
@@ -270,8 +277,12 @@ export interface Booking {
   bookingNumber: string;
   status: BookingStatus;
   masterId: string;
+  /** The master's *user* id — what `POST /reports` takes; `masterId` is their profile. */
+  masterUserId?: string;
   masterDisplayName: string;
   clientId: string;
+  /** The client's *user* id — what `POST /reports` takes; `clientId` is their profile. */
+  clientUserId?: string;
   clientName: string;
   clientPhone?: string | null;
   serviceId: string;
@@ -300,6 +311,10 @@ export interface Booking {
   rescheduleCount: number;
   attachmentFileIds: string[];
   createdAt: string;
+  /** FR-7.7 — what the client says actually changed hands off-platform. Null until confirmed. */
+  paidAmount?: string | null;
+  paymentNote?: string | null;
+  paymentConfirmedAt?: string | null;
   /** The master's WhatsApp contact — present (non-null) only while whatsappEnabled is true (P0). */
   masterWhatsappEnabled?: boolean;
   masterWhatsappPhone?: string | null;
@@ -377,9 +392,7 @@ export interface Review {
    clientName?: string;
    masterId: string;
    rating: number;
-   clientRating?: number | null;
    comment?: string | null;
-   clientComment?: string | null;
    npsScore?: number | null;
    wouldRecommend?: boolean | null;
    status: string;
@@ -523,6 +536,7 @@ export const NOTIFICATION_TYPES = [
   'BOOKING_CANCELLED',
   'BOOKING_EXPIRED',
   'BOOKING_RESCHEDULED',
+  'PAYMENT_CONFIRMED',
   'MASTER_REGISTERED',
   'MASTER_APPROVED',
   'MASTER_REJECTED',
@@ -536,9 +550,51 @@ export const NOTIFICATION_TYPES = [
   'QUOTE_REQUESTED',
   'QUOTE_RESPONDED',
   'QUOTE_DECLINED',
+  'ORDER_PLACED',
 ] as const;
 
 export type NotificationType = (typeof NOTIFICATION_TYPES)[number];
+
+/** Mirrors the backend `AuditAction` enum — drives the admin audit-log filter. */
+export const AUDIT_ACTIONS = [
+  'MASTER_APPROVED',
+  'MASTER_REJECTED',
+  'MASTER_ACTIVATED',
+  'MASTER_DEACTIVATED',
+  'USER_BLOCKED',
+  'USER_UNBLOCKED',
+  'CATEGORY_CREATED',
+  'CATEGORY_UPDATED',
+  'CATEGORY_DEACTIVATED',
+  'SERVICE_DEACTIVATED',
+  'BOOKING_FORCE_CANCELLED',
+  'REVIEW_HIDDEN',
+  'REVIEW_UNHIDDEN',
+  'BANNER_CREATED',
+  'BANNER_UPDATED',
+  'BANNER_DELETED',
+  'NOTIFICATION_BROADCAST',
+  'CONVERSATION_ACCESSED',
+  'MASTER_STATS_ACCESSED',
+  'CERTIFICATE_VERIFIED',
+  'CERTIFICATE_REJECTED',
+  'REPORT_RESOLVED',
+  'PRODUCT_CATEGORY_CREATED',
+  'PRODUCT_CATEGORY_UPDATED',
+  'PRODUCT_CATEGORY_DELETED',
+  'PRODUCT_CREATED',
+  'PRODUCT_UPDATED',
+  'PRODUCT_DELETED',
+  'ORDER_CANCELLED',
+  'SHOP_CREATED',
+  'SHOP_UPDATED',
+  'SHOP_DELETED',
+] as const;
+
+export type AuditAction = (typeof AUDIT_ACTIONS)[number];
+
+export const BANNER_POSITIONS = ['HOME_TOP', 'HOME_MIDDLE', 'CATEGORY_TOP'] as const;
+export type BannerPosition = (typeof BANNER_POSITIONS)[number];
 
 export type NotificationPreferences = Record<NotificationType, boolean>;
 
@@ -567,12 +623,36 @@ export interface Banner {
   title: string;
   subtitle?: string | null;
   imageFileId: string;
+  /** Short-lived read URL signed by the banners module — `GET /files/:id/url` is uploader-scoped. */
+  imageUrl: string | null;
   linkUrl?: string | null;
-  position: string;
+  position: BannerPosition;
   sortOrder: number;
   startsAt?: string | null;
   endsAt?: string | null;
   isActive: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+/** `POST /auth/2fa/setup` — the secret is shown once and never returned again. */
+export interface TwoFactorSetup {
+  secret: string;
+  otpauthUrl: string;
+}
+
+export interface AuditLog {
+  id: string;
+  actorUserId: string;
+  action: string;
+  entityType: string;
+  entityId: string;
+  before: unknown;
+  after: unknown;
+  reason?: string | null;
+  ipAddress?: string | null;
+  userAgent?: string | null;
+  createdAt: string;
 }
 
 export interface PaginationMeta {
@@ -623,6 +703,9 @@ export interface MasterStatus {
   reliabilityScore: string | null;
   /** B-24 — opted in to auto-accepting eligible bookings (also needs reliabilityScore >= 90). */
   instantBookEnabled: boolean;
+  /** Self-reported precise pin (`PATCH /masters/me/location`); null falls back to the city center. */
+  latitude: number | null;
+  longitude: number | null;
 }
 
 export interface Session {
@@ -633,6 +716,82 @@ export interface Session {
   createdAt: string;
   lastActiveAt: string;
   current: boolean;
+}
+
+// ---- Marketplace ----
+export interface ProductCategory {
+  id: string;
+  name: string;
+  slug: string;
+  sortOrder: number;
+  isActive: boolean;
+  createdAt: string;
+}
+
+export interface Product {
+  id: string;
+  categoryId: string;
+  categoryName: string;
+  name: string;
+  description: string;
+  price: string;
+  oldPrice: string | null;
+  discountPercent: number | null;
+  currency: string;
+  imageUrls: string[];
+  isActive: boolean;
+  createdAt: string;
+}
+
+export interface MarketplaceShop {
+  id: string;
+  name: string;
+  address: string;
+  cityId: string;
+  cityName: string;
+  latitude: number;
+  longitude: number;
+  phone: string | null;
+  isActive: boolean;
+  createdAt: string;
+}
+
+export interface CartItem {
+  productId: string;
+  productName: string;
+  imageUrl: string | null;
+  unitPrice: string;
+  oldPrice: string | null;
+  discountPercent: number | null;
+  currency: string;
+  quantity: number;
+  subtotal: string;
+  isAvailable: boolean;
+}
+
+export interface Cart {
+  items: CartItem[];
+  totalAmount: string;
+  currency: string | null;
+}
+
+export type OrderStatus = 'PAID' | 'CANCELLED';
+
+export interface OrderItem {
+  productId: string;
+  productName: string;
+  unitPrice: string;
+  quantity: number;
+  subtotal: string;
+}
+
+export interface Order {
+  id: string;
+  status: OrderStatus;
+  totalAmount: string;
+  currency: string;
+  items: OrderItem[];
+  createdAt: string;
 }
 
 // Matches the real DashboardResponseDto from /admin/dashboard (verified against live Swagger

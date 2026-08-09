@@ -25,6 +25,7 @@ export default function AdminMasterStatsPage() {
   const [stats, setStats] = useState<AdminMasterStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [togglingActive, setTogglingActive] = useState(false);
 
   useEffect(() => {
     if (!masterId) return;
@@ -47,6 +48,28 @@ export default function AdminMasterStatsPage() {
       cancelled = true;
     };
   }, [masterId]);
+
+  const handleToggleActive = async () => {
+    if (!master) return;
+    const reason = master.isActive ? window.prompt(t('deactivateReasonPrompt')) : null;
+    if (master.isActive && (!reason || reason.trim().length < 10)) return;
+    setTogglingActive(true);
+    setError(null);
+    try {
+      if (master.isActive) {
+        await adminApi.masters.deactivate(master.id, (reason as string).trim());
+      } else {
+        await adminApi.masters.activate(master.id);
+      }
+      // The status endpoints return the profile, not the public projection this page
+      // renders, so re-read rather than patching a partially-shaped object in.
+      setMaster(await mastersApi.byId(master.id));
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : t('toggleActiveFailed'));
+    } finally {
+      setTogglingActive(false);
+    }
+  };
 
   const maxBreakdown = stats ? Math.max(...STARS.map((s) => stats.reviewsBreakdown[s]), 1) : 1;
   const maxMonthly = stats && stats.monthlySeries.length ? Math.max(...stats.monthlySeries.map((m) => m.bookings), 1) : 1;
@@ -91,21 +114,45 @@ export default function AdminMasterStatsPage() {
                 className="w-16 h-16 rounded-2xl object-cover"
               />
               <div>
-                <h2 className="text-lg font-extrabold text-slate-900 dark:text-white">{master.displayName}</h2>
+                <h2 className="text-lg font-extrabold text-slate-900 dark:text-white flex items-center gap-2 flex-wrap">
+                  {master.displayName}
+                  <span
+                    className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold ${
+                      master.isActive
+                        ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300'
+                        : 'bg-red-100 dark:bg-red-950 text-red-700 dark:text-red-300'
+                    }`}
+                  >
+                    {master.isActive ? t('stateActive') : t('stateInactive')}
+                  </span>
+                </h2>
                 <p className="text-xs text-slate-500">{master.cityName}</p>
               </div>
             </div>
-            {master.whatsappPhone && (
-              <a
-                href={waLink(master.whatsappPhone) ?? '#'}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-[#25D366] hover:bg-[#1ebe5d] text-white text-xs font-bold shadow transition"
+            <div className="flex flex-wrap items-center gap-2">
+              {/* Moderator suspension — distinct from the master's own vacation toggle;
+                  the reason given here is what lands in the audit log. */}
+              <button
+                onClick={handleToggleActive}
+                disabled={togglingActive}
+                className={`px-5 py-2.5 rounded-2xl text-xs font-bold shadow transition disabled:opacity-60 ${
+                  master.isActive ? 'bg-red-600 hover:bg-red-700 text-white' : 'btn-success'
+                }`}
               >
-                <Icon name="whatsapp" size={16} />
-                {t('openWhatsApp')}
-              </a>
-            )}
+                {togglingActive ? '...' : master.isActive ? t('deactivate') : t('activate')}
+              </button>
+              {master.whatsappPhone && (
+                <a
+                  href={waLink(master.whatsappPhone) ?? '#'}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-[#25D366] hover:bg-[#1ebe5d] text-white text-xs font-bold shadow transition"
+                >
+                  <Icon name="whatsapp" size={16} />
+                  {t('openWhatsApp')}
+                </a>
+              )}
+            </div>
           </div>
 
           {/* Key metrics */}

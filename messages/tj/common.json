@@ -94,6 +94,7 @@
   "monthlyBookings": "Фармоишҳои моҳона",
   "completionRate": "Фоизи муваффақият",
   "exploreAllCategories": "Тамошои ҳамаи {count} категория",
+  "mastersCountShort": "{count} усто",
   "ctaTitle": "Ҳисоби нархро гиред ва устоҳои сертификатдорро имрӯз фармоиш диҳед",
   "tagPlumber": "Сантехник",
   "tagElectrician": "Электрик",
@@ -181,5 +182,6 @@
   "myDashboard": "Кабинети Ман",
   "logOut": "Баромадан",
   "noNotifications": "Ҳанӯз огоҳинома нест",
-  "ppPortfolio": "Портфолио ва Галерея"
+  "ppPortfolio": "Портфолио ва Галерея",
+  "cart": "Сабад"
 }

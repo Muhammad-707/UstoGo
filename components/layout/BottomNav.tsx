@@ -13,6 +13,7 @@ export function BottomNav() {
   const navItems = [
     { href: "/home", icon: "Home", label: t("home") },
     { href: "/search", icon: "Search", label: t("searchMasters") },
+    { href: "/marketplace", icon: "shoppingbag", label: t("marketplace") },
     { href: "/messages", icon: "whatsapp", label: t("whatsapp") },
     { href: "/dashboard/client", icon: "User", label: t("clientDashboard") },
   ];

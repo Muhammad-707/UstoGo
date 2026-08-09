@@ -8,6 +8,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { authApi, usersApi } from '@/lib/api/endpoints';
 import { ApiError } from '@/lib/api/client';
 import { PasswordInput } from '@/components/ui/PasswordInput';
+import { TwoFactorSection } from '@/components/settings/TwoFactorSection';
 import { validatePassword, type ValidationErrorKey } from '@/lib/validation';
 import type { Session } from '@/lib/api/types';
 
@@ -173,6 +174,9 @@ export default function SecuritySettingsPage() {
           </button>
         </form>
       </div>
+
+      {/* Two-factor authentication (ADMIN accounts only — see the component) */}
+      <TwoFactorSection />
 
       {/* Active Sessions */}
       <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-xl space-y-4">

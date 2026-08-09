@@ -14,5 +14,11 @@
   "noServices": "Ҳанӯз хидмати анҷомдодашуда нест.",
   "completedCount": "{count} анҷомдодашуда",
   "monthlySeries": "6 Моҳи Охир",
-  "noMonthlyData": "Дар 6 моҳи охир фаъолияти фармоиш нест."
+  "noMonthlyData": "Дар 6 моҳи охир фаъолияти фармоиш нест.",
+  "stateActive": "Фаъол",
+  "stateInactive": "Боздошташуда",
+  "activate": "Дубора фаъол кардан",
+  "deactivate": "Боздоштани усто",
+  "deactivateReasonPrompt": "Сабаби боздоштани ин усто (на камтар аз 10 ҳарф):",
+  "toggleActiveFailed": "Тағйири ҳолати усто номуваффақ шуд."
 }

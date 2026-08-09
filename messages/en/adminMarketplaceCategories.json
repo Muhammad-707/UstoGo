@@ -1,0 +1,22 @@
+{
+  "title": "Product Categories",
+  "subtitle": "Categories for the marketplace catalogue",
+  "addCategory": "Add Category",
+  "editCategory": "Edit Category",
+  "back": "Back",
+  "nameLabel": "Name",
+  "slugLabel": "Slug",
+  "sortOrderLabel": "Sort Order",
+  "isActiveLabel": "Active",
+  "slugImmutableHint": "The slug cannot be changed once created.",
+  "save": "Save",
+  "cancel": "Cancel",
+  "noResults": "No categories yet.",
+  "inactive": "Inactive",
+  "edit": "Edit",
+  "delete": "Delete",
+  "loadFailed": "Failed to load categories",
+  "saveFailed": "Failed to save the category",
+  "deleteFailed": "Failed to delete the category",
+  "confirmDelete": "Delete this category?"
+}

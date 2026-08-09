@@ -4,16 +4,18 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { Icon } from '@/components/icons/LucideIcons';
-import { mastersApi } from '@/lib/api/endpoints';
-import type { MasterPublic } from '@/lib/api/types';
+import { bannersApi, mastersApi } from '@/lib/api/endpoints';
+import type { Banner, MasterPublic } from '@/lib/api/types';
 import { getAvatarUrl } from '@/lib/placeholders';
 
 export interface SlideData {
   id: number;
+  /** For the built-in slides this is an i18n key; for admin banners it is literal text. */
   category: string;
   title: string;
   image: string;
   photographer: string;
+  linkUrl?: string | null;
 }
 
 export const HERO_SLIDES: SlideData[] = [
@@ -67,6 +69,7 @@ export default function HeroSlider() {
   const [isPaused, setIsPaused] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [showcaseMasters, setShowcaseMasters] = useState<MasterPublic[]>([]);
+  const [banners, setBanners] = useState<Banner[]>([]);
   const touchStartXRef = useRef<number | null>(null);
   const touchEndXRef = useRef<number | null>(null);
 
@@ -74,13 +77,41 @@ export default function HeroSlider() {
     mastersApi.search({ limit: 3, sort: 'rating:desc' }).then((res) => setShowcaseMasters(res.items)).catch(() => {});
   }, []);
 
-  const nextSlide = useCallback(() => {
-    setCurrentIndex((prev) => (prev + 1) % HERO_SLIDES.length);
+  // Admin-managed HOME_TOP banners replace the stock slides entirely once any exist;
+  // the built-in set stays as the fallback so the hero is never blank on a fresh install.
+  useEffect(() => {
+    bannersApi
+      .list('HOME_TOP')
+      .then((items) => setBanners(items.filter((b) => b.imageUrl !== null)))
+      .catch(() => {});
   }, []);
 
+  const slides: SlideData[] = banners.length > 0
+    ? banners.map((banner, idx) => ({
+        id: idx + 1,
+        category: banner.subtitle ?? '',
+        title: banner.title,
+        image: banner.imageUrl as string,
+        photographer: '',
+        linkUrl: banner.linkUrl ?? null,
+      }))
+    : HERO_SLIDES;
+  const usingBanners = banners.length > 0;
+  const slideCount = slides.length;
+
+  const nextSlide = useCallback(() => {
+    setCurrentIndex((prev) => (prev + 1) % slideCount);
+  }, [slideCount]);
+
   const prevSlide = useCallback(() => {
-    setCurrentIndex((prev) => (prev - 1 + HERO_SLIDES.length) % HERO_SLIDES.length);
-  }, []);
+    setCurrentIndex((prev) => (prev - 1 + slideCount) % slideCount);
+  }, [slideCount]);
+
+  // A shorter admin set must not leave the index pointing past the end.
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- clamps the index when the slide source changes
+    setCurrentIndex((prev) => (prev >= slideCount ? 0 : prev));
+  }, [slideCount]);
 
   // Autoplay every 5 seconds (5000ms) with smooth fade transition
   useEffect(() => {
@@ -130,7 +161,7 @@ export default function HeroSlider() {
       {/* 1. BACKGROUND SLIDER IMAGES (6 SLIDES FADE) */}
       {/* =================================================== */}
       <div className="absolute inset-0 pointer-events-none z-0">
-        {HERO_SLIDES.map((slide, idx) => {
+        {slides.map((slide, idx) => {
           const isActive = idx === currentIndex;
           return (
             <div
@@ -179,14 +210,16 @@ export default function HeroSlider() {
       {/* =================================================== */}
       <div className="absolute top-6 right-6 z-40 px-3.5 py-1.5 rounded-full bg-slate-900/80 border border-slate-700/80 text-white text-xs font-mono font-bold backdrop-blur-md shadow-lg flex items-center gap-2">
         <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-        <span>0{currentIndex + 1} / 06</span>
+        <span>{String(currentIndex + 1).padStart(2, '0')} / {String(slideCount).padStart(2, '0')}</span>
       </div>
 
       {/* Active Slide Category Pill (Top Left) */}
-      <div className="absolute top-6 left-6 z-40 hidden sm:flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-600/30 border border-blue-400/40 text-blue-200 text-xs font-semibold backdrop-blur-md shadow-md">
-        <Icon name="Sparkles" size={14} className="text-amber-400 animate-spin-slow" />
-        <span>{t(HERO_SLIDES[currentIndex].category)}</span>
-      </div>
+      {(usingBanners ? slides[currentIndex]?.category : true) && (
+        <div className="absolute top-6 left-6 z-40 hidden sm:flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-600/30 border border-blue-400/40 text-blue-200 text-xs font-semibold backdrop-blur-md shadow-md">
+          <Icon name="Sparkles" size={14} className="text-amber-400 animate-spin-slow" />
+          <span>{usingBanners ? slides[currentIndex].category : t(slides[currentIndex].category)}</span>
+        </div>
+      )}
 
       {/* =================================================== */}
       {/* 4. HERO CONTENT OVERLAY (TEXT & SEARCH BAR & CARDS) */}
@@ -307,7 +340,7 @@ export default function HeroSlider() {
       {/* 5. PAGINATION DOTS (BOTTOM CENTER) */}
       {/* =================================================== */}
       <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-40 flex items-center gap-2 px-4 py-2 rounded-full bg-slate-900/80 border border-slate-800/80 backdrop-blur-md shadow-2xl">
-        {HERO_SLIDES.map((slide, idx) => {
+        {slides.map((slide, idx) => {
           const isActive = idx === currentIndex;
           return (
             <button

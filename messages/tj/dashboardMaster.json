@@ -68,5 +68,13 @@
   "npsPassives": "Бетараф",
   "npsDetractors": "Норозиён",
   "npsNoData": "Ҳанӯз ҷавоби NPS нест.",
-  "unfinishedJobsWarning": "Шумо {count} кори нотамом доред. Фармоишҳои интизор ва қабулшударо санҷед."
+  "unfinishedJobsWarning": "Шумо {count} кори нотамом доред. Фармоишҳои интизор ва қабулшударо санҷед.",
+  "moderationPendingTitle": "Профил дар баррасӣ аст",
+  "moderationPendingHint": "Модератор профили шуморо месанҷад. Пас аз тасдиқ шумо фармоиш қабул карда метавонед.",
+  "moderationRejectedTitle": "Профил тасдиқ нашуд",
+  "moderationRejectedHint": "Он чиро ки модератор нишон додааст ислоҳ кунед ва дубора барои баррасӣ фиристед.",
+  "moderationReasonLabel": "Сабаби модератор",
+  "moderationEditProfile": "Таҳрири профил",
+  "moderationResubmit": "Дубора фиристодан",
+  "resubmitFailed": "Дубора фиристодани профил номуваффақ шуд."
 }

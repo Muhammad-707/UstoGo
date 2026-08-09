@@ -1,0 +1,14 @@
+{
+  "title": "Marketplace Orders",
+  "subtitle": "Every order placed on the marketplace",
+  "back": "Back",
+  "noResults": "No orders yet.",
+  "orderItems": "{count} item(s)",
+  "cancel": "Cancel Order",
+  "confirmCancel": "Cancel this order? No refund is issued — checkout is mocked.",
+  "cancelFailed": "Failed to cancel the order",
+  "loadFailed": "Failed to load orders",
+  "prev": "Previous",
+  "next": "Next",
+  "pageOf": "Page {page} of {total}"
+}

@@ -2,16 +2,22 @@
 
 import React, { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import { useTranslations } from 'next-intl';
 import { Icon } from '@/components/icons/LucideIcons';
 import { useAuth } from '@/contexts/AuthContext';
-import { citiesApi, usersApi } from '@/lib/api/endpoints';
+import { citiesApi, masterCabinetApi, usersApi } from '@/lib/api/endpoints';
 import { ApiError } from '@/lib/api/client';
 import { waLink } from '@/lib/whatsapp';
 import { revalidateMastersCache } from '@/lib/api/revalidate';
 import { resolveOwnFileUrl, uploadFile } from '@/lib/api/upload';
 import { getAvatarUrl, getCoverUrl } from '@/lib/placeholders';
 import type { City } from '@/lib/api/types';
+
+const MasterLocationPicker = dynamic(() => import('@/components/masters/MasterLocationPicker'), {
+  ssr: false,
+  loading: () => <div className="h-[320px] w-full rounded-2xl bg-slate-50 dark:bg-slate-800/40 animate-pulse" />,
+});
 
 export default function EditProfilePage() {
   const t = useTranslations('settingsProfile');
@@ -33,6 +39,10 @@ export default function EditProfilePage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
+  const [masterLat, setMasterLat] = useState<number | null>(null);
+  const [masterLng, setMasterLng] = useState<number | null>(null);
+  const [cityLat, setCityLat] = useState<number | null>(null);
+  const [cityLng, setCityLng] = useState<number | null>(null);
 
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [bannerUrl, setBannerUrl] = useState<string | null>(null);
@@ -68,6 +78,21 @@ export default function EditProfilePage() {
     resolveOwnFileUrl(profile?.avatarFileId ?? null).then(setAvatarUrl);
     if (isMaster) resolveOwnFileUrl(user.masterProfile?.bannerFileId ?? null).then(setBannerUrl);
   }, [user, isMaster]);
+
+  useEffect(() => {
+    if (!isMaster) return;
+    masterCabinetApi.myStatus().then((status) => {
+      setMasterLat(status.latitude);
+      setMasterLng(status.longitude);
+    }).catch(() => {});
+  }, [isMaster]);
+
+  useEffect(() => {
+    const city = cities.find((c) => c.id === cityId);
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- derives the fallback map center from the selected city
+    setCityLat(city?.latitude ?? null);
+    setCityLng(city?.longitude ?? null);
+  }, [cities, cityId]);
 
   const refreshMedia = useCallback(async () => {
     const profile = user?.clientProfile ?? user?.masterProfile;
@@ -389,6 +414,25 @@ export default function EditProfilePage() {
               </a>
             )}
             <p className="text-[10px] text-slate-500 dark:text-slate-400">{t('whatsappChangeWarning')}</p>
+          </div>
+        )}
+
+        {isMaster && (
+          <div className="space-y-4 p-6 rounded-3xl bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/40">
+            <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+              <Icon name="mappin" size={18} className="text-amber-600 dark:text-amber-400" />
+              {t('locationSectionTitle')}
+            </h3>
+            <MasterLocationPicker
+              initialLatitude={masterLat}
+              initialLongitude={masterLng}
+              cityLatitude={cityLat}
+              cityLongitude={cityLng}
+              onSaved={(lat, lng) => {
+                setMasterLat(lat);
+                setMasterLng(lng);
+              }}
+            />
           </div>
         )}
 

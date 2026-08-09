@@ -4,5 +4,7 @@
   "hourlyRate": "{rate}/соат",
   "bookService": "Заказ кардани Хизмат",
   "unavailablePending": "Дигар тасдиқ нашудааст — ҳоло фармоиш дода намешавад",
-  "unavailableInactive": "Ҳоло фармоишҳои навро қабул намекунад"
+  "unavailableInactive": "Ҳоло фармоишҳои навро қабул намекунад",
+  "addToFavorites": "Ба интихобшудаҳо илова кардан",
+  "removeFromFavorites": "Аз интихобшудаҳо баровардан"
 }

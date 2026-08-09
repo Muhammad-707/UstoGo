@@ -1,0 +1,16 @@
+{
+  "badge": "Заказы",
+  "title": "Мои Заказы",
+  "noOrders": "Вы ещё не делали заказов.",
+  "browseShop": "Перейти в Магазин",
+  "orderItems": "{count} товар(ов)",
+  "prev": "Назад",
+  "next": "Вперёд",
+  "pageOf": "Страница {page} из {total}",
+  "orderNotFound": "Заказ не найден.",
+  "backToOrders": "Назад к Заказам",
+  "orderPlaced": "Оформлен",
+  "unitPriceXQuantity": "{price} × {quantity}",
+  "total": "Итого",
+  "mockPaymentNote": "Оплата имитируется — данные карты никогда не собирались."
+}

@@ -8,13 +8,13 @@ import { Icon } from '@/components/icons/LucideIcons';
 import { favoritesApi } from '@/lib/api/endpoints';
 import type { MasterPublic } from '@/lib/api/types';
 import { getAvatarUrl } from '@/lib/placeholders';
-import { useFavorites } from '@/hooks/useFavorites';
+import { useFavorites } from '@/contexts/FavoritesContext';
 import { FilterContainer, FilterItem } from '@/components/ui/FilterAnimate';
 import { ClientPageHeader } from '@/components/client/ClientPageHeader';
 
 export default function FavoritesPage() {
   const t = useTranslations('favorites');
-  const { favoriteIds } = useFavorites();
+  const { favoriteIds, toggleFavorite } = useFavorites();
   const [masters, setMasters] = useState<MasterPublic[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -72,13 +72,21 @@ export default function FavoritesPage() {
                     : 'border-slate-200 dark:border-slate-800 hover:shadow-2xl hover:shadow-blue-500/10 hover:border-blue-200 dark:hover:border-sky-900 transition-[box-shadow,border-color] duration-300'
                 }`}
               >
-                <div className="flex items-center gap-4">
+                <div className="flex items-start gap-4">
                   <img src={m.avatarUrl ?? getAvatarUrl(m.id, m.displayName)} alt={m.displayName} className="w-16 h-16 rounded-2xl object-cover" />
-                  <div>
-                    <h3 className="font-extrabold text-slate-900 dark:text-white text-base">{m.displayName}</h3>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-extrabold text-slate-900 dark:text-white text-base truncate">{m.displayName}</h3>
                     <p className="text-xs text-blue-600 dark:text-sky-400 font-semibold">{m.cityName}</p>
                     <span className="text-xs text-amber-500 font-bold">★ {m.ratingAverage}</span>
                   </div>
+                  <button
+                    onClick={() => toggleFavorite(m.id)}
+                    aria-label={t('removeFromFavorites')}
+                    title={t('removeFromFavorites')}
+                    className="shrink-0 w-9 h-9 rounded-xl flex items-center justify-center text-red-500 hover:bg-red-50 dark:hover:bg-red-950/40 transition"
+                  >
+                    <Icon name="heart" size={17} className="fill-red-500" />
+                  </button>
                 </div>
                 {unavailable && (
                   <p className="text-xs font-bold text-red-600 dark:text-red-400 flex items-center gap-1.5">

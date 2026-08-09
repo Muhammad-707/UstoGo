@@ -1,0 +1,16 @@
+{
+  "badge": "Orders",
+  "title": "My Orders",
+  "noOrders": "You haven't placed any orders yet.",
+  "browseShop": "Browse the Shop",
+  "orderItems": "{count} item(s)",
+  "prev": "Previous",
+  "next": "Next",
+  "pageOf": "Page {page} of {total}",
+  "orderNotFound": "Order not found.",
+  "backToOrders": "Back to Orders",
+  "orderPlaced": "Placed",
+  "unitPriceXQuantity": "{price} × {quantity}",
+  "total": "Total",
+  "mockPaymentNote": "Payment is mocked — no card data was ever collected."
+}

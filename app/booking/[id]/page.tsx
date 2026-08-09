@@ -10,6 +10,7 @@ import { bookingsApi, citiesApi, mastersApi, reviewsApi } from '@/lib/api/endpoi
 import { ApiError } from '@/lib/api/client';
 import { downloadFile } from '@/lib/api/download';
 import { CertificateCard } from '@/components/certificates/CertificateCard';
+import { ReportUserButton } from '@/components/reports/ReportUserButton';
 
 const LiveTrackingMap = dynamic(() => import('@/components/booking/LiveTrackingMap'), {
   ssr: false,
@@ -81,6 +82,11 @@ export default function BookingDetailsPage() {
   const [certificateLoading, setCertificateLoading] = useState(false);
   const [showCertificateModal, setShowCertificateModal] = useState(false);
   const [masterLiveLocation, setMasterLiveLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [paidAmount, setPaidAmount] = useState('');
+  const [paymentNote, setPaymentNote] = useState('');
+  const [paymentError, setPaymentError] = useState<string | null>(null);
+  const [confirmingPayment, setConfirmingPayment] = useState(false);
   const lastEmitRef = useRef(0);
 
   const handleViewCertificate = async () => {
@@ -118,7 +124,6 @@ export default function BookingDetailsPage() {
     };
   }, [booking?.id, booking?.attachmentFileIds]);
   const [alreadyReviewed, setAlreadyReviewed] = useState(false);
-  const [alreadyClientRated, setAlreadyClientRated] = useState(false);
 
   useEffect(() => {
     citiesApi.list().then((list) => setCities(list)).catch(() => setCities([]));
@@ -154,14 +159,6 @@ export default function BookingDetailsPage() {
       .myReviews()
       .then((res) => setAlreadyReviewed(res.items.some((r) => r.bookingId === booking.id)))
       .catch(() => {});
-  }, [booking, user?.role]);
-
-  useEffect(() => {
-    if (!booking || user?.role !== 'MASTER' || booking.status !== 'COMPLETED') return;
-    reviewsApi
-      .received()
-      .then((res) => setAlreadyClientRated(res.items.some((r) => r.bookingId === booking.id && r.clientRating != null)))
-      .catch(() => setAlreadyClientRated(false));
   }, [booking, user?.role]);
 
   // Live status without a manual refresh: WebSocket push (BookingsGateway) is the
@@ -329,6 +326,39 @@ export default function BookingDetailsPage() {
     );
   };
 
+  const openPaymentModal = () => {
+    setPaidAmount(booking?.price ?? '');
+    setPaymentNote('');
+    setPaymentError(null);
+    setShowPaymentModal(true);
+  };
+
+  const confirmPayment = async () => {
+    if (!booking) return;
+    const amount = Number(paidAmount);
+    if (!Number.isFinite(amount) || amount < 0) {
+      setPaymentError(t('paymentAmountInvalid'));
+      return;
+    }
+    // The backend enforces this too (PAYMENT_NOTE_REQUIRED); checking here saves a
+    // round trip and puts the message next to the field that caused it.
+    if (amount < Number(booking.price) && paymentNote.trim().length < 10) {
+      setPaymentError(t('paymentNoteRequired'));
+      return;
+    }
+    setConfirmingPayment(true);
+    setPaymentError(null);
+    try {
+      const updated = await bookingsApi.confirmPayment(booking.id, amount, paymentNote.trim() || undefined);
+      setBooking((prev) => (prev ? { ...prev, ...updated } : prev));
+      setShowPaymentModal(false);
+    } catch (err) {
+      setPaymentError(err instanceof ApiError ? err.message : t('paymentConfirmFailed'));
+    } finally {
+      setConfirmingPayment(false);
+    }
+  };
+
   const handleDownloadReceipt = async () => {
     setDownloadingReceipt(true);
     try {
@@ -440,16 +470,6 @@ export default function BookingDetailsPage() {
             </Link>
           )}
 
-          {isMaster && booking.status === 'COMPLETED' && !alreadyClientRated && (
-            <Link
-              href={`/reviews?booking=${booking.id}`}
-              className="btn-success px-5 py-3 rounded-2xl font-extrabold text-xs transition flex items-center gap-2"
-            >
-              <Icon name="Star" size={16} />
-              <span>{t('rateClient')}</span>
-            </Link>
-          )}
-
           {(isClient || isMaster) && booking.status === 'COMPLETED' && (
             <button
               onClick={handleDownloadReceipt}
@@ -550,9 +570,108 @@ export default function BookingDetailsPage() {
         </div>
       </div>
 
+      {/* Reporting the counterparty needs their *user* id, which only the two
+          participants of a booking ever see — this is the one place it is available. */}
+      {(isClient || isMaster) && (
+        <div className="flex justify-end -mt-4">
+          {isClient && booking.masterUserId && (
+            <ReportUserButton reportedUserId={booking.masterUserId} />
+          )}
+          {isMaster && booking.clientUserId && (
+            <ReportUserButton reportedUserId={booking.clientUserId} />
+          )}
+        </div>
+      )}
+
       {actionError && (
         <p className="text-xs font-bold text-red-600 dark:text-red-400 text-center">{actionError}</p>
       )}
+
+      {/* Payment confirmation (FR-7.7) — records a cash/transfer that already happened
+          off-platform (ADR-8), so it exists only once the job itself is COMPLETED. */}
+      {booking.status === 'COMPLETED' && (isClient || isMaster) && (() => {
+        const confirmed = !!booking.paymentConfirmedAt;
+        const paid = Number(booking.paidAmount ?? 0);
+        const agreed = Number(booking.price);
+        const tip = confirmed && paid > agreed ? (paid - agreed).toFixed(2) : null;
+        const short = confirmed && paid < agreed ? (agreed - paid).toFixed(2) : null;
+
+        return (
+          <div
+            className={`glass-card p-6 sm:p-7 rounded-3xl border shadow-xl ${
+              confirmed
+                ? 'border-emerald-200 dark:border-emerald-900/60'
+                : 'border-amber-200 dark:border-amber-900/60'
+            }`}
+          >
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5">
+              <div className="flex items-start gap-4">
+                <div
+                  className={`w-11 h-11 shrink-0 rounded-2xl flex items-center justify-center ${
+                    confirmed
+                      ? 'bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400'
+                      : 'bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400'
+                  }`}
+                >
+                  <Icon name={confirmed ? 'checkcircle2' : 'dollarsign'} size={20} />
+                </div>
+                <div className="space-y-1">
+                  <h3 className="text-sm font-extrabold text-slate-900 dark:text-white">
+                    {confirmed ? t('paymentConfirmedTitle') : t('paymentPendingTitle')}
+                  </h3>
+                  {confirmed ? (
+                    <>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">
+                        {t('paymentConfirmedOn', { date: new Date(booking.paymentConfirmedAt as string).toLocaleString() })}
+                      </p>
+                      {booking.paymentNote && (
+                        <p className="text-xs text-slate-600 dark:text-slate-300 pt-1">
+                          <span className="font-bold text-slate-400">{t('paymentNoteLabel')}:</span> {booking.paymentNote}
+                        </p>
+                      )}
+                    </>
+                  ) : (
+                    <p className="text-xs text-slate-500 dark:text-slate-400 max-w-md">
+                      {isClient ? t('paymentPendingHintClient') : t('paymentPendingHintMaster')}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex items-center gap-4 shrink-0">
+                <div className="text-right">
+                  <span className="text-[10px] uppercase font-bold text-slate-400 block">
+                    {confirmed ? t('paymentPaidLabel') : t('paymentAgreedLabel')}
+                  </span>
+                  <span className="text-xl font-extrabold text-slate-900 dark:text-white">
+                    {confirmed ? booking.paidAmount : booking.price} {booking.currency}
+                  </span>
+                  {tip && (
+                    <span className="block text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
+                      {t('paymentTip', { amount: `${tip} ${booking.currency}` })}
+                    </span>
+                  )}
+                  {short && (
+                    <span className="block text-[11px] font-bold text-amber-600 dark:text-amber-400">
+                      {t('paymentShort', { amount: `${short} ${booking.currency}` })}
+                    </span>
+                  )}
+                </div>
+
+                {!confirmed && isClient && (
+                  <button
+                    onClick={openPaymentModal}
+                    className="px-6 py-3 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-xs font-extrabold shadow-lg shadow-emerald-600/25 transition flex items-center gap-2"
+                  >
+                    <Icon name="checkcircle2" size={16} />
+                    {t('confirmPaymentButton')}
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        );
+      })()}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
@@ -844,6 +963,97 @@ export default function BookingDetailsPage() {
                 className="px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-extrabold text-xs shadow transition disabled:opacity-60"
               >
                 {t('cancelModalConfirm')}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Confirm payment modal (FR-7.7) */}
+      {showPaymentModal && (
+        <div
+          className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4"
+          onClick={() => setShowPaymentModal(false)}
+        >
+          <div
+            className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl w-full max-w-md p-6 sm:p-8 space-y-5"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 shrink-0 rounded-2xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+                <Icon name="dollarsign" size={18} />
+              </div>
+              <div>
+                <h3 className="text-lg font-extrabold text-slate-900 dark:text-white">{t('paymentModalTitle')}</h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{t('paymentModalSubtitle')}</p>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700">
+              <span className="text-xs font-bold text-slate-500">{t('paymentAgreedLabel')}</span>
+              <span className="text-sm font-extrabold text-slate-900 dark:text-white">
+                {booking.price} {booking.currency}
+              </span>
+            </div>
+
+            <label className="block space-y-1.5">
+              <span className="text-xs font-bold text-slate-700 dark:text-slate-300">{t('paymentAmountLabel')}</span>
+              <div className="relative">
+                <input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value={paidAmount}
+                  onChange={(e) => setPaidAmount(e.target.value)}
+                  className="w-full p-3.5 pr-16 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm font-extrabold"
+                />
+                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">
+                  {booking.currency}
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setPaidAmount(booking.price)}
+                className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 hover:underline"
+              >
+                {t('paymentPaidInFull')}
+              </button>
+            </label>
+
+            <label className="block space-y-1.5">
+              <span className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                {t('paymentNoteLabel')}
+                {Number(paidAmount) < Number(booking.price) && (
+                  <span className="text-red-500"> *</span>
+                )}
+              </span>
+              <textarea
+                value={paymentNote}
+                onChange={(e) => setPaymentNote(e.target.value)}
+                rows={3}
+                maxLength={500}
+                placeholder={t('paymentNotePlaceholder')}
+                className="w-full p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold"
+              />
+            </label>
+
+            {paymentError && (
+              <p className="text-xs font-bold text-red-600 dark:text-red-400">{paymentError}</p>
+            )}
+
+            <div className="flex items-center justify-end gap-3 pt-1">
+              <button
+                onClick={() => setShowPaymentModal(false)}
+                className="px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-extrabold text-xs hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+              >
+                {t('cancelModalDismiss')}
+              </button>
+              <button
+                onClick={confirmPayment}
+                disabled={confirmingPayment}
+                className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-extrabold text-xs shadow-lg shadow-emerald-600/25 transition disabled:opacity-60"
+              >
+                {confirmingPayment ? '...' : t('confirmPaymentButton')}
               </button>
             </div>
           </div>

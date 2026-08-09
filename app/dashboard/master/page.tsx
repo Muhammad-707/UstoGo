@@ -25,6 +25,7 @@ export default function MasterDashboardPage() {
   const { user, refreshUser } = useAuth();
   const masterProfile = user?.masterProfile;
   const [togglingActive, setTogglingActive] = useState(false);
+  const [resubmitting, setResubmitting] = useState(false);
 
   const [pending, setPending] = useState<Booking[]>([]);
   const [upcoming, setUpcoming] = useState<Booking[]>([]);
@@ -182,6 +183,26 @@ export default function MasterDashboardPage() {
       setError(err instanceof ApiError ? err.message : 'Failed to update availability.');
     } finally {
       setTogglingActive(false);
+    }
+  };
+
+  /**
+   * The only way out of a REJECTED profile. Without this a rejected master saw the
+   * rejection and had no action to take — `POST /masters/me/resubmit` existed with
+   * nothing calling it.
+   */
+  const handleResubmit = async () => {
+    setResubmitting(true);
+    setError(null);
+    try {
+      await masterCabinetApi.resubmit();
+      await refreshUser();
+      const fresh = await masterCabinetApi.myStatus();
+      setStatus(fresh);
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : t('resubmitFailed'));
+    } finally {
+      setResubmitting(false);
     }
   };
 
@@ -352,6 +373,69 @@ export default function MasterDashboardPage() {
             </div>
           )}
         </FilterContainer>
+      )}
+
+      {/* Moderation feedback — the only place a rejected master learns why and can act. */}
+      {masterProfile && masterProfile.approvalStatus !== 'APPROVED' && (
+        <div
+          className={`glass-card rounded-3xl border p-6 sm:p-8 shadow-xl space-y-4 ${
+            masterProfile.approvalStatus === 'REJECTED'
+              ? 'border-red-200 dark:border-red-900/60'
+              : 'border-amber-200 dark:border-amber-900/60'
+          }`}
+        >
+          <div className="flex items-start gap-4">
+            <div
+              className={`w-11 h-11 shrink-0 rounded-2xl flex items-center justify-center ${
+                masterProfile.approvalStatus === 'REJECTED'
+                  ? 'bg-red-50 dark:bg-red-950/50 text-red-600 dark:text-red-400'
+                  : 'bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400'
+              }`}
+            >
+              <Icon name={masterProfile.approvalStatus === 'REJECTED' ? 'x' : 'clock'} size={20} />
+            </div>
+            <div className="space-y-1.5 min-w-0">
+              <h3 className="text-sm font-extrabold text-slate-900 dark:text-white">
+                {masterProfile.approvalStatus === 'REJECTED'
+                  ? t('moderationRejectedTitle')
+                  : t('moderationPendingTitle')}
+              </h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 max-w-xl">
+                {masterProfile.approvalStatus === 'REJECTED'
+                  ? t('moderationRejectedHint')
+                  : t('moderationPendingHint')}
+              </p>
+              {masterProfile.rejectionReason && (
+                <div className="mt-2 p-3.5 rounded-2xl bg-red-50 dark:bg-red-950/30 border border-red-100 dark:border-red-900/50">
+                  <span className="text-[10px] font-extrabold uppercase tracking-wider text-red-500">
+                    {t('moderationReasonLabel')}
+                  </span>
+                  <p className="text-xs text-slate-700 dark:text-slate-200 mt-1">
+                    {masterProfile.rejectionReason}
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {masterProfile.approvalStatus === 'REJECTED' && (
+            <div className="flex flex-wrap items-center gap-3">
+              <Link
+                href="/settings/profile"
+                className="px-5 py-2.5 rounded-2xl border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-xs font-extrabold hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+              >
+                {t('moderationEditProfile')}
+              </Link>
+              <button
+                onClick={handleResubmit}
+                disabled={resubmitting}
+                className="px-6 py-2.5 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white text-xs font-extrabold shadow-lg shadow-amber-500/25 disabled:opacity-60 transition"
+              >
+                {resubmitting ? '...' : t('moderationResubmit')}
+              </button>
+            </div>
+          )}
+        </div>
       )}
 
       {/* Reliability & Instant Book */}

@@ -1,0 +1,22 @@
+{
+  "title": "Сабти Амалҳо",
+  "subtitle": "Ҳар амали идорӣ — танҳо иловашаванда",
+  "back": "Бозгашт",
+  "actionLabel": "Амал",
+  "allActions": "Ҳамаи амалҳо",
+  "entityTypeLabel": "Навъи объект",
+  "fromLabel": "Аз",
+  "toLabel": "То",
+  "resetFilters": "Тоза кардани филтрҳо",
+  "resultsCount": "{count} сабт",
+  "noResults": "Ба ин филтрҳо ягон сабт мувофиқ нест.",
+  "actorLabel": "Иҷрокунанда",
+  "entityIdLabel": "ID-и объект",
+  "reasonLabel": "Сабаб",
+  "beforeLabel": "Пеш (фиристодашуда)",
+  "afterLabel": "Баъд (натиҷа)",
+  "loadFailed": "Боркунии сабти амалҳо номуваффақ шуд",
+  "prev": "Қаблӣ",
+  "next": "Навбатӣ",
+  "pageOf": "Саҳифаи {page} аз {total}"
+}

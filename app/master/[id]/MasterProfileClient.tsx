@@ -12,6 +12,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import type { MasterPublic, MasterService, Review, WorkingDay, MasterCertificatePublic } from '@/lib/api/types';
 import { waLink } from '@/lib/whatsapp';
 import { getAvatarUrl, getCoverUrl, PLACEHOLDER_REVIEWER_AVATAR } from '@/lib/placeholders';
+import { FavoriteButton } from '@/components/masters/FavoriteButton';
 import { FilterItem } from '@/components/ui/FilterAnimate';
 
 type TabId = 'about' | 'services' | 'gallery' | 'reviews' | 'hours';
@@ -31,6 +32,8 @@ export default function MasterProfileClient() {
   const [media, setMedia] = useState<{ avatarUrl: string | null; bannerUrl: string | null; portfolio: { fileId: string; caption: string | null; url: string }[] }>({ avatarUrl: null, bannerUrl: null, portfolio: [] });
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
+  const [loadError, setLoadError] = useState(false);
+  const [reloadKey, setReloadKey] = useState(0);
 
   const [activeTab, setActiveTab] = useState<TabId>('about');
   const [showQuoteModal, setShowQuoteModal] = useState(false);
@@ -46,6 +49,7 @@ export default function MasterProfileClient() {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- resets loading state before an async fetch
     setLoading(true);
     setNotFound(false);
+    setLoadError(false);
 
     mastersApi
       .byId(masterId)
@@ -57,6 +61,11 @@ export default function MasterProfileClient() {
         if (cancelled) return;
         if (err instanceof ApiError && err.status === 404) {
           setNotFound(true);
+        } else {
+          // Network hiccup, timeout, or a 5xx from a waking-up backend — not the
+          // same thing as the master genuinely not existing, so it gets its own
+          // retryable error state instead of the "not found" screen.
+          setLoadError(true);
         }
       })
       .finally(() => {
@@ -86,7 +95,7 @@ export default function MasterProfileClient() {
     return () => {
       cancelled = true;
     };
-  }, [masterId]);
+  }, [masterId, reloadKey]);
 
   useEffect(() => {
     if (!masterId || user?.role !== 'CLIENT') return;
@@ -121,6 +130,26 @@ export default function MasterProfileClient() {
     return (
       <div className="min-h-[60vh] flex items-center justify-center text-sm text-slate-500 dark:text-slate-400 font-medium">
         {t('loading')}
+      </div>
+    );
+  }
+
+  if (loadError && !master) {
+    return (
+      <div className="min-h-[75vh] flex flex-col items-center justify-center text-center p-4 sm:p-6 space-y-6">
+        <div className="w-24 h-24 rounded-3xl bg-red-100 dark:bg-red-950 text-red-600 dark:text-red-400 flex items-center justify-center shadow-xl">
+          <Icon name="X" size={48} />
+        </div>
+        <div className="space-y-2 max-w-md">
+          <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white">{t('loadErrorTitle')}</h1>
+          <p className="text-xs text-slate-500">{t('loadErrorBody')}</p>
+        </div>
+        <button
+          onClick={() => setReloadKey((k) => k + 1)}
+          className="px-8 py-3.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-lg transition btn-ripple"
+        >
+          {t('retry')}
+        </button>
       </div>
     );
   }
@@ -237,6 +266,8 @@ export default function MasterProfileClient() {
           </div>
 
           <div className="flex items-center gap-3 justify-center">
+            <FavoriteButton masterId={master.id} />
+
             {master.whatsappEnabled && master.whatsappPhone && (() => {
             const link = waLink(master.whatsappPhone);
             return link ? (

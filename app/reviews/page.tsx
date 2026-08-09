@@ -21,19 +21,14 @@ export default function ReviewsPage() {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
-  const [clientRatingModalOpen, setClientRatingModalOpen] = useState(false);
 
   const [completedBookings, setCompletedBookings] = useState<Booking[]>([]);
-  const [clientRatingBookings, setClientRatingBookings] = useState<Booking[]>([]);
   const [bookingId, setBookingId] = useState('');
   const [rating, setRating] = useState(5);
-  const [clientRating, setClientRating] = useState(5);
   const [comment, setComment] = useState('');
-  const [clientComment, setClientComment] = useState('');
   const [npsScore, setNpsScore] = useState<number | null>(null);
   const [wouldRecommend, setWouldRecommend] = useState<boolean | null>(null);
   const [submitting, setSubmitting] = useState(false);
-  const [clientRatingSubmitting, setClientRatingSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const [replyDrafts, setReplyDrafts] = useState<Record<string, string>>({});
@@ -64,22 +59,6 @@ export default function ReviewsPage() {
     }
   };
 
-  const openClientRatingModal = () => {
-    setClientRatingModalOpen(true);
-    if (isMaster) {
-      bookingsApi
-        .list({ status: 'COMPLETED', limit: 20 })
-        .then((res) => {
-          setClientRatingBookings(res.items);
-          const preselect = deepLinkedBookingId && res.items.some((b) => b.id === deepLinkedBookingId)
-            ? deepLinkedBookingId
-            : res.items[0]?.id;
-          if (preselect) setBookingId(preselect);
-        })
-        .catch(() => setClientRatingBookings([]));
-    }
-  };
-
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- opens the review modal for a deep-linked booking
     if (deepLinkedBookingId && !isMaster) openModal();
@@ -99,7 +78,7 @@ export default function ReviewsPage() {
       setReplyOpenFor(null);
       setReplyDrafts((prev) => ({ ...prev, [reviewId]: '' }));
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Failed to send reply.');
+      setError(err instanceof ApiError ? err.message : t('replyFailed'));
     } finally {
       setReplySubmittingFor(null);
     }
@@ -123,35 +102,11 @@ export default function ReviewsPage() {
       setNpsScore(null);
       setWouldRecommend(null);
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Failed to submit review.');
+      setError(err instanceof ApiError ? err.message : t('submitReviewFailed'));
     } finally {
       setSubmitting(false);
     }
   };
-
-  const handleClientRatingSubmit = async () => {
-    if (!bookingId) return;
-    setClientRatingSubmitting(true);
-    setError(null);
-    try {
-      const created = await reviewsApi.rateClient({ bookingId, rating: clientRating, comment: clientComment || undefined });
-      setReviews((prev) => [created, ...prev]);
-      setClientRatingModalOpen(false);
-      setClientComment('');
-    } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Failed to submit client rating.');
-    } finally {
-      setClientRatingSubmitting(false);
-    }
-  };
-
-  const renderStars = (ratingValue: number) => (
-    <div className="flex items-center gap-0.5 text-amber-500">
-      {[1, 2, 3, 4, 5].map((s) => (
-        <Icon key={s} name="Star" size={12} className={s <= ratingValue ? 'fill-amber-400' : 'text-slate-300 dark:text-slate-600'} />
-      ))}
-    </div>
-  );
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-12">
@@ -186,20 +141,12 @@ export default function ReviewsPage() {
             </button>
           )}
 
-          {isMaster && (
-            <button
-              onClick={openClientRatingModal}
-              className="btn-success px-6 py-3.5 rounded-2xl font-extrabold text-xs transition btn-ripple"
-            >
-              {t('rateClient')}
-            </button>
-          )}
         </div>
       </div>
 
       {/* Reviews List */}
-      {loading && <p className="text-xs text-slate-400 font-semibold">Loading…</p>}
-      {!loading && reviews.length === 0 && <p className="text-xs text-slate-400 font-semibold">No reviews yet.</p>}
+      {loading && <p className="text-xs text-slate-400 font-semibold">{t('loading')}</p>}
+      {!loading && reviews.length === 0 && <p className="text-xs text-slate-400 font-semibold">{t('noReviewsYet')}</p>}
       <FilterContainer className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {reviews.map((rev, idx) => (
           <FilterItem key={rev.id} index={idx % 2} className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-4 shadow-lg">
@@ -217,17 +164,6 @@ export default function ReviewsPage() {
             </div>
 
             {rev.comment && <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">{rev.comment}</p>}
-
-            {rev.clientRating && (
-              <div className="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 text-xs space-y-1">
-                <span className="font-bold text-emerald-700 dark:text-emerald-400">{t('clientRatingLabel')}</span>
-                <div className="flex items-center gap-1 text-amber-500">
-                  {renderStars(rev.clientRating)}
-                  <span className="text-slate-600 dark:text-slate-300 ml-1">{rev.clientRating}.0</span>
-                </div>
-                {rev.clientComment && <p className="text-slate-600 dark:text-slate-300 mt-1">{rev.clientComment}</p>}
-              </div>
-            )}
 
             {rev.reply && (
               <div className="p-4 rounded-2xl bg-blue-50 dark:bg-slate-800/80 text-xs text-slate-700 dark:text-slate-300 space-y-1">
@@ -287,11 +223,11 @@ export default function ReviewsPage() {
             </div>
 
             {completedBookings.length === 0 ? (
-              <p className="text-xs text-slate-500">No completed bookings available to review.</p>
+              <p className="text-xs text-slate-500">{t('noCompletedBookingsToReview')}</p>
             ) : (
               <>
                 <div className="space-y-2">
-                  <label className="text-xs font-bold text-slate-400">Booking</label>
+                  <label className="text-xs font-bold text-slate-400">{t('bookingLabel')}</label>
                   <select
                     value={bookingId}
                     onChange={(e) => setBookingId(e.target.value)}
@@ -389,75 +325,6 @@ export default function ReviewsPage() {
                   className="w-full py-4 rounded-2xl bg-blue-600 text-white font-extrabold text-xs shadow-lg btn-ripple disabled:opacity-60"
                 >
                   {t('submitReview')}
-                </button>
-              </>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* Rate Client Modal (Master rates Client) */}
-      {clientRatingModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm">
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-8 rounded-3xl max-w-md w-full space-y-4 shadow-2xl animate-fade-in">
-            <div className="flex justify-between items-center">
-              <h3 className="font-extrabold text-slate-900 dark:text-white text-lg">{t('rateClientTitle')}</h3>
-              <button onClick={() => setClientRatingModalOpen(false)} className="text-slate-400 hover:text-slate-600">
-                <Icon name="X" size={20} />
-              </button>
-            </div>
-
-            {clientRatingBookings.length === 0 ? (
-              <p className="text-xs text-slate-500">No completed bookings available to rate the client.</p>
-            ) : (
-              <>
-                <div className="space-y-2">
-                  <label className="text-xs font-bold text-slate-400">{t('bookingLabel')}</label>
-                  <select
-                    value={bookingId}
-                    onChange={(e) => setBookingId(e.target.value)}
-                    className="w-full p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs"
-                  >
-                    {clientRatingBookings.map((b) => (
-                      <option key={b.id} value={b.id}>{b.serviceTitle} — {b.clientName}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-xs font-bold text-slate-400">{t('clientRatingLabel')}</label>
-                  <div className="flex gap-2 text-amber-400">
-                    {[1, 2, 3, 4, 5].map((s) => (
-                      <Icon
-                        key={s}
-                        name="Star"
-                        size={24}
-                        onClick={() => setClientRating(s)}
-                        className={`cursor-pointer hover:scale-110 transition ${s <= clientRating ? 'fill-amber-400' : ''}`}
-                      />
-                    ))}
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-xs font-bold text-slate-400">{t('clientCommentLabel')}</label>
-                  <textarea
-                    rows={4}
-                    value={clientComment}
-                    onChange={(e) => setClientComment(e.target.value)}
-                    placeholder={t('clientCommentPlaceholder')}
-                    className="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs"
-                  />
-                </div>
-
-                {error && <p className="text-xs font-bold text-red-600 dark:text-red-400">{error}</p>}
-
-                <button
-                  onClick={handleClientRatingSubmit}
-                  disabled={clientRatingSubmitting}
-                  className="btn-success w-full py-4 rounded-2xl font-extrabold text-xs btn-ripple disabled:opacity-60"
-                >
-                  {t('submitClientRating')}
                 </button>
               </>
             )}

@@ -8,7 +8,7 @@ import { Icon } from '@/components/icons/LucideIcons';
 import { setLocale } from '@/i18n/actions';
 import { locales, localeMeta, type Locale } from '@/i18n/locales';
 import { useAuth, dashboardPathFor } from '@/contexts/AuthContext';
-import { notificationsApi } from '@/lib/api/endpoints';
+import { cartApi, notificationsApi } from '@/lib/api/endpoints';
 import type { NotificationItem } from '@/lib/api/types';
 
 export const Navbar: React.FC = () => {
@@ -30,16 +30,21 @@ export const Navbar: React.FC = () => {
   const [notifOpen, setNotifOpen] = useState(false);
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [cartCount, setCartCount] = useState(0);
 
   useEffect(() => {
     if (!user) {
       // eslint-disable-next-line react-hooks/set-state-in-effect -- clears stale notifications on logout
       setNotifications([]);
       setUnreadCount(0);
+      setCartCount(0);
       return;
     }
     notificationsApi.unreadCount().then((res) => setUnreadCount(res.count)).catch(() => {});
     notificationsApi.list({ limit: 5 }).then((res) => setNotifications(res.items)).catch(() => {});
+    if (user.role === 'CLIENT') {
+      cartApi.get().then((cart) => setCartCount(cart.items.length)).catch(() => {});
+    }
   }, [user]);
 
   const handleLogout = async () => {
@@ -79,6 +84,7 @@ export const Navbar: React.FC = () => {
     { href: '/home', label: t('home') },
     { href: '/categories', label: t('categories') },
     { href: '/search', label: t('searchMasters') },
+    { href: '/marketplace', label: t('marketplace') },
     { href: '/leaderboard', label: t('leaderboard') },
     { href: '/reviews', label: t('reviews') },
     { href: '/about', label: t('about') },
@@ -236,6 +242,22 @@ export const Navbar: React.FC = () => {
               </>
             )}
           </div>
+
+          {/* Cart Button (CLIENT only) */}
+          {user?.role === 'CLIENT' && (
+            <Link
+              href="/cart"
+              className="p-2.5 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition relative"
+              aria-label={t('cart')}
+            >
+              <Icon name="shoppingcart" size={18} />
+              {cartCount > 0 && (
+                <span className="absolute top-1.5 right-1.5 w-4 h-4 bg-emerald-500 text-white text-[10px] font-extrabold rounded-full flex items-center justify-center border-2 border-white dark:border-slate-900">
+                  {cartCount}
+                </span>
+              )}
+            </Link>
+          )}
 
           {/* Light/Dark Mode Switcher */}
           <button

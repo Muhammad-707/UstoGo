@@ -1,0 +1,19 @@
+{
+  "title": "Review Moderation",
+  "subtitle": "Hide reviews that break the rules",
+  "back": "Back",
+  "resultsCount": "{count} reviews",
+  "noResults": "No reviews yet.",
+  "anonymous": "Deleted User",
+  "hidden": "Hidden",
+  "masterReply": "Master's reply",
+  "hide": "Hide review",
+  "unhide": "Restore review",
+  "viewMaster": "View master",
+  "confirmHide": "Hide this review? It stops counting toward the master's rating.",
+  "actionFailed": "The action failed.",
+  "loadFailed": "Failed to load reviews",
+  "prev": "Previous",
+  "next": "Next",
+  "pageOf": "Page {page} of {total}"
+}

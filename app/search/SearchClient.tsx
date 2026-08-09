@@ -9,6 +9,7 @@ import { mastersApi, citiesApi } from '@/lib/api/endpoints';
 import { flattenCategories, resolveCategoryId } from '@/lib/api/category-utils';
 import type { Category, City, MasterPublic } from '@/lib/api/types';
 import { getAvatarUrl } from '@/lib/placeholders';
+import { FavoriteButton } from '@/components/masters/FavoriteButton';
 import { FilterContainer, FilterItem, FilterButton, AnimatedGrid, AnimatedCard } from '@/components/ui/FilterAnimate';
 
 const SearchMap = dynamic(() => import('@/components/search/SearchMap'), {
@@ -427,14 +428,14 @@ export default function SearchClient({
               {masters.map((m, idx) => (
                 <AnimatedCard key={m.id} index={idx % 3} className="glass-card rounded-3xl overflow-hidden border border-slate-200 dark:border-slate-800 flex flex-col justify-between group hover:-translate-y-1.5 hover:shadow-2xl hover:shadow-blue-500/10 hover:border-blue-200 dark:hover:border-sky-900 transition-[transform,box-shadow,border-color] duration-300">
                   <div className="p-6 space-y-4">
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-start gap-4">
                       <img src={m.avatarUrl ?? getAvatarUrl(m.id, m.displayName)} alt={m.displayName} className="w-16 h-16 rounded-2xl object-cover shadow-md group-hover:scale-105 transition-transform duration-300" />
-                      <div>
+                      <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-1.5">
-                          <h3 className="font-extrabold text-slate-900 dark:text-white text-base">{m.displayName}</h3>
-                          {m.hasCertificates && <Icon name="ShieldCheck" size={16} className="text-blue-500" />}
+                          <h3 className="font-extrabold text-slate-900 dark:text-white text-base truncate">{m.displayName}</h3>
+                          {m.hasCertificates && <Icon name="ShieldCheck" size={16} className="text-blue-500 shrink-0" />}
                         </div>
-                        <p className="text-xs font-semibold text-blue-600 dark:text-sky-400">
+                        <p className="text-xs font-semibold text-blue-600 dark:text-sky-400 truncate">
                           {m.categories.join(', ') || '—'}
                         </p>
                         <div className="flex items-center gap-1 text-xs text-amber-500 font-bold mt-1">
@@ -442,6 +443,7 @@ export default function SearchClient({
                           <span>{m.ratingAverage} ({m.ratingCount})</span>
                         </div>
                       </div>
+                      <FavoriteButton masterId={m.id} size="sm" />
                     </div>
 
                     {m.bio && (
@@ -512,12 +514,15 @@ export default function SearchClient({
                       </span>
                     </div>
 
-                    <Link
-                      href={`/booking?master=${m.id}`}
-                      className="px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow transition btn-ripple"
-                    >
-                      {t('bookNow')}
-                    </Link>
+                    <div className="flex items-center gap-2">
+                      <FavoriteButton masterId={m.id} />
+                      <Link
+                        href={`/booking?master=${m.id}`}
+                        className="px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow transition btn-ripple"
+                      >
+                        {t('bookNow')}
+                      </Link>
+                    </div>
                   </div>
                 </AnimatedCard>
               ))}

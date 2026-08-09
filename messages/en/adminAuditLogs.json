@@ -1,0 +1,22 @@
+{
+  "title": "Audit Log",
+  "subtitle": "Every privileged action, append-only",
+  "back": "Back",
+  "actionLabel": "Action",
+  "allActions": "All actions",
+  "entityTypeLabel": "Entity type",
+  "fromLabel": "From",
+  "toLabel": "To",
+  "resetFilters": "Reset filters",
+  "resultsCount": "{count} entries",
+  "noResults": "No audit entries match these filters.",
+  "actorLabel": "Actor",
+  "entityIdLabel": "Entity id",
+  "reasonLabel": "Reason",
+  "beforeLabel": "Before (submitted)",
+  "afterLabel": "After (result)",
+  "loadFailed": "Failed to load the audit log",
+  "prev": "Previous",
+  "next": "Next",
+  "pageOf": "Page {page} of {total}"
+}

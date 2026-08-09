@@ -87,7 +87,7 @@ export default function RegisterClientPage() {
   };
 
   return (
-    <AuthShell minHeight="85vh">
+    <AuthShell minHeight="85vh" image="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=2400&q=90">
       <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 sm:p-12 w-full max-w-md shadow-2xl space-y-6 animate-fade-in">
         <div className="text-center space-y-2">
           <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white">{t('title')}</h2>

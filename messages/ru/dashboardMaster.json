@@ -68,5 +68,13 @@
   "npsPassives": "Нейтральные",
   "npsDetractors": "Критики",
   "npsNoData": "Пока нет ответов NPS.",
-  "unfinishedJobsWarning": "У вас {count} незавершённых заказов. Проверьте ожидающие и принятые заказы."
+  "unfinishedJobsWarning": "У вас {count} незавершённых заказов. Проверьте ожидающие и принятые заказы.",
+  "moderationPendingTitle": "Профиль на проверке",
+  "moderationPendingHint": "Модератор проверяет ваш профиль. После одобрения вы сможете принимать заказы.",
+  "moderationRejectedTitle": "Профиль не одобрен",
+  "moderationRejectedHint": "Исправьте замечания модератора и отправьте профиль на повторную проверку.",
+  "moderationReasonLabel": "Причина модератора",
+  "moderationEditProfile": "Редактировать профиль",
+  "moderationResubmit": "Отправить повторно",
+  "resubmitFailed": "Не удалось отправить профиль повторно."
 }

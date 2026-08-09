@@ -4,5 +4,7 @@
   "hourlyRate": "{rate}/ч",
   "bookService": "Заказать Услугу",
   "unavailablePending": "Больше не одобрен — сейчас забронировать нельзя",
-  "unavailableInactive": "Сейчас не принимает заказы"
+  "unavailableInactive": "Сейчас не принимает заказы",
+  "addToFavorites": "Добавить в избранное",
+  "removeFromFavorites": "Удалить из избранного"
 }

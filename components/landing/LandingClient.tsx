@@ -41,6 +41,7 @@ export default function LandingClient({
   allMasters: MasterPublic[];
 }) {
   const t = useTranslations('common');
+  const tCategories = useTranslations('categories');
 
   const [categoryFilter, setCategoryFilter] = useState<'all' | 'popular'>('all');
 
@@ -207,9 +208,9 @@ export default function LandingClient({
 
                 {/* Footer details */}
                 <div className="relative pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-xs text-slate-500">
-                  <span>{stat?.count ?? 0} устоҳо</span>
+                  <span>{tCategories('verifiedMasters', { count: stat?.count ?? 0 })}</span>
                   {stat?.minPrice != null && (
-                    <span className="font-extrabold text-slate-900 dark:text-white">Аз ${stat.minPrice}/h</span>
+                    <span className="font-extrabold text-slate-900 dark:text-white">{tCategories('startingFrom', { price: stat.minPrice })}</span>
                   )}
                 </div>
               </Link>

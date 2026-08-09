@@ -195,9 +195,9 @@ export default function CategoriesClient() {
                   </div>
 
                   <div className="relative pt-4 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-xs">
-                    <span className="text-slate-500 font-medium">{stat?.count ?? 0} устоҳо</span>
+                    <span className="text-slate-500 font-medium">{t('verifiedMasters', { count: stat?.count ?? 0 })}</span>
                     {stat?.minPrice != null && (
-                      <span className="font-extrabold text-slate-900 dark:text-white">Аз ${stat.minPrice}/h</span>
+                      <span className="font-extrabold text-slate-900 dark:text-white">{t('startingFrom', { price: stat.minPrice })}</span>
                     )}
                   </div>
                 </Link>

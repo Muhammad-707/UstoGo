@@ -1,0 +1,19 @@
+{
+  "reportButton": "Report this user",
+  "modalTitle": "Report a user",
+  "modalSubtitle": "A moderator reviews every report. Abuse of this form is itself reportable.",
+  "typeLabel": "Reason",
+  "typeSPAM": "Spam",
+  "typeFRAUD": "Fraud",
+  "typeABUSE": "Abuse",
+  "typeOTHER": "Other",
+  "descriptionLabel": "What happened?",
+  "descriptionPlaceholder": "Describe what happened, with dates and details where you can.",
+  "descriptionTooShort": "Please describe what happened in at least 10 characters.",
+  "submitButton": "Send report",
+  "cancel": "Cancel",
+  "close": "Close",
+  "sentTitle": "Report sent",
+  "sentBody": "A moderator will review it. You will not be notified of the outcome.",
+  "sendFailed": "Could not send the report."
+}

@@ -14,5 +14,11 @@
   "noServices": "No completed services yet.",
   "completedCount": "{count} completed",
   "monthlySeries": "Last 6 Months",
-  "noMonthlyData": "No booking activity in the last 6 months."
+  "noMonthlyData": "No booking activity in the last 6 months.",
+  "stateActive": "Active",
+  "stateInactive": "Suspended",
+  "activate": "Reactivate master",
+  "deactivate": "Suspend master",
+  "deactivateReasonPrompt": "Reason for suspending this master (at least 10 characters):",
+  "toggleActiveFailed": "Could not change the master's state."
 }

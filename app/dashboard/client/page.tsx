@@ -7,7 +7,7 @@ import { useTranslations } from 'next-intl';
 import { bookingsApi, mastersApi, referralApi, reviewsApi } from '@/lib/api/endpoints';
 import { getBookingsSocket } from '@/lib/bookings/socket';
 import { useRequireAuth } from '@/hooks/useRequireAuth';
-import { useFavorites } from '@/hooks/useFavorites';
+import { useFavorites } from '@/contexts/FavoritesContext';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { getAvatarUrl } from '@/lib/placeholders';
 import type { Booking, MasterPublic, MyReferral } from '@/lib/api/types';

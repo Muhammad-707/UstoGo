@@ -25,14 +25,25 @@ interface SearchPageData {
 const REVALIDATE_SECONDS = 30;
 const MASTERS_TAG = 'masters';
 
+const EMPTY_HOME_DATA: HomePageData = { categories: [], topMasters: [], allMasters: [] };
+const EMPTY_SEARCH_DATA: SearchPageData = { categories: [], initialMasters: [], totalPages: 0, total: 0 };
+
+// The backend (Render free tier) can be asleep or briefly unreachable. These pages
+// are rendered on the server, so a thrown ApiError/network error here would crash
+// the whole request with Next's "unexpected error" overlay instead of just showing
+// an empty state — callers degrade gracefully and the client can retry on refresh.
 export const getLandingData = unstable_cache(
   async (): Promise<HomePageData> => {
-    const [categories, top, all] = await Promise.all([
-      categoriesApi.tree(),
-      mastersApi.search({ limit: 3, sort: 'rating:desc' }),
-      mastersApi.search({ limit: 100 }),
-    ]);
-    return { categories, topMasters: top.items, allMasters: all.items };
+    try {
+      const [categories, top, all] = await Promise.all([
+        categoriesApi.tree(),
+        mastersApi.search({ limit: 3, sort: 'rating:desc' }),
+        mastersApi.search({ limit: 100 }),
+      ]);
+      return { categories, topMasters: top.items, allMasters: all.items };
+    } catch {
+      return EMPTY_HOME_DATA;
+    }
   },
   ['home-page', 'landing'],
   { revalidate: REVALIDATE_SECONDS, tags: [MASTERS_TAG] }
@@ -40,12 +51,16 @@ export const getLandingData = unstable_cache(
 
 export const getHomeData = unstable_cache(
   async (): Promise<HomePageData> => {
-    const [categories, top, all] = await Promise.all([
-      categoriesApi.tree(),
-      mastersApi.search({ limit: 6, sort: 'rating:desc' }),
-      mastersApi.search({ limit: 100 }),
-    ]);
-    return { categories, topMasters: top.items, allMasters: all.items };
+    try {
+      const [categories, top, all] = await Promise.all([
+        categoriesApi.tree(),
+        mastersApi.search({ limit: 6, sort: 'rating:desc' }),
+        mastersApi.search({ limit: 100 }),
+      ]);
+      return { categories, topMasters: top.items, allMasters: all.items };
+    } catch {
+      return EMPTY_HOME_DATA;
+    }
   },
   ['home-page', 'home'],
   { revalidate: REVALIDATE_SECONDS, tags: [MASTERS_TAG] }
@@ -53,10 +68,14 @@ export const getHomeData = unstable_cache(
 
 export const getSearchData = unstable_cache(
   async (categoryId: string | null | undefined): Promise<SearchPageData> => {
-    const categories = await categoriesApi.tree();
-    const id = resolveCategoryId(categoryId, categories);
-    const res = await mastersApi.search({ categoryId: id, maxPrice: 500, page: 1, limit: 20 });
-    return { categories, initialMasters: res.items, totalPages: res.meta.totalPages, total: res.meta.total };
+    try {
+      const categories = await categoriesApi.tree();
+      const id = resolveCategoryId(categoryId, categories);
+      const res = await mastersApi.search({ categoryId: id, maxPrice: 500, page: 1, limit: 20 });
+      return { categories, initialMasters: res.items, totalPages: res.meta.totalPages, total: res.meta.total };
+    } catch {
+      return EMPTY_SEARCH_DATA;
+    }
   },
   ['search-page'],
   { revalidate: REVALIDATE_SECONDS, tags: [MASTERS_TAG] }

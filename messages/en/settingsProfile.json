@@ -30,5 +30,12 @@
   "whatsappDisabled": "Disabled",
   "whatsappTest": "Test",
   "whatsappChangeWarning": "After changing, clients will write to the new number",
-  "whatsappChanged": "Changed: {date}"
+  "whatsappChanged": "Changed: {date}",
+  "locationSectionTitle": "Precise Map Location",
+  "locationHint": "Click the map or drag the pin to set your exact location. Clients see this instead of just your city — falls back to the city center if not set.",
+  "useMyLocation": "Use My Location",
+  "locating": "Locating...",
+  "saveLocation": "Save Location",
+  "clearLocation": "Clear",
+  "locationSaveFailed": "Failed to save location"
 }

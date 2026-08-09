@@ -4,7 +4,6 @@
   "subtitle": "Authentic reviews from verified UstoGo bookings.",
   "basedOn": "Based on {count}+ reviews",
   "writeReview": "Write a Review",
-  "rateClient": "Rate Client",
   "craftsmanResponse": "Craftsman Response:",
   "replyToReview": "Reply to this review",
   "replyPlaceholder": "Write a public reply…",
@@ -21,10 +20,10 @@
   "commentsLabel": "Review Comments",
   "commentsPlaceholder": "Describe your experience...",
   "submitReview": "Submit Review",
-  "rateClientTitle": "Rate the Client",
-  "clientRatingLabel": "Client Rating",
   "bookingLabel": "Booking",
-  "clientCommentLabel": "Client Comment",
-  "clientCommentPlaceholder": "Describe the client behavior...",
-  "submitClientRating": "Submit Client Rating"
+  "loading": "Loading…",
+  "noReviewsYet": "No reviews yet.",
+  "noCompletedBookingsToReview": "No completed bookings available to review.",
+  "replyFailed": "Failed to send reply.",
+  "submitReviewFailed": "Failed to submit review."
 }
