@@ -81,7 +81,7 @@ export default function ProductDetailPage() {
 
   if (loading) {
     return (
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="page-shell py-12">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
           <div className="aspect-square rounded-3xl bg-slate-50 dark:bg-slate-800/40 animate-pulse" />
           <div className="space-y-4">
@@ -95,7 +95,7 @@ export default function ProductDetailPage() {
 
   if (notFound || !product) {
     return (
-      <div className="max-w-3xl mx-auto px-4 py-20 text-center space-y-4">
+      <div className="page-shell page-shell-narrow py-20 text-center space-y-4">
         <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">{t('productNotFound')}</p>
         <Link href="/marketplace" className="text-xs font-bold text-emerald-600 hover:underline">
           {t('backToShop')}
@@ -105,7 +105,7 @@ export default function ProductDetailPage() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+    <div className="page-shell py-10 space-y-8">
       <Link href="/marketplace" className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-500 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition">
         <Icon name="chevronleft" size={14} />
         {t('backToShop')}

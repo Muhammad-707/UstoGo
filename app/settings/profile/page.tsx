@@ -198,7 +198,7 @@ export default function EditProfilePage() {
         title={t('editProfile')}
         accent={isMaster ? 'amber' : 'blue'}
       />
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+    <div className="page-shell page-shell-narrow py-10 space-y-8">
 
       {isMaster && (
         <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-xl">

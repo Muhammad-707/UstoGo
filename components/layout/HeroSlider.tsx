@@ -227,7 +227,7 @@ export default function HeroSlider() {
       {/* =================================================== */}
       {/* 4. HERO CONTENT OVERLAY (TEXT & SEARCH BAR & CARDS) */}
       {/* =================================================== */}
-      <div className="relative z-30 max-w-7xl mx-auto w-full text-center space-y-8 pt-6">
+      <div className="relative z-30 page-shell w-full text-center space-y-8 pt-6">
         
         {/* Trust Badge */}
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-950/90 border border-blue-500/40 text-sky-300 text-xs font-bold shadow-xl backdrop-blur-md animate-fade-in">

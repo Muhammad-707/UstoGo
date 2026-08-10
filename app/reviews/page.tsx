@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Icon } from '@/components/icons/LucideIcons';
 import { useTranslations } from 'next-intl';
 import { useAuth } from '@/contexts/AuthContext';
@@ -18,13 +18,26 @@ export default function ReviewsPage() {
   const t = useTranslations('reviews');
   const { user } = useAuth();
   const isMaster = user?.role === 'MASTER';
+  const router = useRouter();
   const searchParams = useSearchParams();
   const deepLinkedBookingId = searchParams?.get('booking') ?? null;
-  // `/leaderboard` redirects here with `?tab=leaderboard`; a signed-out visitor has no
-  // reviews of their own to read, so the ranking is the more useful landing tab for them.
-  const [tab, setTab] = useState<ReviewsTab>(
-    searchParams?.get('tab') === 'leaderboard' ? 'leaderboard' : 'reviews',
-  );
+  /**
+   * The URL is the tab's only source of truth — `/leaderboard` redirects here with
+   * `?tab=leaderboard`, and switching tabs rewrites it. Holding the choice in component
+   * state alone meant a reload always came back on Reviews, throwing away the tab the
+   * reader was actually on, and it also made the ranking impossible to link to.
+   */
+  const tab: ReviewsTab = searchParams?.get('tab') === 'leaderboard' ? 'leaderboard' : 'reviews';
+
+  const setTab = (next: ReviewsTab) => {
+    const params = new URLSearchParams(searchParams?.toString() ?? '');
+    if (next === 'leaderboard') params.set('tab', 'leaderboard');
+    else params.delete('tab');
+    const query = params.toString();
+    // `scroll: false` — the switcher sits at the top of the page, so jumping to the top
+    // after clicking it is movement the reader did not ask for.
+    router.replace(query ? `/reviews?${query}` : '/reviews', { scroll: false });
+  };
 
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
@@ -122,7 +135,7 @@ export default function ReviewsPage() {
   ];
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-10">
+    <div className="page-shell py-12 space-y-10">
 
       {/* Reviews / Leaderboard switcher */}
       <div className="flex justify-center">
@@ -144,10 +157,16 @@ export default function ReviewsPage() {
         </div>
       </div>
 
-      {tab === 'leaderboard' && <LeaderboardPanel />}
+      {/* `key` on the wrapper restarts the entry animation on every switch — without it
+          React reuses the node and the incoming panel simply appears. */}
+      {tab === 'leaderboard' && (
+        <div key="leaderboard" className="animate-tab-in">
+          <LeaderboardPanel />
+        </div>
+      )}
 
       {tab === 'reviews' && (
-      <div className="space-y-10">
+      <div key="reviews" className="space-y-10 animate-tab-in">
 
       {/* Header & Rating Breakdown */}
       <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 border border-slate-200 dark:border-slate-800 shadow-xl flex flex-col md:flex-row items-center justify-between gap-8">

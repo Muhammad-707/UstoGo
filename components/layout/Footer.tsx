@@ -21,7 +21,7 @@ export const Footer: React.FC = () => {
       <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-sky-500/10 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="page-shell relative z-10">
         
         {/* Top Newsletter & Banner Callout */}
         <div className="bg-gradient-to-r from-blue-900/40 via-slate-800/80 to-blue-950/40 p-8 sm:p-12 rounded-3xl border border-blue-800/40 shadow-2xl mb-16 flex flex-col lg:flex-row items-center justify-between gap-8 backdrop-blur-xl">

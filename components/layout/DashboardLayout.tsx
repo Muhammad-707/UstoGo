@@ -29,7 +29,7 @@ export function DashboardLayout({ children, role, title, subtitle, action }: Das
 
   return (
     <div className="min-h-screen bg-slate-100 dark:bg-slate-950">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-5 sm:pt-7">
+      <div className="page-shell pt-5 sm:pt-7">
         {/* Hero card */}
         <div className={`relative overflow-hidden rounded-[2rem] bg-gradient-to-br ${config.gradientFrom} ${config.gradientTo} p-5 sm:p-7 shadow-xl ${config.glow} ring-1 ring-black/5`}>
           {/* Dot-grid texture */}
@@ -90,7 +90,7 @@ export function DashboardLayout({ children, role, title, subtitle, action }: Das
       </div>
 
       {/* Page Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-8 sm:pb-10 space-y-6">{children}</main>
+      <main className="page-shell pt-6 pb-8 sm:pb-10 space-y-6">{children}</main>
     </div>
   );
 }

@@ -57,7 +57,7 @@ export default function WishlistPage() {
   return (
     <>
     <ClientPageHeader icon="heart" eyebrow={t('badge')} title={t('wishlist')} />
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8">
+    <div className="page-shell py-12 space-y-8">
 
       {loading && (
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">

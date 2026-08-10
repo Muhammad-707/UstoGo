@@ -119,14 +119,14 @@ export default function WhatsAppContactsPage() {
 
   if (!user) {
     return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
+      <div className="page-shell py-16 text-center">
         <p className="text-sm text-slate-500">{t('loginRequired')}</p>
       </div>
     );
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <div className="page-shell py-8 space-y-8">
       <div>
         <span className="text-xs font-extrabold uppercase tracking-widest text-[#25D366]">
           {t('badge')}

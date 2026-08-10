@@ -372,7 +372,7 @@ export default function BookingDetailsPage() {
 
   if (loading) {
     return (
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-20 flex justify-center">
+      <div className="page-shell page-shell-narrow py-20 flex justify-center">
         <Spinner />
       </div>
     );
@@ -380,7 +380,7 @@ export default function BookingDetailsPage() {
 
   if (notFound) {
     return (
-      <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center space-y-6">
+      <div className="page-shell page-shell-narrow py-20 text-center space-y-6">
         <div className="w-16 h-16 bg-slate-100 dark:bg-slate-800 text-slate-400 rounded-full flex items-center justify-center mx-auto">
           <Icon name="Search" size={28} />
         </div>
@@ -398,7 +398,7 @@ export default function BookingDetailsPage() {
 
   if (error || !booking) {
     return (
-      <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center space-y-6">
+      <div className="page-shell page-shell-narrow py-20 text-center space-y-6">
         <div className="w-16 h-16 bg-red-100 dark:bg-red-950 text-red-500 rounded-full flex items-center justify-center mx-auto">
           <Icon name="X" size={28} />
         </div>
@@ -430,7 +430,7 @@ export default function BookingDetailsPage() {
   const canMasterComplete = isMaster && booking.status === 'IN_PROGRESS';
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8">
+    <div className="page-shell page-shell-narrow py-12 space-y-8">
 
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 glass-card p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl">

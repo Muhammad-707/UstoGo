@@ -78,7 +78,7 @@ export default function ClientHomePage({
   const greetingName = user?.clientProfile?.firstName || 'Guest';
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
+    <div className="page-shell py-10 space-y-10">
 
       {/* Welcome Banner */}
       <div className="relative overflow-hidden bg-gradient-to-br from-blue-900 via-slate-900 to-indigo-950 rounded-3xl p-8 text-white shadow-xl flex flex-col md:flex-row items-center justify-between gap-6 border border-slate-800">

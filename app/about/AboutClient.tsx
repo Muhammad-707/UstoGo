@@ -30,7 +30,7 @@ export default function AboutClient() {
         <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/70 to-slate-950/20" />
         <div className="absolute inset-0 bg-gradient-to-r from-slate-950/80 via-transparent to-transparent" />
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 w-full">
+        <div className="relative page-shell pb-16 w-full">
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
@@ -51,7 +51,7 @@ export default function AboutClient() {
       </section>
 
       {/* 2. STATS BAND */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-32 relative z-10">
+      <section className="page-shell -mt-32 relative z-10">
         <FilterContainer className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {STATS.map((s, idx) => (
             <FilterItem key={s.labelKey} index={idx}>
@@ -72,7 +72,7 @@ export default function AboutClient() {
       </section>
 
       {/* 3. MISSION SPLIT SECTION */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="page-shell">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <FilterItem index={0}>
             <div className="relative rounded-3xl overflow-hidden shadow-2xl group">
@@ -107,7 +107,7 @@ export default function AboutClient() {
       </section>
 
       {/* 4. VALUES / FEATURE CARDS */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+      <section className="page-shell space-y-10">
         <div className="text-center max-w-2xl mx-auto space-y-3">
           <span className="text-xs font-extrabold uppercase tracking-widest text-blue-600 dark:text-sky-400">
             {t('valuesBadge')}
@@ -142,7 +142,7 @@ export default function AboutClient() {
       </section>
 
       {/* 5. CTA */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="page-shell">
         <div className="bg-gradient-to-br from-blue-600 via-indigo-600 to-blue-800 rounded-3xl p-8 sm:p-14 text-white shadow-2xl shadow-blue-900/30 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-8">
           <div className="absolute -top-20 -right-10 w-72 h-72 rounded-full bg-sky-400/20 blur-3xl animate-float" />
           <div className="absolute -bottom-24 -left-10 w-72 h-72 rounded-full bg-purple-400/20 blur-3xl animate-float" style={{ animationDelay: '1s' }} />

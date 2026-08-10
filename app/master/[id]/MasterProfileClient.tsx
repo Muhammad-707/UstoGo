@@ -209,7 +209,7 @@ export default function MasterProfileClient() {
         <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-24 relative z-10">
+      <div className="page-shell -mt-24 relative z-10">
 
         {/* Profile Header Card */}
         <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-2xl flex flex-col md:flex-row md:items-end justify-between gap-6">

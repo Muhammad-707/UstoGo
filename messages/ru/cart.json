@@ -8,5 +8,12 @@
   "total": "Итого",
   "checkout": "Оформить Заказ",
   "updateFailed": "Не удалось обновить корзину",
-  "checkoutFailed": "Не удалось оформить заказ"
+  "checkoutFailed": "Не удалось оформить заказ",
+  "itemsCount": "Товаров: {count}",
+  "quantity": "Количество",
+  "lineTotal": "Сумма",
+  "remove": "Удалить",
+  "saved": "Вы экономите {amount}",
+  "continueShopping": "Продолжить покупки",
+  "summary": "Итого по заказу"
 }

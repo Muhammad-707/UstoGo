@@ -8,5 +8,12 @@
   "total": "Total",
   "checkout": "Checkout",
   "updateFailed": "Failed to update the cart",
-  "checkoutFailed": "Checkout failed"
+  "checkoutFailed": "Checkout failed",
+  "itemsCount": "{count} items",
+  "quantity": "Quantity",
+  "lineTotal": "Line total",
+  "remove": "Remove",
+  "saved": "You save {amount}",
+  "continueShopping": "Continue shopping",
+  "summary": "Order summary"
 }

@@ -25,7 +25,7 @@ export default function PaymentsPage() {
   return (
     <>
     <ClientPageHeader icon="dollarsign" eyebrow={t('badge')} title={t('title')} />
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+    <div className="page-shell page-shell-narrow py-10 space-y-8">
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Card 1: Total spent — no online payment gateway exists yet; masters are paid directly */}

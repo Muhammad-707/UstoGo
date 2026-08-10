@@ -144,7 +144,7 @@ export default function SearchClient({
   }, [searchQuery, selectedCategory, verifiedOnly, minRating, maxPrice, selectedCity, sortBy, page, userLocation, radiusKm]);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+    <div className="page-shell py-10 space-y-8">
 
       {/* Header & Main Search */}
       <div className="space-y-4">

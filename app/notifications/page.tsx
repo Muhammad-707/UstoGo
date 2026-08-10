@@ -47,7 +47,7 @@ export default function NotificationsPage() {
     (n.payload?.message as string | undefined) ?? '';
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8">
+    <div className="page-shell page-shell-narrow py-12 space-y-8">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <div className="hidden sm:flex w-12 h-12 shrink-0 rounded-2xl bg-gradient-to-br from-blue-600 to-sky-500 text-white items-center justify-center shadow-lg shadow-blue-900/20">

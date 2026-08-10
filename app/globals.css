@@ -112,6 +112,29 @@ body {
   animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
+/* Entry for a tab panel: a shorter, flatter fadeIn, so switching tabs reads as the
+   content arriving rather than the whole page re-rendering under the switcher. */
+@keyframes tabIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.995);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-tab-in {
+  animation: tabIn 0.32s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-tab-in {
+    animation: none;
+  }
+}
+
 .no-scrollbar {
   scrollbar-width: none;
   -ms-overflow-style: none;
@@ -214,6 +237,42 @@ body {
   transform: scale(0, 0);
   opacity: 0.3;
   transition: 0s;
+}
+
+/* ---------------------------------------------------------------------------
+   Page width
+   One shell for the whole site. Widths used to be picked per page — 2xl through
+   7xl, six different values — so the navbar, the page header band and the page
+   body each started at a different left edge and none of them lined up. Every
+   page-level container is now `.page-shell`, and the handful of pages that are
+   really one form or one reading column add `.page-shell-narrow` (declared
+   after, so it wins) rather than inventing a fourth width: a text input as wide
+   as the page is worse than one 1040px wide, not better.
+
+   1320px, not 1280 and not 1440: the old 7xl left too much empty margin on a
+   1900px screen, and 1440 read as stretched rather than roomy.
+   --------------------------------------------------------------------------- */
+.page-shell {
+  width: 100%;
+  max-width: 82.5rem; /* 1320px */
+  margin-inline: auto;
+  padding-inline: 1rem;
+}
+
+@media (min-width: 640px) {
+  .page-shell {
+    padding-inline: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .page-shell {
+    padding-inline: 2rem;
+  }
+}
+
+.page-shell-narrow {
+  max-width: 65rem; /* 1040px */
 }
 
 /* ---------------------------------------------------------------------------

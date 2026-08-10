@@ -90,7 +90,7 @@ export default function CertificatesPage() {
         </button>
       }
     />
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+    <div className="page-shell page-shell-narrow py-10 space-y-8">
 
       {error && (
         <div className="p-4 rounded-2xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 text-xs font-bold text-red-600 dark:text-red-400">

@@ -8,5 +8,12 @@
   "total": "Ҷамъ",
   "checkout": "Пардохт кардан",
   "updateFailed": "Навсозии сабад номуваффақ шуд",
-  "checkoutFailed": "Пардохт номуваффақ шуд"
+  "checkoutFailed": "Пардохт номуваффақ шуд",
+  "itemsCount": "{count} мол",
+  "quantity": "Миқдор",
+  "lineTotal": "Ҷамъ",
+  "remove": "Хориҷ кардан",
+  "saved": "Шумо сарфа мекунед {amount}",
+  "continueShopping": "Идомаи харид",
+  "summary": "Хулосаи фармоиш"
 }

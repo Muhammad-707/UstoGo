@@ -101,7 +101,7 @@ export default function LandingClient({
           }}
         />
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        <div className="relative page-shell grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {STATS.map((s, idx) => (
             <FilterItem key={s.labelKey} index={idx}>
               <motion.div
@@ -128,7 +128,7 @@ export default function LandingClient({
       </section>
 
       {/* 3. POPULAR CATEGORIES SECTION */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+      <section className="page-shell space-y-8">
 
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
           <div>
@@ -237,7 +237,7 @@ export default function LandingClient({
 
       {/* 4. HOW IT WORKS SECTION */}
       <section className="bg-slate-100/70 dark:bg-slate-900/50 py-20 border-y border-slate-200/80 dark:border-slate-800/80">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
+        <div className="page-shell space-y-16">
 
           <div className="text-center max-w-2xl mx-auto space-y-3">
             <span className="text-xs font-extrabold uppercase tracking-widest text-blue-600 dark:text-sky-400">
@@ -291,7 +291,7 @@ export default function LandingClient({
       </section>
 
       {/* 5. TOP MASTERS SECTION */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+      <section className="page-shell space-y-8">
 
         <div className="flex items-center justify-between">
           <div>
@@ -396,7 +396,7 @@ export default function LandingClient({
       </section>
 
       {/* 6. CALL TO ACTION SECTION */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="page-shell">
         <div className="bg-gradient-to-br from-blue-600 via-indigo-600 to-blue-800 rounded-3xl p-8 sm:p-14 text-white shadow-2xl shadow-blue-900/30 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-8">
 
           {/* Decorative glows + pattern */}

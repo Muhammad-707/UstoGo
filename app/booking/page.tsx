@@ -259,7 +259,7 @@ export default function BookingWizardPage() {
   // No master selected via ?master= — this wizard assumes a preselected craftsman.
   if (!preselectedMasterId) {
     return (
-      <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center space-y-6">
+      <div className="page-shell page-shell-narrow py-20 text-center space-y-6">
         <div className="w-16 h-16 bg-slate-100 dark:bg-slate-800 text-slate-400 rounded-full flex items-center justify-center mx-auto">
           <Icon name="Search" size={28} />
         </div>
@@ -277,7 +277,7 @@ export default function BookingWizardPage() {
 
   if (masterLoading) {
     return (
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20 flex justify-center">
+      <div className="page-shell page-shell-narrow py-20 flex justify-center">
         <Spinner />
       </div>
     );
@@ -285,7 +285,7 @@ export default function BookingWizardPage() {
 
   if (masterError || !master) {
     return (
-      <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center space-y-6">
+      <div className="page-shell page-shell-narrow py-20 text-center space-y-6">
         <div className="w-16 h-16 bg-red-100 dark:bg-red-950 text-red-500 rounded-full flex items-center justify-center mx-auto">
           <Icon name="X" size={28} />
         </div>
@@ -301,7 +301,7 @@ export default function BookingWizardPage() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8">
+    <div className="page-shell page-shell-narrow py-12 space-y-8">
 
       {/* Page Title */}
       <div className="text-center space-y-2">

@@ -115,7 +115,7 @@ export default function SecuritySettingsPage() {
   return (
     <>
       <PageHeader icon="key" eyebrow={t('accountSettings')} title={t('title')} />
-    <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+    <div className="page-shell page-shell-narrow py-10 space-y-8">
       {/* Change Password */}
       <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-xl space-y-4">
         <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">

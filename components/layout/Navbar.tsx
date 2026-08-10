@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useTransition } from 'react';
+import React, { useState, useEffect, useRef, useTransition } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useLocale, useTranslations } from 'next-intl';
@@ -125,11 +125,34 @@ export const Navbar: React.FC = () => {
 
   const isLinkActive = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
 
+  /**
+   * The booking CTA rests as an icon and opens into its label on hover.
+   *
+   * The width is measured rather than guessed. A `max-width` transition has to pick a
+   * number big enough for the longest translation, so the easing finishes well before
+   * the box reaches it and the tail of the movement snaps; the CSS `0fr → 1fr` grid
+   * trick collapses here for a different reason — an `fr` needs free space to divide,
+   * and inside a shrink-to-fit `inline-flex` there is none, so it resolves to 0. The
+   * label's own `offsetWidth` is neither of those problems, and it is re-read whenever
+   * the label changes, which is what makes this survive a language switch.
+   */
+  const bookLabel = t('bookService');
+  const bookLabelRef = useRef<HTMLSpanElement>(null);
+  const [bookLabelWidth, setBookLabelWidth] = useState(0);
+  const [bookOpen, setBookOpen] = useState(false);
+
+  useEffect(() => {
+    if (bookLabelRef.current) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- measures rendered text, unavailable before paint
+      setBookLabelWidth(bookLabelRef.current.offsetWidth);
+    }
+  }, [bookLabel]);
+
   return (
     <header className="sticky top-0 z-50 w-full glass-panel border-b border-slate-200/80 dark:border-slate-800/80 shadow-sm transition-colors duration-300">
-      {/* `max-w-7xl` on purpose: it is the container every page uses, so the wordmark,
-          the page header band below and the page content all share one left edge. */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-[72px] flex items-center justify-between gap-4">
+      {/* `page-shell` on purpose: it is the one container the whole site uses, so the
+          wordmark, the page header band below and the page content share a left edge. */}
+      <div className="page-shell h-[72px] flex items-center justify-between gap-4">
 
         {/* Brand Logo — also the link to the landing page */}
         <Link href="/" className="flex items-center gap-2.5 group shrink-0">
@@ -358,15 +381,33 @@ export const Navbar: React.FC = () => {
           )}
 
           {/* Booking is a client action: a master fulfils jobs and an admin moderates
-              them, so neither has any use for "book a service" in their own header. */}
+              them, so neither has any use for "book a service" in their own header.
+
+              It rests as an icon and opens into the full label on hover — see the
+              `bookLabelWidth` note above for why the width is measured. At rest it was
+              the widest thing in the bar for a control nobody needs to read twice.
+              `title`/`aria-label` carry the same words for anyone not using a mouse, and
+              focus opens it too so the keyboard path is not icon-only. */}
           {isClientView && (
             <Link
               href="/booking"
-              className="hidden md:flex px-4 py-2.5 rounded-2xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white text-xs font-bold shadow-lg shadow-blue-600/25 btn-ripple transition duration-200 items-center gap-2 whitespace-nowrap"
+              title={bookLabel}
+              aria-label={bookLabel}
+              onMouseEnter={() => setBookOpen(true)}
+              onMouseLeave={() => setBookOpen(false)}
+              onFocus={() => setBookOpen(true)}
+              onBlur={() => setBookOpen(false)}
+              className="hidden md:inline-flex items-center h-11 px-3.5 rounded-2xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white text-xs font-bold shadow-lg shadow-blue-600/25 hover:shadow-xl hover:shadow-blue-600/35 transition-shadow duration-300"
             >
-              <Icon name="Calendar" size={15} />
-              <span className="hidden lg:inline">{t('bookService')}</span>
-              <span className="lg:hidden">{t('bookShort')}</span>
+              <Icon name="Calendar" size={17} className="shrink-0" />
+              <span
+                className="overflow-hidden whitespace-nowrap transition-[width,opacity] duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]"
+                style={{ width: bookOpen ? bookLabelWidth : 0, opacity: bookOpen ? 1 : 0 }}
+              >
+                <span ref={bookLabelRef} className="inline-block pl-2">
+                  {bookLabel}
+                </span>
+              </span>
             </Link>
           )}
 

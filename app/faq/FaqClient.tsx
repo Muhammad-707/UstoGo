@@ -19,7 +19,7 @@ export default function FaqClient() {
   const [openIdx, setOpenIdx] = useState<number | null>(0);
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-10">
+    <div className="page-shell page-shell-narrow py-16 space-y-10">
       <div className="text-center space-y-3">
         <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-sky-300 text-xs font-bold uppercase tracking-wider">
           {t('badge')}
