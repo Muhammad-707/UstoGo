@@ -7,9 +7,11 @@ import { bookingsApi } from '@/lib/api/endpoints';
 import { ApiError } from '@/lib/api/client';
 import type { ScheduleOptimizerResult } from '@/lib/api/types';
 import { MasterPageHeader } from '@/components/master/MasterPageHeader';
+import { useDateFormat } from '@/lib/datetime';
 
 export default function ScheduleOptimizerPage() {
   const t = useTranslations('scheduleOptimizer');
+  const fmt = useDateFormat();
 
   const [date, setDate] = useState(() => new Date().toISOString().slice(0, 10));
   const [result, setResult] = useState<ScheduleOptimizerResult | null>(null);
@@ -91,7 +93,7 @@ export default function ScheduleOptimizerPage() {
                     <div className="min-w-0 flex-1">
                       <p className="text-sm font-bold text-slate-900 dark:text-white truncate">{stop.serviceTitle}</p>
                       <p className="text-[11px] text-slate-400">
-                        {stop.district} · {new Date(stop.scheduledAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        {stop.district} · {fmt.time(stop.scheduledAt)}
                       </p>
                     </div>
                     {index < result.stops.length - 1 && <Icon name="arrowright" size={14} className="text-slate-300 shrink-0" />}

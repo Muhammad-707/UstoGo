@@ -184,13 +184,13 @@ export default function HeroSlider() {
           );
         })}
 
-        {/* Scrim. Both of these were `dark:`-only, so in the light theme the hero had no
-            overlay at all and white headline text sat straight on a bright photograph —
-            over the drill-on-plaster slide the title was simply unreadable. The hero is
-            dark in both themes (its text is always white), so the scrim is unconditional;
-            the dark theme only deepens it. */}
-        <div className="absolute inset-0 z-20 bg-gradient-to-b from-slate-950/75 via-slate-950/60 to-slate-950/85 dark:from-slate-950/80 dark:via-slate-950/65 dark:to-slate-950/88" />
-        <div className="absolute inset-0 z-20 bg-[radial-gradient(circle_at_center,_rgba(2,6,23,0.25)_20%,_rgba(2,6,23,0.72)_100%)]" />
+        {/* Premium Dark Gradient & Vignette Overlay for Crisp Readability.
+            Deliberately `dark:`-only: in the light theme the photograph is meant to show
+            through at full brightness. A previous pass made these unconditional to help
+            the headline contrast and that was the wrong trade — it turned the light-mode
+            banner black, which is not what this hero is. */}
+        <div className="absolute inset-0 z-20 dark:bg-gradient-to-b dark:from-slate-950/70 dark:via-slate-950/55 dark:to-slate-950/78" />
+        <div className="absolute inset-0 z-20 dark:bg-[radial-gradient(circle_at_center,_transparent_20%,_rgba(2,6,23,0.6)_100%)]" />
       </div>
 
       {/* =================================================== */}
@@ -282,7 +282,7 @@ export default function HeroSlider() {
 
         {/* Quick Tag Chips */}
         <div className="flex flex-wrap items-center justify-center gap-2 text-xs text-slate-300 pt-1">
-          <span className="font-bold text-slate-200/90">{t('popular')}</span>
+          <span className="font-semibold text-slate-400">{t('popular')}</span>
           {[
             { name: 'Plumber', key: 'tagPlumber' },
             { name: 'Electrician', key: 'tagElectrician' },

@@ -37,6 +37,7 @@ export default function ClientHomePage({
   allMasters: MasterPublic[];
 }) {
   const t = useTranslations('common');
+  const te = useTranslations('enums');
   const fmt = useDateFormat();
   const { perHour } = useMoney();
   const { user } = useAuth();
@@ -77,7 +78,9 @@ export default function ClientHomePage({
       .catch(() => setActiveBooking(null));
   }, [user]);
 
-  const greetingName = user?.clientProfile?.firstName || 'Guest';
+  /** A master browsing the feed has no clientProfile, which is how a signed-in user
+      ended up greeted as "Guest" — and "Guest" was hardcoded English besides. */
+  const greetingName = user?.clientProfile?.firstName ?? user?.masterProfile?.displayName ?? null;
 
   return (
     <div className="page-shell py-10 space-y-10">
@@ -131,7 +134,7 @@ export default function ClientHomePage({
                   {t('activeBookingPrefix')}{activeBooking.bookingNumber}
                 </span>
                 <span className="px-2 py-0.5 rounded-full bg-blue-600 text-white text-[10px] font-bold">
-                  {activeBooking.status}
+                  {te(`bookingStatus.${activeBooking.status}`)}
                 </span>
               </div>
               <h4 className="text-sm font-bold text-slate-900 dark:text-white mt-0.5">

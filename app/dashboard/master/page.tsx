@@ -21,7 +21,6 @@ import { FilterContainer, FilterItem } from '@/components/ui/FilterAnimate';
 import { AnalyticsSection } from '@/components/master/AnalyticsSection';
 import { EmptyState } from '@/components/ui/EmptyState';
 
-const WEEKDAYS = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'] as const;
 
 export default function MasterDashboardPage() {
   const t = useTranslations('dashboardMaster');
@@ -280,15 +279,18 @@ export default function MasterDashboardPage() {
   return (
     <DashboardLayout role="MASTER" title={t('title')} subtitle={t('overview')} action={
       <div className="flex items-center gap-3">
+        {/* These sit on the hero's amber gradient, not on the page. Slate-on-orange and
+            amber-on-amber both washed out; a translucent secondary and a solid white
+            primary are what read against a coloured band. */}
         <Link
           href="/settings/schedule"
-          className="px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
+          className="px-5 py-2.5 rounded-xl bg-white/15 hover:bg-white/25 backdrop-blur border border-white/25 text-xs font-bold text-white transition whitespace-nowrap"
         >
           {t('manageSchedule')}
         </Link>
         <Link
           href="/settings/services"
-          className="px-5 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs shadow-md"
+          className="px-5 py-2.5 rounded-xl bg-white text-amber-700 hover:bg-amber-50 font-extrabold text-xs shadow-lg transition whitespace-nowrap"
         >
           {t('editServices')}
         </Link>
@@ -329,7 +331,7 @@ export default function MasterDashboardPage() {
 
       {/* Profile Hero */}
       {masterProfile && (
-        <FilterContainer className="bg-gradient-to-r from-slate-900 via-slate-900 to-amber-950/60 rounded-3xl p-6 sm:p-8 border border-slate-700/60 shadow-2xl text-white flex flex-col md:flex-row md:items-center gap-6">
+        <FilterContainer className="relative overflow-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-amber-950 rounded-3xl p-6 sm:p-8 border border-slate-800 shadow-2xl text-white flex flex-col md:flex-row md:items-center gap-6">
           <div className="relative shrink-0">
             <img src={avatarUrl ?? getAvatarUrl(masterProfile.id, masterProfile.displayName)} alt={masterProfile.displayName} className="w-24 h-24 rounded-3xl object-cover border-4 border-amber-400/40 shadow-2xl" />
             <div className="absolute -bottom-1 -right-1 p-1.5 rounded-full bg-amber-500 text-white shadow-lg" title={t('verifiedMaster')}>
@@ -361,7 +363,7 @@ export default function MasterDashboardPage() {
               disabled={togglingActive}
               className={`shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-2xl border text-xs font-extrabold transition disabled:opacity-60 ${
                 masterProfile.isActive
-                  ? 'bg-white/10 border-white/10 hover:bg-white/15'
+                  ? 'bg-white/15 border-white/25 hover:bg-white/25'
                   : 'bg-red-500/10 border-red-400/30 hover:bg-red-500/20'
               }`}
               title={t('toggleAvailabilityHint')}
@@ -580,7 +582,7 @@ export default function MasterDashboardPage() {
                 <p className="text-xs text-slate-500">
                   {t('scheduleAddressLine', {
                     date: fmt.date(b.scheduledAt),
-                    time: new Date(b.scheduledAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                    time: fmt.time(b.scheduledAt),
                     address: [cityName(b.cityId), b.addressDistrict, b.addressLine].filter(Boolean).join(', ') || '—',
                   })}
                 </p>
@@ -629,9 +631,9 @@ export default function MasterDashboardPage() {
                 <div className="space-y-1 min-w-0">
                   <p className="text-sm font-bold text-slate-900 dark:text-white truncate">{b.serviceTitle}</p>
                   <p className="text-xs text-slate-500">
-                    {new Date(b.scheduledAt).toLocaleDateString([], { weekday: 'short', day: 'numeric', month: 'short' })}
+                    {`${weekdays.short(new Date(b.scheduledAt).getDay())}, ${fmt.date(b.scheduledAt)}`}
                     {' • '}
-                    {new Date(b.scheduledAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    {fmt.time(b.scheduledAt)}
                   </p>
                   <p className="text-xs text-slate-500 truncate">
                     {b.clientName} {b.contactPhone ? `• ${b.contactPhone}` : ''}
@@ -689,8 +691,8 @@ export default function MasterDashboardPage() {
                         <p className="text-[10px] font-bold uppercase text-slate-400">{weekdays.ofDate(d)}</p>
                         <p className="text-sm font-extrabold text-slate-900 dark:text-white">{d.getDate()}</p>
                       </div>
-                      <span className="text-xs font-bold capitalize text-slate-700 dark:text-slate-300">
-                        {WEEKDAYS[d.getDay()]}
+                      <span className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                        {weekdays.long(d.getDay())}
                       </span>
                     </div>
                     {day ? (
