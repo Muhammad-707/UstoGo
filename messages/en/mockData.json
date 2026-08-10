@@ -1,81 +1,243 @@
 {
   "categories": {
-    "plumber": { "name": "Plumbing Services", "description": "Pipe repair, leak detection, drain cleaning, tap & fixture installations.", "badge": "High Demand" },
-    "electrician": { "name": "Electrical Work", "description": "Wiring, circuit breakers, light fixtures, switchboards & safety audits.", "badge": "Popular" },
-    "ac-repair": { "name": "AC Repair & HVAC", "description": "Freon refill, compressor fixing, duct cleaning, annual AC servicing.", "badge": "Top Rated" },
-    "painter": { "name": "Interior & Exterior Painting", "description": "Wall painting, wallpaper installation, texture coating & waterproofing." },
-    "carpenter": { "name": "Carpentry & Woodwork", "description": "Custom furniture, door fittings, wooden flooring & cabinet repairs." },
-    "cleaner": { "name": "Deep Cleaning", "description": "Full house deep cleaning, sofa shampooing, carpet & kitchen sanitization.", "badge": "Best Value" },
-    "appliance-repair": { "name": "Appliance Repair", "description": "Washing machine, refrigerator, microwave oven & dishwasher servicing." },
-    "mason": { "name": "Masonry & Tiling", "description": "Tile replacement, brickwork, marble polishing & concrete repairs." },
-    "welder": { "name": "Welding & Metalwork", "description": "Gate repair, metal railing fabrication, structural steel welding." },
-    "roofer": { "name": "Roofing Services", "description": "Roof leak waterproofing, tile replacement, gutter repair & insulation." },
-    "interior-designer": { "name": "Interior Design", "description": "3D space planning, color consultation, modular kitchen design.", "badge": "Luxury" },
-    "cctv-installer": { "name": "CCTV & Security Systems", "description": "IP camera setup, smart lock installation, alarm & DVR setup.", "badge": "Smart Home" },
-    "internet-tech": { "name": "Internet & Networking", "description": "Mesh Wi-Fi setup, fiber optic cabling, office network configuration." },
-    "locksmith": { "name": "Locksmith Services", "description": "Emergency door opening, deadbolt installation, key duplicating." },
-    "handyman": { "name": "General Handyman", "description": "TV wall mounting, curtain hanging, shelf installation & odd jobs.", "badge": "Fast Booking" }
+    "plumber": {
+      "name": "Plumbing Services",
+      "description": "Pipe repair, leak detection, drain cleaning, tap & fixture installations.",
+      "badge": "High Demand"
+    },
+    "electrician": {
+      "name": "Electrical Work",
+      "description": "Wiring, circuit breakers, light fixtures, switchboards & safety audits.",
+      "badge": "Popular"
+    },
+    "ac-repair": {
+      "name": "AC Repair & HVAC",
+      "description": "Freon refill, compressor fixing, duct cleaning, annual AC servicing.",
+      "badge": "Top Rated"
+    },
+    "painter": {
+      "name": "Interior & Exterior Painting",
+      "description": "Wall painting, wallpaper installation, texture coating & waterproofing."
+    },
+    "carpenter": {
+      "name": "Carpentry & Woodwork",
+      "description": "Custom furniture, door fittings, wooden flooring & cabinet repairs."
+    },
+    "cleaner": {
+      "name": "Deep Cleaning",
+      "description": "Full house deep cleaning, sofa shampooing, carpet & kitchen sanitization.",
+      "badge": "Best Value"
+    },
+    "appliance-repair": {
+      "name": "Appliance Repair",
+      "description": "Washing machine, refrigerator, microwave oven & dishwasher servicing."
+    },
+    "mason": {
+      "name": "Masonry & Tiling",
+      "description": "Tile replacement, brickwork, marble polishing & concrete repairs."
+    },
+    "welder": {
+      "name": "Welding & Metalwork",
+      "description": "Gate repair, metal railing fabrication, structural steel welding."
+    },
+    "roofer": {
+      "name": "Roofing Services",
+      "description": "Roof leak waterproofing, tile replacement, gutter repair & insulation."
+    },
+    "interior-designer": {
+      "name": "Interior Design",
+      "description": "3D space planning, color consultation, modular kitchen design.",
+      "badge": "Luxury"
+    },
+    "cctv-installer": {
+      "name": "CCTV & Security Systems",
+      "description": "IP camera setup, smart lock installation, alarm & DVR setup.",
+      "badge": "Smart Home"
+    },
+    "internet-tech": {
+      "name": "Internet & Networking",
+      "description": "Mesh Wi-Fi setup, fiber optic cabling, office network configuration."
+    },
+    "locksmith": {
+      "name": "Locksmith Services",
+      "description": "Emergency door opening, deadbolt installation, key duplicating."
+    },
+    "handyman": {
+      "name": "General Handyman",
+      "description": "TV wall mounting, curtain hanging, shelf installation & odd jobs.",
+      "badge": "Fast Booking"
+    }
   },
   "masters": {
     "master-1": {
       "title": "Senior Master Electrician & Smart Home Specialist",
       "bio": "Licensed master electrician with over 12 years of hands-on experience in residential rewiring, smart breaker panel upgrades, EV charger installations, and emergency troubleshooting. Guaranteed safety and zero compliance issues.",
-      "skills": ["EV Charger Install", "Breaker Panel Upgrade", "Smart Lighting (Lutron)", "Emergency Troubleshooting", "Safety Inspection"],
-      "workingHours": { "Monday - Friday": "08:00 AM - 07:00 PM", "Saturday": "09:00 AM - 05:00 PM", "Sunday": "Emergency Calls Only" },
+      "skills": [
+        "EV Charger Install",
+        "Breaker Panel Upgrade",
+        "Smart Lighting (Lutron)",
+        "Emergency Troubleshooting",
+        "Safety Inspection"
+      ],
+      "workingHours": {
+        "Monday - Friday": "08:00 AM - 07:00 PM",
+        "Saturday": "09:00 AM - 05:00 PM",
+        "Sunday": "Emergency Calls Only"
+      },
       "reviews": {
-        "rev-1": { "serviceTitle": "Whole Home Smart Panel Installation", "comment": "Alex is an absolute wizard! Upgraded our old 100A panel to a 200A smart panel and installed our Tesla Gen 3 charger seamlessly. Kept everything spotless and explained every detail.", "craftsmanReply": "Thanks David! It was a pleasure working on your home electrical setup." },
-        "rev-2": { "serviceTitle": "Recessed LED Lighting Installation", "comment": "Super punctual, professional, and friendly. Installed 12 recessed lights in our living room with zero drywall damage. Highly recommended!" }
+        "rev-1": {
+          "serviceTitle": "Whole Home Smart Panel Installation",
+          "comment": "Alex is an absolute wizard! Upgraded our old 100A panel to a 200A smart panel and installed our Tesla Gen 3 charger seamlessly. Kept everything spotless and explained every detail.",
+          "craftsmanReply": "Thanks David! It was a pleasure working on your home electrical setup."
+        },
+        "rev-2": {
+          "serviceTitle": "Recessed LED Lighting Installation",
+          "comment": "Super punctual, professional, and friendly. Installed 12 recessed lights in our living room with zero drywall damage. Highly recommended!"
+        }
       }
     },
     "master-2": {
       "title": "Master Plumber & Hydro-Jetting Expert",
       "bio": "Specialist in trenchless pipe repair, tankless water heater installations, luxury bathroom plumbing fixtures, and high-pressure sewer drain jetting.",
-      "skills": ["Tankless Water Heaters", "Hydro-Jetting", "Bathroom Fixture Fitting", "Sewer Camera Inspection", "Leak Detection"],
-      "workingHours": { "Monday - Saturday": "07:00 AM - 08:00 PM", "Sunday": "24/7 Emergency Service" },
+      "skills": [
+        "Tankless Water Heaters",
+        "Hydro-Jetting",
+        "Bathroom Fixture Fitting",
+        "Sewer Camera Inspection",
+        "Leak Detection"
+      ],
+      "workingHours": {
+        "Monday - Saturday": "07:00 AM - 08:00 PM",
+        "Sunday": "24/7 Emergency Service"
+      },
       "reviews": {
-        "rev-3": { "serviceTitle": "Emergency Pipe Burst Repair", "comment": "Arrived within 30 minutes of my emergency call at midnight! Fixed the leaking main line quickly and saved our basement floors." }
+        "rev-3": {
+          "serviceTitle": "Emergency Pipe Burst Repair",
+          "comment": "Arrived within 30 minutes of my emergency call at midnight! Fixed the leaking main line quickly and saved our basement floors."
+        }
       }
     },
     "master-3": {
       "title": "Award-Winning Interior Architect & Designer",
       "bio": "Transforming luxury apartments and urban villas with Scandinavian minimalism and Japandi elegance. 3D photorealistic renderings, custom lighting plans, and full furniture curation.",
-      "skills": ["3D Photorealistic Rendering", "Modular Kitchen Layout", "Custom Furniture Design", "Color Palette Curation", "Lighting Design"],
-      "workingHours": { "Monday - Friday": "09:00 AM - 06:00 PM", "Saturday": "By Appointment", "Sunday": "Closed" },
+      "skills": [
+        "3D Photorealistic Rendering",
+        "Modular Kitchen Layout",
+        "Custom Furniture Design",
+        "Color Palette Curation",
+        "Lighting Design"
+      ],
+      "workingHours": {
+        "Monday - Friday": "09:00 AM - 06:00 PM",
+        "Saturday": "By Appointment",
+        "Sunday": "Closed"
+      },
       "reviews": {
-        "rev-4": { "serviceTitle": "Full Loft Redesign & Curation", "comment": "Sarah elevated our penthouse into a work of art. The attention to natural light, wood textures, and ambient glow is unmatched." }
+        "rev-4": {
+          "serviceTitle": "Full Loft Redesign & Curation",
+          "comment": "Sarah elevated our penthouse into a work of art. The attention to natural light, wood textures, and ambient glow is unmatched."
+        }
       }
     },
     "master-4": {
       "title": "HVAC Specialist & Climate Automation Specialist",
       "bio": "EPA 608 Universal certified technician specializing in multi-zone VRF systems, Nest/Ecobee smart thermostat integration, and ductwork air quality purification.",
-      "skills": ["Daikin VRF Systems", "Freon Leak Repair", "Smart Thermostat Integration", "Ductless Mini-Split", "Air Purification Filters"],
-      "workingHours": { "Monday - Saturday": "08:00 AM - 07:00 PM", "Sunday": "10:00 AM - 04:00 PM" },
+      "skills": [
+        "Daikin VRF Systems",
+        "Freon Leak Repair",
+        "Smart Thermostat Integration",
+        "Ductless Mini-Split",
+        "Air Purification Filters"
+      ],
+      "workingHours": {
+        "Monday - Saturday": "08:00 AM - 07:00 PM",
+        "Sunday": "10:00 AM - 04:00 PM"
+      },
       "reviews": {}
     },
     "master-5": {
       "title": "Master Decorative Painter & Wall Artist",
       "bio": "Specializing in Venetian plaster finishes, limewash aesthetics, crisp modern accent walls, and zero-VOC eco-friendly paints for healthy home environments.",
-      "skills": ["Venetian Plaster", "Limewash Finish", "Exterior Waterproof Painting", "Cabinet Spray Painting", "Wallpaper Hanging"],
-      "workingHours": { "Monday - Friday": "08:00 AM - 06:00 PM", "Saturday": "09:00 AM - 04:00 PM" },
+      "skills": [
+        "Venetian Plaster",
+        "Limewash Finish",
+        "Exterior Waterproof Painting",
+        "Cabinet Spray Painting",
+        "Wallpaper Hanging"
+      ],
+      "workingHours": {
+        "Monday - Friday": "08:00 AM - 06:00 PM",
+        "Saturday": "09:00 AM - 04:00 PM"
+      },
       "reviews": {}
     },
     "master-6": {
       "title": "Smart Home Security & CCTV Systems Engineer",
       "bio": "Designing unbreachable perimeter security for estates and residences. 4K PoE camera arrays, night-vision AI detection, encrypted NVR storage & remote mobile control setup.",
-      "skills": ["Hikvision 4K PoE Arrays", "Ring & Nest Integration", "Biometric Smart Door Locks", "Intrusion Alarm Systems", "Network Security"],
-      "workingHours": { "Monday - Saturday": "08:00 AM - 08:00 PM" },
+      "skills": [
+        "Hikvision 4K PoE Arrays",
+        "Ring & Nest Integration",
+        "Biometric Smart Door Locks",
+        "Intrusion Alarm Systems",
+        "Network Security"
+      ],
+      "workingHours": {
+        "Monday - Saturday": "08:00 AM - 08:00 PM"
+      },
       "reviews": {}
     }
   },
   "notifications": {
-    "notif-1": { "title": "Master En Route!", "message": "Alex Morgan has started navigation to your location (742 Evergreen Terrace). ETA 15 mins." },
-    "notif-2": { "title": "Booking Confirmed", "message": "Elena Rostova confirmed your painting appointment for Oct 17." },
-    "notif-3": { "title": "Special Autumn Offer!", "message": "Get 20% off deep home cleaning & AC servicing this weekend. Use code AUTUMN20." },
-    "notif-4": { "title": "Payment Receipt #UG-55201", "message": "Payment of $150.00 to Marcus Vance was successful." }
+    "notif-1": {
+      "title": "Master En Route!",
+      "message": "Alex Morgan has started navigation to your location (742 Evergreen Terrace). ETA 15 mins."
+    },
+    "notif-2": {
+      "title": "Booking Confirmed",
+      "message": "Elena Rostova confirmed your painting appointment for Oct 17."
+    },
+    "notif-3": {
+      "title": "Special Autumn Offer!",
+      "message": "Get 20% off deep home cleaning & AC servicing this weekend. Use code AUTUMN20."
+    },
+    "notif-4": {
+      "title": "Payment Receipt #UG-55201",
+      "message": "Payment of 150.00 TJS to Marcus Vance was successful."
+    }
   },
   "bookings": {
-    "b-101": { "serviceName": "200A Smart Electrical Panel Upgrade", "notes": "Please call on arrival. Dog is friendly but will be kept in master bedroom.", "timeline": ["Booking Request Placed", "Craftsman Confirmed", "Master En Route to Address", "Work in Progress", "Job Completed & Verified"] },
-    "b-102": { "serviceName": "Living Room Deep Limewash Wall Painting", "notes": "Basecoat materials delivered already.", "timeline": ["Booking Request Placed", "Craftsman Confirmed", "Master En Route to Address", "Work in Progress", "Job Completed & Verified"] },
-    "b-103": { "serviceName": "Tankless Water Heater Inspection & Flush", "notes": "Flushed descaling valve and replaced pressure filter.", "timeline": ["Booking Request Placed", "Craftsman Confirmed", "Master En Route to Address", "Work in Progress", "Job Completed & Verified"] }
+    "b-101": {
+      "serviceName": "200A Smart Electrical Panel Upgrade",
+      "notes": "Please call on arrival. Dog is friendly but will be kept in master bedroom.",
+      "timeline": [
+        "Booking Request Placed",
+        "Craftsman Confirmed",
+        "Master En Route to Address",
+        "Work in Progress",
+        "Job Completed & Verified"
+      ]
+    },
+    "b-102": {
+      "serviceName": "Living Room Deep Limewash Wall Painting",
+      "notes": "Basecoat materials delivered already.",
+      "timeline": [
+        "Booking Request Placed",
+        "Craftsman Confirmed",
+        "Master En Route to Address",
+        "Work in Progress",
+        "Job Completed & Verified"
+      ]
+    },
+    "b-103": {
+      "serviceName": "Tankless Water Heater Inspection & Flush",
+      "notes": "Flushed descaling valve and replaced pressure filter.",
+      "timeline": [
+        "Booking Request Placed",
+        "Craftsman Confirmed",
+        "Master En Route to Address",
+        "Work in Progress",
+        "Job Completed & Verified"
+      ]
+    }
   }
 }

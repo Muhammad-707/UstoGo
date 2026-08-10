@@ -51,7 +51,7 @@
   "estimatedDuration": "Estimated Duration",
   "hoursUnit": "{count} hours",
   "totalAmount": "Total Amount",
-  "confirmAndPay": "Confirm & Pay (${amount}.00)",
+  "confirmAndPay": "Confirm & Pay ({amount})",
   "noMasterTitle": "No craftsman selected",
   "noMasterDesc": "Pick a craftsman first, then come back here to book an appointment.",
   "selectServiceLabel": "Select a service",

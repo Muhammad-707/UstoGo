@@ -213,7 +213,7 @@ export default function LandingClient({
                 <div className="relative pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-xs text-slate-500">
                   <span>{tCategories('verifiedMasters', { count: stat?.count ?? 0 })}</span>
                   {stat?.minPrice != null && (
-                    <span className="font-extrabold text-slate-900 dark:text-white">{tCategories('startingFrom', { price: stat.minPrice })}</span>
+                    <span className="font-extrabold text-slate-900 dark:text-white">{tCategories('startingFrom', { price: perHour(stat.minPrice) })}</span>
                   )}
                 </div>
               </Link>

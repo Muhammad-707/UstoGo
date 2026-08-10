@@ -14,6 +14,7 @@ import type { City, MasterPublic, MasterService, SavedAddress } from '@/lib/api/
 const MAX_ATTACHMENTS = 5;
 import { useRequireAuth } from '@/hooks/useRequireAuth';
 import { getAvatarUrl } from '@/lib/placeholders';
+import { useMoney } from '@/lib/money';
 
 // The backend rejects bookings made less than 2 hours in advance (SLOT_TOO_SOON).
 const MIN_BOOKING_ADVANCE_MS = 2 * 60 * 60 * 1000;
@@ -39,6 +40,7 @@ function Spinner({ className = '' }: { className?: string }) {
 
 export default function BookingWizardPage() {
   const t = useTranslations('booking');
+  const { money } = useMoney();
   const searchParams = useSearchParams();
   const preselectedMasterId = searchParams.get('master');
   const preselectedServiceId = searchParams.get('service');
@@ -776,7 +778,7 @@ export default function BookingWizardPage() {
                 className="btn-success w-full py-4 rounded-2xl disabled:opacity-60 font-extrabold text-sm transition btn-ripple flex items-center justify-center gap-2"
               >
                 {submitting && <Spinner className="w-4 h-4 border-white/40 border-t-white" />}
-                {t('confirmAndPay', { amount: totalPrice.toFixed(2) })}
+                {t('confirmAndPay', { amount: money(totalPrice) })}
               </button>
             </div>
           )}

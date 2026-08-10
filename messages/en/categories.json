@@ -6,5 +6,5 @@
   "filterPopular": "Most Popular",
   "filterLuxury": "Luxury & Premium",
   "verifiedMasters": "{count} Verified Masters",
-  "startingFrom": "From ${price}/hr"
+  "startingFrom": "From {price}"
 }

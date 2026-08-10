@@ -20,7 +20,7 @@
   "scheduleAddressLine": "{date} ({time}) • Адрес: {address}",
   "clientNoteLabel": "“{note}”",
   "decline": "Отклонить",
-  "acceptJob": "Принять Заказ (${price})",
+  "acceptJob": "Принять Заказ ({price})",
   "verifiedMaster": "Проверенный мастер",
   "statusActive": "Активен",
   "statusInactive": "Неактивен",

@@ -13,6 +13,7 @@ import { ApiError } from '@/lib/api/client';
 import { downloadFile } from '@/lib/api/download';
 import { revalidateMastersCache } from '@/lib/api/revalidate';
 import { getBookingsSocket } from '@/lib/bookings/socket';
+import { useMoney } from '@/lib/money';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import type { Booking, City, MasterNps, MasterStats, MasterStatus, WorkingDay } from '@/lib/api/types';
 import { getAvatarUrl } from '@/lib/placeholders';
@@ -23,6 +24,7 @@ const WEEKDAYS = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'frida
 
 export default function MasterDashboardPage() {
   const t = useTranslations('dashboardMaster');
+  const { money } = useMoney();
   const weekdays = useWeekdays();
   useRequireAuth(['MASTER']);
   const { user, refreshUser } = useAuth();
@@ -602,7 +604,7 @@ export default function MasterDashboardPage() {
                   onClick={() => handleAccept(b.id)}
                   className="btn-success px-5 py-2 rounded-xl text-xs font-bold transition disabled:opacity-50"
                 >
-                  {t('acceptJob', { price: b.price })}
+                  {t('acceptJob', { price: money(b.price) })}
                 </button>
               </div>
             </FilterItem>

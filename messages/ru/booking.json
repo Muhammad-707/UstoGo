@@ -51,7 +51,7 @@
   "estimatedDuration": "Ориентировочная продолжительность",
   "hoursUnit": "{count} ч.",
   "totalAmount": "Итоговая сумма",
-  "confirmAndPay": "Подтвердить и оплатить (${amount}.00)",
+  "confirmAndPay": "Подтвердить и оплатить ({amount})",
   "noMasterTitle": "Мастер не выбран",
   "noMasterDesc": "Сначала выберите мастера, затем вернитесь сюда, чтобы оформить заказ.",
   "selectServiceLabel": "Выберите услугу",

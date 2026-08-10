@@ -6,5 +6,5 @@
   "filterPopular": "Машҳуртаринҳо",
   "filterLuxury": "Люкс ва Премиум",
   "verifiedMasters": "{count} Устои Санҷидашуда",
-  "startingFrom": "Аз ${price}/соат"
+  "startingFrom": "Аз {price}"
 }

@@ -5,7 +5,7 @@
   "fullNameLabel": "Полное Имя",
   "fullNamePlaceholder": "Алексей Морозов",
   "specialtyLabel": "Основная Специализация",
-  "hourlyRateLabel": "Почасовая Ставка ($)",
+  "hourlyRateLabel": "Почасовая Ставка (сомони)",
   "experienceLabel": "Опыт Работы (лет)",
   "uploadLabel": "Загрузите Лицензию / Сертификат (PDF или изображение)",
   "dragDropText": "Перетащите файлы сюда или",

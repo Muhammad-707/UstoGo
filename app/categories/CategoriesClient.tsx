@@ -9,6 +9,7 @@ import { categoriesApi, mastersApi } from '@/lib/api/endpoints';
 import type { Category, MasterPublic } from '@/lib/api/types';
 import { getCategoryVisual } from '@/lib/categoryVisuals';
 import { FilterContainer, FilterButton, AnimatedGrid, AnimatedCard } from '@/components/ui/FilterAnimate';
+import { useMoney } from '@/lib/money';
 
 function flattenLeafCategories(categories: Category[]): Category[] {
   const out: Category[] = [];
@@ -24,6 +25,7 @@ function flattenLeafCategories(categories: Category[]): Category[] {
 
 export default function CategoriesClient() {
   const t = useTranslations('categories');
+  const { perHour } = useMoney();
   const [categories, setCategories] = useState<Category[]>([]);
   const [allMasters, setAllMasters] = useState<MasterPublic[]>([]);
   const [loading, setLoading] = useState(true);
@@ -197,7 +199,7 @@ export default function CategoriesClient() {
                   <div className="relative pt-4 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-xs">
                     <span className="text-slate-500 font-medium">{t('verifiedMasters', { count: stat?.count ?? 0 })}</span>
                     {stat?.minPrice != null && (
-                      <span className="font-extrabold text-slate-900 dark:text-white">{t('startingFrom', { price: stat.minPrice })}</span>
+                      <span className="font-extrabold text-slate-900 dark:text-white">{t('startingFrom', { price: perHour(stat.minPrice) })}</span>
                     )}
                   </div>
                 </Link>
