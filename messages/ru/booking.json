@@ -56,5 +56,6 @@
   "noMasterDesc": "Сначала выберите мастера, затем вернитесь сюда, чтобы оформить заказ.",
   "selectServiceLabel": "Выберите услугу",
   "serviceWord": "Услуга",
-  "browseCraftsmen": "Смотреть мастеров"
+  "browseCraftsmen": "Смотреть мастеров",
+  "priceFromLabel": "От {price}"
 }

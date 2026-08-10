@@ -9,6 +9,7 @@ import type { Booking, QuickReply, UserRole } from '@/lib/api/types';
 import { useAuth } from '@/contexts/AuthContext';
 import { getAvatarUrl } from '@/lib/placeholders';
 import { waLink, waBookingText } from '@/lib/whatsapp';
+import { EmptyState } from '@/components/ui/EmptyState';
 
 const WHATSAPP_STATUSES = new Set(['ACCEPTED', 'IN_PROGRESS', 'COMPLETED']);
 
@@ -150,12 +151,12 @@ export default function WhatsAppContactsPage() {
       )}
 
       {!loading && contacts.length === 0 && (
-        <div className="p-12 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-center space-y-3">
-          <div className="w-14 h-14 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-400 flex items-center justify-center mx-auto">
-            <Icon name="whatsapp" size={28} />
-          </div>
-          <p className="text-xs text-slate-500 font-semibold">{t('empty')}</p>
-        </div>
+        <EmptyState
+          icon="whatsapp"
+          tone="emerald"
+          title={t('empty')}
+          description={t('emptyDesc')}
+        />
       )}
 
       {!loading && contacts.length > 0 && (

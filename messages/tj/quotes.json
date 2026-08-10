@@ -26,5 +26,7 @@
   "sendDecline": "Фиристодани рад",
   "cancelAction": "Бекор кардан",
   "validationPriceInvalid": "Нархи дурустро аз 0 зиёд ворид кунед.",
-  "validationReasonTooShort": "Сабабро на кам аз 10 ҳарф нависед."
+  "validationReasonTooShort": "Сабабро на кам аз 10 ҳарф нависед.",
+  "emptyDesc": "Пеш аз фармоиш аз усто нарх пурсед — ҷавоби ӯ дар ин ҷо пайдо мешавад.",
+  "findMaster": "Ёфтани усто"
 }

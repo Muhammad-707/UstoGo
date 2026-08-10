@@ -76,5 +76,19 @@
   "moderationReasonLabel": "Moderator's reason",
   "moderationEditProfile": "Edit profile",
   "moderationResubmit": "Resubmit for review",
-  "resubmitFailed": "Could not resubmit the profile."
+  "resubmitFailed": "Could not resubmit the profile.",
+  "analyticsTitle": "Analytics",
+  "statusCompleted": "Completed",
+  "statusInProgress": "In progress",
+  "statusAwaiting": "Awaiting",
+  "statusCancelledShort": "Cancelled",
+  "responseSpeed": "Response speed",
+  "minutesShort": "{minutes} min",
+  "repeatClients": "Repeat clients",
+  "profileViews": "Profile views",
+  "revenue14Days": "Revenue, last 14 days",
+  "totalWord": "total",
+  "loadingShort": "Loading…",
+  "completionRateTitle": "Booking completion",
+  "revenueByCategory": "Revenue by category"
 }

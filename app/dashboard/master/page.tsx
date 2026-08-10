@@ -636,7 +636,7 @@ export default function MasterDashboardPage() {
                   </p>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
-                  <span className="text-sm font-extrabold text-slate-900 dark:text-white">${b.price}</span>
+                  <span className="text-sm font-extrabold text-slate-900 dark:text-white">{money(b.price)}</span>
                   <button
                     disabled={actingId === b.id}
                     onClick={() => handleStart(b.id)}

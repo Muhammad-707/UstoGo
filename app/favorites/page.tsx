@@ -13,6 +13,7 @@ import { getAvatarUrl } from '@/lib/placeholders';
 import { useFavorites } from '@/contexts/FavoritesContext';
 import { FilterContainer, FilterItem } from '@/components/ui/FilterAnimate';
 import { ClientPageHeader } from '@/components/client/ClientPageHeader';
+import { EmptyState } from '@/components/ui/EmptyState';
 
 export default function FavoritesPage() {
   const t = useTranslations('favorites');
@@ -52,15 +53,16 @@ export default function FavoritesPage() {
 
       {loading ? (
         <div className="text-center py-16 text-sm text-slate-500 dark:text-slate-400 font-medium">
-          Loading favorites...
+          {t('loading')}
         </div>
       ) : masters.length === 0 ? (
-        <div className="glass-card rounded-3xl p-12 text-center space-y-2">
-          <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">{t('empty')}</p>
-          <Link href="/search" className="text-xs font-bold text-blue-600 dark:text-sky-400 hover:underline">
-            {t('browseMasters')}
-          </Link>
-        </div>
+        <EmptyState
+          icon="heart"
+          title={t('empty')}
+          description={t('emptyDesc')}
+          actionLabel={t('browseMasters')}
+          actionHref="/search"
+        />
       ) : (
         <FilterContainer className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {masters.map((m, idx) => {

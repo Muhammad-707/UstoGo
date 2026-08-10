@@ -66,7 +66,7 @@ export default function OrderDetailPage() {
             <p className="text-sm font-bold text-slate-900 dark:text-white">{new Date(order.createdAt).toLocaleString()}</p>
           </div>
           <span className={`px-3 py-1.5 rounded-full text-xs font-extrabold ${STATUS_STYLE[order.status] ?? ''}`}>
-            {order.status}
+            {t(`status${order.status}`)}
           </span>
         </div>
 

@@ -265,7 +265,7 @@ export default function ClientDashboardPage() {
                       <span>{b.masterDisplayName}</span>
                     </td>
                     <td className="py-4 text-slate-500">{new Date(b.scheduledAt).toLocaleDateString()}</td>
-                    <td className="py-4 font-bold text-slate-900 dark:text-white">{b.price} {b.currency}</td>
+                    <td className="py-4 font-bold text-slate-900 dark:text-white">{money(b.price)}</td>
                     <td className="py-4">
                       <span
                         className={`px-2.5 py-1 rounded-full text-[10px] font-bold ${

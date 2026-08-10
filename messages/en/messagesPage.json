@@ -6,5 +6,6 @@
   "loginRequired": "Please log in to access this page.",
   "whatsappButton": "WhatsApp",
   "whatsappButtonShort": "WA",
-  "quickReplyDefault": "Default message"
+  "quickReplyDefault": "Default message",
+  "emptyDesc": "Once a booking is accepted you can reach the other side on WhatsApp from here."
 }

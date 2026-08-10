@@ -9,6 +9,7 @@ import { ApiError } from '@/lib/api/client';
 import { useRequireAuth } from '@/hooks/useRequireAuth';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import type { Paginated, Product, ProductCategory } from '@/lib/api/types';
+import { useMoney } from '@/lib/money';
 
 const EMPTY_FORM = {
   id: '',
@@ -23,6 +24,7 @@ const EMPTY_FORM = {
 
 export default function AdminProductsPage() {
   const t = useTranslations('adminMarketplaceProducts');
+  const { money } = useMoney();
   useRequireAuth(['ADMIN']);
 
   const [result, setResult] = useState<Paginated<Product> | null>(null);
@@ -182,7 +184,7 @@ export default function AdminProductsPage() {
                   </p>
                   <p className="text-[11px] text-slate-400">{p.categoryName}</p>
                   <p className="text-xs font-bold text-slate-700 dark:text-slate-200 mt-1">
-                    {p.price} {p.currency}
+                    {money(p.price)}
                     {p.oldPrice && <span className="text-slate-400 line-through ml-2">{p.oldPrice}</span>}
                   </p>
                   <div className="flex gap-2 mt-2">

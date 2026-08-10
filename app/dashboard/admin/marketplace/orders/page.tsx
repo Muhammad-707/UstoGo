@@ -9,6 +9,7 @@ import { ApiError } from '@/lib/api/client';
 import { useRequireAuth } from '@/hooks/useRequireAuth';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import type { Order, Paginated } from '@/lib/api/types';
+import { useMoney } from '@/lib/money';
 
 const STATUS_STYLE: Record<string, string> = {
   PAID: 'bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300',
@@ -17,6 +18,7 @@ const STATUS_STYLE: Record<string, string> = {
 
 export default function AdminMarketplaceOrdersPage() {
   const t = useTranslations('adminMarketplaceOrders');
+  const { money } = useMoney();
   useRequireAuth(['ADMIN']);
 
   const [result, setResult] = useState<Paginated<Order> | null>(null);
@@ -84,8 +86,8 @@ export default function AdminMarketplaceOrdersPage() {
                   <p className="text-[11px] text-slate-400">{new Date(order.createdAt).toLocaleString()}</p>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className={`px-2.5 py-1 rounded-full text-[10px] font-extrabold ${STATUS_STYLE[order.status] ?? ''}`}>{order.status}</span>
-                  <span className="text-sm font-extrabold text-slate-900 dark:text-white">{order.totalAmount} {order.currency}</span>
+                  <span className={`px-2.5 py-1 rounded-full text-[10px] font-extrabold ${STATUS_STYLE[order.status] ?? ''}`}>{t(`status${order.status}`)}</span>
+                  <span className="text-sm font-extrabold text-slate-900 dark:text-white">{money(order.totalAmount)}</span>
                   {order.status === 'PAID' && (
                     <button onClick={() => handleCancel(order.id)} disabled={actingId === order.id} className="px-3.5 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold disabled:opacity-60 transition">
                       {t('cancel')}

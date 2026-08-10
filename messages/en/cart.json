@@ -15,5 +15,6 @@
   "remove": "Remove",
   "saved": "You save {amount}",
   "continueShopping": "Continue shopping",
-  "summary": "Order summary"
+  "summary": "Order summary",
+  "emptyDesc": "Add the materials and tools you need, then check out in one go."
 }

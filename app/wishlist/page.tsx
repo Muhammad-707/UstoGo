@@ -9,6 +9,7 @@ import { cartApi, wishlistApi } from '@/lib/api/endpoints';
 import type { Product } from '@/lib/api/types';
 import { FilterContainer, FilterItem } from '@/components/ui/FilterAnimate';
 import { ClientPageHeader } from '@/components/client/ClientPageHeader';
+import { EmptyState } from '@/components/ui/EmptyState';
 
 export default function WishlistPage() {
   const t = useTranslations('marketplace');
@@ -68,12 +69,14 @@ export default function WishlistPage() {
       )}
 
       {!loading && products.length === 0 && (
-        <div className="glass-card rounded-3xl p-12 text-center space-y-2">
-          <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">{t('noWishlist')}</p>
-          <Link href="/marketplace" className="text-xs font-bold text-emerald-600 hover:underline">
-            {t('backToShop')}
-          </Link>
-        </div>
+        <EmptyState
+          icon="heart"
+          tone="emerald"
+          title={t('noWishlist')}
+          description={t('wishlistEmptyDesc')}
+          actionLabel={t('backToShop')}
+          actionHref="/marketplace"
+        />
       )}
 
       {!loading && products.length > 0 && (

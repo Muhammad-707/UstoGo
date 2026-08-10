@@ -56,5 +56,6 @@
   "noMasterDesc": "Pick a craftsman first, then come back here to book an appointment.",
   "selectServiceLabel": "Select a service",
   "serviceWord": "Service",
-  "browseCraftsmen": "Browse craftsmen"
+  "browseCraftsmen": "Browse craftsmen",
+  "priceFromLabel": "From {price}"
 }

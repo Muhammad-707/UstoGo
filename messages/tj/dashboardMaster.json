@@ -76,5 +76,19 @@
   "moderationReasonLabel": "Сабаби модератор",
   "moderationEditProfile": "Таҳрири профил",
   "moderationResubmit": "Дубора фиристодан",
-  "resubmitFailed": "Дубора фиристодани профил номуваффақ шуд."
+  "resubmitFailed": "Дубора фиристодани профил номуваффақ шуд.",
+  "analyticsTitle": "Таҳлил",
+  "statusCompleted": "Иҷрошуда",
+  "statusInProgress": "Дар ҷараён",
+  "statusAwaiting": "Дар интизорӣ",
+  "statusCancelledShort": "Бекоршуда",
+  "responseSpeed": "Суръати ҷавоб",
+  "minutesShort": "{minutes} дақ",
+  "repeatClients": "Мизоҷони такрорӣ",
+  "profileViews": "Дидани профил",
+  "revenue14Days": "Даромад дар 14 рӯз",
+  "totalWord": "ҳамагӣ",
+  "loadingShort": "Боркунӣ…",
+  "completionRateTitle": "Фоизи иҷрои фармоишҳо",
+  "revenueByCategory": "Даромад аз рӯи категория"
 }

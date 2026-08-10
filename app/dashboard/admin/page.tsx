@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Icon } from '@/components/icons/LucideIcons';
+import { useMoney } from '@/lib/money';
 import { useTranslations } from 'next-intl';
 import { adminApi, bookingsApi, categoriesApi } from '@/lib/api/endpoints';
 import { ApiError } from '@/lib/api/client';
@@ -19,6 +20,7 @@ function flattenCategories(cats: Category[]): Category[] {
 
 export default function AdminDashboardPage() {
   const t = useTranslations('dashboardAdmin');
+  const { money } = useMoney();
   useRequireAuth(['ADMIN']);
 
   const [data, setData] = useState<DashboardResponse | null>(null);
@@ -366,7 +368,7 @@ export default function AdminDashboardPage() {
                         {m.completedBookingsCount}
                       </span>
                     </td>
-                    <td className="py-3 pr-4 font-bold text-slate-900 dark:text-white">${m.totalEarnings}</td>
+                    <td className="py-3 pr-4 font-bold text-slate-900 dark:text-white">{money(m.totalEarnings)}</td>
                     <td className="py-3 pr-4">
                       {m.whatsappPhone ? (
                         <a
@@ -458,7 +460,7 @@ export default function AdminDashboardPage() {
                 </div>
                 <div className="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/20 text-center">
                   <p className="text-[10px] font-bold text-emerald-400 uppercase">{t('colEarnings')}</p>
-                  <p className="text-2xl font-extrabold text-emerald-600 dark:text-emerald-400">${selectedMaster.totalEarnings}</p>
+                  <p className="text-2xl font-extrabold text-emerald-600 dark:text-emerald-400">{money(selectedMaster.totalEarnings)}</p>
                 </div>
               </div>
 

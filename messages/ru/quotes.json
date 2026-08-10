@@ -26,5 +26,7 @@
   "sendDecline": "Отправить отказ",
   "cancelAction": "Отмена",
   "validationPriceInvalid": "Введите корректную цену больше 0.",
-  "validationReasonTooShort": "Укажите причину не короче 10 символов."
+  "validationReasonTooShort": "Укажите причину не короче 10 символов.",
+  "emptyDesc": "Запросите у мастера цену до заказа — его ответ появится здесь.",
+  "findMaster": "Найти мастера"
 }

@@ -3,5 +3,6 @@
   "title": "Notifications",
   "markAllRead": "Mark All as Read",
   "loading": "Loading…",
-  "empty": "No notifications yet."
+  "empty": "No notifications yet.",
+  "emptyDesc": "Booking updates, reviews and messages will appear here."
 }

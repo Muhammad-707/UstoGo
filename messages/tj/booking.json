@@ -56,5 +56,6 @@
   "noMasterDesc": "Аввал усторо интихоб кунед, баъд ба ин ҷо баргардед то фармоиш диҳед.",
   "selectServiceLabel": "Хизматрасониро интихоб кунед",
   "serviceWord": "Хизматрасонӣ",
-  "browseCraftsmen": "Дидани устоҳо"
+  "browseCraftsmen": "Дидани устоҳо",
+  "priceFromLabel": "Аз {price}"
 }

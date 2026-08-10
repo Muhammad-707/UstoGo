@@ -6,5 +6,6 @@
   "loginRequired": "Войдите, чтобы получить доступ к этой странице.",
   "whatsappButton": "WhatsApp",
   "whatsappButtonShort": "WA",
-  "quickReplyDefault": "Сообщение по умолчанию"
+  "quickReplyDefault": "Сообщение по умолчанию",
+  "emptyDesc": "После подтверждения заказа отсюда можно написать второй стороне в WhatsApp."
 }

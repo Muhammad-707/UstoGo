@@ -11,6 +11,7 @@ import { ApiError } from '@/lib/api/client';
 import type { Cart } from '@/lib/api/types';
 import { ClientPageHeader } from '@/components/client/ClientPageHeader';
 import { useMoney } from '@/lib/money';
+import { EmptyState } from '@/components/ui/EmptyState';
 
 export default function CartPage() {
   const t = useTranslations('cart');
@@ -92,13 +93,14 @@ export default function CartPage() {
       )}
 
       {!loading && (!cart || cart.items.length === 0) && (
-        <div className="glass-card rounded-3xl p-12 text-center space-y-3">
-          <Icon name="shoppingcart" size={32} className="mx-auto text-slate-300 dark:text-slate-600" />
-          <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">{t('empty')}</p>
-          <Link href="/marketplace" className="inline-block text-xs font-bold text-emerald-600 hover:underline">
-            {t('browseShop')}
-          </Link>
-        </div>
+        <EmptyState
+          icon="shoppingcart"
+          tone="emerald"
+          title={t('empty')}
+          description={t('emptyDesc')}
+          actionLabel={t('browseShop')}
+          actionHref="/marketplace"
+        />
       )}
 
       {!loading && cart && cart.items.length > 0 && (

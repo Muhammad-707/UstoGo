@@ -12,5 +12,8 @@
   "orderPlaced": "Оформлен",
   "unitPriceXQuantity": "{price} × {quantity}",
   "total": "Итого",
-  "mockPaymentNote": "Оплата имитируется — данные карты никогда не собирались."
+  "mockPaymentNote": "Оплата имитируется — данные карты никогда не собирались.",
+  "noOrdersDesc": "Всё, что вы купите в маркетплейсе, появится здесь вместе со статусом доставки.",
+  "statusPAID": "Оплачен",
+  "statusCANCELLED": "Отменён"
 }

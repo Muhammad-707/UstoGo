@@ -10,9 +10,11 @@ import { cartApi, productCategoriesApi, productsApi, wishlistApi } from '@/lib/a
 import { ApiError } from '@/lib/api/client';
 import type { Product, ProductCategory } from '@/lib/api/types';
 import { FilterButton, FilterContainer, FilterItem } from '@/components/ui/FilterAnimate';
+import { useMoney } from '@/lib/money';
 
 export default function MarketplacePage() {
   const t = useTranslations('marketplace');
+  const { money } = useMoney();
   const router = useRouter();
   const { user } = useAuth();
   const isClient = user?.role === 'CLIENT';
@@ -262,7 +264,7 @@ export default function MarketplacePage() {
                     </Link>
                     <div className="flex items-baseline gap-2">
                       <span className="text-base font-extrabold text-slate-900 dark:text-white">
-                        {product.price} {product.currency}
+                        {money(product.price)}
                       </span>
                       {product.oldPrice && (
                         <span className="text-xs text-slate-400 line-through">{product.oldPrice}</span>

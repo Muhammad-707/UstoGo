@@ -76,5 +76,19 @@
   "moderationReasonLabel": "Причина модератора",
   "moderationEditProfile": "Редактировать профиль",
   "moderationResubmit": "Отправить повторно",
-  "resubmitFailed": "Не удалось отправить профиль повторно."
+  "resubmitFailed": "Не удалось отправить профиль повторно.",
+  "analyticsTitle": "Аналитика",
+  "statusCompleted": "Завершено",
+  "statusInProgress": "В работе",
+  "statusAwaiting": "Ожидают",
+  "statusCancelledShort": "Отменено",
+  "responseSpeed": "Скорость ответа",
+  "minutesShort": "{minutes} мин",
+  "repeatClients": "Повторные клиенты",
+  "profileViews": "Просмотры профиля",
+  "revenue14Days": "Доход за 14 дней",
+  "totalWord": "всего",
+  "loadingShort": "Загрузка…",
+  "completionRateTitle": "Завершаемость заказов",
+  "revenueByCategory": "Доход по категориям"
 }

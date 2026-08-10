@@ -10,6 +10,7 @@ import type { PriceType, Quote } from '@/lib/api/types';
 import { useAuth } from '@/contexts/AuthContext';
 import { ClientPageHeader } from '@/components/client/ClientPageHeader';
 import { MasterPageHeader } from '@/components/master/MasterPageHeader';
+import { EmptyState } from '@/components/ui/EmptyState';
 
 const PRICE_TYPES: PriceType[] = ['FIXED', 'HOURLY', 'FROM'];
 
@@ -120,9 +121,13 @@ export default function QuotesPage() {
       {error && <p className="text-xs font-bold text-red-600 dark:text-red-400">{error}</p>}
       {loading && <p className="text-xs text-slate-400 font-semibold">{t('loading')}</p>}
       {!loading && quotes.length === 0 && (
-        <div className="glass-card rounded-3xl p-12 text-center space-y-2">
-          <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">{t('empty')}</p>
-        </div>
+        <EmptyState
+          icon="calculator"
+          title={t('empty')}
+          description={t('emptyDesc')}
+          actionLabel={t('findMaster')}
+          actionHref="/search"
+        />
       )}
 
       <div className="space-y-4">

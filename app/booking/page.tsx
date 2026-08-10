@@ -40,7 +40,7 @@ function Spinner({ className = '' }: { className?: string }) {
 
 export default function BookingWizardPage() {
   const t = useTranslations('booking');
-  const { money } = useMoney();
+  const { money, perHour } = useMoney();
   const searchParams = useSearchParams();
   const preselectedMasterId = searchParams.get('master');
   const preselectedServiceId = searchParams.get('service');
@@ -427,7 +427,7 @@ export default function BookingWizardPage() {
                       {master.categories?.join(', ')}
                     </p>
                     {master.priceFrom && (
-                      <span className="text-xs text-slate-500 font-bold">From ${master.priceFrom}</span>
+                      <span className="text-xs text-slate-500 font-bold">{t('priceFromLabel', { price: perHour(master.priceFrom) })}</span>
                     )}
                   </div>
                 </div>
@@ -458,7 +458,7 @@ export default function BookingWizardPage() {
                       >
                         <div>{svc.title}</div>
                         <div className={selectedServiceId === svc.id ? 'text-blue-100' : 'text-slate-400'}>
-                          {svc.price} {svc.currency}
+                          {money(svc.price)}
                         </div>
                       </button>
                     ))}

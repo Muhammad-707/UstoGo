@@ -21,6 +21,7 @@ import { getBookingsSocket } from '@/lib/bookings/socket';
 import { CANCELLATION_REASON_CODES, type BookingDetail, type CancellationReasonCode, type City, type CompletionCertificate } from '@/lib/api/types';
 import { useAuth } from '@/contexts/AuthContext';
 import { getAvatarUrl } from '@/lib/placeholders';
+import { useMoney } from '@/lib/money';
 
 const STATUS_KEY: Record<string, string> = {
   PENDING: 'statusPending',
@@ -54,6 +55,7 @@ function Spinner() {
 
 export default function BookingDetailsPage() {
   const t = useTranslations('bookingDetail');
+  const { money } = useMoney();
   const tc = useTranslations('common');
   const { user } = useAuth();
   const params = useParams();
@@ -644,16 +646,16 @@ export default function BookingDetailsPage() {
                     {confirmed ? t('paymentPaidLabel') : t('paymentAgreedLabel')}
                   </span>
                   <span className="text-xl font-extrabold text-slate-900 dark:text-white">
-                    {confirmed ? booking.paidAmount : booking.price} {booking.currency}
+                    {money(confirmed ? booking.paidAmount : booking.price)}
                   </span>
                   {tip && (
                     <span className="block text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
-                      {t('paymentTip', { amount: `${tip} ${booking.currency}` })}
+                      {t('paymentTip', { amount: money(tip) })}
                     </span>
                   )}
                   {short && (
                     <span className="block text-[11px] font-bold text-amber-600 dark:text-amber-400">
-                      {t('paymentShort', { amount: `${short} ${booking.currency}` })}
+                      {t('paymentShort', { amount: money(short) })}
                     </span>
                   )}
                 </div>
@@ -773,13 +775,13 @@ export default function BookingDetailsPage() {
               <div className="flex justify-between">
                 <span className="text-slate-500">{t('serviceFee')}</span>
                 <span className="font-bold text-slate-900 dark:text-white">
-                  {booking.price} {booking.currency}
+                  {money(booking.price)}
                 </span>
               </div>
               <div className="flex justify-between pt-2 border-t border-slate-100 dark:border-slate-800 text-sm">
                 <span className="font-bold text-slate-900 dark:text-white">{t('totalPaid')}</span>
                 <span className="font-extrabold text-emerald-600 dark:text-emerald-400">
-                  {booking.price} {booking.currency}
+                  {money(booking.price)}
                 </span>
               </div>
             </div>
@@ -992,7 +994,7 @@ export default function BookingDetailsPage() {
             <div className="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700">
               <span className="text-xs font-bold text-slate-500">{t('paymentAgreedLabel')}</span>
               <span className="text-sm font-extrabold text-slate-900 dark:text-white">
-                {booking.price} {booking.currency}
+                {money(booking.price)}
               </span>
             </div>
 

@@ -8,5 +8,7 @@
   "addToFavorites": "Add to favorites",
   "removeFromFavorites": "Remove from favorites",
   "empty": "No favorites yet.",
-  "browseMasters": "Browse masters"
+  "browseMasters": "Browse masters",
+  "emptyDesc": "Save the masters you liked and they will be one tap away next time.",
+  "loading": "Loading…"
 }

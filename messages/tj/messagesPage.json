@@ -6,5 +6,6 @@
   "loginRequired": "Барои дастрасӣ тавсия шуд ворид шавед.",
   "whatsappButton": "WhatsApp",
   "whatsappButtonShort": "WA",
-  "quickReplyDefault": "Паёми пешфарз"
+  "quickReplyDefault": "Паёми пешфарз",
+  "emptyDesc": "Пас аз тасдиқи фармоиш аз ин ҷо ба тарафи дуюм дар WhatsApp навишта метавонед."
 }

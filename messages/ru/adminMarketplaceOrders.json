@@ -10,5 +10,7 @@
   "loadFailed": "Не удалось загрузить заказы",
   "prev": "Назад",
   "next": "Вперёд",
-  "pageOf": "Страница {page} из {total}"
+  "pageOf": "Страница {page} из {total}",
+  "statusPAID": "Оплачен",
+  "statusCANCELLED": "Отменён"
 }

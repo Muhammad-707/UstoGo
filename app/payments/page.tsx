@@ -3,12 +3,14 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Icon } from '@/components/icons/LucideIcons';
+import { useMoney } from '@/lib/money';
 import { bookingsApi } from '@/lib/api/endpoints';
 import type { Booking } from '@/lib/api/types';
 import { ClientPageHeader } from '@/components/client/ClientPageHeader';
 
 export default function PaymentsPage() {
   const t = useTranslations('payments');
+  const { money } = useMoney();
   const [completed, setCompleted] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -34,7 +36,7 @@ export default function PaymentsPage() {
 
           <div className="p-5 rounded-2xl bg-gradient-to-r from-blue-600 to-sky-500 text-white space-y-2 shadow-lg">
             <span className="text-xs font-bold uppercase tracking-wider text-blue-100">{t('totalSpentLabel')}</span>
-            <p className="text-3xl font-extrabold">${totalSpent.toFixed(2)}</p>
+            <p className="text-3xl font-extrabold">{money(totalSpent)}</p>
             <span className="text-[11px] text-blue-100">{t('completedCount', { count: completed.length })}</span>
           </div>
 
@@ -64,7 +66,7 @@ export default function PaymentsPage() {
                     </span>
                   </div>
                   <span className="font-bold text-emerald-600 dark:text-emerald-400 whitespace-nowrap">
-                    ${Number(b.price).toFixed(2)}
+                    {money(b.price)}
                   </span>
                 </div>
               ))}

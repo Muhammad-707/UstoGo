@@ -22,7 +22,7 @@ type TabId = 'about' | 'services' | 'gallery' | 'reviews' | 'hours';
 
 export default function MasterProfileClient() {
   const t = useTranslations('masterDetail');
-  const { perHour } = useMoney();
+  const { money, perHour } = useMoney();
   const weekdays = useWeekdays();
   const locale = useLocale();
   const params = useParams();
@@ -459,7 +459,7 @@ export default function MasterProfileClient() {
                         <p className="text-xs text-slate-400 mt-1">{s.durationMinutes} {t('minutes')}</p>
                       </div>
                       <span className="text-sm font-extrabold text-slate-900 dark:text-white whitespace-nowrap">
-                        {s.price} {s.currency}
+                        {money(s.price)}
                       </span>
                     </FilterItem>
                   ))

@@ -12,5 +12,8 @@
   "orderPlaced": "Placed",
   "unitPriceXQuantity": "{price} × {quantity}",
   "total": "Total",
-  "mockPaymentNote": "Payment is mocked — no card data was ever collected."
+  "mockPaymentNote": "Payment is mocked — no card data was ever collected.",
+  "noOrdersDesc": "Anything you buy from the marketplace shows up here with its delivery status.",
+  "statusPAID": "Paid",
+  "statusCANCELLED": "Cancelled"
 }

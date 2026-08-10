@@ -26,5 +26,7 @@
   "sendDecline": "Send decline",
   "cancelAction": "Cancel",
   "validationPriceInvalid": "Enter a valid price greater than 0.",
-  "validationReasonTooShort": "Give a reason of at least 10 characters."
+  "validationReasonTooShort": "Give a reason of at least 10 characters.",
+  "emptyDesc": "Ask a master for a price before you book, and their answer lands here.",
+  "findMaster": "Find a master"
 }

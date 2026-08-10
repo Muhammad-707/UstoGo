@@ -20,5 +20,6 @@
   "quantity": "Quantity",
   "productUnavailable": "This product is currently unavailable.",
   "loginToBuy": "Log in to buy",
-  "noWishlist": "Your wishlist is empty."
+  "noWishlist": "Your wishlist is empty.",
+  "wishlistEmptyDesc": "Tap the heart on any product to keep it here for later."
 }

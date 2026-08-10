@@ -9,9 +9,11 @@ import { useAuth } from '@/contexts/AuthContext';
 import { cartApi, productsApi, wishlistApi } from '@/lib/api/endpoints';
 import { ApiError } from '@/lib/api/client';
 import type { Product } from '@/lib/api/types';
+import { useMoney } from '@/lib/money';
 
 export default function ProductDetailPage() {
   const t = useTranslations('marketplace');
+  const { money } = useMoney();
   const params = useParams<{ id: string }>();
   const router = useRouter();
   const { user } = useAuth();
@@ -154,10 +156,10 @@ export default function ProductDetailPage() {
 
           <div className="flex items-baseline gap-3">
             <span className="text-3xl font-extrabold text-slate-900 dark:text-white">
-              {product.price} {product.currency}
+              {money(product.price)}
             </span>
             {product.oldPrice && (
-              <span className="text-base text-slate-400 line-through">{product.oldPrice} {product.currency}</span>
+              <span className="text-base text-slate-400 line-through">{money(product.oldPrice)}</span>
             )}
           </div>
 

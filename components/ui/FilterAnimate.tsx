@@ -32,7 +32,18 @@ const ITEM_DURATION = 0.6;
 const ITEM_EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 const MAX_STAGGER_INDEX = 8;
 
-const VIEWPORT = { once: true, amount: 'some', margin: '0px 0px -40px 0px' } as const;
+/**
+ * These animate on mount, not on scroll.
+ *
+ * They used to be `whileInView` with `viewport.once`, which is the wrong trigger for
+ * this app: every list here is populated by a fetch, so the element the observer was
+ * watching is created *after* the scroll position settled, and `once` means one missed
+ * intersection leaves the content parked at `opacity: 0` forever. `FilterContainer`
+ * tried to work around it by remounting on child count, which instead restarted the
+ * wave every time a batch changed size — `/orders` shipped two real orders that were
+ * in the DOM, styled `opacity: 0`, and invisible on screen. A reveal that can hide
+ * real content is worse than no reveal, so the trigger is now mount.
+ */
 
 // Items inside a container (FilterContainer / AnimatedGrid) are driven by the
 // container's single viewport trigger, so the whole group waves in order
@@ -62,8 +73,7 @@ export function FilterContainer({
       <motion.div
         key={count}
         initial="hidden"
-        whileInView="show"
-        viewport={VIEWPORT}
+        animate="show"
         variants={staggerContainerVariants}
         className={className}
       >
@@ -74,10 +84,9 @@ export function FilterContainer({
 }
 
 /**
- * Fades/slides in the moment it scrolls into view (not on page mount), and only once.
- * Inside a FilterContainer it participates in the container's ordered wave.
- * Standalone, `index` staggers items that become visible together; the delay is
- * clamped so long lists never freeze cards off-screen.
+ * Fades/slides in when it mounts. Inside a FilterContainer it participates in the
+ * container's ordered wave; standalone, `index` staggers items that appear together,
+ * clamped so a long list does not end with a card waiting a full second.
  */
 export function FilterItem({
   index = 0,
@@ -101,8 +110,7 @@ export function FilterItem({
   return (
     <motion.div
       initial="hidden"
-      whileInView="show"
-      viewport={VIEWPORT}
+      animate="show"
       variants={staggerItemVariants}
       transition={{ duration: ITEM_DURATION, ease: ITEM_EASE, delay: (index % MAX_STAGGER_INDEX) * STAGGER_STEP }}
       onClick={onClick}
@@ -133,8 +141,7 @@ export function FilterButton({
     ? { variants: staggerItemVariants as Variants }
     : {
         initial: 'hidden' as const,
-        whileInView: 'show' as const,
-        viewport: VIEWPORT,
+        animate: 'show' as const,
         variants: staggerItemVariants as Variants,
         transition: { duration: ITEM_DURATION, ease: ITEM_EASE, delay: (index % MAX_STAGGER_INDEX) * STAGGER_STEP },
       };
@@ -173,8 +180,7 @@ export function AnimatedGrid({
       <motion.div
         key={animKey}
         initial="hidden"
-        whileInView="show"
-        viewport={VIEWPORT}
+        animate="show"
         variants={staggerContainerVariants}
         exit={{ opacity: 0, transition: { duration: 0.15, ease: 'easeIn' } }}
         className={className}
@@ -186,12 +192,12 @@ export function AnimatedGrid({
 }
 
 /**
- * A single card that fades/slides in the moment it scrolls into view, once.
- * Inside an AnimatedGrid it participates in the container's ordered wave.
+ * A single card that fades/slides in when it mounts. Inside an AnimatedGrid it
+ * participates in the container's ordered wave.
  */
 const MotionTr = motion.create('tr');
 
-/** Same scroll-in stagger as AnimatedCard, but for a <tr> inside a <table>. */
+/** Same stagger as AnimatedCard, but for a <tr> inside a <table>. */
 export function InViewRow({
   index = 0,
   className,
@@ -214,8 +220,7 @@ export function InViewRow({
   return (
     <MotionTr
       initial="hidden"
-      whileInView="show"
-      viewport={VIEWPORT}
+      animate="show"
       variants={staggerItemVariants}
       transition={{ duration: ITEM_DURATION, ease: ITEM_EASE, delay: (index % MAX_STAGGER_INDEX) * STAGGER_STEP }}
       onClick={onClick}
@@ -246,8 +251,7 @@ export function AnimatedCard({
   return (
     <motion.div
       initial="hidden"
-      whileInView="show"
-      viewport={VIEWPORT}
+      animate="show"
       variants={staggerItemVariants}
       transition={{ duration: ITEM_DURATION, ease: ITEM_EASE, delay: (index % MAX_STAGGER_INDEX) * STAGGER_STEP }}
       className={className}

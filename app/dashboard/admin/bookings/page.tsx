@@ -10,6 +10,7 @@ import { useRequireAuth } from '@/hooks/useRequireAuth';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { InViewRow } from '@/components/ui/FilterAnimate';
 import type { Booking, BookingDetail, BookingStatus, Paginated } from '@/lib/api/types';
+import { useMoney } from '@/lib/money';
 
 const STATUSES: BookingStatus[] = [
   'PENDING',
@@ -34,6 +35,7 @@ const cancellable = (status: string) => ['PENDING', 'ACCEPTED', 'IN_PROGRESS'].i
 
 export default function AdminBookingsPage() {
   const t = useTranslations('adminBookings');
+  const { money } = useMoney();
   useRequireAuth(['ADMIN']);
 
   const [result, setResult] = useState<Paginated<Booking> | null>(null);
@@ -169,7 +171,7 @@ export default function AdminBookingsPage() {
                         {b.status}
                       </span>
                     </td>
-                    <td className="py-3 text-right font-extrabold text-slate-900 dark:text-white">{b.price} {b.currency}</td>
+                    <td className="py-3 text-right font-extrabold text-slate-900 dark:text-white">{money(b.price)}</td>
                     <td className="py-3 text-right">
                       <button
                         onClick={() => openDetail(b.id)}
@@ -235,7 +237,7 @@ export default function AdminBookingsPage() {
                   <p><span className="font-bold text-slate-400">{t('colClient')}:</span> {detail.clientName}</p>
                   <p><span className="font-bold text-slate-400">{t('colMaster')}:</span> {detail.masterDisplayName}</p>
                   <p><span className="font-bold text-slate-400">{t('colStatus')}:</span> {detail.status}</p>
-                  <p><span className="font-bold text-slate-400">{t('colPrice')}:</span> {detail.price} {detail.currency}</p>
+                  <p><span className="font-bold text-slate-400">{t('colPrice')}:</span> {money(detail.price)}</p>
                   <p className="col-span-2">
                     <span className="font-bold text-slate-400">{t('scheduledLabel')}:</span> {new Date(detail.scheduledAt).toLocaleString()}
                   </p>
@@ -244,7 +246,7 @@ export default function AdminBookingsPage() {
                   )}
                   {detail.paymentConfirmedAt && (
                     <p className="col-span-2 text-emerald-600 dark:text-emerald-400 font-bold">
-                      {t('paidLabel')}: {detail.paidAmount} {detail.currency}
+                      {t('paidLabel')}: {money(detail.paidAmount)}
                     </p>
                   )}
                 </div>

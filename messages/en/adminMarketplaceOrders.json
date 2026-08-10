@@ -10,5 +10,7 @@
   "loadFailed": "Failed to load orders",
   "prev": "Previous",
   "next": "Next",
-  "pageOf": "Page {page} of {total}"
+  "pageOf": "Page {page} of {total}",
+  "statusPAID": "Paid",
+  "statusCANCELLED": "Cancelled"
 }
