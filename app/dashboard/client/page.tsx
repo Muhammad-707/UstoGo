@@ -14,9 +14,12 @@ import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { getAvatarUrl } from '@/lib/placeholders';
 import type { Booking, MasterPublic, MyReferral } from '@/lib/api/types';
 import { FilterContainer, FilterItem, InViewRow } from '@/components/ui/FilterAnimate';
+import { useDateFormat } from '@/lib/datetime';
 
 export default function ClientDashboardPage() {
   const t = useTranslations('dashboardClient');
+  const fmt = useDateFormat();
+  const te = useTranslations('enums');
   const { money } = useMoney();
   useRequireAuth(['CLIENT']);
   const { favoriteIds } = useFavorites();
@@ -264,7 +267,7 @@ export default function ClientDashboardPage() {
                       <img src={getAvatarUrl(b.masterId, b.masterDisplayName)} alt="" className="w-6 h-6 rounded-full object-cover" />
                       <span>{b.masterDisplayName}</span>
                     </td>
-                    <td className="py-4 text-slate-500">{new Date(b.scheduledAt).toLocaleDateString()}</td>
+                    <td className="py-4 text-slate-500">{fmt.date(b.scheduledAt)}</td>
                     <td className="py-4 font-bold text-slate-900 dark:text-white">{money(b.price)}</td>
                     <td className="py-4">
                       <span
@@ -274,7 +277,7 @@ export default function ClientDashboardPage() {
                             : 'bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300'
                         }`}
                       >
-                        {b.status}
+                        {te(`bookingStatus.${b.status}`)}
                       </span>
                     </td>
                     <td className="py-4 text-right">

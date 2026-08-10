@@ -9,6 +9,7 @@ import { ApiError } from '@/lib/api/client';
 import { useRequireAuth } from '@/hooks/useRequireAuth';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import type { ProductCategory } from '@/lib/api/types';
+import { EmptyState } from '@/components/ui/EmptyState';
 
 const EMPTY_FORM = { id: '', name: '', slug: '', sortOrder: '0', isActive: true };
 
@@ -136,7 +137,7 @@ export default function AdminProductCategoriesPage() {
             {Array.from({ length: 3 }).map((_, idx) => <div key={idx} className="h-16 rounded-2xl bg-slate-50 dark:bg-slate-800/40 animate-pulse" />)}
           </div>
         )}
-        {!loading && categories.length === 0 && <p className="text-xs text-slate-400 font-semibold text-center py-10">{t('noResults')}</p>}
+        {!loading && categories.length === 0 && <EmptyState icon="tag" title={t('noResults')} />}
         {!loading && categories.length > 0 && (
           <div className="space-y-2">
             {categories.map((c) => (

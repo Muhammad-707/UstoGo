@@ -9,6 +9,8 @@ import { ApiError } from '@/lib/api/client';
 import { useRequireAuth } from '@/hooks/useRequireAuth';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { AUDIT_ACTIONS, type AuditLog, type Paginated } from '@/lib/api/types';
+import { useDateFormat } from '@/lib/datetime';
+import { EmptyState } from '@/components/ui/EmptyState';
 
 /** Colour-codes the destructive actions so a scan of the list surfaces them first. */
 function toneFor(action: string): string {
@@ -26,6 +28,7 @@ function toneFor(action: string): string {
 
 export default function AdminAuditLogsPage() {
   const t = useTranslations('adminAuditLogs');
+  const fmt = useDateFormat();
   useRequireAuth(['ADMIN']);
 
   const [result, setResult] = useState<Paginated<AuditLog> | null>(null);
@@ -156,7 +159,7 @@ export default function AdminAuditLogsPage() {
         )}
 
         {!loading && result && result.items.length === 0 && (
-          <p className="text-xs text-slate-400 font-semibold text-center py-10">{t('noResults')}</p>
+          <EmptyState icon="shieldcheck" title={t('noResults')} />
         )}
 
         {!loading && result && result.items.length > 0 && (
@@ -181,7 +184,7 @@ export default function AdminAuditLogsPage() {
                       </span>
                     </div>
                     <div className="flex items-center gap-3 shrink-0">
-                      <span className="text-[10px] text-slate-400">{new Date(log.createdAt).toLocaleString()}</span>
+                      <span className="text-[10px] text-slate-400">{fmt.dateTime(log.createdAt)}</span>
                       <Icon name="chevrondown" size={14} className={`text-slate-400 transition-transform ${open ? 'rotate-180' : ''}`} />
                     </div>
                   </button>

@@ -10,6 +10,11 @@ interface EmptyStateProps {
   actionLabel?: string;
   actionHref?: string;
   tone?: 'blue' | 'amber' | 'emerald';
+  /**
+   * `inline` drops the card chrome for the case where this already sits inside a panel —
+   * a bordered card nested in a bordered card reads as a rendering mistake.
+   */
+  variant?: 'card' | 'inline';
 }
 
 const TONE: Record<NonNullable<EmptyStateProps['tone']>, { tile: string; ring: string; button: string }> = {
@@ -46,20 +51,34 @@ export function EmptyState({
   actionLabel,
   actionHref,
   tone = 'blue',
+  variant = 'card',
 }: EmptyStateProps) {
   const t = TONE[tone];
+  const inline = variant === 'inline';
 
   return (
-    <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-6 py-14 sm:py-16 text-center">
-      <div className={`pointer-events-none absolute -top-24 left-1/2 -translate-x-1/2 w-72 h-72 rounded-full ${t.ring} blur-3xl`} />
+    <div
+      className={
+        inline
+          ? 'px-6 py-10 text-center'
+          : 'relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-6 py-14 sm:py-16 text-center'
+      }
+    >
+      {!inline && (
+        <div className={`pointer-events-none absolute -top-24 left-1/2 -translate-x-1/2 w-72 h-72 rounded-full ${t.ring} blur-3xl`} />
+      )}
       <div className="relative flex flex-col items-center gap-4">
         <div
-          className={`w-16 h-16 rounded-3xl bg-gradient-to-br ${t.tile} text-white flex items-center justify-center shadow-lg`}
+          className={
+            inline
+              ? 'w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-400 flex items-center justify-center'
+              : `w-16 h-16 rounded-3xl bg-gradient-to-br ${t.tile} text-white flex items-center justify-center shadow-lg`
+          }
         >
-          <Icon name={icon} size={28} />
+          <Icon name={icon} size={inline ? 22 : 28} />
         </div>
         <div className="space-y-1.5 max-w-sm">
-          <h3 className="text-lg font-extrabold text-slate-900 dark:text-white">{title}</h3>
+          <h3 className={`font-extrabold text-slate-900 dark:text-white ${inline ? 'text-sm' : 'text-lg'}`}>{title}</h3>
           {description && (
             <p className="text-xs leading-relaxed text-slate-500 dark:text-slate-400 font-medium">
               {description}

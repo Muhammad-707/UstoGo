@@ -51,5 +51,6 @@
   "colRating": "Rating",
   "colBookings": "Bookings",
   "colEarnings": "Earnings",
-  "noActiveBookings": "No active bookings for this master."
+  "noActiveBookings": "No active bookings for this master.",
+  "metricCompletedCount": "{count} completed"
 }

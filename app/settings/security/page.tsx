@@ -12,9 +12,11 @@ import { TwoFactorSection } from '@/components/settings/TwoFactorSection';
 import { validatePassword, type ValidationErrorKey } from '@/lib/validation';
 import type { Session } from '@/lib/api/types';
 import { PageHeader } from '@/components/layout/PageHeader';
+import { useDateFormat } from '@/lib/datetime';
 
 export default function SecuritySettingsPage() {
   const t = useTranslations('settingsSecurity');
+  const fmt = useDateFormat();
   const tv = useTranslations('validation');
   const { logout } = useAuth();
 
@@ -92,7 +94,7 @@ export default function SecuritySettingsPage() {
     }
   };
 
-  const formatDate = (iso: string) => new Date(iso).toLocaleString();
+  const formatDate = (iso: string) => fmt.dateTime(iso);
 
   const handleExport = async () => {
     setExporting(true);

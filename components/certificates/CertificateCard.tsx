@@ -5,9 +5,11 @@ import QRCode from 'qrcode';
 import { useTranslations } from 'next-intl';
 import { Icon } from '@/components/icons/LucideIcons';
 import type { CompletionCertificate } from '@/lib/api/types';
+import { useDateFormat } from '@/lib/datetime';
 
 export function CertificateCard({ certificate }: { certificate: CompletionCertificate }) {
   const t = useTranslations('certificate');
+  const fmt = useDateFormat();
   const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
 
   useEffect(() => {
@@ -59,7 +61,7 @@ export function CertificateCard({ certificate }: { certificate: CompletionCertif
         </div>
         <div>
           <span className="text-slate-400 font-bold uppercase tracking-wider block">{t('completedLabel')}</span>
-          <span className="text-slate-900 dark:text-white font-semibold">{new Date(certificate.completedAt).toLocaleDateString()}</span>
+          <span className="text-slate-900 dark:text-white font-semibold">{fmt.date(certificate.completedAt)}</span>
         </div>
         <div>
           <span className="text-slate-400 font-bold uppercase tracking-wider block">{t('codeLabel')}</span>

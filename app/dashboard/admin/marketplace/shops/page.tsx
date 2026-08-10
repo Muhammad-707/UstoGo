@@ -10,6 +10,7 @@ import { ApiError } from '@/lib/api/client';
 import { useRequireAuth } from '@/hooks/useRequireAuth';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import type { City, MarketplaceShop } from '@/lib/api/types';
+import { EmptyState } from '@/components/ui/EmptyState';
 
 const ShopLocationPicker = dynamic(() => import('@/components/marketplace/ShopLocationPicker'), {
   ssr: false,
@@ -214,7 +215,7 @@ export default function AdminMarketplaceShopsPage() {
             {Array.from({ length: 3 }).map((_, idx) => <div key={idx} className="h-20 rounded-2xl bg-slate-50 dark:bg-slate-800/40 animate-pulse" />)}
           </div>
         )}
-        {!loading && shops.length === 0 && <p className="text-xs text-slate-400 font-semibold text-center py-10">{t('noResults')}</p>}
+        {!loading && shops.length === 0 && <EmptyState icon="store" title={t('noResults')} />}
         {!loading && shops.length > 0 && (
           <div className="space-y-3">
             {shops.map((shop) => (

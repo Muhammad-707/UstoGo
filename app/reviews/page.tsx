@@ -11,11 +11,13 @@ import type { Review, Booking } from '@/lib/api/types';
 import { getAvatarUrl } from '@/lib/placeholders';
 import { FilterContainer, FilterItem } from '@/components/ui/FilterAnimate';
 import { LeaderboardPanel } from '@/components/masters/LeaderboardPanel';
+import { useDateFormat } from '@/lib/datetime';
 
 type ReviewsTab = 'reviews' | 'leaderboard';
 
 export default function ReviewsPage() {
   const t = useTranslations('reviews');
+  const fmt = useDateFormat();
   const { user } = useAuth();
   const isMaster = user?.role === 'MASTER';
   const router = useRouter();
@@ -211,7 +213,7 @@ export default function ReviewsPage() {
               <div className="flex items-center gap-3">
                 <img src={getAvatarUrl(rev.clientId, rev.clientName)} alt="" className="w-12 h-12 rounded-2xl object-cover" />
                 <div>
-                  <span className="text-[11px] text-slate-400">{new Date(rev.createdAt).toLocaleDateString()}</span>
+                  <span className="text-[11px] text-slate-400">{fmt.date(rev.createdAt)}</span>
                 </div>
               </div>
               <div className="flex items-center gap-1 text-amber-500 font-bold text-xs">

@@ -10,6 +10,8 @@ import { useRequireAuth } from '@/hooks/useRequireAuth';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import type { AdminUserListItem, UserProfile, UserRole, UserStatus } from '@/lib/api/types';
 import { getAvatarUrl } from '@/lib/placeholders';
+import { useDateFormat } from '@/lib/datetime';
+import { EmptyState } from '@/components/ui/EmptyState';
 
 const STATUS_STYLE: Record<UserStatus, string> = {
   ACTIVE: 'bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300',
@@ -19,6 +21,8 @@ const STATUS_STYLE: Record<UserStatus, string> = {
 
 export default function AdminUsersPage() {
   const t = useTranslations('adminUsers');
+  const fmt = useDateFormat();
+  const te = useTranslations('enums');
   useRequireAuth(['ADMIN']);
 
   const [users, setUsers] = useState<AdminUserListItem[]>([]);
@@ -162,7 +166,7 @@ export default function AdminUsersPage() {
         )}
 
         {!loading && users.length === 0 && (
-          <p className="text-xs text-slate-400 font-semibold text-center py-10">{t('noResults')}</p>
+          <EmptyState icon="user" title={t('noResults')} />
         )}
 
         {!loading && users.length > 0 && (
@@ -194,15 +198,15 @@ export default function AdminUsersPage() {
                         </div>
                       </div>
                     </td>
-                    <td className="py-3 pr-4 font-bold text-slate-700 dark:text-slate-300">{u.role}</td>
+                    <td className="py-3 pr-4 font-bold text-slate-700 dark:text-slate-300">{te(`userRole.${u.role}`)}</td>
                     <td className="py-3 pr-4">
                       <span className={`px-2 py-1 rounded-full font-bold text-[10px] ${STATUS_STYLE[u.status]}`}>
-                        {u.status}
+                        {te(`userStatus.${u.status}`)}
                       </span>
                     </td>
-                    <td className="py-3 pr-4 text-slate-500">{new Date(u.createdAt).toLocaleDateString()}</td>
+                    <td className="py-3 pr-4 text-slate-500">{fmt.date(u.createdAt)}</td>
                     <td className="py-3 pr-4 text-slate-500">
-                      {u.lastLoginAt ? new Date(u.lastLoginAt).toLocaleDateString() : t('never')}
+                      {u.lastLoginAt ? fmt.date(u.lastLoginAt) : t('never')}
                     </td>
                     <td className="py-3 pr-4" onClick={(e) => e.stopPropagation()}>
                       {u.status === 'BLOCKED' ? (

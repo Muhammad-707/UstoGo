@@ -14,6 +14,7 @@ import { resolveOwnFileUrl, uploadFile } from '@/lib/api/upload';
 import { getAvatarUrl, getCoverUrl } from '@/lib/placeholders';
 import type { City } from '@/lib/api/types';
 import { PageHeader } from '@/components/layout/PageHeader';
+import { useDateFormat } from '@/lib/datetime';
 
 const MasterLocationPicker = dynamic(() => import('@/components/masters/MasterLocationPicker'), {
   ssr: false,
@@ -22,6 +23,7 @@ const MasterLocationPicker = dynamic(() => import('@/components/masters/MasterLo
 
 export default function EditProfilePage() {
   const t = useTranslations('settingsProfile');
+  const fmt = useDateFormat();
   const { user, refreshUser, logout } = useAuth();
   const isMaster = user?.role === 'MASTER';
 
@@ -394,7 +396,7 @@ export default function EditProfilePage() {
                 </button>
                 {whatsappChangedAt && (
                   <p className="text-[10px] text-amber-600 dark:text-amber-400 font-semibold">
-                    {t('whatsappChanged', { date: new Date(whatsappChangedAt).toLocaleString() })}
+                    {t('whatsappChanged', { date: fmt.dateTime(whatsappChangedAt) })}
                   </p>
                 )}
               </div>

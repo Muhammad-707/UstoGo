@@ -1,6 +1,6 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 
 /**
  * Weekday names come from the message catalogue rather than `Intl`.
@@ -22,5 +22,49 @@ export function useWeekdays() {
     long: (weekday: number): string => long[weekday] ?? '',
     short: (weekday: number): string => short[weekday] ?? '',
     ofDate: (date: Date): string => short[date.getDay()] ?? '',
+  };
+}
+
+/**
+ * Dates and times in the locale the user picked, not the one their browser happens to
+ * be set to.
+ *
+ * Every call site used a bare `toLocaleString()`, which reads `navigator.language` and
+ * ignores the app entirely — so a fully Tajik dashboard printed US-format timestamps
+ * for anyone on an English browser, and the same row looked different to two people
+ * reading the same page. `tj` is mapped to `tg-TJ` for the same reason `useWeekdays`
+ * exists: `tj` is not a language tag.
+ */
+const INTL_LOCALE: Record<string, string> = { tj: 'tg-TJ', ru: 'ru-RU', en: 'en-US' };
+
+export function useDateFormat() {
+  const locale = useLocale();
+  const tag = INTL_LOCALE[locale] ?? 'en-US';
+
+  const parse = (value: string | number | Date | null | undefined): Date | null => {
+    if (value === null || value === undefined || value === '') return null;
+    const date = value instanceof Date ? value : new Date(value);
+    return Number.isNaN(date.getTime()) ? null : date;
+  };
+
+  return {
+    /** 10.08.2026 */
+    date: (value: string | number | Date | null | undefined): string =>
+      parse(value)?.toLocaleDateString(tag) ?? '—',
+    /** 10.08.2026, 15:13 */
+    dateTime: (value: string | number | Date | null | undefined): string =>
+      parse(value)?.toLocaleString(tag, {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+      }) ?? '—',
+    /** 15:13 */
+    time: (value: string | number | Date | null | undefined): string =>
+      parse(value)?.toLocaleTimeString(tag, { hour: '2-digit', minute: '2-digit' }) ?? '—',
+    /** 1 234 — grouped by the same locale as the dates. */
+    number: (value: number | null | undefined): string =>
+      value === null || value === undefined ? '—' : value.toLocaleString(tag),
   };
 }

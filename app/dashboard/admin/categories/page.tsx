@@ -9,6 +9,7 @@ import { ApiError } from '@/lib/api/client';
 import { useRequireAuth } from '@/hooks/useRequireAuth';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import type { Category } from '@/lib/api/types';
+import { EmptyState } from '@/components/ui/EmptyState';
 
 const EMPTY_FORM = { id: '', name: '', slug: '', parentId: '', description: '', sortOrder: '0', isActive: true };
 
@@ -172,7 +173,7 @@ export default function AdminCategoriesPage() {
             {Array.from({ length: 5 }).map((_, idx) => <div key={idx} className="h-14 rounded-2xl bg-slate-50 dark:bg-slate-800/40 animate-pulse" />)}
           </div>
         )}
-        {!loading && flat.length === 0 && <p className="text-xs text-slate-400 font-semibold text-center py-10">{t('noResults')}</p>}
+        {!loading && flat.length === 0 && <EmptyState icon="grid" title={t('noResults')} />}
         {!loading && flat.length > 0 && (
           <div className="space-y-1.5">
             {flat.map((c) => (

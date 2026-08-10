@@ -10,6 +10,8 @@ import { uploadFile } from '@/lib/api/upload';
 import { useRequireAuth } from '@/hooks/useRequireAuth';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { BANNER_POSITIONS, type Banner, type BannerPosition } from '@/lib/api/types';
+import { useDateFormat } from '@/lib/datetime';
+import { EmptyState } from '@/components/ui/EmptyState';
 
 interface FormState {
   id: string;
@@ -44,6 +46,7 @@ const toLocalInput = (iso?: string | null) => (iso ? iso.slice(0, 16) : '');
 
 export default function AdminBannersPage() {
   const t = useTranslations('adminBanners');
+  const fmt = useDateFormat();
   useRequireAuth(['ADMIN']);
 
   const [banners, setBanners] = useState<Banner[]>([]);
@@ -297,7 +300,7 @@ export default function AdminBannersPage() {
         )}
 
         {!loading && banners.length === 0 && (
-          <p className="text-xs text-slate-400 font-semibold text-center py-10">{t('noResults')}</p>
+          <EmptyState icon="image" title={t('noResults')} />
         )}
 
         {!loading && banners.length > 0 && (
@@ -325,7 +328,7 @@ export default function AdminBannersPage() {
                   <p className="text-sm font-extrabold text-slate-900 dark:text-white line-clamp-1">{banner.title}</p>
                   {banner.subtitle && <p className="text-[11px] text-slate-500 line-clamp-1">{banner.subtitle}</p>}
                   <p className="text-[10px] text-slate-400">
-                    {t('windowLabel')}: {banner.startsAt ? new Date(banner.startsAt).toLocaleDateString() : '∞'} — {banner.endsAt ? new Date(banner.endsAt).toLocaleDateString() : '∞'}
+                    {t('windowLabel')}: {banner.startsAt ? fmt.date(banner.startsAt) : '∞'} — {banner.endsAt ? fmt.date(banner.endsAt) : '∞'}
                   </p>
                   <div className="flex gap-2 pt-1">
                     <button onClick={() => openEdit(banner)} className="px-3.5 py-2 rounded-xl bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition">

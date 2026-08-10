@@ -8,6 +8,7 @@ import { Icon } from '@/components/icons/LucideIcons';
 import { useRequireAuth } from '@/hooks/useRequireAuth';
 import { ordersApi } from '@/lib/api/endpoints';
 import type { Order } from '@/lib/api/types';
+import { useDateFormat } from '@/lib/datetime';
 
 const STATUS_STYLE: Record<string, string> = {
   PAID: 'bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300',
@@ -16,6 +17,7 @@ const STATUS_STYLE: Record<string, string> = {
 
 export default function OrderDetailPage() {
   const t = useTranslations('orders');
+  const fmt = useDateFormat();
   const params = useParams<{ id: string }>();
   useRequireAuth(['CLIENT']);
 
@@ -63,7 +65,7 @@ export default function OrderDetailPage() {
         <div className="flex items-center justify-between flex-wrap gap-3">
           <div>
             <p className="text-xs font-bold text-slate-400">{t('orderPlaced')}</p>
-            <p className="text-sm font-bold text-slate-900 dark:text-white">{new Date(order.createdAt).toLocaleString()}</p>
+            <p className="text-sm font-bold text-slate-900 dark:text-white">{fmt.dateTime(order.createdAt)}</p>
           </div>
           <span className={`px-3 py-1.5 rounded-full text-xs font-extrabold ${STATUS_STYLE[order.status] ?? ''}`}>
             {t(`status${order.status}`)}

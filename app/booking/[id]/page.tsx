@@ -22,6 +22,7 @@ import { CANCELLATION_REASON_CODES, type BookingDetail, type CancellationReasonC
 import { useAuth } from '@/contexts/AuthContext';
 import { getAvatarUrl } from '@/lib/placeholders';
 import { useMoney } from '@/lib/money';
+import { useDateFormat } from '@/lib/datetime';
 
 const STATUS_KEY: Record<string, string> = {
   PENDING: 'statusPending',
@@ -55,6 +56,7 @@ function Spinner() {
 
 export default function BookingDetailsPage() {
   const t = useTranslations('bookingDetail');
+  const fmt = useDateFormat();
   const { money } = useMoney();
   const tc = useTranslations('common');
   const { user } = useAuth();
@@ -624,7 +626,7 @@ export default function BookingDetailsPage() {
                   {confirmed ? (
                     <>
                       <p className="text-xs text-slate-500 dark:text-slate-400">
-                        {t('paymentConfirmedOn', { date: new Date(booking.paymentConfirmedAt as string).toLocaleString() })}
+                        {t('paymentConfirmedOn', { date: fmt.dateTime(booking.paymentConfirmedAt as string) })}
                       </p>
                       {booking.paymentNote && (
                         <p className="text-xs text-slate-600 dark:text-slate-300 pt-1">
@@ -691,7 +693,7 @@ export default function BookingDetailsPage() {
               <div className="p-5 rounded-2xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 space-y-1">
                 <h4 className="text-sm font-bold text-red-700 dark:text-red-300">{t('cancelledTitle')}</h4>
                 <p className="text-xs text-red-600 dark:text-red-400">
-                  {new Date(booking.cancelledAt).toLocaleString()}
+                  {fmt.dateTime(booking.cancelledAt)}
                   {booking.cancellationReason ? ` — ${booking.cancellationReason}` : ''}
                 </p>
               </div>
@@ -719,7 +721,7 @@ export default function BookingDetailsPage() {
                         {item.label}
                       </h4>
                       <p className="text-xs text-slate-400 mt-0.5">
-                        {item.timestamp ? new Date(item.timestamp).toLocaleString() : '—'}
+                        {item.timestamp ? fmt.dateTime(item.timestamp) : '—'}
                       </p>
                     </div>
                   </div>

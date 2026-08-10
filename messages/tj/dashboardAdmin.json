@@ -51,5 +51,6 @@
   "colRating": "Рейтинг",
   "colBookings": "Фармоишҳо",
   "colEarnings": "Даромад",
-  "noActiveBookings": "Ин усто фармоиши фаъол надорад."
+  "noActiveBookings": "Ин усто фармоиши фаъол надорад.",
+  "metricCompletedCount": "{count} иҷрошуда"
 }

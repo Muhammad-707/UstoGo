@@ -1,0 +1,40 @@
+{
+  "bookingStatus": {
+    "PENDING": "Pending",
+    "ACCEPTED": "Accepted",
+    "IN_PROGRESS": "In progress",
+    "COMPLETED": "Completed",
+    "REJECTED": "Declined",
+    "EXPIRED": "Expired",
+    "CANCELLED_BY_CLIENT": "Cancelled by client",
+    "CANCELLED_BY_MASTER": "Cancelled by master",
+    "CANCELLED_BY_ADMIN": "Cancelled by admin"
+  },
+  "userRole": {
+    "CLIENT": "Client",
+    "MASTER": "Master",
+    "ADMIN": "Admin"
+  },
+  "userStatus": {
+    "ACTIVE": "Active",
+    "INACTIVE": "Inactive",
+    "BLOCKED": "Blocked"
+  },
+  "approvalStatus": {
+    "PENDING": "Pending",
+    "APPROVED": "Approved",
+    "REJECTED": "Rejected"
+  },
+  "reportType": {
+    "SPAM": "Spam",
+    "FRAUD": "Fraud",
+    "ABUSE": "Abuse",
+    "OTHER": "Other"
+  },
+  "reportStatus": {
+    "OPEN": "Open",
+    "REVIEWED": "Reviewed",
+    "RESOLVED": "Resolved",
+    "REJECTED": "Rejected"
+  }
+}

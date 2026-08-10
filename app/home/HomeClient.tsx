@@ -13,6 +13,7 @@ import { getCategoryVisual } from '@/lib/categoryVisuals';
 import { getAvatarUrl } from '@/lib/placeholders';
 import { useAuth } from '@/contexts/AuthContext';
 import { FilterContainer, FilterItem } from '@/components/ui/FilterAnimate';
+import { useDateFormat } from '@/lib/datetime';
 
 function flattenLeafCategories(categories: Category[]): Category[] {
   const out: Category[] = [];
@@ -36,6 +37,7 @@ export default function ClientHomePage({
   allMasters: MasterPublic[];
 }) {
   const t = useTranslations('common');
+  const fmt = useDateFormat();
   const { perHour } = useMoney();
   const { user } = useAuth();
 
@@ -136,7 +138,7 @@ export default function ClientHomePage({
                 {activeBooking.serviceTitle} {t('withConnector')} {activeBooking.masterDisplayName}
               </h4>
               <p className="text-xs text-slate-500 dark:text-slate-400">
-                {t('scheduledForPrefix')} {new Date(activeBooking.scheduledAt).toLocaleString()}
+                {t('scheduledForPrefix')} {fmt.dateTime(activeBooking.scheduledAt)}
               </p>
             </div>
           </div>

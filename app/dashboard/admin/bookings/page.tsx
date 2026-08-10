@@ -11,6 +11,8 @@ import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { InViewRow } from '@/components/ui/FilterAnimate';
 import type { Booking, BookingDetail, BookingStatus, Paginated } from '@/lib/api/types';
 import { useMoney } from '@/lib/money';
+import { useDateFormat } from '@/lib/datetime';
+import { EmptyState } from '@/components/ui/EmptyState';
 
 const STATUSES: BookingStatus[] = [
   'PENDING',
@@ -35,6 +37,8 @@ const cancellable = (status: string) => ['PENDING', 'ACCEPTED', 'IN_PROGRESS'].i
 
 export default function AdminBookingsPage() {
   const t = useTranslations('adminBookings');
+  const fmt = useDateFormat();
+  const te = useTranslations('enums');
   const { money } = useMoney();
   useRequireAuth(['ADMIN']);
 
@@ -142,7 +146,7 @@ export default function AdminBookingsPage() {
         )}
 
         {!loading && result && result.items.length === 0 && (
-          <p className="text-xs text-slate-400 font-semibold text-center py-10">{t('noResults')}</p>
+          <EmptyState icon="calendar" title={t('noResults')} />
         )}
 
         {!loading && result && result.items.length > 0 && (
@@ -168,7 +172,7 @@ export default function AdminBookingsPage() {
                     <td className="py-3 text-slate-500 hidden md:table-cell">{b.masterDisplayName}</td>
                     <td className="py-3">
                       <span className={`px-2 py-1 rounded-full text-[10px] font-extrabold ${STATUS_STYLE[b.status] ?? 'bg-slate-100 dark:bg-slate-800 text-slate-500'}`}>
-                        {b.status}
+                        {te(`bookingStatus.${b.status}`)}
                       </span>
                     </td>
                     <td className="py-3 text-right font-extrabold text-slate-900 dark:text-white">{money(b.price)}</td>
@@ -236,10 +240,10 @@ export default function AdminBookingsPage() {
                 <div className="grid grid-cols-2 gap-3 text-xs">
                   <p><span className="font-bold text-slate-400">{t('colClient')}:</span> {detail.clientName}</p>
                   <p><span className="font-bold text-slate-400">{t('colMaster')}:</span> {detail.masterDisplayName}</p>
-                  <p><span className="font-bold text-slate-400">{t('colStatus')}:</span> {detail.status}</p>
+                  <p><span className="font-bold text-slate-400">{t('colStatus')}:</span> {te(`bookingStatus.${detail.status}`)}</p>
                   <p><span className="font-bold text-slate-400">{t('colPrice')}:</span> {money(detail.price)}</p>
                   <p className="col-span-2">
-                    <span className="font-bold text-slate-400">{t('scheduledLabel')}:</span> {new Date(detail.scheduledAt).toLocaleString()}
+                    <span className="font-bold text-slate-400">{t('scheduledLabel')}:</span> {fmt.dateTime(detail.scheduledAt)}
                   </p>
                   {detail.addressLine && (
                     <p className="col-span-2"><span className="font-bold text-slate-400">{t('addressLabel')}:</span> {detail.addressLine}</p>
@@ -258,7 +262,7 @@ export default function AdminBookingsPage() {
                       {detail.history.map((h) => (
                         <div key={h.id} className="flex items-center justify-between text-[11px] p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60">
                           <span className="font-bold text-slate-700 dark:text-slate-200">{h.status}</span>
-                          <span className="text-slate-400">{new Date(h.createdAt).toLocaleString()}</span>
+                          <span className="text-slate-400">{fmt.dateTime(h.createdAt)}</span>
                         </div>
                       ))}
                     </div>

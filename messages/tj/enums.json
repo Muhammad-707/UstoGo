@@ -1,0 +1,40 @@
+{
+  "bookingStatus": {
+    "PENDING": "Дар интизорӣ",
+    "ACCEPTED": "Қабулшуда",
+    "IN_PROGRESS": "Дар ҷараён",
+    "COMPLETED": "Иҷрошуда",
+    "REJECTED": "Радшуда",
+    "EXPIRED": "Мӯҳлаташ гузашт",
+    "CANCELLED_BY_CLIENT": "Аз ҷониби мизоҷ бекор шуд",
+    "CANCELLED_BY_MASTER": "Аз ҷониби усто бекор шуд",
+    "CANCELLED_BY_ADMIN": "Аз ҷониби админ бекор шуд"
+  },
+  "userRole": {
+    "CLIENT": "Мизоҷ",
+    "MASTER": "Усто",
+    "ADMIN": "Админ"
+  },
+  "userStatus": {
+    "ACTIVE": "Фаъол",
+    "INACTIVE": "Ғайрифаъол",
+    "BLOCKED": "Басташуда"
+  },
+  "approvalStatus": {
+    "PENDING": "Дар интизорӣ",
+    "APPROVED": "Тасдиқшуда",
+    "REJECTED": "Радшуда"
+  },
+  "reportType": {
+    "SPAM": "Спам",
+    "FRAUD": "Қаллобӣ",
+    "ABUSE": "Таҳқир",
+    "OTHER": "Дигар"
+  },
+  "reportStatus": {
+    "OPEN": "Кушода",
+    "REVIEWED": "Дидашуда",
+    "RESOLVED": "Ҳалшуда",
+    "REJECTED": "Радшуда"
+  }
+}

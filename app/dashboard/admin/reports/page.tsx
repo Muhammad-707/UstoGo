@@ -9,6 +9,8 @@ import { ApiError } from '@/lib/api/client';
 import { useRequireAuth } from '@/hooks/useRequireAuth';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import type { AdminReport, ReportStatus } from '@/lib/api/types';
+import { useDateFormat } from '@/lib/datetime';
+import { EmptyState } from '@/components/ui/EmptyState';
 
 const STATUS_STYLE: Record<ReportStatus, string> = {
   OPEN: 'bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300',
@@ -19,6 +21,8 @@ const STATUS_STYLE: Record<ReportStatus, string> = {
 
 export default function AdminReportsPage() {
   const t = useTranslations('adminReports');
+  const fmt = useDateFormat();
+  const te = useTranslations('enums');
   useRequireAuth(['ADMIN']);
 
   const [reports, setReports] = useState<AdminReport[]>([]);
@@ -115,7 +119,7 @@ export default function AdminReportsPage() {
         )}
 
         {!loading && reports.length === 0 && (
-          <p className="text-xs text-slate-400 font-semibold text-center py-10">{t('noResults')}</p>
+          <EmptyState icon="filetext" title={t('noResults')} />
         )}
 
         {!loading && reports.length > 0 && (
@@ -125,11 +129,11 @@ export default function AdminReportsPage() {
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <div className="flex items-center gap-2">
                     <span className="px-2 py-1 rounded-full font-bold text-[10px] bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200">
-                      {r.type}
+                      {te(`reportType.${r.type}`)}
                     </span>
-                    <span className={`px-2 py-1 rounded-full font-bold text-[10px] ${STATUS_STYLE[r.status]}`}>{r.status}</span>
+                    <span className={`px-2 py-1 rounded-full font-bold text-[10px] ${STATUS_STYLE[r.status]}`}>{te(`reportStatus.${r.status}`)}</span>
                   </div>
-                  <span className="text-[10px] text-slate-400">{new Date(r.createdAt).toLocaleString()}</span>
+                  <span className="text-[10px] text-slate-400">{fmt.dateTime(r.createdAt)}</span>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
@@ -143,7 +147,7 @@ export default function AdminReportsPage() {
                   <p className="text-xs text-slate-500"><span className="font-bold">{t('adminNote')}:</span> {r.adminNote}</p>
                 )}
                 {r.resolvedByEmail && (
-                  <p className="text-[10px] text-slate-400">{t('resolvedBy')}: {r.resolvedByEmail} · {r.resolvedAt ? new Date(r.resolvedAt).toLocaleString() : ''}</p>
+                  <p className="text-[10px] text-slate-400">{t('resolvedBy')}: {r.resolvedByEmail} · {r.resolvedAt ? fmt.dateTime(r.resolvedAt) : ''}</p>
                 )}
 
                 {(r.status === 'OPEN' || r.status === 'REVIEWED') && (

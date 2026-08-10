@@ -11,9 +11,12 @@ import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { FilterContainer, FilterItem } from '@/components/ui/FilterAnimate';
 import { getAvatarUrl } from '@/lib/placeholders';
 import type { Paginated, Review } from '@/lib/api/types';
+import { useDateFormat } from '@/lib/datetime';
+import { EmptyState } from '@/components/ui/EmptyState';
 
 export default function AdminReviewsPage() {
   const t = useTranslations('adminReviews');
+  const fmt = useDateFormat();
   useRequireAuth(['ADMIN']);
 
   const [result, setResult] = useState<Paginated<Review> | null>(null);
@@ -95,7 +98,7 @@ export default function AdminReviewsPage() {
         )}
 
         {!loading && result && result.items.length === 0 && (
-          <p className="text-xs text-slate-400 font-semibold text-center py-10">{t('noResults')}</p>
+          <EmptyState icon="star" title={t('noResults')} />
         )}
 
         {!loading && result && result.items.length > 0 && (
@@ -123,7 +126,7 @@ export default function AdminReviewsPage() {
                             {review.clientName ?? t('anonymous')}
                           </p>
                           <span className="text-[10px] text-slate-400">
-                            {new Date(review.createdAt).toLocaleDateString()}
+                            {fmt.date(review.createdAt)}
                           </span>
                         </div>
                       </div>

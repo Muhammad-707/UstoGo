@@ -9,6 +9,7 @@ import { ApiError } from '@/lib/api/client';
 import { useRequireAuth } from '@/hooks/useRequireAuth';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import type { AdminCertificate } from '@/lib/api/types';
+import { EmptyState } from '@/components/ui/EmptyState';
 
 export default function AdminCertificatesPage() {
   const t = useTranslations('adminCertificates');
@@ -126,7 +127,7 @@ export default function AdminCertificatesPage() {
         )}
 
         {!loading && certificates.length === 0 && (
-          <p className="text-xs text-slate-400 font-semibold text-center py-10">{t('noResults')}</p>
+          <EmptyState icon="award" title={t('noResults')} />
         )}
 
         {!loading && certificates.length > 0 && (

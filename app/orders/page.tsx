@@ -11,6 +11,7 @@ import { FilterContainer, FilterItem } from '@/components/ui/FilterAnimate';
 import { ClientPageHeader } from '@/components/client/ClientPageHeader';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { useMoney } from '@/lib/money';
+import { useDateFormat } from '@/lib/datetime';
 
 const STATUS_STYLE: Record<string, string> = {
   PAID: 'bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300',
@@ -19,6 +20,7 @@ const STATUS_STYLE: Record<string, string> = {
 
 export default function OrdersPage() {
   const t = useTranslations('orders');
+  const fmt = useDateFormat();
   const { money } = useMoney();
   useRequireAuth(['CLIENT']);
 
@@ -80,7 +82,7 @@ export default function OrdersPage() {
                     <p className="text-xs font-bold text-slate-900 dark:text-white">
                       {t('orderItems', { count: order.items.length })}
                     </p>
-                    <p className="text-[10px] text-slate-400 mt-0.5">{new Date(order.createdAt).toLocaleString()}</p>
+                    <p className="text-[10px] text-slate-400 mt-0.5">{fmt.dateTime(order.createdAt)}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3 shrink-0">

@@ -51,5 +51,6 @@
   "colRating": "Рейтинг",
   "colBookings": "Заказы",
   "colEarnings": "Доход",
-  "noActiveBookings": "У этого мастера нет активных заказов."
+  "noActiveBookings": "У этого мастера нет активных заказов.",
+  "metricCompletedCount": "завершено: {count}"
 }

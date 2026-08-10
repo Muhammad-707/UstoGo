@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { Icon } from '@/components/icons/LucideIcons';
 import { useTranslations } from 'next-intl';
 
-import { useWeekdays } from '@/lib/datetime';
+import { useWeekdays, useDateFormat } from '@/lib/datetime';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRequireAuth } from '@/hooks/useRequireAuth';
 import { bookingsApi, citiesApi, masterCabinetApi, mastersApi } from '@/lib/api/endpoints';
@@ -19,11 +19,13 @@ import type { Booking, City, MasterNps, MasterStats, MasterStatus, WorkingDay } 
 import { getAvatarUrl } from '@/lib/placeholders';
 import { FilterContainer, FilterItem } from '@/components/ui/FilterAnimate';
 import { AnalyticsSection } from '@/components/master/AnalyticsSection';
+import { EmptyState } from '@/components/ui/EmptyState';
 
 const WEEKDAYS = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'] as const;
 
 export default function MasterDashboardPage() {
   const t = useTranslations('dashboardMaster');
+  const fmt = useDateFormat();
   const { money } = useMoney();
   const weekdays = useWeekdays();
   useRequireAuth(['MASTER']);
@@ -557,7 +559,7 @@ export default function MasterDashboardPage() {
         <h3 className="text-lg font-bold text-slate-900 dark:text-white">{t('pendingApprovals')}</h3>
         {loading && <p className="text-xs text-slate-400 font-semibold">{t('loadingRequests')}</p>}
         {!loading && pending.length === 0 && (
-          <p className="text-xs text-slate-400 font-semibold">{t('noPendingRequests')}</p>
+          <EmptyState variant="inline" icon="clock" title={t('noPendingRequests')} />
         )}
         <div className="divide-y divide-slate-100 dark:divide-slate-800">
           {pending.map((b, idx) => (
@@ -577,7 +579,7 @@ export default function MasterDashboardPage() {
                 </div>
                 <p className="text-xs text-slate-500">
                   {t('scheduleAddressLine', {
-                    date: new Date(b.scheduledAt).toLocaleDateString(),
+                    date: fmt.date(b.scheduledAt),
                     time: new Date(b.scheduledAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
                     address: [cityName(b.cityId), b.addressDistrict, b.addressLine].filter(Boolean).join(', ') || '—',
                   })}
@@ -619,7 +621,7 @@ export default function MasterDashboardPage() {
         <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-4 shadow-xl">
           <h3 className="text-lg font-bold text-slate-900 dark:text-white">{t('upcomingJobs')}</h3>
           {!loading && upcoming.length === 0 && (
-            <p className="text-xs text-slate-400 font-semibold">{t('noUpcomingJobs')}</p>
+            <EmptyState variant="inline" icon="calendar" title={t('noUpcomingJobs')} />
           )}
           <div className="divide-y divide-slate-100 dark:divide-slate-800">
             {upcoming.map((b, idx) => (
@@ -669,7 +671,7 @@ export default function MasterDashboardPage() {
             </div>
           </div>
           {orderedSchedule.length === 0 ? (
-            <p className="text-xs text-slate-400 font-semibold">{t('noScheduleSet')}</p>
+            <EmptyState variant="inline" icon="clock" title={t('noScheduleSet')} />
           ) : (
             <div className="space-y-2">
               {nextDays.map((d, idx) => {

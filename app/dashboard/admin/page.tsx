@@ -20,6 +20,7 @@ function flattenCategories(cats: Category[]): Category[] {
 
 export default function AdminDashboardPage() {
   const t = useTranslations('dashboardAdmin');
+  const te = useTranslations('enums');
   const { money } = useMoney();
   useRequireAuth(['ADMIN']);
 
@@ -141,7 +142,7 @@ export default function AdminDashboardPage() {
     ? [
         { title: t('metricTotalClients'), value: data.users.clients.toLocaleString(), growth: t('metricTotalClientsGrowth', { count: data.users.blocked }), icon: 'Users', color: 'from-emerald-500 to-teal-500', bg: 'from-emerald-500/10 to-teal-500/10' },
         { title: t('metricTotalMasters'), value: data.users.masters.toLocaleString(), growth: `${data.masters.approved} ${t('approved')}`, icon: 'shieldcheck', color: 'from-blue-600 to-sky-500', bg: 'from-blue-600/10 to-sky-500/10' },
-        { title: t('metricMonthlyBookings'), value: totalBookings.toLocaleString(), growth: `${data.bookings.completed} completed`, icon: 'BarChart3', color: 'from-amber-500 to-orange-500', bg: 'from-amber-500/10 to-orange-500/10' },
+        { title: t('metricMonthlyBookings'), value: totalBookings.toLocaleString(), growth: t('metricCompletedCount', { count: data.bookings.completed }), icon: 'BarChart3', color: 'from-amber-500 to-orange-500', bg: 'from-amber-500/10 to-orange-500/10' },
         { title: 'Average Rating', value: data.reviews.averageRating.toFixed(2), growth: `${data.reviews.count} reviews`, icon: 'Star', color: 'from-purple-600 to-indigo-600', bg: 'from-purple-600/10 to-indigo-600/10' },
       ]
     : [];
@@ -393,7 +394,7 @@ export default function AdminDashboardPage() {
                             ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300'
                             : 'bg-red-100 dark:bg-red-950 text-red-800 dark:text-red-300'
                       }`}>
-                        {m.approvalStatus}
+                        {te(`approvalStatus.${m.approvalStatus}`)}
                       </span>
                     </td>
                     <td className="py-3 pr-4" onClick={(e) => e.stopPropagation()}>
@@ -495,7 +496,7 @@ export default function AdminDashboardPage() {
                           b.status === 'IN_PROGRESS' ? 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300' :
                           'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300'
                         }`}>
-                          {b.status}
+                          {te(`bookingStatus.${b.status}`)}
                         </span>
                         <p className="text-[10px] text-slate-400 mt-0.5">{b.clientName}</p>
                       </div>

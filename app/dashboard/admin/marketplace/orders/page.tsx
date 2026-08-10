@@ -10,6 +10,8 @@ import { useRequireAuth } from '@/hooks/useRequireAuth';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import type { Order, Paginated } from '@/lib/api/types';
 import { useMoney } from '@/lib/money';
+import { useDateFormat } from '@/lib/datetime';
+import { EmptyState } from '@/components/ui/EmptyState';
 
 const STATUS_STYLE: Record<string, string> = {
   PAID: 'bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300',
@@ -18,6 +20,7 @@ const STATUS_STYLE: Record<string, string> = {
 
 export default function AdminMarketplaceOrdersPage() {
   const t = useTranslations('adminMarketplaceOrders');
+  const fmt = useDateFormat();
   const { money } = useMoney();
   useRequireAuth(['ADMIN']);
 
@@ -76,14 +79,14 @@ export default function AdminMarketplaceOrdersPage() {
             {Array.from({ length: 4 }).map((_, idx) => <div key={idx} className="h-20 rounded-2xl bg-slate-50 dark:bg-slate-800/40 animate-pulse" />)}
           </div>
         )}
-        {!loading && (!result || result.items.length === 0) && <p className="text-xs text-slate-400 font-semibold text-center py-10">{t('noResults')}</p>}
+        {!loading && (!result || result.items.length === 0) && <EmptyState icon="shoppingcart" title={t('noResults')} />}
         {!loading && result && result.items.length > 0 && (
           <div className="space-y-3">
             {result.items.map((order) => (
               <div key={order.id} className="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700 flex items-center justify-between gap-3 flex-wrap">
                 <div>
                   <p className="text-sm font-extrabold text-slate-900 dark:text-white">{t('orderItems', { count: order.items.length })}</p>
-                  <p className="text-[11px] text-slate-400">{new Date(order.createdAt).toLocaleString()}</p>
+                  <p className="text-[11px] text-slate-400">{fmt.dateTime(order.createdAt)}</p>
                 </div>
                 <div className="flex items-center gap-3">
                   <span className={`px-2.5 py-1 rounded-full text-[10px] font-extrabold ${STATUS_STYLE[order.status] ?? ''}`}>{t(`status${order.status}`)}</span>

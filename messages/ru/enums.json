@@ -1,0 +1,40 @@
+{
+  "bookingStatus": {
+    "PENDING": "В ожидании",
+    "ACCEPTED": "Принят",
+    "IN_PROGRESS": "В работе",
+    "COMPLETED": "Завершён",
+    "REJECTED": "Отклонён",
+    "EXPIRED": "Истёк",
+    "CANCELLED_BY_CLIENT": "Отменён клиентом",
+    "CANCELLED_BY_MASTER": "Отменён мастером",
+    "CANCELLED_BY_ADMIN": "Отменён админом"
+  },
+  "userRole": {
+    "CLIENT": "Клиент",
+    "MASTER": "Мастер",
+    "ADMIN": "Админ"
+  },
+  "userStatus": {
+    "ACTIVE": "Активен",
+    "INACTIVE": "Неактивен",
+    "BLOCKED": "Заблокирован"
+  },
+  "approvalStatus": {
+    "PENDING": "На рассмотрении",
+    "APPROVED": "Одобрен",
+    "REJECTED": "Отклонён"
+  },
+  "reportType": {
+    "SPAM": "Спам",
+    "FRAUD": "Мошенничество",
+    "ABUSE": "Оскорбления",
+    "OTHER": "Другое"
+  },
+  "reportStatus": {
+    "OPEN": "Открыта",
+    "REVIEWED": "Рассмотрена",
+    "RESOLVED": "Решена",
+    "REJECTED": "Отклонена"
+  }
+}

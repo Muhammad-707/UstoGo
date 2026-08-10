@@ -7,9 +7,11 @@ import { useMoney } from '@/lib/money';
 import { bookingsApi } from '@/lib/api/endpoints';
 import type { Booking } from '@/lib/api/types';
 import { ClientPageHeader } from '@/components/client/ClientPageHeader';
+import { useDateFormat } from '@/lib/datetime';
 
 export default function PaymentsPage() {
   const t = useTranslations('payments');
+  const fmt = useDateFormat();
   const { money } = useMoney();
   const [completed, setCompleted] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
@@ -62,7 +64,7 @@ export default function PaymentsPage() {
                       {b.masterDisplayName} ({b.serviceTitle})
                     </p>
                     <span className="text-slate-400">
-                      {b.completedAt ? new Date(b.completedAt).toLocaleDateString() : '—'}
+                      {b.completedAt ? fmt.date(b.completedAt) : '—'}
                     </span>
                   </div>
                   <span className="font-bold text-emerald-600 dark:text-emerald-400 whitespace-nowrap">

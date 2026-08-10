@@ -10,6 +10,7 @@ import { useRequireAuth } from '@/hooks/useRequireAuth';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import type { Paginated, Product, ProductCategory } from '@/lib/api/types';
 import { useMoney } from '@/lib/money';
+import { EmptyState } from '@/components/ui/EmptyState';
 
 const EMPTY_FORM = {
   id: '',
@@ -167,7 +168,7 @@ export default function AdminProductsPage() {
             {Array.from({ length: 4 }).map((_, idx) => <div key={idx} className="h-24 rounded-2xl bg-slate-50 dark:bg-slate-800/40 animate-pulse" />)}
           </div>
         )}
-        {!loading && (!result || result.items.length === 0) && <p className="text-xs text-slate-400 font-semibold text-center py-10">{t('noResults')}</p>}
+        {!loading && (!result || result.items.length === 0) && <EmptyState icon="package" title={t('noResults')} />}
         {!loading && result && result.items.length > 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {result.items.map((p) => (
