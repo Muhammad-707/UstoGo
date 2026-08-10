@@ -134,13 +134,14 @@ export default function WorkingSchedulePage() {
   const today = new Date().toISOString().slice(0, 10);
 
   return (
+    <>
+    <MasterPageHeader
+      icon="clock"
+      eyebrow={t('availabilityMatrix')}
+      title={t('workingSchedule')}
+      hint={t('scheduleHint')}
+    />
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
-      <MasterPageHeader
-        icon="clock"
-        eyebrow={t('availabilityMatrix')}
-        title={t('workingSchedule')}
-        hint={t('scheduleHint')}
-      />
 
       {error && (
         <div className="p-4 rounded-2xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 text-xs font-bold text-red-600 dark:text-red-400">
@@ -304,5 +305,6 @@ export default function WorkingSchedulePage() {
         </div>
       </div>
     </div>
+    </>
   );
 }

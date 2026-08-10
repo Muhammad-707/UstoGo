@@ -51,5 +51,10 @@
   "estimatedDuration": "Давомнокии тахминӣ",
   "hoursUnit": "{count} соат",
   "totalAmount": "Маблағи умумӣ",
-  "confirmAndPay": "Тасдиқ ва Пардохт (${amount}.00)"
+  "confirmAndPay": "Тасдиқ ва Пардохт (${amount}.00)",
+  "noMasterTitle": "Усто интихоб нашудааст",
+  "noMasterDesc": "Аввал усторо интихоб кунед, баъд ба ин ҷо баргардед то фармоиш диҳед.",
+  "selectServiceLabel": "Хизматрасониро интихоб кунед",
+  "serviceWord": "Хизматрасонӣ",
+  "browseCraftsmen": "Дидани устоҳо"
 }

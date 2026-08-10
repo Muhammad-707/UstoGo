@@ -66,9 +66,9 @@ export default function NotificationsPage() {
       </div>
 
       <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 divide-y divide-slate-100 dark:divide-slate-800 overflow-hidden">
-        {loading && <div className="p-6 text-xs text-slate-400 font-semibold">Loading…</div>}
+        {loading && <div className="p-6 text-xs text-slate-400 font-semibold">{t('loading')}</div>}
         {!loading && items.length === 0 && (
-          <div className="p-6 text-xs text-slate-400 font-semibold">No notifications yet.</div>
+          <div className="p-6 text-xs text-slate-400 font-semibold">{t('empty')}</div>
         )}
         {items.map((n, idx) => (
           <FilterItem key={n.id} index={idx}>

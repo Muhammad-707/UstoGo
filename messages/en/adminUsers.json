@@ -30,5 +30,12 @@
   "detailCity": "City",
   "detailApprovalStatus": "Approval Status",
   "detailRating": "Rating",
-  "detailCompletedJobs": "Completed Jobs"
+  "detailCompletedJobs": "Completed Jobs",
+  "roleCLIENT": "Client",
+  "roleMASTER": "Master",
+  "roleADMIN": "Admin",
+  "statusACTIVE": "Active",
+  "statusINACTIVE": "Inactive",
+  "statusBLOCKED": "Blocked",
+  "detailEmail": "Email"
 }

@@ -70,8 +70,9 @@ export default function CartPage() {
   const canCheckout = !!cart && cart.items.length > 0 && cart.items.some((i) => i.isAvailable);
 
   return (
+    <>
+    <ClientPageHeader icon="shoppingcart" eyebrow={t('badge')} title={t('title')} />
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8">
-      <ClientPageHeader icon="shoppingcart" eyebrow={t('badge')} title={t('title')} />
 
       {loading && (
         <div className="space-y-3">
@@ -179,5 +180,6 @@ export default function CartPage() {
         </>
       )}
     </div>
+    </>
   );
 }

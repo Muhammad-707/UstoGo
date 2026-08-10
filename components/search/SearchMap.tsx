@@ -26,6 +26,8 @@ function pinIcon(color: string, size = 30) {
 }
 
 const masterPin = pinIcon('#2563EB');
+/** A master who dropped their own pin is exact — shown in the brand amber, never nudged. */
+const exactPin = pinIcon('#D97706');
 const userPin = pinIcon('#059669', 26);
 
 function RecenterOnLocation({ lat, lng }: { lat: number; lng: number }) {
@@ -42,26 +44,46 @@ interface SearchMapProps {
   userLocation: { lat: number; lng: number } | null;
 }
 
+interface MapPoint {
+  master: MasterPublic;
+  lat: number;
+  lng: number;
+  exact: boolean;
+}
+
 export default function SearchMap({ masters, userLocation }: SearchMapProps) {
   const t = useTranslations('search');
+  const tc = useTranslations('common');
 
-  const points = useMemo(() => {
+  const points = useMemo<MapPoint[]>(() => {
+    // A master who set their own coordinates is plotted exactly there. Only the ones
+    // falling back to their city's centre get spread apart — otherwise every master in
+    // Dushanbe would land on one pixel, and a self-reported pin would be moved off the
+    // spot its owner deliberately chose.
     const seen = new Map<string, number>();
+
     return masters
-      .filter((m) => m.cityLatitude != null && m.cityLongitude != null)
       .map((m) => {
-        const key = `${m.cityLatitude},${m.cityLongitude}`;
+        const exact = m.latitude != null && m.longitude != null;
+        const lat = exact ? (m.latitude as number) : m.cityLatitude;
+        const lng = exact ? (m.longitude as number) : m.cityLongitude;
+        if (lat == null || lng == null) return null;
+        if (exact) return { master: m, lat, lng, exact: true };
+
+        const key = `${String(lat)},${String(lng)}`;
         const count = seen.get(key) ?? 0;
         seen.set(key, count + 1);
-        // Small deterministic jitter so masters in the same city don't stack exactly.
         const angle = (count * 47 * Math.PI) / 180;
         const jitter = count === 0 ? 0 : 0.01 + count * 0.004;
+
         return {
           master: m,
-          lat: (m.cityLatitude as number) + Math.sin(angle) * jitter,
-          lng: (m.cityLongitude as number) + Math.cos(angle) * jitter,
+          lat: lat + Math.sin(angle) * jitter,
+          lng: lng + Math.cos(angle) * jitter,
+          exact: false,
         };
-      });
+      })
+      .filter((p): p is MapPoint => p !== null);
   }, [masters]);
 
   const center: [number, number] = userLocation
@@ -83,28 +105,78 @@ export default function SearchMap({ masters, userLocation }: SearchMapProps) {
             <Popup>{t('nearMeActive')}</Popup>
           </Marker>
         )}
-        {points.map(({ master, lat, lng }) => (
-          <Marker key={master.id} position={[lat, lng]} icon={masterPin}>
-            <Popup>
-              <div className="space-y-1.5 min-w-[160px]">
-                <div className="flex items-center gap-2">
+        {points.map(({ master, lat, lng, exact }) => (
+          <Marker key={master.id} position={[lat, lng]} icon={exact ? exactPin : masterPin}>
+            <Popup className="ustogo-popup" minWidth={244} maxWidth={244}>
+              <div className="w-[244px] font-sans">
+                <div className="flex items-start gap-3 p-3.5 pb-3">
                   <img
                     src={master.avatarUrl ?? getAvatarUrl(master.id, master.displayName)}
                     alt={master.displayName}
-                    className="w-8 h-8 rounded-lg object-cover"
+                    className="w-12 h-12 rounded-xl object-cover ring-2 ring-white shadow-md shrink-0"
                   />
-                  <div>
-                    <p className="text-xs font-bold text-slate-900">{master.displayName}</p>
-                    <p className="text-[10px] text-amber-600">★ {master.ratingAverage} ({master.ratingCount})</p>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-[13px] font-extrabold text-slate-900 leading-tight truncate">
+                      {master.displayName}
+                    </p>
+                    {master.categories.length > 0 && (
+                      <p className="text-[10px] font-bold text-blue-600 truncate mt-0.5">
+                        {master.categories[0]}
+                      </p>
+                    )}
+                    <div className="flex items-center gap-1 mt-1">
+                      <span className="text-amber-500 text-[11px] leading-none">★</span>
+                      <span className="text-[11px] font-extrabold text-slate-800 leading-none">
+                        {Number(master.ratingAverage).toFixed(1)}
+                      </span>
+                      <span className="text-[10px] text-slate-400 font-semibold leading-none">
+                        ({master.ratingCount})
+                      </span>
+                    </div>
                   </div>
                 </div>
-                <p className="text-[10px] text-slate-500">{master.cityName}</p>
-                {master.distanceKm != null && (
-                  <p className="text-[10px] font-bold text-blue-600">{t('distanceAway', { km: master.distanceKm.toFixed(1) })}</p>
+
+                <div className="px-3.5 pb-3 flex flex-wrap gap-1.5">
+                  <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-slate-100 text-[10px] font-bold text-slate-600">
+                    📍 {master.cityName}
+                  </span>
+                  {master.distanceKm != null && (
+                    <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-emerald-50 text-[10px] font-bold text-emerald-700">
+                      {t('distanceAway', { km: master.distanceKm.toFixed(1) })}
+                    </span>
+                  )}
+                  {master.completedBookingsCount > 0 && (
+                    <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-slate-100 text-[10px] font-bold text-slate-600">
+                      ✓ {t('jobsDone', { count: master.completedBookingsCount })}
+                    </span>
+                  )}
+                </div>
+
+                {master.priceFrom != null && (
+                  <div className="px-3.5 pb-3 flex items-baseline gap-1.5">
+                    <span className="text-[10px] font-bold uppercase tracking-wide text-slate-400">
+                      {tc('from')}
+                    </span>
+                    <span className="text-[15px] font-extrabold text-slate-900 leading-none">
+                      {tc('money', { amount: Number(master.priceFrom).toFixed(0) })}
+                    </span>
+                  </div>
                 )}
-                <Link href={`/master/${master.id}`} className="block text-center text-[10px] font-bold text-white bg-blue-600 rounded-lg py-1.5 mt-1">
-                  {t('profile')}
-                </Link>
+
+                <div className="grid grid-cols-2 gap-2 px-3.5 pb-3.5">
+                  <Link
+                    href={`/master/${master.id}`}
+                    className="ustogo-popup-btn flex items-center justify-center rounded-xl bg-slate-100 py-2 text-[11px] font-extrabold !text-slate-700 !no-underline hover:bg-slate-200 transition"
+                  >
+                    {t('profile')}
+                  </Link>
+                  <Link
+                    href={`/booking?master=${master.id}`}
+                    className="ustogo-popup-btn flex items-center justify-center rounded-xl bg-blue-600 py-2 text-[11px] font-extrabold !text-white !no-underline shadow-md shadow-blue-600/25 hover:bg-blue-700 transition"
+                  >
+                    {t('bookNow')}
+                  </Link>
+                </div>
               </div>
             </Popup>
           </Marker>

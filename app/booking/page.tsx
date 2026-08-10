@@ -261,13 +261,13 @@ export default function BookingWizardPage() {
         <div className="w-16 h-16 bg-slate-100 dark:bg-slate-800 text-slate-400 rounded-full flex items-center justify-center mx-auto">
           <Icon name="Search" size={28} />
         </div>
-        <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white">No craftsman selected</h1>
-        <p className="text-sm text-slate-500">Pick a craftsman first, then come back here to book an appointment.</p>
+        <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white">{t('noMasterTitle')}</h1>
+        <p className="text-sm text-slate-500">{t('noMasterDesc')}</p>
         <Link
           href="/search"
           className="inline-block px-8 py-3.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-lg transition btn-ripple"
         >
-          Browse Craftsmen
+          {t('browseCraftsmen')}
         </Link>
       </div>
     );
@@ -432,7 +432,7 @@ export default function BookingWizardPage() {
               </div>
 
               <div className="space-y-3">
-                <label className="text-xs font-bold uppercase tracking-wider text-slate-400">Select a Service</label>
+                <label className="text-xs font-bold uppercase tracking-wider text-slate-400">{t('selectServiceLabel')}</label>
                 {servicesLoading ? (
                   <div className="flex justify-center py-6">
                     <Spinner />
@@ -731,7 +731,7 @@ export default function BookingWizardPage() {
                 </div>
                 {selectedService && (
                   <div className="flex justify-between pb-2 border-b border-slate-200 dark:border-slate-700">
-                    <span className="text-slate-400">Service</span>
+                    <span className="text-slate-400">{t('serviceWord')}</span>
                     <span className="font-bold text-slate-900 dark:text-white">{selectedService.title}</span>
                   </div>
                 )}

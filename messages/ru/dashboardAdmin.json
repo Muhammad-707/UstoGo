@@ -40,5 +40,16 @@
   "npsPassives": "Нейтральные",
   "npsDetractors": "Критики",
   "npsResponses": "{count} ответов",
-  "npsNoData": "Пока нет ответов NPS."
+  "npsNoData": "Пока нет ответов NPS.",
+  "noChartData": "Пока нет данных по заказам.",
+  "filterPending": "На рассмотрении",
+  "filterApproved": "Одобрены",
+  "filterRejected": "Отклонены",
+  "allCategories": "Все категории",
+  "noMastersForFilter": "По этому фильтру мастеров нет.",
+  "colCity": "Город",
+  "colRating": "Рейтинг",
+  "colBookings": "Заказы",
+  "colEarnings": "Доход",
+  "noActiveBookings": "У этого мастера нет активных заказов."
 }

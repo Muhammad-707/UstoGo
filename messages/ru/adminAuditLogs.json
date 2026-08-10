@@ -18,5 +18,6 @@
   "loadFailed": "Не удалось загрузить журнал",
   "prev": "Назад",
   "next": "Вперёд",
-  "pageOf": "Страница {page} из {total}"
+  "pageOf": "Страница {page} из {total}",
+  "entityTypePlaceholder": "например, Category"
 }

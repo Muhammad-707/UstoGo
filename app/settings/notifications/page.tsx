@@ -7,6 +7,7 @@ import { Icon } from '@/components/icons/LucideIcons';
 import { notificationsApi } from '@/lib/api/endpoints';
 import { ApiError } from '@/lib/api/client';
 import type { NotificationPreferences, NotificationType } from '@/lib/api/types';
+import { PageHeader } from '@/components/layout/PageHeader';
 
 const GROUPS: { key: string; icon: string; types: NotificationType[] }[] = [
   {
@@ -88,20 +89,9 @@ export default function NotificationPreferencesPage() {
   };
 
   return (
+    <>
+      <PageHeader icon="bell" eyebrow={t('accountSettings')} title={t('title')} hint={t('subtitle')} />
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
-      <div className="flex items-center gap-4">
-        <div className="hidden sm:flex w-12 h-12 shrink-0 rounded-2xl bg-gradient-to-br from-blue-600 to-sky-500 text-white items-center justify-center shadow-lg shadow-blue-900/20">
-          <Icon name="bell" size={22} />
-        </div>
-        <div>
-          <span className="text-xs font-extrabold uppercase tracking-widest text-blue-600 dark:text-sky-400">
-            {t('accountSettings')}
-          </span>
-          <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white mt-0.5">{t('title')}</h1>
-          <p className="text-xs text-slate-400 mt-1">{t('subtitle')}</p>
-        </div>
-      </div>
-
       {loading && <p className="text-xs text-slate-400 font-semibold">{t('loading')}</p>}
       {error && <p className="text-xs font-bold text-red-600 dark:text-red-400">{error}</p>}
 
@@ -153,5 +143,6 @@ export default function NotificationPreferencesPage() {
         {t('backToSecurity')}
       </Link>
     </div>
+    </>
   );
 }

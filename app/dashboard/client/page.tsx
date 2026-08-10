@@ -236,9 +236,9 @@ export default function ClientDashboardPage() {
           <h3 className="text-lg font-bold text-slate-900 dark:text-white">{t('recentBookings')}</h3>
         </div>
 
-        {loading && <p className="text-xs text-slate-400 font-semibold">Loading…</p>}
+        {loading && <p className="text-xs text-slate-400 font-semibold">{t('loading')}</p>}
         {!loading && bookings.length === 0 && (
-          <p className="text-xs text-slate-400 font-semibold">No bookings yet.</p>
+          <p className="text-xs text-slate-400 font-semibold">{t('noBookings')}</p>
         )}
 
         {!loading && bookings.length > 0 && (
@@ -324,19 +324,19 @@ export default function ClientDashboardPage() {
 
               <div className="grid grid-cols-2 gap-3 text-xs">
                 <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800">
-                  <p className="text-slate-400 font-bold">Experience</p>
-                  <p className="font-extrabold text-slate-900 dark:text-white">{selectedMaster.yearsOfExperience} yrs</p>
+                  <p className="text-slate-400 font-bold">{t('masterExperience')}</p>
+                  <p className="font-extrabold text-slate-900 dark:text-white">{t('yearsShort', { years: selectedMaster.yearsOfExperience })}</p>
                 </div>
                 <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800">
-                  <p className="text-slate-400 font-bold">Service Radius</p>
-                  <p className="font-extrabold text-slate-900 dark:text-white">{selectedMaster.serviceRadiusKm} km</p>
+                  <p className="text-slate-400 font-bold">{t('masterServiceRadius')}</p>
+                  <p className="font-extrabold text-slate-900 dark:text-white">{t('kmShort', { km: selectedMaster.serviceRadiusKm })}</p>
                 </div>
                 <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800">
-                  <p className="text-slate-400 font-bold">Completed</p>
+                  <p className="text-slate-400 font-bold">{t('masterCompleted')}</p>
                   <p className="font-extrabold text-slate-900 dark:text-white">{selectedMaster.completedBookingsCount}</p>
                 </div>
                 <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800">
-                  <p className="text-slate-400 font-bold">Categories</p>
+                  <p className="text-slate-400 font-bold">{t('masterCategories')}</p>
                   <p className="font-extrabold text-slate-900 dark:text-white">{selectedMaster.categories.slice(0, 2).join(', ')}</p>
                 </div>
               </div>

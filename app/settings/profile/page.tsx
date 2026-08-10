@@ -13,6 +13,7 @@ import { revalidateMastersCache } from '@/lib/api/revalidate';
 import { resolveOwnFileUrl, uploadFile } from '@/lib/api/upload';
 import { getAvatarUrl, getCoverUrl } from '@/lib/placeholders';
 import type { City } from '@/lib/api/types';
+import { PageHeader } from '@/components/layout/PageHeader';
 
 const MasterLocationPicker = dynamic(() => import('@/components/masters/MasterLocationPicker'), {
   ssr: false,
@@ -190,18 +191,14 @@ export default function EditProfilePage() {
   const effectiveBanner = bannerUrl ?? getCoverUrl(user?.id ?? '');
 
   return (
+    <>
+      <PageHeader
+        icon="User"
+        eyebrow={t('accountSettings')}
+        title={t('editProfile')}
+        accent={isMaster ? 'amber' : 'blue'}
+      />
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
-      <div className="flex items-center gap-4">
-        <div className={`hidden sm:flex w-12 h-12 shrink-0 rounded-2xl bg-gradient-to-br ${isMaster ? 'from-amber-500 to-orange-600 shadow-amber-900/20' : 'from-blue-600 to-sky-500 shadow-blue-900/20'} text-white items-center justify-center shadow-lg`}>
-          <Icon name="User" size={22} />
-        </div>
-        <div>
-          <span className={`text-xs font-extrabold uppercase tracking-widest ${isMaster ? 'text-amber-600 dark:text-amber-400' : 'text-blue-600 dark:text-sky-400'}`}>
-            {t('accountSettings')}
-          </span>
-          <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white mt-0.5">{t('editProfile')}</h1>
-        </div>
-      </div>
 
       {isMaster && (
         <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-xl">
@@ -464,5 +461,6 @@ export default function EditProfilePage() {
         </div>
       </div>
     </div>
+    </>
   );
 }

@@ -1,8 +1,14 @@
 import type { ReactNode } from 'react';
 
+/**
+ * `labelKey` is a key in the `dashboardLayout` message namespace, not a label. The nav
+ * used to carry English strings straight into the JSX, which is why a Tajik dashboard
+ * still read "Overview / Active Jobs / Find Masters" — the labels never went through
+ * next-intl at all. Resolving them is `DashboardLayout`'s job, where the hook lives.
+ */
 export interface NavItem {
   href: string;
-  label: string;
+  labelKey: string;
   icon: string;
   color: string;
   badge?: number;
@@ -20,8 +26,8 @@ export interface SidebarConfig {
   activeBar: string;
   ring: string;
   icon: string;
-  title: string;
-  subtitle: string;
+  /** Key in the `dashboardLayout` namespace — `panelADMIN`, `panelMASTER`, `panelCLIENT`. */
+  titleKey: string;
   nav: NavItem[];
 }
 
@@ -37,23 +43,22 @@ export const adminSidebar: SidebarConfig = {
   activeBar: 'bg-gradient-to-b from-purple-500 to-indigo-600',
   ring: 'ring-purple-500/40',
   icon: 'shieldcheck',
-  title: 'Admin Panel',
-  subtitle: 'Platform Control',
+  titleKey: 'panelADMIN',
   nav: [
-    { href: '/dashboard/admin', label: 'Overview', icon: 'grid', color: 'bg-purple-500' },
-    { href: '/dashboard/admin/users', label: 'Users', icon: 'user', color: 'bg-purple-500' },
-    { href: '/dashboard/admin/bookings', label: 'Bookings', icon: 'calendar', color: 'bg-purple-500' },
-    { href: '/dashboard/admin/reviews', label: 'Reviews', icon: 'star', color: 'bg-purple-500' },
-    { href: '/dashboard/admin/reports', label: 'Reports', icon: 'filetext', color: 'bg-purple-500' },
-    { href: '/dashboard/admin/certificates', label: 'Certificates', icon: 'award', color: 'bg-purple-500' },
-    { href: '/dashboard/admin/categories', label: 'Categories', icon: 'grid', color: 'bg-purple-500' },
-    { href: '/dashboard/admin/banners', label: 'Banners', icon: 'image', color: 'bg-purple-500' },
-    { href: '/dashboard/admin/broadcast', label: 'Broadcast', icon: 'bell', color: 'bg-purple-500' },
-    { href: '/dashboard/admin/audit-logs', label: 'Audit Log', icon: 'shieldcheck', color: 'bg-purple-500' },
-    { href: '/dashboard/admin/marketplace/products', label: 'Products', icon: 'package', color: 'bg-purple-500' },
-    { href: '/dashboard/admin/marketplace/categories', label: 'Product Categories', icon: 'tag', color: 'bg-purple-500' },
-    { href: '/dashboard/admin/marketplace/orders', label: 'Orders', icon: 'shoppingcart', color: 'bg-purple-500' },
-    { href: '/dashboard/admin/marketplace/shops', label: 'Shops', icon: 'store', color: 'bg-purple-500' },
+    { href: '/dashboard/admin', labelKey: 'navOverview', icon: 'grid', color: 'bg-purple-500' },
+    { href: '/dashboard/admin/users', labelKey: 'navUsers', icon: 'user', color: 'bg-purple-500' },
+    { href: '/dashboard/admin/bookings', labelKey: 'navBookings', icon: 'calendar', color: 'bg-purple-500' },
+    { href: '/dashboard/admin/reviews', labelKey: 'navReviews', icon: 'star', color: 'bg-purple-500' },
+    { href: '/dashboard/admin/reports', labelKey: 'navReports', icon: 'filetext', color: 'bg-purple-500' },
+    { href: '/dashboard/admin/certificates', labelKey: 'navCertificates', icon: 'award', color: 'bg-purple-500' },
+    { href: '/dashboard/admin/categories', labelKey: 'navCategories', icon: 'grid', color: 'bg-purple-500' },
+    { href: '/dashboard/admin/banners', labelKey: 'navBanners', icon: 'image', color: 'bg-purple-500' },
+    { href: '/dashboard/admin/broadcast', labelKey: 'navBroadcast', icon: 'bell', color: 'bg-purple-500' },
+    { href: '/dashboard/admin/audit-logs', labelKey: 'navAuditLog', icon: 'shieldcheck', color: 'bg-purple-500' },
+    { href: '/dashboard/admin/marketplace/products', labelKey: 'navProducts', icon: 'package', color: 'bg-purple-500' },
+    { href: '/dashboard/admin/marketplace/categories', labelKey: 'navProductCategories', icon: 'tag', color: 'bg-purple-500' },
+    { href: '/dashboard/admin/marketplace/orders', labelKey: 'navOrders', icon: 'shoppingcart', color: 'bg-purple-500' },
+    { href: '/dashboard/admin/marketplace/shops', labelKey: 'navShops', icon: 'store', color: 'bg-purple-500' },
   ],
 };
 
@@ -69,17 +74,14 @@ export const masterSidebar: SidebarConfig = {
   activeBar: 'bg-gradient-to-b from-amber-500 to-orange-600',
   ring: 'ring-amber-500/40',
   icon: 'wrench',
-  title: 'Master Panel',
-  subtitle: 'Your Dashboard',
+  titleKey: 'panelMASTER',
   nav: [
-    { href: '/dashboard/master', label: 'Overview', icon: 'grid', color: 'bg-amber-500' },
-    { href: '/dashboard/master', label: 'Pending Jobs', icon: 'clock', color: 'bg-amber-500' },
-    { href: '/dashboard/master', label: 'Upcoming', icon: 'calendar', color: 'bg-amber-500' },
-    { href: '/dashboard/master', label: 'Completed', icon: 'checkcircle2', color: 'bg-amber-500' },
-    { href: '/messages', label: 'WhatsApp', icon: 'whatsapp', color: 'bg-[#25D366]' },
-    { href: '/settings/services', label: 'Services', icon: 'briefcase', color: 'bg-amber-500' },
-    { href: '/settings/schedule', label: 'Schedule', icon: 'clock', color: 'bg-amber-500' },
-    { href: '/settings/profile', label: 'Settings', icon: 'settings', color: 'bg-amber-500' },
+    { href: '/dashboard/master', labelKey: 'navOverview', icon: 'grid', color: 'bg-amber-500' },
+    { href: '/messages', labelKey: 'navWhatsApp', icon: 'whatsapp', color: 'bg-[#25D366]' },
+    { href: '/reviews', labelKey: 'navReviews', icon: 'star', color: 'bg-amber-500' },
+    { href: '/settings/services', labelKey: 'navServices', icon: 'briefcase', color: 'bg-amber-500' },
+    { href: '/settings/schedule', labelKey: 'navSchedule', icon: 'clock', color: 'bg-amber-500' },
+    { href: '/settings/profile', labelKey: 'navSettings', icon: 'settings', color: 'bg-amber-500' },
   ],
 };
 
@@ -95,19 +97,16 @@ export const clientSidebar: SidebarConfig = {
   activeBar: 'bg-gradient-to-b from-blue-500 to-sky-600',
   ring: 'ring-blue-500/40',
   icon: 'user',
-  title: 'Client Panel',
-  subtitle: 'Your Dashboard',
+  titleKey: 'panelCLIENT',
   nav: [
-    { href: '/dashboard/client', label: 'Overview', icon: 'grid', color: 'bg-blue-500' },
-    { href: '/dashboard/client', label: 'Active Jobs', icon: 'clock', color: 'bg-blue-500' },
-    { href: '/dashboard/client', label: 'Completed', icon: 'checkcircle2', color: 'bg-blue-500' },
-    { href: '/search', label: 'Find Masters', icon: 'search', color: 'bg-blue-500' },
-    { href: '/messages', label: 'WhatsApp', icon: 'whatsapp', color: 'bg-[#25D366]' },
-    { href: '/favorites', label: 'Favorites', icon: 'heart', color: 'bg-blue-500' },
-    { href: '/marketplace', label: 'Marketplace', icon: 'shoppingbag', color: 'bg-blue-500' },
-    { href: '/cart', label: 'Cart', icon: 'shoppingcart', color: 'bg-blue-500' },
-    { href: '/orders', label: 'Orders', icon: 'package', color: 'bg-blue-500' },
-    { href: '/settings/profile', label: 'Settings', icon: 'settings', color: 'bg-blue-500' },
+    { href: '/dashboard/client', labelKey: 'navOverview', icon: 'grid', color: 'bg-blue-500' },
+    { href: '/search', labelKey: 'navFindMasters', icon: 'search', color: 'bg-blue-500' },
+    { href: '/messages', labelKey: 'navWhatsApp', icon: 'whatsapp', color: 'bg-[#25D366]' },
+    { href: '/favorites', labelKey: 'navFavorites', icon: 'heart', color: 'bg-blue-500' },
+    { href: '/marketplace', labelKey: 'navMarketplace', icon: 'shoppingbag', color: 'bg-blue-500' },
+    { href: '/cart', labelKey: 'navCart', icon: 'shoppingcart', color: 'bg-blue-500' },
+    { href: '/orders', labelKey: 'navOrders', icon: 'package', color: 'bg-blue-500' },
+    { href: '/settings/profile', labelKey: 'navSettings', icon: 'settings', color: 'bg-blue-500' },
   ],
 };
 

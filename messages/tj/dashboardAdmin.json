@@ -40,5 +40,16 @@
   "npsPassives": "Бетараф",
   "npsDetractors": "Норозиён",
   "npsResponses": "{count} ҷавоб",
-  "npsNoData": "Ҳанӯз ҷавоби NPS нест."
+  "npsNoData": "Ҳанӯз ҷавоби NPS нест.",
+  "noChartData": "Ҳанӯз маълумот дар бораи фармоишҳо нест.",
+  "filterPending": "Дар интизорӣ",
+  "filterApproved": "Тасдиқшуда",
+  "filterRejected": "Радшуда",
+  "allCategories": "Ҳамаи категорияҳо",
+  "noMastersForFilter": "Барои ин филтр усто ёфт нашуд.",
+  "colCity": "Шаҳр",
+  "colRating": "Рейтинг",
+  "colBookings": "Фармоишҳо",
+  "colEarnings": "Даромад",
+  "noActiveBookings": "Ин усто фармоиши фаъол надорад."
 }

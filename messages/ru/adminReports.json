@@ -17,5 +17,9 @@
   "blockThisUser": "Заблокировать Пользователя",
   "prev": "Назад",
   "next": "Вперёд",
-  "pageOf": "Страница {page} из {total}"
+  "pageOf": "Страница {page} из {total}",
+  "statusOPEN": "Открыта",
+  "statusREVIEWED": "Рассмотрена",
+  "statusRESOLVED": "Решена",
+  "statusREJECTED": "Отклонена"
 }

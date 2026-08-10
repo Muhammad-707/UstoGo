@@ -215,3 +215,33 @@ body {
   opacity: 0.3;
   transition: 0s;
 }
+
+/* ---------------------------------------------------------------------------
+   Leaflet popups
+   Leaflet ships `.leaflet-container a { color: #0078A8 }`, which outranks a
+   single utility class — so every call-to-action inside a map popup rendered
+   as a blue link on a blue button instead of white text. These rules hand the
+   colour back to the button's own utilities and drop the padding Leaflet adds
+   around popup content so the card can bleed to its own edges.
+   --------------------------------------------------------------------------- */
+.leaflet-container a.ustogo-popup-btn,
+.leaflet-container a.ustogo-popup-btn:hover {
+  text-decoration: none;
+}
+
+.leaflet-popup.ustogo-popup .leaflet-popup-content-wrapper {
+  padding: 0;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 18px 40px -12px rgba(15, 23, 42, 0.35);
+}
+
+.leaflet-popup.ustogo-popup .leaflet-popup-content {
+  margin: 0;
+  width: auto !important;
+  line-height: 1.35;
+}
+
+.leaflet-popup.ustogo-popup .leaflet-popup-tip {
+  box-shadow: none;
+}

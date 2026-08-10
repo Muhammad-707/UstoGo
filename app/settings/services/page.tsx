@@ -227,31 +227,32 @@ export default function MasterServicesPage() {
     : '';
 
   return (
+    <>
+    <MasterPageHeader
+      icon="briefcase"
+      eyebrow={t('catalogManagement')}
+      title={t('servicesPricing')}
+      hint={t('pageHint')}
+      action={
+        <button
+          onClick={() => {
+            if (myCategoryIds.length === 0) {
+              setError(t('noCategoryAttached'));
+              return;
+            }
+            setShowForm((s) => !s);
+            if (!showForm) {
+              setEditingId(null);
+              setForm({ ...EMPTY_FORM, categoryId: myCategoryIds[0] });
+            }
+          }}
+          className="px-5 py-2.5 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-extrabold text-xs shadow-lg shadow-amber-900/20 transition"
+        >
+          + {t('addService')}
+        </button>
+      }
+    />
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
-      <MasterPageHeader
-        icon="briefcase"
-        eyebrow={t('catalogManagement')}
-        title={t('servicesPricing')}
-        hint={t('pageHint')}
-        action={
-          <button
-            onClick={() => {
-              if (myCategoryIds.length === 0) {
-                setError(t('noCategoryAttached'));
-                return;
-              }
-              setShowForm((s) => !s);
-              if (!showForm) {
-                setEditingId(null);
-                setForm({ ...EMPTY_FORM, categoryId: myCategoryIds[0] });
-              }
-            }}
-            className="px-5 py-2.5 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-extrabold text-xs shadow-lg shadow-amber-900/20 transition"
-          >
-            + {t('addService')}
-          </button>
-        }
-      />
 
       {error && (
         <div className="p-4 rounded-2xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 text-xs font-bold text-red-600 dark:text-red-400">
@@ -468,5 +469,6 @@ export default function MasterServicesPage() {
         </div>
       </div>
     </div>
+    </>
   );
 }

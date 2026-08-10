@@ -30,5 +30,12 @@
   "detailCity": "Город",
   "detailApprovalStatus": "Статус Одобрения",
   "detailRating": "Рейтинг",
-  "detailCompletedJobs": "Выполненные Заказы"
+  "detailCompletedJobs": "Выполненные Заказы",
+  "roleCLIENT": "Клиент",
+  "roleMASTER": "Мастер",
+  "roleADMIN": "Админ",
+  "statusACTIVE": "Активен",
+  "statusINACTIVE": "Неактивен",
+  "statusBLOCKED": "Заблокирован",
+  "detailEmail": "Эл. почта"
 }

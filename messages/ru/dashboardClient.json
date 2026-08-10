@@ -31,5 +31,13 @@
   "referralShareText": "Присоединяйтесь к UstoGo по моей реферальной ссылке и найдите проверенных мастеров: {link}",
   "referralStatReferred": "Друзей Присоединилось",
   "referralStatBonus": "Заработано Бонусов",
-  "recentlyViewed": "Недавно Просмотренные"
+  "recentlyViewed": "Недавно Просмотренные",
+  "loading": "Загрузка…",
+  "noBookings": "Заказов пока нет.",
+  "masterExperience": "Опыт",
+  "masterServiceRadius": "Радиус выезда",
+  "masterCompleted": "Выполнено",
+  "masterCategories": "Категории",
+  "yearsShort": "{years} лет",
+  "kmShort": "{km} км"
 }

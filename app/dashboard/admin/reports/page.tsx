@@ -100,10 +100,10 @@ export default function AdminReportsPage() {
           className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold w-fit"
         >
           <option value="">{t('allStatuses')}</option>
-          <option value="OPEN">OPEN</option>
-          <option value="REVIEWED">REVIEWED</option>
-          <option value="RESOLVED">RESOLVED</option>
-          <option value="REJECTED">REJECTED</option>
+          <option value="OPEN">{t('statusOPEN')}</option>
+          <option value="REVIEWED">{t('statusREVIEWED')}</option>
+          <option value="RESOLVED">{t('statusRESOLVED')}</option>
+          <option value="REJECTED">{t('statusREJECTED')}</option>
         </select>
 
         {loading && (

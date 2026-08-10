@@ -25,5 +25,7 @@
   "noReviewsYet": "No reviews yet.",
   "noCompletedBookingsToReview": "No completed bookings available to review.",
   "replyFailed": "Failed to send reply.",
-  "submitReviewFailed": "Failed to submit review."
+  "submitReviewFailed": "Failed to submit review.",
+  "tabReviews": "Reviews",
+  "tabLeaderboard": "Leaderboard"
 }

@@ -18,5 +18,6 @@
   "loadFailed": "Боркунии сабти амалҳо номуваффақ шуд",
   "prev": "Қаблӣ",
   "next": "Навбатӣ",
-  "pageOf": "Саҳифаи {page} аз {total}"
+  "pageOf": "Саҳифаи {page} аз {total}",
+  "entityTypePlaceholder": "мисол: Category"
 }

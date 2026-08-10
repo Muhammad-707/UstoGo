@@ -10,6 +10,9 @@ import { ApiError } from '@/lib/api/client';
 import type { Review, Booking } from '@/lib/api/types';
 import { getAvatarUrl } from '@/lib/placeholders';
 import { FilterContainer, FilterItem } from '@/components/ui/FilterAnimate';
+import { LeaderboardPanel } from '@/components/masters/LeaderboardPanel';
+
+type ReviewsTab = 'reviews' | 'leaderboard';
 
 export default function ReviewsPage() {
   const t = useTranslations('reviews');
@@ -17,6 +20,11 @@ export default function ReviewsPage() {
   const isMaster = user?.role === 'MASTER';
   const searchParams = useSearchParams();
   const deepLinkedBookingId = searchParams?.get('booking') ?? null;
+  // `/leaderboard` redirects here with `?tab=leaderboard`; a signed-out visitor has no
+  // reviews of their own to read, so the ranking is the more useful landing tab for them.
+  const [tab, setTab] = useState<ReviewsTab>(
+    searchParams?.get('tab') === 'leaderboard' ? 'leaderboard' : 'reviews',
+  );
 
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
@@ -108,8 +116,38 @@ export default function ReviewsPage() {
     }
   };
 
+  const tabs: Array<{ id: ReviewsTab; label: string; icon: string }> = [
+    { id: 'reviews', label: t('tabReviews'), icon: 'MessageSquare' },
+    { id: 'leaderboard', label: t('tabLeaderboard'), icon: 'trendingup' },
+  ];
+
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-12">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-10">
+
+      {/* Reviews / Leaderboard switcher */}
+      <div className="flex justify-center">
+        <div className="inline-flex items-center gap-1 p-1.5 rounded-2xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
+          {tabs.map((item) => (
+            <button
+              key={item.id}
+              onClick={() => setTab(item.id)}
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-extrabold transition-all duration-200 ${
+                tab === item.id
+                  ? 'bg-white dark:bg-slate-800 text-blue-600 dark:text-sky-400 shadow-md'
+                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
+              }`}
+            >
+              <Icon name={item.icon} size={15} />
+              {item.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {tab === 'leaderboard' && <LeaderboardPanel />}
+
+      {tab === 'reviews' && (
+      <div className="space-y-10">
 
       {/* Header & Rating Breakdown */}
       <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 border border-slate-200 dark:border-slate-800 shadow-xl flex flex-col md:flex-row items-center justify-between gap-8">
@@ -210,6 +248,9 @@ export default function ReviewsPage() {
           </FilterItem>
         ))}
       </FilterContainer>
+
+      </div>
+      )}
 
       {/* Write Review Modal (Client rates Master) */}
       {modalOpen && (

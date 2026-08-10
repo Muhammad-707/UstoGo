@@ -17,5 +17,9 @@
   "blockThisUser": "Блок кардани Корбари Шикоятшуда",
   "prev": "Қаблӣ",
   "next": "Навбатӣ",
-  "pageOf": "Саҳифаи {page} аз {total}"
+  "pageOf": "Саҳифаи {page} аз {total}",
+  "statusOPEN": "Кушода",
+  "statusREVIEWED": "Дидашуда",
+  "statusRESOLVED": "Ҳалшуда",
+  "statusREJECTED": "Радшуда"
 }

@@ -201,7 +201,7 @@ export default function AdminDashboardPage() {
             </div>
           )}
           {!loading && data && data.series.length === 0 && (
-            <p className="text-xs text-slate-400 font-semibold text-center py-10">No booking activity data yet.</p>
+            <p className="text-xs text-slate-400 font-semibold text-center py-10">{t('noChartData')}</p>
           )}
           {loading && <div className="h-52 rounded-2xl bg-slate-50 dark:bg-slate-800/40 animate-pulse" />}
         </div>
@@ -277,9 +277,9 @@ export default function AdminDashboardPage() {
                 onChange={(e) => setApprovalStatus(e.target.value as ApprovalStatus)}
                 className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold transition"
               >
-                <option value="PENDING">Pending</option>
-                <option value="APPROVED">Approved</option>
-                <option value="REJECTED">Rejected</option>
+                <option value="PENDING">{t('filterPending')}</option>
+                <option value="APPROVED">{t('filterApproved')}</option>
+                <option value="REJECTED">{t('filterRejected')}</option>
               </select>
             </FilterItem>
             <FilterItem index={1}>
@@ -288,7 +288,7 @@ export default function AdminDashboardPage() {
                 onChange={(e) => setCategoryId(e.target.value)}
                 className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold transition"
               >
-                <option value="">All categories</option>
+                <option value="">{t('allCategories')}</option>
                 {categories.map((c) => (
                   <option key={c.id} value={c.id}>{c.name}</option>
                 ))}
@@ -316,7 +316,7 @@ export default function AdminDashboardPage() {
             <div className="w-16 h-16 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-400 flex items-center justify-center mx-auto mb-3">
               <Icon name="shieldcheck" size={24} />
             </div>
-            <p className="text-xs text-slate-400 font-semibold">No masters found for this filter.</p>
+            <p className="text-xs text-slate-400 font-semibold">{t('noMastersForFilter')}</p>
           </div>
         )}
 
@@ -326,9 +326,9 @@ export default function AdminDashboardPage() {
               <thead>
                 <tr className="text-left text-slate-400 uppercase tracking-wider text-[10px] border-b border-slate-100 dark:border-slate-800">
                   <th className="py-3 pr-4">{t('tableApplicant')}</th>
-                  <th className="py-3 pr-4">City</th>
-                  <th className="py-3 pr-4">Rating</th>
-                  <th className="py-3 pr-4">Bookings</th>
+                  <th className="py-3 pr-4">{t('colCity')}</th>
+                  <th className="py-3 pr-4">{t('colRating')}</th>
+                  <th className="py-3 pr-4">{t('colBookings')}</th>
                   <th className="py-3 pr-4">{t('tableEarnings')}</th>
                   <th className="py-3 pr-4">{t('tableWhatsApp')}</th>
                   <th className="py-3 pr-4">{t('tableStatus')}</th>
@@ -449,15 +449,15 @@ export default function AdminDashboardPage() {
             <div className="p-6 space-y-6">
               <div className="grid grid-cols-3 gap-4">
                 <div className="p-4 rounded-2xl bg-purple-50 dark:bg-purple-950/20 text-center">
-                  <p className="text-[10px] font-bold text-purple-400 uppercase">Bookings</p>
+                  <p className="text-[10px] font-bold text-purple-400 uppercase">{t('colBookings')}</p>
                   <p className="text-2xl font-extrabold text-purple-600 dark:text-purple-400">{masterBookings.length}</p>
                 </div>
                 <div className="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/20 text-center">
-                  <p className="text-[10px] font-bold text-amber-400 uppercase">Rating</p>
+                  <p className="text-[10px] font-bold text-amber-400 uppercase">{t('colRating')}</p>
                   <p className="text-2xl font-extrabold text-amber-600 dark:text-amber-400">{selectedMaster.ratingAverage}</p>
                 </div>
                 <div className="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/20 text-center">
-                  <p className="text-[10px] font-bold text-emerald-400 uppercase">Earnings</p>
+                  <p className="text-[10px] font-bold text-emerald-400 uppercase">{t('colEarnings')}</p>
                   <p className="text-2xl font-extrabold text-emerald-600 dark:text-emerald-400">${selectedMaster.totalEarnings}</p>
                 </div>
               </div>
@@ -473,7 +473,7 @@ export default function AdminDashboardPage() {
                   <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-400 flex items-center justify-center mx-auto mb-3">
                     <Icon name="checkcircle2" size={20} />
                   </div>
-                  <p className="text-xs text-slate-400 font-semibold">No active bookings for this master.</p>
+                  <p className="text-xs text-slate-400 font-semibold">{t('noActiveBookings')}</p>
                 </div>
               ) : (
                 <div className="space-y-3">

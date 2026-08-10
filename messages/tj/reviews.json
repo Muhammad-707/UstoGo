@@ -25,5 +25,7 @@
   "noReviewsYet": "Тақризҳо ҳанӯз нестанд.",
   "noCompletedBookingsToReview": "Фармоиши анҷомёфта барои баҳодиҳӣ нест.",
   "replyFailed": "Ҷавоб фиристода нашуд.",
-  "submitReviewFailed": "Баҳо фиристода нашуд."
+  "submitReviewFailed": "Баҳо фиристода нашуд.",
+  "tabReviews": "Баҳодиҳӣ",
+  "tabLeaderboard": "Рейтинг"
 }

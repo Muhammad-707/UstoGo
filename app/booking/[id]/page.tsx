@@ -384,8 +384,8 @@ export default function BookingDetailsPage() {
         <div className="w-16 h-16 bg-slate-100 dark:bg-slate-800 text-slate-400 rounded-full flex items-center justify-center mx-auto">
           <Icon name="Search" size={28} />
         </div>
-        <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white">Booking not found</h1>
-        <p className="text-sm text-slate-500">This booking doesn&apos;t exist or you don&apos;t have access to it.</p>
+        <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white">{t('notFoundTitle')}</h1>
+        <p className="text-sm text-slate-500">{t('notFoundDesc')}</p>
         <Link
           href="/dashboard/client"
           className="inline-block px-8 py-3.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-lg transition btn-ripple"
@@ -687,7 +687,7 @@ export default function BookingDetailsPage() {
 
             {booking.cancelledAt ? (
               <div className="p-5 rounded-2xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 space-y-1">
-                <h4 className="text-sm font-bold text-red-700 dark:text-red-300">Booking Cancelled</h4>
+                <h4 className="text-sm font-bold text-red-700 dark:text-red-300">{t('cancelledTitle')}</h4>
                 <p className="text-xs text-red-600 dark:text-red-400">
                   {new Date(booking.cancelledAt).toLocaleString()}
                   {booking.cancellationReason ? ` — ${booking.cancellationReason}` : ''}

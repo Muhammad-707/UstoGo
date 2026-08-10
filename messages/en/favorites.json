@@ -6,5 +6,7 @@
   "unavailablePending": "No longer approved — can't be booked right now",
   "unavailableInactive": "Not accepting bookings right now",
   "addToFavorites": "Add to favorites",
-  "removeFromFavorites": "Remove from favorites"
+  "removeFromFavorites": "Remove from favorites",
+  "empty": "No favorites yet.",
+  "browseMasters": "Browse masters"
 }

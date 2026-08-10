@@ -60,28 +60,35 @@ export default function ShopMap({ shops, origin }: ShopMapProps) {
 
         {shops.map((shop) => (
           <Marker key={shop.id} position={[shop.latitude, shop.longitude]} icon={shopPin}>
-            <Popup>
-              <div className="space-y-1.5 min-w-[190px]">
-                <p className="text-xs font-bold text-slate-900">{shop.name}</p>
-                {shop.distanceKm != null && (
-                  <p className="text-[10px] font-extrabold text-emerald-600">
-                    {t('kmAway', { km: shop.distanceKm })}
-                  </p>
-                )}
+            <Popup className="ustogo-popup" minWidth={236} maxWidth={236}>
+              <div className="w-[236px] p-3.5 space-y-2 font-sans">
+                <div className="flex items-start justify-between gap-2">
+                  <p className="text-[13px] font-extrabold text-slate-900 leading-tight">{shop.name}</p>
+                  {shop.distanceKm != null && (
+                    <span className="shrink-0 px-2 py-0.5 rounded-lg bg-emerald-50 text-[10px] font-extrabold text-emerald-700">
+                      {t('kmAway', { km: shop.distanceKm })}
+                    </span>
+                  )}
+                </div>
                 {shop.description && <p className="text-[10px] text-slate-600">{shop.description}</p>}
-                <p className="text-[10px] text-slate-500">{shop.address}</p>
-                <p className="text-[10px] text-slate-500">{shop.cityName}</p>
-                {shop.workingHours && <p className="text-[10px] text-slate-500">{shop.workingHours}</p>}
+                <div className="space-y-1 pt-0.5 text-[10px] text-slate-500">
+                  <p>📍 {shop.address}</p>
+                  <p>🏙 {shop.cityName}</p>
+                  {shop.workingHours && <p>🕘 {shop.workingHours}</p>}
+                </div>
                 {shop.phone && (
-                  <a href={`tel:${shop.phone}`} className="block text-[10px] font-bold text-emerald-600">
-                    {shop.phone}
+                  <a
+                    href={`tel:${shop.phone}`}
+                    className="ustogo-popup-btn block text-[11px] font-extrabold !text-emerald-600"
+                  >
+                    ☎ {shop.phone}
                   </a>
                 )}
                 <a
                   href={`https://www.openstreetmap.org/?mlat=${shop.latitude}&mlon=${shop.longitude}#map=17/${shop.latitude}/${shop.longitude}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block text-center text-[10px] font-bold text-white bg-emerald-600 rounded-lg py-1.5 mt-1"
+                  className="ustogo-popup-btn block text-center text-[11px] font-extrabold !text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl py-2 mt-1 shadow-md shadow-emerald-600/25 transition"
                 >
                   {t('openInMaps')}
                 </a>

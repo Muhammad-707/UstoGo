@@ -31,5 +31,13 @@
   "referralShareText": "Join UstoGo with my referral link and find trusted craftsmen: {link}",
   "referralStatReferred": "Friends Joined",
   "referralStatBonus": "Bonus Earned",
-  "recentlyViewed": "Recently Viewed"
+  "recentlyViewed": "Recently Viewed",
+  "loading": "Loading…",
+  "noBookings": "No bookings yet.",
+  "masterExperience": "Experience",
+  "masterServiceRadius": "Service radius",
+  "masterCompleted": "Completed",
+  "masterCategories": "Categories",
+  "yearsShort": "{years} yrs",
+  "kmShort": "{km} km"
 }

@@ -11,6 +11,7 @@ import { PasswordInput } from '@/components/ui/PasswordInput';
 import { TwoFactorSection } from '@/components/settings/TwoFactorSection';
 import { validatePassword, type ValidationErrorKey } from '@/lib/validation';
 import type { Session } from '@/lib/api/types';
+import { PageHeader } from '@/components/layout/PageHeader';
 
 export default function SecuritySettingsPage() {
   const t = useTranslations('settingsSecurity');
@@ -112,19 +113,9 @@ export default function SecuritySettingsPage() {
   };
 
   return (
+    <>
+      <PageHeader icon="key" eyebrow={t('accountSettings')} title={t('title')} />
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
-      <div className="flex items-center gap-4">
-        <div className="hidden sm:flex w-12 h-12 shrink-0 rounded-2xl bg-gradient-to-br from-blue-600 to-sky-500 text-white items-center justify-center shadow-lg shadow-blue-900/20">
-          <Icon name="key" size={22} />
-        </div>
-        <div>
-          <span className="text-xs font-extrabold uppercase tracking-widest text-blue-600 dark:text-sky-400">
-            {t('accountSettings')}
-          </span>
-          <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white mt-0.5">{t('title')}</h1>
-        </div>
-      </div>
-
       {/* Change Password */}
       <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-xl space-y-4">
         <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
@@ -262,5 +253,6 @@ export default function SecuritySettingsPage() {
         <Icon name="arrowright" size={18} className="shrink-0 text-slate-400" />
       </Link>
     </div>
+    </>
   );
 }

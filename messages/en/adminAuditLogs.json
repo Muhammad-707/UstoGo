@@ -18,5 +18,6 @@
   "loadFailed": "Failed to load the audit log",
   "prev": "Previous",
   "next": "Next",
-  "pageOf": "Page {page} of {total}"
+  "pageOf": "Page {page} of {total}",
+  "entityTypePlaceholder": "e.g. Category"
 }

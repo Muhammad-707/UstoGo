@@ -114,7 +114,7 @@ export default function AdminAuditLogsPage() {
             <input
               value={entityType}
               onChange={(e) => { setEntityType(e.target.value); setPage(1); }}
-              placeholder="Category"
+              placeholder={t('entityTypePlaceholder')}
               className="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-bold"
             />
           </label>

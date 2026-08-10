@@ -25,5 +25,7 @@
   "noReviewsYet": "Отзывов пока нет.",
   "noCompletedBookingsToReview": "Нет завершённых заказов, доступных для отзыва.",
   "replyFailed": "Не удалось отправить ответ.",
-  "submitReviewFailed": "Не удалось отправить отзыв."
+  "submitReviewFailed": "Не удалось отправить отзыв.",
+  "tabReviews": "Отзывы",
+  "tabLeaderboard": "Рейтинг"
 }

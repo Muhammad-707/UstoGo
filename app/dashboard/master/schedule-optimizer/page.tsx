@@ -35,21 +35,22 @@ export default function ScheduleOptimizerPage() {
   }, [load]);
 
   return (
+    <>
+    <MasterPageHeader
+      icon="compass"
+      eyebrow={t('badge')}
+      title={t('title')}
+      hint={t('pageHint')}
+      action={
+        <input
+          type="date"
+          value={date}
+          onChange={(e) => setDate(e.target.value)}
+          className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold"
+        />
+      }
+    />
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
-      <MasterPageHeader
-        icon="compass"
-        eyebrow={t('badge')}
-        title={t('title')}
-        hint={t('pageHint')}
-        action={
-          <input
-            type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-            className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold"
-          />
-        }
-      />
 
       {error && <p className="text-xs font-bold text-red-600 dark:text-red-400">{error}</p>}
       {loading && <p className="text-xs text-slate-400 font-semibold">{t('loading')}</p>}
@@ -102,5 +103,6 @@ export default function ScheduleOptimizerPage() {
         </>
       )}
     </div>
+    </>
   );
 }

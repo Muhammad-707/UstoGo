@@ -62,5 +62,8 @@
   "paymentNotePlaceholder": "Why was the amount different? (required if less than agreed)",
   "paymentAmountInvalid": "Enter a valid amount.",
   "paymentNoteRequired": "Paying less than the agreed price needs a note of at least 10 characters.",
-  "paymentConfirmFailed": "Could not confirm the payment."
+  "paymentConfirmFailed": "Could not confirm the payment.",
+  "notFoundTitle": "Booking not found",
+  "notFoundDesc": "This booking doesn't exist or you don't have access to it.",
+  "cancelledTitle": "Booking cancelled"
 }

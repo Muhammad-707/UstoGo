@@ -137,9 +137,9 @@ export default function AdminUsersPage() {
             className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold"
           >
             <option value="">{t('allRoles')}</option>
-            <option value="CLIENT">CLIENT</option>
-            <option value="MASTER">MASTER</option>
-            <option value="ADMIN">ADMIN</option>
+            <option value="CLIENT">{t('roleCLIENT')}</option>
+            <option value="MASTER">{t('roleMASTER')}</option>
+            <option value="ADMIN">{t('roleADMIN')}</option>
           </select>
           <select
             value={status}
@@ -147,9 +147,9 @@ export default function AdminUsersPage() {
             className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold"
           >
             <option value="">{t('allStatuses')}</option>
-            <option value="ACTIVE">ACTIVE</option>
-            <option value="INACTIVE">INACTIVE</option>
-            <option value="BLOCKED">BLOCKED</option>
+            <option value="ACTIVE">{t('statusACTIVE')}</option>
+            <option value="INACTIVE">{t('statusINACTIVE')}</option>
+            <option value="BLOCKED">{t('statusBLOCKED')}</option>
           </select>
         </div>
 
@@ -266,7 +266,7 @@ export default function AdminUsersPage() {
                 <>
                   <div className="grid grid-cols-2 gap-3 text-xs">
                     <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800">
-                      <p className="text-slate-400 font-bold">Email</p>
+                      <p className="text-slate-400 font-bold">{t('detailEmail')}</p>
                       <p className="font-extrabold text-slate-900 dark:text-white break-all">{selected.email}</p>
                     </div>
                     <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800">

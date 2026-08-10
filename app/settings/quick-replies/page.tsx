@@ -85,8 +85,9 @@ export default function QuickRepliesPage() {
   };
 
   return (
+    <>
+    <MasterPageHeader icon="message" eyebrow={t('badge')} title={t('title')} hint={t('pageHint')} />
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
-      <MasterPageHeader icon="message" eyebrow={t('badge')} title={t('title')} hint={t('pageHint')} />
 
       {error && <p className="text-xs font-bold text-red-600 dark:text-red-400">{error}</p>}
       {loading && <p className="text-xs text-slate-400 font-semibold">{t('loading')}</p>}
@@ -154,5 +155,6 @@ export default function QuickRepliesPage() {
         )}
       </div>
     </div>
+    </>
   );
 }

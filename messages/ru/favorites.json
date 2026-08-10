@@ -6,5 +6,7 @@
   "unavailablePending": "Больше не одобрен — сейчас забронировать нельзя",
   "unavailableInactive": "Сейчас не принимает заказы",
   "addToFavorites": "Добавить в избранное",
-  "removeFromFavorites": "Удалить из избранного"
+  "removeFromFavorites": "Удалить из избранного",
+  "empty": "Пока нет избранных.",
+  "browseMasters": "Смотреть мастеров"
 }

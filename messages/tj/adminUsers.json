@@ -30,5 +30,12 @@
   "detailCity": "Шаҳр",
   "detailApprovalStatus": "Статуси Тасдиқ",
   "detailRating": "Рейтинг",
-  "detailCompletedJobs": "Корҳои Анҷомдода"
+  "detailCompletedJobs": "Корҳои Анҷомдода",
+  "roleCLIENT": "Мизоҷ",
+  "roleMASTER": "Усто",
+  "roleADMIN": "Админ",
+  "statusACTIVE": "Фаъол",
+  "statusINACTIVE": "Ғайрифаъол",
+  "statusBLOCKED": "Басташуда",
+  "detailEmail": "Почтаи электронӣ"
 }

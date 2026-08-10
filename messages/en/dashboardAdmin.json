@@ -40,5 +40,16 @@
   "npsPassives": "Passives",
   "npsDetractors": "Detractors",
   "npsResponses": "{count} responses",
-  "npsNoData": "No NPS responses yet."
+  "npsNoData": "No NPS responses yet.",
+  "noChartData": "No booking activity data yet.",
+  "filterPending": "Pending",
+  "filterApproved": "Approved",
+  "filterRejected": "Rejected",
+  "allCategories": "All categories",
+  "noMastersForFilter": "No masters found for this filter.",
+  "colCity": "City",
+  "colRating": "Rating",
+  "colBookings": "Bookings",
+  "colEarnings": "Earnings",
+  "noActiveBookings": "No active bookings for this master."
 }

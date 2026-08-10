@@ -121,25 +121,26 @@ export default function SavedAddressesPage() {
   };
 
   return (
+    <>
+    <ClientPageHeader
+      icon="mappin"
+      eyebrow={t('badge')}
+      title={t('title')}
+      hint={t('pageHint')}
+      action={
+        !showForm && (
+          <button
+            onClick={() => setShowForm(true)}
+            disabled={addresses.length >= 10}
+            className="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-md transition disabled:opacity-50 flex items-center gap-2"
+          >
+            <Icon name="Calendar" size={14} />
+            {t('addAddress')}
+          </button>
+        )
+      }
+    />
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
-      <ClientPageHeader
-        icon="mappin"
-        eyebrow={t('badge')}
-        title={t('title')}
-        hint={t('pageHint')}
-        action={
-          !showForm && (
-            <button
-              onClick={() => setShowForm(true)}
-              disabled={addresses.length >= 10}
-              className="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-md transition disabled:opacity-50 flex items-center gap-2"
-            >
-              <Icon name="Calendar" size={14} />
-              {t('addAddress')}
-            </button>
-          )
-        }
-      />
 
       {error && <p className="text-xs font-bold text-red-600 dark:text-red-400">{error}</p>}
       {loading && <p className="text-xs text-slate-400 font-semibold">{t('loading')}</p>}
@@ -285,5 +286,6 @@ export default function SavedAddressesPage() {
         ))}
       </div>
     </div>
+    </>
   );
 }

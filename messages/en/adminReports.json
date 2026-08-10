@@ -17,5 +17,9 @@
   "blockThisUser": "Block Reported User",
   "prev": "Previous",
   "next": "Next",
-  "pageOf": "Page {page} of {total}"
+  "pageOf": "Page {page} of {total}",
+  "statusOPEN": "Open",
+  "statusREVIEWED": "Reviewed",
+  "statusRESOLVED": "Resolved",
+  "statusREJECTED": "Rejected"
 }

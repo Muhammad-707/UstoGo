@@ -46,8 +46,9 @@ export default function FavoritesPage() {
   }, [favoriteIds]);
 
   return (
+    <>
+    <ClientPageHeader icon="heart" eyebrow={t('badge')} title={t('title')} />
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8">
-      <ClientPageHeader icon="heart" eyebrow={t('badge')} title={t('title')} />
 
       {loading ? (
         <div className="text-center py-16 text-sm text-slate-500 dark:text-slate-400 font-medium">
@@ -55,9 +56,9 @@ export default function FavoritesPage() {
         </div>
       ) : masters.length === 0 ? (
         <div className="glass-card rounded-3xl p-12 text-center space-y-2">
-          <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">No favorites yet.</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">{t('empty')}</p>
           <Link href="/search" className="text-xs font-bold text-blue-600 dark:text-sky-400 hover:underline">
-            Browse masters
+            {t('browseMasters')}
           </Link>
         </div>
       ) : (
@@ -121,5 +122,6 @@ export default function FavoritesPage() {
         </FilterContainer>
       )}
     </div>
+    </>
   );
 }
