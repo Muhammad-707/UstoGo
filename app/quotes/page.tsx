@@ -137,7 +137,7 @@ export default function QuotesPage() {
 
       <div className="space-y-4">
         {quotes.map((quote) => (
-          <Card key={quote.id} className="gap-0 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 space-y-3">
+          <Card key={quote.id} className="rounded-3xl border border-slate-200 dark:border-slate-800 p-6 space-y-3">
             <div className="flex items-start justify-between gap-4">
               <div className="min-w-0">
                 <h3 className="text-sm font-extrabold text-slate-900 dark:text-white">

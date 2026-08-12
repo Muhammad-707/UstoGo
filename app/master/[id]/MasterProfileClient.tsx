@@ -527,7 +527,7 @@ export default function MasterProfileClient() {
                   </div>
                 ) : (
                   reviews.map((rev, idx) => (
-                    <Card key={rev.id} asChild className="gap-0">
+                    <Card key={rev.id} asChild>
                       <FilterItem
                      
                       index={idx}

@@ -217,7 +217,7 @@ export default function ClientDashboardPage() {
 
       {/* Recently Viewed Masters */}
       {recentlyViewed.length > 0 && (
-        <Card className="gap-0 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-4 shadow-xl">
+        <Card className="rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-4 shadow-xl">
           <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
             <Icon name="eye" size={18} />
             {t('recentlyViewed')}
@@ -245,7 +245,7 @@ export default function ClientDashboardPage() {
       )}
 
       {/* Recent Bookings Table */}
-      <Card className="gap-0 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-6 shadow-xl">
+      <Card className="rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-6 shadow-xl">
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-bold text-slate-900 dark:text-white">{t('recentBookings')}</h3>
         </div>

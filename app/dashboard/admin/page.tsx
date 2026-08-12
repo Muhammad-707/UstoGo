@@ -175,7 +175,7 @@ export default function AdminDashboardPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         {loading &&
           Array.from({ length: 4 }).map((_, idx) => (
-            <Card key={idx} className="p-6 border-slate-200 dark:border-slate-800 shadow-xl h-[100px] animate-pulse" />
+            <Card key={idx} className="p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl h-[100px] animate-pulse" />
           ))}
         {!loading &&
           metrics.map((m, idx) => (
@@ -195,7 +195,7 @@ export default function AdminDashboardPage() {
       {/* Chart + Quick Stats Row */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
         {/* Chart */}
-        <Card className="gap-0 lg:col-span-2 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-6 shadow-xl">
+        <Card className="lg:col-span-2 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-6 shadow-xl">
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-lg font-bold text-slate-900 dark:text-white">{t('chartTitle')}</h3>
@@ -224,7 +224,7 @@ export default function AdminDashboardPage() {
         </Card>
 
         {/* Quick Stats */}
-        <Card className="gap-0 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-xl space-y-4">
+        <Card className="rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-xl space-y-4">
           <h3 className="text-sm font-bold text-slate-900 dark:text-white">{t('quickStats')}</h3>
           <div className="space-y-3">
             {[
@@ -248,7 +248,7 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* Platform NPS */}
-      <Card className="gap-0 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-6 shadow-xl">
+      <Card className="rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-6 shadow-xl">
         <div>
           <h3 className="text-lg font-bold text-slate-900 dark:text-white">{t('npsTitle')}</h3>
           <p className="text-[10px] text-slate-400 font-semibold mt-0.5">{t('npsSubtitle')}</p>
@@ -281,7 +281,7 @@ export default function AdminDashboardPage() {
       </Card>
 
       {/* Master Verification Table */}
-      <Card className="gap-0 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-6 shadow-xl">
+      <Card className="rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-6 shadow-xl">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
             <h3 className="text-lg font-bold text-slate-900 dark:text-white">{t('verificationQueue')}</h3>

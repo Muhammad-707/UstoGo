@@ -424,7 +424,7 @@ export default function SearchClient({
 
           {/* Master Cards Grid / List */}
           {viewMode !== 'map' && (!error && !(loading && page === 1) && masters.length === 0 ? (
-            <Card className="gap-0 rounded-3xl p-12 text-center space-y-4">
+            <Card className="rounded-3xl p-12 text-center space-y-4">
               <div className="w-16 h-16 rounded-2xl bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-sky-400 mx-auto flex items-center justify-center">
                 <Icon name="Search" size={32} />
               </div>

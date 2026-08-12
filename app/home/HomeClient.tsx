@@ -212,7 +212,7 @@ export default function ClientHomePage({
         <FilterContainer className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {topMasters.map((m, idx) => (
             <FilterItem key={m.id} index={idx % 3}>
-            <Card asChild className="gap-0">
+            <Card asChild>
               <motion.div
               whileHover={{ y: -6 }}
               transition={{ type: 'spring', stiffness: 300, damping: 20 }}

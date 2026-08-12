@@ -63,7 +63,7 @@ export default function ScheduleOptimizerPage() {
       {result && !loading && (
         <>
           {result.stops.length === 0 ? (
-            <Card className="gap-0 rounded-3xl p-12 text-center space-y-2">
+            <Card className="rounded-3xl p-12 text-center space-y-2">
               <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">{t('empty')}</p>
             </Card>
           ) : (

@@ -103,7 +103,7 @@ export default function AdminCertificatesPage() {
         </div>
       )}
 
-      <Card className="gap-0 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-6 shadow-xl">
+      <Card className="rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-6 shadow-xl">
         <div className="flex items-center gap-2">
           {(['pending', 'verified', 'all'] as const).map((f) => (
             <Button size="raw" variant="ghost"

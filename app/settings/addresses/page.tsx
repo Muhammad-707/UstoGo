@@ -152,7 +152,7 @@ export default function SavedAddressesPage() {
       {loading && <p className="text-xs text-slate-400 font-semibold">{t('loading')}</p>}
 
       {showForm && (
-        <Card className="gap-0 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-xl space-y-4">
+        <Card className="rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-xl space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
             <div className="space-y-1.5 sm:col-span-2">
               <Label htmlFor="address-label" className="text-slate-500">{t('labelLabel')}</Label>
@@ -246,7 +246,7 @@ export default function SavedAddressesPage() {
       )}
 
       {!loading && addresses.length === 0 && !showForm && (
-        <Card className="gap-0 rounded-3xl p-12 text-center space-y-2">
+        <Card className="rounded-3xl p-12 text-center space-y-2">
           <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">{t('empty')}</p>
         </Card>
       )}

@@ -24,7 +24,7 @@ export default function ContactClient() {
 
       <FilterContainer className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <FilterItem index={0}>
-          <Card className="gap-0 p-8 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-5 h-full">
+          <Card className="p-8 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-5 h-full">
             <h3 className="text-lg font-extrabold text-slate-900 dark:text-white">{t('formTitle')}</h3>
             <form className="space-y-4">
               <Input type="text" placeholder={t('namePlaceholder')} className="w-full p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition" />
@@ -47,7 +47,7 @@ export default function ContactClient() {
             { titleKey: 'headquartersTitle', bodyKey: 'headquartersAddress', icon: 'MapPin', color: 'from-blue-500/10 to-sky-500/10', iconColor: 'text-blue-600 dark:text-sky-400' },
             { titleKey: 'hotlineTitle', bodyKey: 'hotlineNumber', icon: 'MessageSquare', color: 'from-emerald-500/10 to-teal-500/10', iconColor: 'text-emerald-600 dark:text-emerald-400' },
           ].map((item) => (
-            <Card key={item.titleKey} asChild className="gap-0">
+            <Card key={item.titleKey} asChild>
               <motion.div
              
               whileHover={{ y: -4 }}

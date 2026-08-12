@@ -112,7 +112,7 @@ export default function AdminProductCategoriesPage() {
       )}
 
       {formOpen && (
-        <Card className="gap-0 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-4 shadow-xl">
+        <Card className="rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-4 shadow-xl">
           <h3 className="text-sm font-bold text-slate-900 dark:text-white">{form.id ? t('editCategory') : t('addCategory')}</h3>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
             <Input placeholder={t('nameLabel')} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-semibold" />
@@ -135,7 +135,7 @@ export default function AdminProductCategoriesPage() {
         </Card>
       )}
 
-      <Card className="gap-0 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-4 shadow-xl">
+      <Card className="rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-4 shadow-xl">
         {loading && (
           <div className="space-y-2">
             {Array.from({ length: 3 }).map((_, idx) => <div key={idx} className="h-16 rounded-2xl bg-slate-50 dark:bg-slate-800/40 animate-pulse" />)}

@@ -71,7 +71,7 @@ export default function FavoritesPage() {
             const unavailable = m.approvalStatus !== 'APPROVED' || !m.isActive;
             return (
               <FilterItem key={m.id} index={idx % 3}>
-              <Card asChild className="gap-0">
+              <Card asChild>
                 <motion.div
                 whileHover={unavailable ? undefined : { y: -6 }}
                 transition={{ type: 'spring', stiffness: 300, damping: 20 }}

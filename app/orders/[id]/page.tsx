@@ -62,7 +62,7 @@ export default function OrderDetailPage() {
         {t('backToOrders')}
       </Link>
 
-      <Card className="gap-0 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-6 shadow-xl">
+      <Card className="rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-6 shadow-xl">
         <div className="flex items-center justify-between flex-wrap gap-3">
           <div>
             <p className="text-xs font-bold text-slate-400">{t('orderPlaced')}</p>

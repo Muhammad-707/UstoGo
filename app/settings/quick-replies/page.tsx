@@ -95,7 +95,7 @@ export default function QuickRepliesPage() {
       {error && <p className="text-xs font-bold text-red-600 dark:text-red-400">{error}</p>}
       {loading && <p className="text-xs text-slate-400 font-semibold">{t('loading')}</p>}
 
-      <Card className="gap-0 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-xl space-y-3">
+      <Card className="rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-xl space-y-3">
         <div className="flex gap-3">
           <Input
             type="text"

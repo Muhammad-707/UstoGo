@@ -86,7 +86,7 @@ export default function AdminReviewsPage() {
         </div>
       )}
 
-      <Card className="gap-0 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-5 shadow-xl">
+      <Card className="rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-5 shadow-xl">
         <p className="text-xs font-bold text-slate-400">
           {result ? t('resultsCount', { count: result.meta.total }) : ''}
         </p>

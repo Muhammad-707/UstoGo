@@ -511,7 +511,7 @@ export default function MasterDashboardPage() {
       <AnalyticsSection stats={stats} loading={statsLoading} />
 
       {/* My NPS */}
-      <Card className="gap-0 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-4 shadow-xl">
+      <Card className="rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-4 shadow-xl">
         <div>
           <h3 className="text-sm font-bold text-slate-900 dark:text-white">{t('myNpsTitle')}</h3>
           <p className="text-[10px] text-slate-400 font-semibold mt-0.5">{t('myNpsSubtitle')}</p>
@@ -563,7 +563,7 @@ export default function MasterDashboardPage() {
       </div>
 
       {/* Pending Job Requests */}
-      <Card className="gap-0 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-6 shadow-xl">
+      <Card className="rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-6 shadow-xl">
         <h3 className="text-lg font-bold text-slate-900 dark:text-white">{t('pendingApprovals')}</h3>
         {loading && <p className="text-xs text-slate-400 font-semibold">{t('loadingRequests')}</p>}
         {!loading && pending.length === 0 && (
@@ -626,7 +626,7 @@ export default function MasterDashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
         {/* Upcoming Bookings */}
-        <Card className="gap-0 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-4 shadow-xl">
+        <Card className="rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-4 shadow-xl">
           <h3 className="text-lg font-bold text-slate-900 dark:text-white">{t('upcomingJobs')}</h3>
           {!loading && upcoming.length === 0 && (
             <EmptyState variant="inline" icon="calendar" title={t('noUpcomingJobs')} />
@@ -661,7 +661,7 @@ export default function MasterDashboardPage() {
         </Card>
 
         {/* Weekly Schedule Preview */}
-        <Card className="gap-0 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-4 shadow-xl">
+        <Card className="rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-4 shadow-xl">
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-bold text-slate-900 dark:text-white">{t('weeklySchedule')}</h3>
             <div className="flex items-center gap-4">

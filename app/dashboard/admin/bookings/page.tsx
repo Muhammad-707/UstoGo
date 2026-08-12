@@ -136,7 +136,7 @@ export default function AdminBookingsPage() {
         </div>
       )}
 
-      <Card className="gap-0 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-5 shadow-xl">
+      <Card className="rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-5 shadow-xl">
         <div className="flex items-center justify-between gap-3 flex-wrap">
           <Select value={status || ANY} onValueChange={(raw) => { const value = raw === ANY ? '' : raw; setStatus(value); setPage(1); }}>
             <SelectTrigger className="w-auto p-2.5 rounded-xl text-xs font-bold">

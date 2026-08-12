@@ -122,7 +122,7 @@ export default function ShopsPage() {
         <FilterContainer className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {shops.map((shop, idx) => (
             <FilterItem key={shop.id} index={idx % 3}>
-              <Card className="gap-0 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 space-y-3 h-full hover:shadow-xl hover:shadow-emerald-500/10 hover:border-emerald-200 dark:hover:border-emerald-900 transition-[box-shadow,border-color] duration-300">
+              <Card className="rounded-3xl p-6 border border-slate-200 dark:border-slate-800 space-y-3 h-full hover:shadow-xl hover:shadow-emerald-500/10 hover:border-emerald-200 dark:hover:border-emerald-900 transition-[box-shadow,border-color] duration-300">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
                     <Icon name="store" size={18} />

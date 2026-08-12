@@ -699,7 +699,7 @@ export default function BookingDetailsPage() {
         <div className="lg:col-span-2 space-y-8">
 
           {/* Stage Progress Timeline */}
-          <Card className="gap-0 p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-6 shadow-xl">
+          <Card className="p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-6 shadow-xl">
             <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
               <Icon name="Clock" size={20} className="text-blue-600 dark:text-sky-400" />
               {t('liveTimeline')}
@@ -749,7 +749,7 @@ export default function BookingDetailsPage() {
 
           {/* Live "On My Way" Tracking */}
           {isClient && booking.status === 'IN_PROGRESS' && masterLiveLocation && (
-            <Card className="gap-0 p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-4 shadow-xl">
+            <Card className="p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-4 shadow-xl">
               <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 <Icon name="mappin" size={20} className="text-blue-600 dark:text-sky-400" />
                 {t('liveTrackingTitle')}
@@ -786,7 +786,7 @@ export default function BookingDetailsPage() {
 
         {/* Receipt Sidebar */}
         <div className="space-y-6">
-          <Card className="gap-0 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-4 shadow-xl">
+          <Card className="p-6 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-4 shadow-xl">
             <h3 className="text-sm font-bold uppercase tracking-wider text-slate-400">{t('paymentAndAddress')}</h3>
 
             <div className="space-y-3 text-xs">
@@ -850,7 +850,7 @@ export default function BookingDetailsPage() {
             <DialogTitle>{t('certificateTitle')}</DialogTitle>
           </DialogHeader>
           {certificateLoading || !certificate ? (
-            <Card className="p-12 text-center">
+            <Card className="rounded-3xl p-12 text-center">
               <p className="text-xs text-slate-400 font-semibold">{t('loadingCertificate')}</p>
             </Card>
           ) : (

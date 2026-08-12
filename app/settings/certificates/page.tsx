@@ -103,7 +103,7 @@ export default function CertificatesPage() {
       )}
 
       {showForm && (
-        <Card className="gap-0 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 space-y-4 shadow-xl">
+        <Card className="rounded-3xl border border-slate-200 dark:border-slate-800 p-6 space-y-4 shadow-xl">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
             <Input
               placeholder={t('titlePlaceholder')}

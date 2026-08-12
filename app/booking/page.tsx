@@ -397,7 +397,7 @@ export default function BookingWizardPage() {
 
       {/* Confirmation View Screen */}
       {bookingConfirmed ? (
-        <Card className="gap-0 p-8 sm:p-12 rounded-3xl border border-slate-200 dark:border-slate-800 text-center space-y-6 shadow-2xl animate-fade-in">
+        <Card className="p-8 sm:p-12 rounded-3xl border border-slate-200 dark:border-slate-800 text-center space-y-6 shadow-2xl animate-fade-in">
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
@@ -450,7 +450,7 @@ export default function BookingWizardPage() {
         </Card>
       ) : (
         /* Booking Step Form Wrapper */
-        <Card className="gap-0 p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl space-y-8">
+        <Card className="p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl space-y-8">
 
           {/* STEP 1: Select Master & Service */}
           {step === 1 && (

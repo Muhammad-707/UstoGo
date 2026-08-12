@@ -197,7 +197,7 @@ export default function AdminBannersPage() {
       )}
 
       {formOpen && (
-        <Card className="gap-0 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-5 shadow-xl">
+        <Card className="rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-5 shadow-xl">
           <h3 className="text-sm font-bold text-slate-900 dark:text-white">
             {form.id ? t('editBanner') : t('addBanner')}
           </h3>
@@ -291,7 +291,7 @@ export default function AdminBannersPage() {
         </Card>
       )}
 
-      <Card className="gap-0 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-4 shadow-xl">
+      <Card className="rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-4 shadow-xl">
         {loading && (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {Array.from({ length: 2 }).map((_, idx) => (

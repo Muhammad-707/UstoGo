@@ -268,7 +268,7 @@ export default function MasterServicesPage() {
       )}
 
       {/* My categories */}
-      <Card className="gap-0 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 space-y-4 shadow-xl">
+      <Card className="rounded-3xl border border-slate-200 dark:border-slate-800 p-6 space-y-4 shadow-xl">
         <h3 className="text-sm font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
           <Icon name="award" size={16} className="text-amber-500" />
           {t('myCategories')}
@@ -320,7 +320,7 @@ export default function MasterServicesPage() {
 
       {/* Add / edit form */}
       {showForm && (
-        <Card className="gap-0 rounded-3xl border border-amber-200 dark:border-amber-800/40 p-6 space-y-4 shadow-xl">
+        <Card className="rounded-3xl border border-amber-200 dark:border-amber-800/40 p-6 space-y-4 shadow-xl">
           <h3 className="text-sm font-extrabold text-slate-900 dark:text-white">
             {editingId !== null ? t('editService') : t('newService')}
           </h3>
@@ -436,7 +436,7 @@ export default function MasterServicesPage() {
       )}
 
       {/* Services list */}
-      <Card className="gap-0 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 space-y-4 shadow-xl">
+      <Card className="rounded-3xl border border-slate-200 dark:border-slate-800 p-6 space-y-4 shadow-xl">
         <h3 className="text-sm font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
           <Icon name="sparkles" size={16} className="text-amber-500" />
           {t('myServicesTitle', { count: services.length })}

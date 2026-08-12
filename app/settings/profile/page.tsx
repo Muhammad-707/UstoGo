@@ -258,7 +258,7 @@ export default function EditProfilePage() {
         </Card>
       )}
 
-      <Card className="gap-0 p-8 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-6 shadow-xl">
+      <Card className="p-8 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-6 shadow-xl">
         {!isMaster && (
           <div className="flex items-center gap-6">
             <img src={effectiveAvatar} alt="" className="w-20 h-20 rounded-3xl object-cover border-2 border-amber-500" />

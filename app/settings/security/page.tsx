@@ -122,7 +122,7 @@ export default function SecuritySettingsPage() {
       <PageHeader icon="key" eyebrow={t('accountSettings')} title={t('title')} />
     <div className="page-shell page-shell-narrow py-10 space-y-8">
       {/* Change Password */}
-      <Card className="gap-0 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-xl space-y-4">
+      <Card className="rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-xl space-y-4">
         <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
           <Icon name="key" size={18} />
           {t('changePasswordTitle')}
@@ -174,7 +174,7 @@ export default function SecuritySettingsPage() {
       <TwoFactorSection />
 
       {/* Active Sessions */}
-      <Card className="gap-0 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-xl space-y-4">
+      <Card className="rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-xl space-y-4">
         <div className="flex items-center justify-between">
           <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
             <Icon name="wifi" size={18} />

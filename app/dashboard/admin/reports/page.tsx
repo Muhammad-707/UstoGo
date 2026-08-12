@@ -103,7 +103,7 @@ export default function AdminReportsPage() {
         </div>
       )}
 
-      <Card className="gap-0 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-6 shadow-xl">
+      <Card className="rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-6 shadow-xl">
         <Select value={status || ANY} onValueChange={(raw) => { const value = raw === ANY ? '' : raw; setStatus(value as ReportStatus | ''); setPage(1); }}>
           <SelectTrigger className="p-2.5 rounded-xl text-xs font-bold w-fit">
             <SelectValue />

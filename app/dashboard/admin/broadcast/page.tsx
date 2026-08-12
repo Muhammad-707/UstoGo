@@ -71,7 +71,7 @@ export default function AdminBroadcastPage() {
       }
     >
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-        <Card className="gap-0 lg:col-span-3 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-6 shadow-xl">
+        <Card className="lg:col-span-3 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-6 shadow-xl">
           <div className="space-y-2">
             <span className="text-xs font-bold text-slate-500">{t('audienceLabel')}</span>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">

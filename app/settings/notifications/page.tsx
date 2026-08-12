@@ -102,7 +102,7 @@ export default function NotificationPreferencesPage() {
         GROUPS.map((group) => (
           <Card
             key={group.key}
-            className="gap-0 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-xl space-y-1"
+            className="rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-xl space-y-1"
           >
             <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2 mb-3">
               <Icon name={group.icon} size={18} />

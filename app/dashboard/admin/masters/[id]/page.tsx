@@ -100,7 +100,7 @@ export default function AdminMasterStatsPage() {
       {loading && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           {Array.from({ length: 4 }).map((_, idx) => (
-            <Card key={idx} className="p-6 border-slate-200 dark:border-slate-800 shadow-xl h-[100px] animate-pulse" />
+            <Card key={idx} className="p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl h-[100px] animate-pulse" />
           ))}
         </div>
       )}
@@ -184,7 +184,7 @@ export default function AdminMasterStatsPage() {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
             {/* Reviews breakdown */}
-            <Card className="gap-0 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-4 shadow-xl">
+            <Card className="rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-4 shadow-xl">
               <h3 className="text-sm font-bold text-slate-900 dark:text-white">{t('reviewsBreakdown')}</h3>
               <div className="space-y-2">
                 {STARS.map((star) => (
@@ -205,7 +205,7 @@ export default function AdminMasterStatsPage() {
             </Card>
 
             {/* Top services */}
-            <Card className="gap-0 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-4 shadow-xl">
+            <Card className="rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-4 shadow-xl">
               <h3 className="text-sm font-bold text-slate-900 dark:text-white">{t('topServices')}</h3>
               {stats.topServices.length === 0 && <p className="text-xs text-slate-400 font-semibold">{t('noServices')}</p>}
               <div className="space-y-2">
@@ -223,7 +223,7 @@ export default function AdminMasterStatsPage() {
           </div>
 
           {/* Monthly series */}
-          <Card className="gap-0 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-6 shadow-xl">
+          <Card className="rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-6 shadow-xl">
             <h3 className="text-sm font-bold text-slate-900 dark:text-white">{t('monthlySeries')}</h3>
             {stats.monthlySeries.length === 0 ? (
               <p className="text-xs text-slate-400 font-semibold">{t('noMonthlyData')}</p>
