@@ -12,6 +12,8 @@ import { ClientPageHeader } from '@/components/client/ClientPageHeader';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { useMoney } from '@/lib/money';
 import { useDateFormat } from '@/lib/datetime';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 
 const STATUS_STYLE: Record<string, string> = {
   PAID: 'bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300',
@@ -70,31 +72,33 @@ export default function OrdersPage() {
         <FilterContainer className="space-y-3">
           {orders.map((order, idx) => (
             <FilterItem key={order.id} index={idx}>
-              <Link
+              <Card asChild>
+                <Link
                 href={`/orders/${order.id}`}
-                className="glass-card rounded-2xl p-5 border border-slate-200 dark:border-slate-800 flex items-center justify-between gap-4 hover:shadow-lg hover:border-emerald-200 dark:hover:border-emerald-900 transition block"
+                className="rounded-2xl p-5 border border-slate-200 dark:border-slate-800 flex items-center justify-between gap-4 hover:shadow-lg hover:border-emerald-200 dark:hover:border-emerald-900 transition block"
               >
-                <div className="flex items-center gap-4 min-w-0">
-                  <div className="w-11 h-11 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
-                    <Icon name="package" size={18} />
+                  <div className="flex items-center gap-4 min-w-0">
+                    <div className="w-11 h-11 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+                      <Icon name="package" size={18} />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-xs font-bold text-slate-900 dark:text-white">
+                        {t('orderItems', { count: order.items.length })}
+                      </p>
+                      <p className="text-[10px] text-slate-400 mt-0.5">{fmt.dateTime(order.createdAt)}</p>
+                    </div>
                   </div>
-                  <div className="min-w-0">
-                    <p className="text-xs font-bold text-slate-900 dark:text-white">
-                      {t('orderItems', { count: order.items.length })}
-                    </p>
-                    <p className="text-[10px] text-slate-400 mt-0.5">{fmt.dateTime(order.createdAt)}</p>
+                  <div className="flex items-center gap-3 shrink-0">
+                    <span className={`px-2.5 py-1 rounded-full text-[10px] font-extrabold ${STATUS_STYLE[order.status] ?? ''}`}>
+                      {t(`status${order.status}`)}
+                    </span>
+                    <span className="text-sm font-extrabold text-slate-900 dark:text-white">
+                      {money(order.totalAmount)}
+                    </span>
+                    <Icon name="chevronright" size={14} className="text-slate-300" />
                   </div>
-                </div>
-                <div className="flex items-center gap-3 shrink-0">
-                  <span className={`px-2.5 py-1 rounded-full text-[10px] font-extrabold ${STATUS_STYLE[order.status] ?? ''}`}>
-                    {t(`status${order.status}`)}
-                  </span>
-                  <span className="text-sm font-extrabold text-slate-900 dark:text-white">
-                    {money(order.totalAmount)}
-                  </span>
-                  <Icon name="chevronright" size={14} className="text-slate-300" />
-                </div>
-              </Link>
+                </Link>
+              </Card>
             </FilterItem>
           ))}
         </FilterContainer>
@@ -102,21 +106,21 @@ export default function OrdersPage() {
 
       {!loading && totalPages > 1 && (
         <div className="flex items-center justify-between pt-2">
-          <button
+          <Button size="raw" variant="ghost"
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={page <= 1}
             className="px-4 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 text-xs font-bold disabled:opacity-40"
           >
             {t('prev')}
-          </button>
+          </Button>
           <span className="text-xs font-bold text-slate-500">{t('pageOf', { page, total: totalPages })}</span>
-          <button
+          <Button size="raw" variant="ghost"
             onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
             disabled={page >= totalPages}
             className="px-4 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 text-xs font-bold disabled:opacity-40"
           >
             {t('next')}
-          </button>
+          </Button>
         </div>
       )}
     </div>

@@ -6,6 +6,8 @@ import { useTranslations } from 'next-intl';
 import { authApi } from '@/lib/api/endpoints';
 import { ApiError } from '@/lib/api/client';
 import { AuthShell } from '@/components/auth/AuthShell';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 
 export default function ForgotPasswordPage() {
   const t = useTranslations('authForgotPassword');
@@ -38,9 +40,9 @@ export default function ForgotPasswordPage() {
             </div>
             <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white">{t('resetLinkSentTitle')}</h2>
             <p className="text-xs text-slate-500">{t('resetLinkSentDesc')}</p>
-            <Link href="/auth/login" className="inline-block px-6 py-3 rounded-xl bg-blue-600 text-white font-bold text-xs">
-              {t('returnToLogin')}
-            </Link>
+            <Button asChild variant="brand" className="h-auto px-6 py-3 rounded-xl text-xs">
+              <Link href="/auth/login">{t('returnToLogin')}</Link>
+            </Button>
           </div>
         ) : (
           <>
@@ -50,22 +52,19 @@ export default function ForgotPasswordPage() {
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">
-              <input
+              <Input
                 type="email"
                 placeholder={t('emailPlaceholder')}
+                aria-label={t('emailPlaceholder')}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs"
+                className="p-4"
                 required
               />
               {error && <p className="text-red-500 text-sm">{error}</p>}
-              <button
-                type="submit"
-                disabled={submitting}
-                className="w-full py-4 rounded-2xl bg-blue-600 text-white font-extrabold text-xs shadow-lg btn-ripple disabled:opacity-60 disabled:cursor-not-allowed"
-              >
+              <Button type="submit" variant="brand" size="xl" disabled={submitting} className="w-full">
                 {submitting ? t('sending') : t('sendResetLink')}
-              </button>
+              </Button>
             </form>
 
             <Link href="/auth/login" className="block text-xs font-bold text-slate-500 hover:underline">

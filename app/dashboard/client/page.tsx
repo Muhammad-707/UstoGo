@@ -15,6 +15,15 @@ import { getAvatarUrl } from '@/lib/placeholders';
 import type { Booking, MasterPublic, MyReferral } from '@/lib/api/types';
 import { FilterContainer, FilterItem, InViewRow } from '@/components/ui/FilterAnimate';
 import { useDateFormat } from '@/lib/datetime';
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Card } from '@/components/ui/card';
 
 export default function ClientDashboardPage() {
   const t = useTranslations('dashboardClient');
@@ -143,21 +152,23 @@ export default function ClientDashboardPage() {
       {/* Metrics Grid */}
       <FilterContainer className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         {metrics.map((m, idx) => (
-          <FilterItem key={idx} index={idx} className="glass-card p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl flex items-center justify-between">
-            <div className="space-y-1">
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">{m.title}</span>
-              <h3 className="text-2xl font-extrabold text-slate-900 dark:text-white">{m.value}</h3>
-            </div>
-            <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${m.color} text-white flex items-center justify-center shadow-lg`}>
-              <Icon name={m.icon} size={22} />
-            </div>
-          </FilterItem>
+          <Card key={idx} asChild>
+            <FilterItem index={idx} className="p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl flex items-center justify-between">
+              <div className="space-y-1">
+                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">{m.title}</span>
+                <h3 className="text-2xl font-extrabold text-slate-900 dark:text-white">{m.value}</h3>
+              </div>
+              <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${m.color} text-white flex items-center justify-center shadow-lg`}>
+                <Icon name={m.icon} size={22} />
+              </div>
+            </FilterItem>
+          </Card>
         ))}
       </FilterContainer>
 
       {/* Referral */}
       {referral && (
-        <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-xl flex flex-col lg:flex-row lg:items-center gap-6 justify-between bg-gradient-to-r from-violet-50/60 to-fuchsia-50/60 dark:from-violet-950/20 dark:to-fuchsia-950/10">
+        <Card className="rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-xl flex flex-col lg:flex-row lg:items-center gap-6 justify-between bg-gradient-to-r from-violet-50/60 to-fuchsia-50/60 dark:from-violet-950/20 dark:to-fuchsia-950/10">
           <div className="flex items-start gap-4">
             <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-violet-500 to-fuchsia-500 text-white flex items-center justify-center shadow-lg shrink-0">
               <Icon name="Heart" size={22} />
@@ -182,13 +193,13 @@ export default function ClientDashboardPage() {
             <div className="px-4 py-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-mono font-extrabold text-sm text-slate-900 dark:text-white tracking-widest text-center">
               {referral.code}
             </div>
-            <button
+            <Button size="raw" variant="ghost"
               onClick={handleCopyReferralLink}
               className="px-4 py-2.5 rounded-xl bg-slate-900 dark:bg-white hover:opacity-90 text-white dark:text-slate-900 text-xs font-bold shadow transition flex items-center justify-center gap-2"
             >
               <Icon name={copied ? 'checkcircle2' : 'filetext'} size={14} />
               {copied ? t('referralCopied') : t('referralCopyLink')}
-            </button>
+            </Button>
             {referralLink && (
               <a
                 href={`https://wa.me/?text=${encodeURIComponent(t('referralShareText', { link: referralLink }))}`}
@@ -201,12 +212,12 @@ export default function ClientDashboardPage() {
               </a>
             )}
           </div>
-        </div>
+        </Card>
       )}
 
       {/* Recently Viewed Masters */}
       {recentlyViewed.length > 0 && (
-        <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-4 shadow-xl">
+        <Card className="gap-0 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-4 shadow-xl">
           <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
             <Icon name="eye" size={18} />
             {t('recentlyViewed')}
@@ -230,11 +241,11 @@ export default function ClientDashboardPage() {
               </Link>
             ))}
           </div>
-        </div>
+        </Card>
       )}
 
       {/* Recent Bookings Table */}
-      <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-6 shadow-xl">
+      <Card className="gap-0 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-6 shadow-xl">
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-bold text-slate-900 dark:text-white">{t('recentBookings')}</h3>
         </div>
@@ -302,24 +313,25 @@ export default function ClientDashboardPage() {
             </table>
           </div>
         )}
-      </div>
+      </Card>
 
       {/* Master Profile Overlay */}
-      {selectedMaster && (
-        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setSelectedMaster(null)}>
-          <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl w-full max-w-lg overflow-hidden" onClick={(e) => e.stopPropagation()}>
+      <Dialog open={!!selectedMaster} onOpenChange={(open) => !open && setSelectedMaster(null)}>
+        <DialogContent className="sm:max-w-lg p-0 gap-0 overflow-hidden">
+          {selectedMaster && (
+            <>
             {selectedMaster.bannerUrl && (
               <img src={selectedMaster.bannerUrl} alt="" className="w-full h-32 object-cover" />
             )}
             <div className="p-6 space-y-4">
-              <div className="flex items-center gap-4 -mt-12">
+              <DialogHeader className="flex-row items-center gap-4 -mt-12 space-y-0 pr-0">
                 <img src={selectedMaster.avatarUrl ?? getAvatarUrl(selectedMaster.id, selectedMaster.displayName)} alt={selectedMaster.displayName} className="w-20 h-20 rounded-3xl object-cover border-4 border-white dark:border-slate-900 shadow-xl" />
                 <div>
-                  <h2 className="text-lg font-extrabold text-slate-900 dark:text-white">{selectedMaster.displayName}</h2>
-                  <p className="text-xs text-slate-500">{selectedMaster.cityName}</p>
+                  <DialogTitle>{selectedMaster.displayName}</DialogTitle>
+                  <DialogDescription>{selectedMaster.cityName}</DialogDescription>
                   <p className="text-xs text-amber-500 font-bold">★ {selectedMaster.ratingAverage} ({selectedMaster.ratingCount})</p>
                 </div>
-              </div>
+              </DialogHeader>
 
               {selectedMaster.bio && (
                 <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">{selectedMaster.bio}</p>
@@ -345,28 +357,34 @@ export default function ClientDashboardPage() {
               </div>
 
               {selectedMaster.whatsappPhone && (
-                <a
-                  href={`https://wa.me/${selectedMaster.whatsappPhone.replace(/\D/g, '')}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2 w-full py-3 rounded-2xl bg-[#25D366] hover:bg-[#1ebe5d] text-white font-extrabold text-xs shadow transition"
+                <Button
+                  asChild
+                  className="w-full h-auto gap-2 py-3 rounded-2xl bg-[#25D366] hover:bg-[#1ebe5d] text-white font-extrabold text-xs shadow"
                 >
-                  <Icon name="whatsapp" size={16} />
-                  Write on WhatsApp
-                </a>
+                  <a
+                    href={`https://wa.me/${selectedMaster.whatsappPhone.replace(/\D/g, '')}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Icon name="whatsapp" size={16} />
+                    Write on WhatsApp
+                  </a>
+                </Button>
               )}
 
-              <Link
-                href={`/master/${selectedMaster.id}`}
-                className="flex items-center justify-center w-full py-3 rounded-2xl border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-extrabold text-xs hover:bg-slate-50 dark:hover:bg-slate-800 transition"
+              <Button
+                asChild
+                variant="outline"
+                className="w-full h-auto py-3 rounded-2xl border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-extrabold text-xs hover:bg-slate-50 dark:hover:bg-slate-800"
                 onClick={() => setSelectedMaster(null)}
               >
-                View Full Profile
-              </Link>
+                <Link href={`/master/${selectedMaster.id}`}>View Full Profile</Link>
+              </Button>
             </div>
-          </div>
-        </div>
-      )}
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </DashboardLayout>
   );
 }

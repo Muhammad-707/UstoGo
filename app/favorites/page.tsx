@@ -14,6 +14,8 @@ import { useFavorites } from '@/contexts/FavoritesContext';
 import { FilterContainer, FilterItem } from '@/components/ui/FilterAnimate';
 import { ClientPageHeader } from '@/components/client/ClientPageHeader';
 import { EmptyState } from '@/components/ui/EmptyState';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 
 export default function FavoritesPage() {
   const t = useTranslations('favorites');
@@ -69,55 +71,57 @@ export default function FavoritesPage() {
             const unavailable = m.approvalStatus !== 'APPROVED' || !m.isActive;
             return (
               <FilterItem key={m.id} index={idx % 3}>
-              <motion.div
+              <Card asChild className="gap-0">
+                <motion.div
                 whileHover={unavailable ? undefined : { y: -6 }}
                 transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-                className={`glass-card rounded-3xl p-6 border space-y-4 h-full ${
+                className={`rounded-3xl p-6 border space-y-4 h-full ${
                   unavailable
                     ? 'border-slate-200 dark:border-slate-800 opacity-60'
                     : 'border-slate-200 dark:border-slate-800 hover:shadow-2xl hover:shadow-blue-500/10 hover:border-blue-200 dark:hover:border-sky-900 transition-[box-shadow,border-color] duration-300'
                 }`}
               >
-                <div className="flex items-start gap-4">
-                  <img src={m.avatarUrl ?? getAvatarUrl(m.id, m.displayName)} alt={m.displayName} className="w-16 h-16 rounded-2xl object-cover" />
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-extrabold text-slate-900 dark:text-white text-base truncate">{m.displayName}</h3>
-                    <p className="text-xs text-blue-600 dark:text-sky-400 font-semibold">{m.cityName}</p>
-                    <span className="text-xs text-amber-500 font-bold">★ {m.ratingAverage}</span>
-                  </div>
-                  <button
-                    onClick={() => toggleFavorite(m.id)}
-                    aria-label={t('removeFromFavorites')}
-                    title={t('removeFromFavorites')}
-                    className="shrink-0 w-9 h-9 rounded-xl flex items-center justify-center text-red-500 hover:bg-red-50 dark:hover:bg-red-950/40 transition"
-                  >
-                    <Icon name="heart" size={17} className="fill-red-500" />
-                  </button>
-                </div>
-                {unavailable && (
-                  <p className="text-xs font-bold text-red-600 dark:text-red-400 flex items-center gap-1.5">
-                    <Icon name="X" size={12} />
-                    {m.approvalStatus !== 'APPROVED' ? t('unavailablePending') : t('unavailableInactive')}
-                  </p>
-                )}
-                <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex justify-between items-center text-xs">
-                  <span className="font-bold text-slate-900 dark:text-white">
-                    {m.priceFrom ? t('hourlyRate', { rate: formatAmount(m.priceFrom, locale) }) : '—'}
-                  </span>
-                  {unavailable ? (
-                    <span className="px-4 py-2 rounded-xl bg-slate-200 dark:bg-slate-800 text-slate-500 font-bold cursor-not-allowed">
-                      {t('bookService')}
-                    </span>
-                  ) : (
-                    <Link
-                      href={`/booking?master=${m.id}`}
-                      className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold transition"
+                  <div className="flex items-start gap-4">
+                    <img src={m.avatarUrl ?? getAvatarUrl(m.id, m.displayName)} alt={m.displayName} className="w-16 h-16 rounded-2xl object-cover" />
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-extrabold text-slate-900 dark:text-white text-base truncate">{m.displayName}</h3>
+                      <p className="text-xs text-blue-600 dark:text-sky-400 font-semibold">{m.cityName}</p>
+                      <span className="text-xs text-amber-500 font-bold">★ {m.ratingAverage}</span>
+                    </div>
+                    <Button size="raw" variant="ghost"
+                      onClick={() => toggleFavorite(m.id)}
+                      aria-label={t('removeFromFavorites')}
+                      title={t('removeFromFavorites')}
+                      className="shrink-0 w-9 h-9 rounded-xl flex items-center justify-center text-red-500 hover:bg-red-50 dark:hover:bg-red-950/40 transition"
                     >
-                      {t('bookService')}
-                    </Link>
+                      <Icon name="heart" size={17} className="fill-red-500" />
+                    </Button>
+                  </div>
+                  {unavailable && (
+                    <p className="text-xs font-bold text-red-600 dark:text-red-400 flex items-center gap-1.5">
+                      <Icon name="X" size={12} />
+                      {m.approvalStatus !== 'APPROVED' ? t('unavailablePending') : t('unavailableInactive')}
+                    </p>
                   )}
-                </div>
-              </motion.div>
+                  <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex justify-between items-center text-xs">
+                    <span className="font-bold text-slate-900 dark:text-white">
+                      {m.priceFrom ? t('hourlyRate', { rate: formatAmount(m.priceFrom, locale) }) : '—'}
+                    </span>
+                    {unavailable ? (
+                      <span className="px-4 py-2 rounded-xl bg-slate-200 dark:bg-slate-800 text-slate-500 font-bold cursor-not-allowed">
+                        {t('bookService')}
+                      </span>
+                    ) : (
+                      <Link
+                        href={`/booking?master=${m.id}`}
+                        className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold transition"
+                      >
+                        {t('bookService')}
+                      </Link>
+                    )}
+                  </div>
+                </motion.div>
+              </Card>
               </FilterItem>
             );
           })}

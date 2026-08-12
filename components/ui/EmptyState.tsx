@@ -1,6 +1,8 @@
 import React from 'react';
 import Link from 'next/link';
 import { Icon } from '@/components/icons/LucideIcons';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 interface EmptyStateProps {
   icon: string;
@@ -86,13 +88,15 @@ export function EmptyState({
           )}
         </div>
         {actionLabel && actionHref && (
-          <Link
-            href={actionHref}
-            className={`mt-1 inline-flex items-center gap-2 px-5 py-3 rounded-2xl ${t.button} text-white text-xs font-extrabold shadow-lg transition`}
+          <Button
+            asChild
+            className={cn('mt-1 h-auto gap-2 px-5 py-3 rounded-2xl text-white text-xs font-extrabold shadow-lg', t.button)}
           >
-            {actionLabel}
-            <Icon name="arrowright" size={14} />
-          </Link>
+            <Link href={actionHref}>
+              {actionLabel}
+              <Icon name="arrowright" size={14} />
+            </Link>
+          </Button>
         )}
       </div>
     </div>

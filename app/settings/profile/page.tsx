@@ -15,6 +15,13 @@ import { getAvatarUrl, getCoverUrl } from '@/lib/placeholders';
 import type { City } from '@/lib/api/types';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { useDateFormat } from '@/lib/datetime';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { cn } from '@/lib/utils';
+import { Card } from '@/components/ui/card';
 
 const MasterLocationPicker = dynamic(() => import('@/components/masters/MasterLocationPicker'), {
   ssr: false,
@@ -203,7 +210,7 @@ export default function EditProfilePage() {
     <div className="page-shell page-shell-narrow py-10 space-y-8">
 
       {isMaster && (
-        <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-xl">
+        <Card className="rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-xl">
           <div className="relative h-40 sm:h-52">
             <img src={effectiveBanner} alt="" className="w-full h-full object-cover" />
             <div className="absolute inset-0 bg-gradient-to-t from-slate-900/70 to-transparent" />
@@ -214,13 +221,13 @@ export default function EditProfilePage() {
               className="hidden"
               onChange={handleBannerChange}
             />
-            <button
+            <Button
               onClick={() => bannerInputRef.current?.click()}
               disabled={uploadingBanner}
-              className="absolute bottom-3 right-3 px-3 py-2 rounded-xl bg-white/90 backdrop-blur text-slate-800 text-[10px] font-extrabold disabled:opacity-60"
+              className="absolute bottom-3 right-3 h-auto px-3 py-2 rounded-xl bg-white/90 hover:bg-white backdrop-blur text-slate-800 text-[10px] font-extrabold"
             >
               {uploadingBanner ? '...' : t('changeBanner')}
-            </button>
+            </Button>
             <img
               src={effectiveAvatar}
               alt=""
@@ -239,18 +246,19 @@ export default function EditProfilePage() {
               className="hidden"
               onChange={handleAvatarChange}
             />
-            <button
+            <Button
+              variant="brand"
               onClick={() => avatarInputRef.current?.click()}
               disabled={uploadingAvatar}
-              className="px-4 py-2.5 rounded-2xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-extrabold disabled:opacity-60 transition"
+              className="h-auto px-4 py-2.5 rounded-2xl bg-amber-600 hover:bg-amber-700 shadow-amber-600/25 text-xs"
             >
               {uploadingAvatar ? '...' : t('changeAvatar')}
-            </button>
+            </Button>
           </div>
-        </div>
+        </Card>
       )}
 
-      <div className="glass-card p-8 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-6 shadow-xl">
+      <Card className="gap-0 p-8 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-6 shadow-xl">
         {!isMaster && (
           <div className="flex items-center gap-6">
             <img src={effectiveAvatar} alt="" className="w-20 h-20 rounded-3xl object-cover border-2 border-amber-500" />
@@ -261,91 +269,99 @@ export default function EditProfilePage() {
               className="hidden"
               onChange={handleAvatarChange}
             />
-            <button
+            <Button
+              variant="secondary"
               onClick={() => avatarInputRef.current?.click()}
               disabled={uploadingAvatar}
-              className="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-xs font-bold text-slate-700 dark:text-slate-200 disabled:opacity-60"
+              className="h-auto px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-xs font-bold text-slate-700 dark:text-slate-200"
             >
               {uploadingAvatar ? '...' : t('changeAvatar')}
-            </button>
+            </Button>
           </div>
         )}
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
           <div className="space-y-1">
-            <label className="font-bold text-slate-700 dark:text-slate-300">{t('firstNameLabel')}</label>
-            <input
+            <Label htmlFor="profile-first-name">{t('firstNameLabel')}</Label>
+            <Input
+              id="profile-first-name"
               type="text"
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
-              className="w-full p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-semibold"
+              className="p-3.5 font-semibold"
             />
           </div>
           <div className="space-y-1">
-            <label className="font-bold text-slate-700 dark:text-slate-300">{t('lastNameLabel')}</label>
-            <input
+            <Label htmlFor="profile-last-name">{t('lastNameLabel')}</Label>
+            <Input
+              id="profile-last-name"
               type="text"
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
-              className="w-full p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-semibold"
+              className="p-3.5 font-semibold"
             />
           </div>
           {isMaster && (
             <div className="space-y-1">
-              <label className="font-bold text-slate-700 dark:text-slate-300">{t('displayNameLabel')}</label>
-              <input
+              <Label htmlFor="profile-display-name">{t('displayNameLabel')}</Label>
+              <Input
+                id="profile-display-name"
                 type="text"
                 value={displayName}
                 onChange={(e) => setDisplayName(e.target.value)}
-                className="w-full p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-semibold"
+                className="p-3.5 font-semibold"
               />
               <span className="text-[10px] text-slate-400">{t('displayNameHint')}</span>
             </div>
           )}
           <div className="space-y-1">
-            <label className="font-bold text-slate-700 dark:text-slate-300">{t('phoneLabel')}</label>
-            <input
+            <Label htmlFor="profile-phone">{t('phoneLabel')}</Label>
+            <Input
+              id="profile-phone"
               type="text"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              className="w-full p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-semibold"
+              className="p-3.5 font-semibold"
             />
           </div>
           <div className="space-y-1">
-            <label className="font-bold text-slate-700 dark:text-slate-300">{t('cityLabel')}</label>
-            <select
-              value={cityId}
-              onChange={(e) => setCityId(e.target.value)}
-              className="w-full p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-semibold"
-            >
-              {cities.map((c) => (
-                <option key={c.id} value={c.id}>{c.name}</option>
-              ))}
-            </select>
+            <Label htmlFor="profile-city">{t('cityLabel')}</Label>
+            <Select value={cityId} onValueChange={setCityId}>
+              <SelectTrigger id="profile-city" className="w-full p-3.5 font-semibold">
+                <SelectValue placeholder={t('cityLabel')} />
+              </SelectTrigger>
+              <SelectContent>
+                {cities.map((c) => (
+                  <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           {isMaster && (
             <div className="space-y-1">
-              <label className="font-bold text-slate-700 dark:text-slate-300">{t('experienceLabel')}</label>
-              <input
+              <Label htmlFor="profile-experience">{t('experienceLabel')}</Label>
+              <Input
+                id="profile-experience"
                 type="number"
                 min="0"
                 max="70"
                 value={yearsOfExperience}
                 onChange={(e) => setYearsOfExperience(e.target.value)}
-                className="w-full p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-semibold"
+                className="p-3.5 font-semibold"
               />
             </div>
           )}
           {isMaster && (
             <div className="space-y-1">
-              <label className="font-bold text-slate-700 dark:text-slate-300">{t('radiusLabel')}</label>
-              <input
+              <Label htmlFor="profile-radius">{t('radiusLabel')}</Label>
+              <Input
+                id="profile-radius"
                 type="number"
                 min="1"
                 max="200"
                 value={serviceRadiusKm}
                 onChange={(e) => setServiceRadiusKm(e.target.value)}
-                className="w-full p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-semibold"
+                className="p-3.5 font-semibold"
               />
             </div>
           )}
@@ -353,12 +369,13 @@ export default function EditProfilePage() {
 
         {isMaster && (
           <div className="space-y-1 text-xs">
-            <label className="font-bold text-slate-700 dark:text-slate-300">{t('bioLabel')}</label>
-            <textarea
+            <Label htmlFor="profile-bio">{t('bioLabel')}</Label>
+            <Textarea
+              id="profile-bio"
               rows={4}
               value={bio}
               onChange={(e) => setBio(e.target.value)}
-              className="w-full p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-semibold"
+              className="p-3.5 font-semibold"
             />
           </div>
         )}
@@ -371,29 +388,33 @@ export default function EditProfilePage() {
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1">
-                <label className="font-bold text-slate-700 dark:text-slate-300">{t('whatsappNumberLabel')}</label>
-                <input
+                <Label htmlFor="profile-whatsapp">{t('whatsappNumberLabel')}</Label>
+                <Input
+                  id="profile-whatsapp"
                   type="tel"
                   value={whatsappPhone}
                   onChange={(e) => setWhatsappPhone(e.target.value)}
                   placeholder="+992901234567"
-                  className="w-full p-3.5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-semibold text-xs"
+                  className="p-3.5 bg-white dark:bg-slate-800 font-semibold"
                 />
                 <p className="text-[10px] text-slate-400">{t('whatsappNumberHint')}</p>
               </div>
               <div className="space-y-1">
-                <label className="font-bold text-slate-700 dark:text-slate-300">{t('whatsappEnabledLabel')}</label>
-                <button
+                <Label htmlFor="profile-whatsapp-toggle">{t('whatsappEnabledLabel')}</Label>
+                <Button
+                  id="profile-whatsapp-toggle"
                   type="button"
+                  aria-pressed={whatsappEnabled}
                   onClick={() => setWhatsappEnabled(!whatsappEnabled)}
-                  className={`w-full py-3 rounded-2xl text-xs font-bold transition ${
+                  className={cn(
+                    'w-full h-auto py-3 rounded-2xl text-xs font-bold',
                     whatsappEnabled
                       ? 'bg-[#25D366] text-white hover:bg-[#1ebe5d]'
-                      : 'bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-400'
-                  }`}
+                      : 'bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-400 hover:bg-slate-300 dark:hover:bg-slate-600',
+                  )}
                 >
                   {whatsappEnabled ? t('whatsappEnabled') : t('whatsappDisabled')}
-                </button>
+                </Button>
                 {whatsappChangedAt && (
                   <p className="text-[10px] text-amber-600 dark:text-amber-400 font-semibold">
                     {t('whatsappChanged', { date: fmt.dateTime(whatsappChangedAt) })}
@@ -402,15 +423,15 @@ export default function EditProfilePage() {
               </div>
             </div>
             {whatsappPhone && (
-              <a
-                href={waLink(whatsappPhone)!}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-[#25D366] hover:bg-[#1ebe5d] text-white text-xs font-bold shadow transition"
+              <Button
+                asChild
+                className="h-auto gap-2 px-5 py-2.5 rounded-2xl bg-[#25D366] hover:bg-[#1ebe5d] text-white text-xs font-bold shadow"
               >
-                <Icon name="whatsapp" size={16} />
-                {t('whatsappTest')}
-              </a>
+                <a href={waLink(whatsappPhone)!} target="_blank" rel="noopener noreferrer">
+                  <Icon name="whatsapp" size={16} />
+                  {t('whatsappTest')}
+                </a>
+              </Button>
             )}
             <p className="text-[10px] text-slate-500 dark:text-slate-400">{t('whatsappChangeWarning')}</p>
           </div>
@@ -439,29 +460,34 @@ export default function EditProfilePage() {
         {saved && <p className="text-xs font-bold text-emerald-600 dark:text-emerald-400">{t('savedOk')}</p>}
 
         <div className="flex items-center gap-3 pt-2">
-          <button
+          <Button
+            variant="brand"
             onClick={handleSave}
             disabled={saving}
-            className="px-8 py-3.5 rounded-2xl bg-amber-600 hover:bg-amber-700 text-white font-extrabold text-xs shadow-lg disabled:opacity-60 transition"
+            className="h-auto px-8 py-3.5 rounded-2xl bg-amber-600 hover:bg-amber-700 shadow-amber-600/25 text-xs"
           >
             {t('saveChanges')}
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="destructive"
             onClick={handleDelete}
             disabled={deleting}
-            className="px-5 py-3.5 rounded-2xl bg-red-50 dark:bg-red-950/40 text-red-600 dark:text-red-400 font-extrabold text-xs disabled:opacity-60 transition"
+            className="h-auto px-5 py-3.5 rounded-2xl bg-red-50 dark:bg-red-950/40 text-red-600 dark:text-red-400 font-extrabold text-xs"
           >
             {deleting ? '...' : t('deleteAccount')}
-          </button>
-          <Link
-            href="/settings/security"
-            className="px-5 py-3.5 rounded-2xl border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-extrabold text-xs hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center gap-2 ml-auto"
+          </Button>
+          <Button
+            asChild
+            variant="outline"
+            className="h-auto px-5 py-3.5 rounded-2xl border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-extrabold text-xs hover:bg-slate-100 dark:hover:bg-slate-800 gap-2 ml-auto"
           >
-            <Icon name="key" size={14} />
-            {t('securitySettings')}
-          </Link>
+            <Link href="/settings/security">
+              <Icon name="key" size={14} />
+              {t('securitySettings')}
+            </Link>
+          </Button>
         </div>
-      </div>
+      </Card>
     </div>
     </>
   );

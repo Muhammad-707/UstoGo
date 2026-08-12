@@ -12,6 +12,11 @@ import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { BANNER_POSITIONS, type Banner, type BannerPosition } from '@/lib/api/types';
 import { useDateFormat } from '@/lib/datetime';
 import { EmptyState } from '@/components/ui/EmptyState';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Card } from '@/components/ui/card';
 
 interface FormState {
   id: string;
@@ -168,13 +173,13 @@ export default function AdminBannersPage() {
       subtitle={t('subtitle')}
       action={
         <div className="flex items-center gap-2">
-          <button
+          <Button size="raw" variant="ghost"
             onClick={openCreate}
             className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-white/15 hover:bg-white/25 backdrop-blur text-white text-xs font-bold transition"
           >
             <Icon name="plus" size={14} />
             {t('addBanner')}
-          </button>
+          </Button>
           <Link
             href="/dashboard/admin"
             className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-white/15 hover:bg-white/25 backdrop-blur text-white text-xs font-bold transition"
@@ -192,7 +197,7 @@ export default function AdminBannersPage() {
       )}
 
       {formOpen && (
-        <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-5 shadow-xl">
+        <Card className="gap-0 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-5 shadow-xl">
           <h3 className="text-sm font-bold text-slate-900 dark:text-white">
             {form.id ? t('editBanner') : t('addBanner')}
           </h3>
@@ -207,42 +212,43 @@ export default function AdminBannersPage() {
                 )}
               </div>
               <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleImageChange} />
-              <button
+              <Button size="raw" variant="ghost"
                 onClick={() => fileInputRef.current?.click()}
                 disabled={uploading}
                 className="w-full py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-bold hover:bg-slate-200 dark:hover:bg-slate-700 disabled:opacity-60 transition"
               >
                 {uploading ? t('uploading') : form.imagePreview ? t('replaceImage') : t('uploadImage')}
-              </button>
+              </Button>
             </div>
 
             <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-              <input
+              <Input
                 placeholder={t('titleLabel')}
                 value={form.title}
                 onChange={(e) => setForm({ ...form, title: e.target.value })}
                 className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-semibold sm:col-span-2"
               />
-              <input
+              <Input
                 placeholder={t('subtitleLabel')}
                 value={form.subtitle}
                 onChange={(e) => setForm({ ...form, subtitle: e.target.value })}
                 className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-semibold sm:col-span-2"
               />
-              <input
+              <Input
                 placeholder={t('linkUrlLabel')}
                 value={form.linkUrl}
                 onChange={(e) => setForm({ ...form, linkUrl: e.target.value })}
                 className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-semibold sm:col-span-2"
               />
-              <select
-                value={form.position}
-                onChange={(e) => setForm({ ...form, position: e.target.value as BannerPosition })}
-                className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-semibold"
-              >
-                {BANNER_POSITIONS.map((p) => <option key={p} value={p}>{t(`position${p}`)}</option>)}
-              </select>
-              <input
+              <Select value={form.position} onValueChange={(value) => { setForm({ ...form, position: value as BannerPosition }); }}>
+                <SelectTrigger className="w-auto p-3 rounded-xl font-semibold">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                {BANNER_POSITIONS.map((p) => <SelectItem key={p} value={p}>{t(`position${p}`)}</SelectItem>)}
+                </SelectContent>
+              </Select>
+              <Input
                 type="number"
                 placeholder={t('sortOrderLabel')}
                 value={form.sortOrder}
@@ -251,7 +257,7 @@ export default function AdminBannersPage() {
               />
               <label className="space-y-1">
                 <span className="font-bold text-slate-500">{t('startsAtLabel')}</span>
-                <input
+                <Input
                   type="datetime-local"
                   value={form.startsAt}
                   onChange={(e) => setForm({ ...form, startsAt: e.target.value })}
@@ -260,7 +266,7 @@ export default function AdminBannersPage() {
               </label>
               <label className="space-y-1">
                 <span className="font-bold text-slate-500">{t('endsAtLabel')}</span>
-                <input
+                <Input
                   type="datetime-local"
                   value={form.endsAt}
                   onChange={(e) => setForm({ ...form, endsAt: e.target.value })}
@@ -268,29 +274,24 @@ export default function AdminBannersPage() {
                 />
               </label>
               <label className="flex items-center gap-2 font-semibold text-slate-700 dark:text-slate-300 sm:col-span-2">
-                <input
-                  type="checkbox"
-                  checked={form.isActive}
-                  onChange={(e) => setForm({ ...form, isActive: e.target.checked })}
-                  className="w-4 h-4"
-                />
+                <Checkbox checked={form.isActive} onCheckedChange={(checked) => setForm({ ...form, isActive: checked === true })} className="size-4" />
                 {t('isActiveLabel')}
               </label>
             </div>
           </div>
 
           <div className="flex items-center gap-2">
-            <button onClick={handleSave} disabled={saving || uploading} className="btn-success px-5 py-2.5 rounded-xl text-xs font-bold disabled:opacity-60 transition">
+            <Button size="raw" variant="ghost" onClick={handleSave} disabled={saving || uploading} className="btn-success px-5 py-2.5 rounded-xl text-xs font-bold disabled:opacity-60 transition">
               {saving ? '...' : t('save')}
-            </button>
-            <button onClick={() => setFormOpen(false)} className="px-5 py-2.5 rounded-xl bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition">
+            </Button>
+            <Button size="raw" variant="ghost" onClick={() => setFormOpen(false)} className="px-5 py-2.5 rounded-xl bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition">
               {t('cancel')}
-            </button>
+            </Button>
           </div>
-        </div>
+        </Card>
       )}
 
-      <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-4 shadow-xl">
+      <Card className="gap-0 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-4 shadow-xl">
         {loading && (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {Array.from({ length: 2 }).map((_, idx) => (
@@ -331,19 +332,19 @@ export default function AdminBannersPage() {
                     {t('windowLabel')}: {banner.startsAt ? fmt.date(banner.startsAt) : '∞'} — {banner.endsAt ? fmt.date(banner.endsAt) : '∞'}
                   </p>
                   <div className="flex gap-2 pt-1">
-                    <button onClick={() => openEdit(banner)} className="px-3.5 py-2 rounded-xl bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition">
+                    <Button size="raw" variant="ghost" onClick={() => openEdit(banner)} className="px-3.5 py-2 rounded-xl bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition">
                       {t('edit')}
-                    </button>
-                    <button onClick={() => handleDelete(banner.id)} className="px-3.5 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold transition">
+                    </Button>
+                    <Button size="raw" variant="ghost" onClick={() => handleDelete(banner.id)} className="px-3.5 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold transition">
                       {t('delete')}
-                    </button>
+                    </Button>
                   </div>
                 </div>
               </div>
             ))}
           </div>
         )}
-      </div>
+      </Card>
     </DashboardLayout>
   );
 }

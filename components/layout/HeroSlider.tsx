@@ -9,6 +9,9 @@ import { Icon } from '@/components/icons/LucideIcons';
 import { bannersApi, mastersApi } from '@/lib/api/endpoints';
 import type { Banner, MasterPublic } from '@/lib/api/types';
 import { getAvatarUrl } from '@/lib/placeholders';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 
 export interface SlideData {
   id: number;
@@ -196,33 +199,46 @@ export default function HeroSlider() {
       {/* =================================================== */}
       {/* 2. NAVIGATION ARROWS (DESKTOP & TABLET) */}
       {/* =================================================== */}
-      <button
+      <Button size="raw" variant="ghost"
         onClick={prevSlide}
         aria-label={t('prevSlideAria')}
         className="hidden sm:flex absolute left-6 top-1/2 -translate-y-1/2 z-40 w-12 h-12 rounded-2xl bg-white/10 hover:bg-white/25 border border-white/20 text-white items-center justify-center shadow-2xl backdrop-blur-md transition-all duration-300 hover:scale-110 active:scale-95 group"
       >
         <Icon name="ChevronLeft" size={24} className="group-hover:-translate-x-0.5 transition-transform" />
-      </button>
+      </Button>
 
-      <button
+      <Button size="raw" variant="ghost"
         onClick={nextSlide}
         aria-label={t('nextSlideAria')}
         className="hidden sm:flex absolute right-6 top-1/2 -translate-y-1/2 z-40 w-12 h-12 rounded-2xl bg-white/10 hover:bg-white/25 border border-white/20 text-white items-center justify-center shadow-2xl backdrop-blur-md transition-all duration-300 hover:scale-110 active:scale-95 group"
       >
         <Icon name="ChevronRight" size={24} className="group-hover:translate-x-0.5 transition-transform" />
-      </button>
+      </Button>
 
       {/* =================================================== */}
       {/* 3. CURRENT SLIDE INDICATOR BADGE (1/6) */}
       {/* =================================================== */}
-      <div className="absolute top-6 right-6 z-40 px-3.5 py-1.5 rounded-full bg-slate-900/80 border border-slate-700/80 text-white text-xs font-mono font-bold backdrop-blur-md shadow-lg flex items-center gap-2">
-        <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-        <span>{String(currentIndex + 1).padStart(2, '0')} / {String(slideCount).padStart(2, '0')}</span>
+      <div className="absolute top-6 right-6 z-40 overflow-hidden rounded-xl bg-slate-950/75 ring-1 ring-white/10 backdrop-blur-xl shadow-lg shadow-black/40">
+        <div className="flex items-baseline gap-1.5 px-3.5 py-2">
+          <span className="text-sm font-mono font-bold tabular-nums leading-none text-white">
+            {String(currentIndex + 1).padStart(2, '0')}
+          </span>
+          {/* Hairline slash instead of a typed “/” — keeps the two numbers reading as one unit */}
+          <span className="w-px h-3 self-center rotate-[18deg] bg-white/25" />
+          <span className="text-[11px] font-mono font-semibold tabular-nums leading-none text-slate-400">
+            {String(slideCount).padStart(2, '0')}
+          </span>
+        </div>
+        {/* Autoplay progress rides the full bottom edge of the chip */}
+        <span
+          className="absolute bottom-0 left-0 h-[2px] bg-gradient-to-r from-sky-400 to-blue-500 transition-all duration-700 ease-out"
+          style={{ width: `${((currentIndex + 1) / slideCount) * 100}%` }}
+        />
       </div>
 
       {/* Active Slide Category Pill (Top Left) */}
       {(usingBanners ? slides[currentIndex]?.category : true) && (
-        <div className="absolute top-6 left-6 z-40 hidden sm:flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-600/30 border border-blue-400/40 text-blue-200 text-xs font-semibold backdrop-blur-md shadow-md">
+        <div className="absolute top-6 left-6 z-40 hidden sm:flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-600/30 border border-blue-400/40 text-white text-xs font-bold tracking-wide [text-shadow:0_1px_3px_rgba(2,6,23,0.7)] backdrop-blur-md shadow-md">
           <Icon name="Sparkles" size={14} className="text-amber-400 animate-spin-slow" />
           <span>{usingBanners ? slides[currentIndex].category : t(slides[currentIndex].category)}</span>
         </div>
@@ -259,12 +275,12 @@ export default function HeroSlider() {
           <div className="relative flex flex-col sm:flex-row items-center bg-slate-900/90 backdrop-blur-xl rounded-2xl p-2 shadow-2xl border border-slate-700/80 gap-2">
             <div className="flex items-center gap-3 pl-4 flex-1 w-full">
               <Icon name="Search" size={22} className="text-slate-400" />
-              <input
+              <Input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder={t('searchPlaceholder')}
-                className="w-full bg-transparent py-3 text-sm sm:text-base text-white placeholder-slate-400 focus:outline-none"
+                className="w-full border-0 bg-transparent dark:bg-transparent rounded-none px-0 py-3 text-sm sm:text-base text-white placeholder:text-slate-400 dark:text-white focus-visible:border-0 focus-visible:ring-0"
               />
             </div>
 
@@ -303,16 +319,19 @@ export default function HeroSlider() {
         {/* Hero Visual Showcase Cards (3 Top Masters) */}
         <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
           {showcaseMasters.map((master, idx) => (
-            <div
+            <Card
               key={master.id}
               className={
-                idx === 1
-                  ? 'glass-card rounded-3xl p-5 relative overflow-hidden group bg-slate-900/80 border-2 border-blue-500/50 backdrop-blur-xl hover:border-blue-400 transition duration-300 shadow-xl shadow-blue-900/20'
-                  : 'glass-card rounded-3xl p-5 relative overflow-hidden group bg-slate-900/70 border border-slate-800/80 backdrop-blur-xl hover:border-blue-500/50 transition duration-300'
+                // The badge marks the highest-rated master, and the list arrives sorted
+                // rating:desc — so the featured styling belongs on the first card, not the middle one.
+                idx === 0
+                  ? 'rounded-3xl p-5 relative overflow-hidden group bg-slate-900/80 border-2 border-blue-500/50 backdrop-blur-xl hover:border-blue-400 transition duration-300 shadow-xl shadow-blue-900/20'
+                  : 'rounded-3xl p-5 relative overflow-hidden group bg-slate-900/70 border border-slate-800/80 backdrop-blur-xl hover:border-blue-500/50 transition duration-300'
               }
             >
-              {idx === 1 && (
-                <div className="absolute top-3 right-3 px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[10px] font-extrabold uppercase">
+              {idx === 0 && (
+                // Same chip treatment as the hero category pill, so the two badges read as one family
+                <div className="absolute top-3 right-3 px-3 py-1 rounded-full bg-blue-600/70 border border-blue-400/40 text-white text-[10px] font-extrabold uppercase tracking-wide [text-shadow:0_1px_3px_rgba(2,6,23,0.7)] backdrop-blur-md shadow-md">
                   {t('topRatedBadge')}
                 </div>
               )}
@@ -337,7 +356,7 @@ export default function HeroSlider() {
                   <Icon name="ChevronRight" size={14} />
                 </Link>
               </div>
-            </div>
+            </Card>
           ))}
         </div>
 
@@ -350,7 +369,7 @@ export default function HeroSlider() {
         {slides.map((slide, idx) => {
           const isActive = idx === currentIndex;
           return (
-            <button
+            <Button size="raw" variant="ghost"
               key={slide.id}
               onClick={() => setCurrentIndex(idx)}
               aria-label={t('goToSlideAria', { n: idx + 1 })}

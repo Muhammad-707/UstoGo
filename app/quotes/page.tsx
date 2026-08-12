@@ -11,6 +11,11 @@ import { useAuth } from '@/contexts/AuthContext';
 import { ClientPageHeader } from '@/components/client/ClientPageHeader';
 import { MasterPageHeader } from '@/components/master/MasterPageHeader';
 import { EmptyState } from '@/components/ui/EmptyState';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Card } from '@/components/ui/card';
 
 const PRICE_TYPES: PriceType[] = ['FIXED', 'HOURLY', 'FROM'];
 
@@ -132,7 +137,7 @@ export default function QuotesPage() {
 
       <div className="space-y-4">
         {quotes.map((quote) => (
-          <div key={quote.id} className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 p-6 space-y-3">
+          <Card key={quote.id} className="gap-0 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 space-y-3">
             <div className="flex items-start justify-between gap-4">
               <div className="min-w-0">
                 <h3 className="text-sm font-extrabold text-slate-900 dark:text-white">
@@ -170,25 +175,25 @@ export default function QuotesPage() {
 
             {isMaster && quote.status === 'PENDING' && respondingId !== quote.id && decliningId !== quote.id && (
               <div className="flex gap-3 pt-1">
-                <button
+                <Button size="raw" variant="ghost"
                   onClick={() => startRespond(quote)}
                   className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs transition"
                 >
                   {t('respond')}
-                </button>
-                <button
+                </Button>
+                <Button size="raw" variant="ghost"
                   onClick={() => startDecline(quote)}
                   className="px-4 py-2 rounded-xl border border-red-200 dark:border-red-900 text-red-600 dark:text-red-400 font-bold text-xs transition"
                 >
                   {t('decline')}
-                </button>
+                </Button>
               </div>
             )}
 
             {respondingId === quote.id && (
               <div className="pt-2 space-y-3 border-t border-slate-100 dark:border-slate-800">
                 <div className="grid grid-cols-2 gap-3">
-                  <input
+                  <Input
                     type="number"
                     min="0.01"
                     step="0.01"
@@ -197,17 +202,18 @@ export default function QuotesPage() {
                     placeholder={t('estimatedPriceLabel')}
                     className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold"
                   />
-                  <select
-                    value={priceType}
-                    onChange={(e) => setPriceType(e.target.value as PriceType)}
-                    className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold"
-                  >
-                    {PRICE_TYPES.map((pt) => (
-                      <option key={String(pt)} value={String(pt)}>{t(`priceType.${String(pt)}`)}</option>
-                    ))}
-                  </select>
+                  <Select value={String(priceType)} onValueChange={(value) => setPriceType(value as PriceType)}>
+                    <SelectTrigger className="p-3 rounded-xl text-xs font-semibold">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {PRICE_TYPES.map((pt) => (
+                        <SelectItem key={String(pt)} value={String(pt)}>{t(`priceType.${String(pt)}`)}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
-                <textarea
+                <Textarea
                   value={note}
                   onChange={(e) => setNote(e.target.value)}
                   rows={2}
@@ -215,19 +221,19 @@ export default function QuotesPage() {
                   className="w-full p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold"
                 />
                 <div className="flex gap-3">
-                  <button onClick={submitRespond} disabled={saving} className="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs disabled:opacity-60">
+                  <Button size="raw" variant="ghost" onClick={submitRespond} disabled={saving} className="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs disabled:opacity-60">
                     {t('sendResponse')}
-                  </button>
-                  <button onClick={() => setRespondingId(null)} className="px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 font-extrabold text-xs">
+                  </Button>
+                  <Button size="raw" variant="ghost" onClick={() => setRespondingId(null)} className="px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 font-extrabold text-xs">
                     {t('cancelAction')}
-                  </button>
+                  </Button>
                 </div>
               </div>
             )}
 
             {decliningId === quote.id && (
               <div className="pt-2 space-y-3 border-t border-slate-100 dark:border-slate-800">
-                <textarea
+                <Textarea
                   value={declineReason}
                   onChange={(e) => setDeclineReason(e.target.value)}
                   rows={2}
@@ -236,16 +242,16 @@ export default function QuotesPage() {
                   className="w-full p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold"
                 />
                 <div className="flex gap-3">
-                  <button onClick={submitDecline} disabled={saving} className="px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-extrabold text-xs disabled:opacity-60">
+                  <Button size="raw" variant="ghost" onClick={submitDecline} disabled={saving} className="px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-extrabold text-xs disabled:opacity-60">
                     {t('sendDecline')}
-                  </button>
-                  <button onClick={() => setDecliningId(null)} className="px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 font-extrabold text-xs">
+                  </Button>
+                  <Button size="raw" variant="ghost" onClick={() => setDecliningId(null)} className="px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 font-extrabold text-xs">
                     {t('cancelAction')}
-                  </button>
+                  </Button>
                 </div>
               </div>
             )}
-          </div>
+          </Card>
         ))}
       </div>
     </div>

@@ -12,6 +12,8 @@ import type { Order, Paginated } from '@/lib/api/types';
 import { useMoney } from '@/lib/money';
 import { useDateFormat } from '@/lib/datetime';
 import { EmptyState } from '@/components/ui/EmptyState';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 
 const STATUS_STYLE: Record<string, string> = {
   PAID: 'bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300',
@@ -73,7 +75,7 @@ export default function AdminMarketplaceOrdersPage() {
         </div>
       )}
 
-      <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-4 shadow-xl">
+      <Card className="gap-0 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-4 shadow-xl">
         {loading && (
           <div className="space-y-2">
             {Array.from({ length: 4 }).map((_, idx) => <div key={idx} className="h-20 rounded-2xl bg-slate-50 dark:bg-slate-800/40 animate-pulse" />)}
@@ -92,9 +94,9 @@ export default function AdminMarketplaceOrdersPage() {
                   <span className={`px-2.5 py-1 rounded-full text-[10px] font-extrabold ${STATUS_STYLE[order.status] ?? ''}`}>{t(`status${order.status}`)}</span>
                   <span className="text-sm font-extrabold text-slate-900 dark:text-white">{money(order.totalAmount)}</span>
                   {order.status === 'PAID' && (
-                    <button onClick={() => handleCancel(order.id)} disabled={actingId === order.id} className="px-3.5 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold disabled:opacity-60 transition">
+                    <Button size="raw" variant="ghost" onClick={() => handleCancel(order.id)} disabled={actingId === order.id} className="px-3.5 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold disabled:opacity-60 transition">
                       {t('cancel')}
-                    </button>
+                    </Button>
                   )}
                 </div>
               </div>
@@ -104,12 +106,12 @@ export default function AdminMarketplaceOrdersPage() {
 
         {!loading && result && result.meta.totalPages > 1 && (
           <div className="flex items-center justify-between pt-2">
-            <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page <= 1} className="px-4 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 text-xs font-bold disabled:opacity-40">{t('prev')}</button>
+            <Button size="raw" variant="ghost" onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page <= 1} className="px-4 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 text-xs font-bold disabled:opacity-40">{t('prev')}</Button>
             <span className="text-xs font-bold text-slate-500">{t('pageOf', { page, total: result.meta.totalPages })}</span>
-            <button onClick={() => setPage((p) => Math.min(result.meta.totalPages, p + 1))} disabled={page >= result.meta.totalPages} className="px-4 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 text-xs font-bold disabled:opacity-40">{t('next')}</button>
+            <Button size="raw" variant="ghost" onClick={() => setPage((p) => Math.min(result.meta.totalPages, p + 1))} disabled={page >= result.meta.totalPages} className="px-4 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 text-xs font-bold disabled:opacity-40">{t('next')}</Button>
           </div>
         )}
-      </div>
+      </Card>
     </DashboardLayout>
   );
 }

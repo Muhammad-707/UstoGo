@@ -9,6 +9,8 @@ import { revalidateMastersCache } from '@/lib/api/revalidate';
 import { resolveOwnFileUrl, uploadFile } from '@/lib/api/upload';
 import type { PortfolioImage } from '@/lib/api/types';
 import { MasterPageHeader } from '@/components/master/MasterPageHeader';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 
 const MAX_IMAGES = 20;
 
@@ -110,13 +112,13 @@ export default function PortfolioPage() {
             className="hidden"
             onChange={handleUpload}
           />
-          <button
+          <Button
             onClick={() => inputRef.current?.click()}
             disabled={uploading || images.length >= MAX_IMAGES}
-            className="px-5 py-2.5 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-extrabold text-xs shadow-lg shadow-amber-900/20 disabled:opacity-60 transition"
+            className="h-auto px-5 py-2.5 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-extrabold text-xs shadow-lg shadow-amber-900/20"
           >
             {uploading ? t('uploading') : `+ ${t('addImage')}`}
-          </button>
+          </Button>
         </>
       }
     />
@@ -128,7 +130,7 @@ export default function PortfolioPage() {
         </div>
       )}
 
-      <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-xl">
+      <Card className="rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-xl">
         {loading && <p className="text-xs text-slate-400 font-semibold">{t('loading')}</p>}
         {!loading && images.length === 0 && (
           <div className="py-12 text-center space-y-3">
@@ -152,29 +154,32 @@ export default function PortfolioPage() {
                 </div>
               )}
               <div className="absolute inset-0 bg-slate-900/60 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-2">
-                <button
+                <Button
+                  size="icon"
                   onClick={() => move(index, -1)}
                   disabled={index === 0}
-                  className="p-2 rounded-xl bg-white/20 text-white disabled:opacity-30"
+                  className="rounded-xl bg-white/20 hover:bg-white/30 text-white disabled:opacity-30"
                   title={t('moveLeft')}
                 >
                   <Icon name="chevron-left" size={16} />
-                </button>
-                <button
+                </Button>
+                <Button
+                  size="icon"
                   onClick={() => move(index, 1)}
                   disabled={index === images.length - 1}
-                  className="p-2 rounded-xl bg-white/20 text-white disabled:opacity-30"
+                  className="rounded-xl bg-white/20 hover:bg-white/30 text-white disabled:opacity-30"
                   title={t('moveRight')}
                 >
                   <Icon name="chevron-right" size={16} />
-                </button>
-                <button
+                </Button>
+                <Button
+                  size="icon"
                   onClick={() => handleRemove(item)}
-                  className="p-2 rounded-xl bg-red-500/80 text-white"
+                  className="rounded-xl bg-red-500/80 hover:bg-red-600 text-white"
                   title={t('remove')}
                 >
                   <Icon name="x" size={16} />
-                </button>
+                </Button>
               </div>
             </div>
           ))}
@@ -182,7 +187,7 @@ export default function PortfolioPage() {
         <p className="text-[10px] text-slate-400 font-bold mt-4">
           {t('count', { current: images.length, max: MAX_IMAGES })}
         </p>
-      </div>
+      </Card>
     </div>
     </>
   );

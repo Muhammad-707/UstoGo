@@ -12,6 +12,8 @@ import { useRequireAuth } from '@/hooks/useRequireAuth';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import type { AdminMasterStats, MasterPublic } from '@/lib/api/types';
 import { getAvatarUrl } from '@/lib/placeholders';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 
 const STARS = ['5', '4', '3', '2', '1'] as const;
 
@@ -98,7 +100,7 @@ export default function AdminMasterStatsPage() {
       {loading && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           {Array.from({ length: 4 }).map((_, idx) => (
-            <div key={idx} className="glass-card p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl h-[100px] animate-pulse" />
+            <Card key={idx} className="p-6 border-slate-200 dark:border-slate-800 shadow-xl h-[100px] animate-pulse" />
           ))}
         </div>
       )}
@@ -106,7 +108,7 @@ export default function AdminMasterStatsPage() {
       {!loading && master && stats && (
         <>
           {/* Master header */}
-          <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-xl flex flex-col sm:flex-row sm:items-center gap-4 justify-between">
+          <Card className="rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-xl flex flex-col sm:flex-row sm:items-center gap-4 justify-between">
             <div className="flex items-center gap-4">
               <img
                 src={master.avatarUrl ?? getAvatarUrl(master.id, master.displayName)}
@@ -132,7 +134,7 @@ export default function AdminMasterStatsPage() {
             <div className="flex flex-wrap items-center gap-2">
               {/* Moderator suspension — distinct from the master's own vacation toggle;
                   the reason given here is what lands in the audit log. */}
-              <button
+              <Button size="raw" variant="ghost"
                 onClick={handleToggleActive}
                 disabled={togglingActive}
                 className={`px-5 py-2.5 rounded-2xl text-xs font-bold shadow transition disabled:opacity-60 ${
@@ -140,7 +142,7 @@ export default function AdminMasterStatsPage() {
                 }`}
               >
                 {togglingActive ? '...' : master.isActive ? t('deactivate') : t('activate')}
-              </button>
+              </Button>
               {master.whatsappPhone && (
                 <a
                   href={waLink(master.whatsappPhone) ?? '#'}
@@ -153,7 +155,7 @@ export default function AdminMasterStatsPage() {
                 </a>
               )}
             </div>
-          </div>
+          </Card>
 
           {/* Key metrics */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5">
@@ -164,7 +166,7 @@ export default function AdminMasterStatsPage() {
               { label: t('avgRating'), value: `${stats.avgRating.toFixed(2)} (${stats.ratingCount})`, icon: 'star', color: 'from-purple-600 to-indigo-600' },
               { label: t('npsLabel'), value: stats.nps ?? '—', icon: 'trendingup', color: 'from-rose-500 to-pink-500' },
             ].map((m, idx) => (
-              <div key={idx} className="glass-card p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl flex items-center justify-between">
+              <Card key={idx} className="p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl flex items-center justify-between">
                 <div className="space-y-1">
                   <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{m.label}</span>
                   <h3 className="text-2xl font-extrabold text-slate-900 dark:text-white">{m.value}</h3>
@@ -172,7 +174,7 @@ export default function AdminMasterStatsPage() {
                 <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${m.color} text-white flex items-center justify-center shadow-lg`}>
                   <Icon name={m.icon} size={20} />
                 </div>
-              </div>
+              </Card>
             ))}
           </div>
 
@@ -182,7 +184,7 @@ export default function AdminMasterStatsPage() {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
             {/* Reviews breakdown */}
-            <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-4 shadow-xl">
+            <Card className="gap-0 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-4 shadow-xl">
               <h3 className="text-sm font-bold text-slate-900 dark:text-white">{t('reviewsBreakdown')}</h3>
               <div className="space-y-2">
                 {STARS.map((star) => (
@@ -200,10 +202,10 @@ export default function AdminMasterStatsPage() {
                   </div>
                 ))}
               </div>
-            </div>
+            </Card>
 
             {/* Top services */}
-            <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-4 shadow-xl">
+            <Card className="gap-0 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-4 shadow-xl">
               <h3 className="text-sm font-bold text-slate-900 dark:text-white">{t('topServices')}</h3>
               {stats.topServices.length === 0 && <p className="text-xs text-slate-400 font-semibold">{t('noServices')}</p>}
               <div className="space-y-2">
@@ -217,11 +219,11 @@ export default function AdminMasterStatsPage() {
                   </div>
                 ))}
               </div>
-            </div>
+            </Card>
           </div>
 
           {/* Monthly series */}
-          <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-6 shadow-xl">
+          <Card className="gap-0 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-6 shadow-xl">
             <h3 className="text-sm font-bold text-slate-900 dark:text-white">{t('monthlySeries')}</h3>
             {stats.monthlySeries.length === 0 ? (
               <p className="text-xs text-slate-400 font-semibold">{t('noMonthlyData')}</p>
@@ -245,7 +247,7 @@ export default function AdminMasterStatsPage() {
                 ))}
               </div>
             )}
-          </div>
+          </Card>
         </>
       )}
     </DashboardLayout>

@@ -8,6 +8,7 @@ import { authApi } from '@/lib/api/endpoints';
 import { ApiError } from '@/lib/api/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { AuthShell } from '@/components/auth/AuthShell';
+import { Button } from '@/components/ui/button';
 
 function VerifyEmailContent() {
   const t = useTranslations('authVerifyEmail');
@@ -65,12 +66,9 @@ function VerifyEmailContent() {
             </div>
             <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white">{t('successTitle')}</h2>
             <p className="text-xs text-slate-500">{t('successDesc')}</p>
-            <Link
-              href={user ? '/' : '/auth/login'}
-              className="inline-block px-6 py-3 rounded-xl bg-blue-600 text-white font-bold text-xs"
-            >
-              {user ? t('continue') : t('goToLogin')}
-            </Link>
+            <Button asChild variant="brand" className="h-auto px-6 py-3 rounded-xl text-xs">
+              <Link href={user ? '/' : '/auth/login'}>{user ? t('continue') : t('goToLogin')}</Link>
+            </Button>
           </div>
         )}
 
@@ -82,13 +80,14 @@ function VerifyEmailContent() {
             <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white">{t('errorTitle')}</h2>
             <p className="text-xs text-slate-500">{error}</p>
             {user && !resent && (
-              <button
+              <Button
                 onClick={handleResend}
                 disabled={resending}
-                className="px-6 py-3 rounded-xl bg-blue-600 text-white font-bold text-xs disabled:opacity-60"
+                variant="brand"
+                className="h-auto px-6 py-3 rounded-xl text-xs"
               >
                 {resending ? t('resending') : t('resendLink')}
-              </button>
+              </Button>
             )}
             {resent && <p className="text-xs font-bold text-emerald-600 dark:text-emerald-400">{t('resentDesc')}</p>}
             <Link href="/auth/login" className="block text-xs font-bold text-slate-500 hover:underline">

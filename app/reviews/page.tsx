@@ -12,6 +12,16 @@ import { getAvatarUrl } from '@/lib/placeholders';
 import { FilterContainer, FilterItem } from '@/components/ui/FilterAnimate';
 import { LeaderboardPanel } from '@/components/masters/LeaderboardPanel';
 import { useDateFormat } from '@/lib/datetime';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
 
 type ReviewsTab = 'reviews' | 'leaderboard';
 
@@ -143,7 +153,7 @@ export default function ReviewsPage() {
       <div className="flex justify-center">
         <div className="inline-flex items-center gap-1 p-1.5 rounded-2xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
           {tabs.map((item) => (
-            <button
+            <Button size="raw" variant="ghost"
               key={item.id}
               onClick={() => setTab(item.id)}
               className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-extrabold transition-all duration-200 ${
@@ -154,7 +164,7 @@ export default function ReviewsPage() {
             >
               <Icon name={item.icon} size={15} />
               {item.label}
-            </button>
+            </Button>
           ))}
         </div>
       </div>
@@ -192,12 +202,12 @@ export default function ReviewsPage() {
           </div>
 
           {!isMaster && (
-            <button
+            <Button size="raw" variant="ghost"
               onClick={openModal}
               className="px-6 py-3.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-lg transition btn-ripple"
             >
               {t('writeReview')}
-            </button>
+            </Button>
           )}
 
         </div>
@@ -234,7 +244,7 @@ export default function ReviewsPage() {
             {isMaster && !rev.reply && (
               replyOpenFor === rev.id ? (
                 <div className="space-y-2">
-                  <textarea
+                  <Textarea
                     rows={2}
                     value={replyDrafts[rev.id] ?? ''}
                     onChange={(e) => setReplyDrafts((prev) => ({ ...prev, [rev.id]: e.target.value }))}
@@ -242,28 +252,28 @@ export default function ReviewsPage() {
                     className="w-full p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs"
                   />
                   <div className="flex items-center gap-2">
-                    <button
+                    <Button size="raw" variant="ghost"
                       onClick={() => handleReply(rev.id)}
                       disabled={replySubmittingFor === rev.id || !(replyDrafts[rev.id] ?? '').trim()}
                       className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold disabled:opacity-50"
                     >
                       {t('sendReply')}
-                    </button>
-                    <button
+                    </Button>
+                    <Button size="raw" variant="ghost"
                       onClick={() => setReplyOpenFor(null)}
                       className="px-4 py-2 rounded-xl text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 text-xs font-bold"
                     >
                       {t('cancelReply')}
-                    </button>
+                    </Button>
                   </div>
                 </div>
               ) : (
-                <button
+                <Button size="raw" variant="ghost"
                   onClick={() => setReplyOpenFor(rev.id)}
                   className="text-xs font-bold text-blue-600 dark:text-sky-400 hover:underline"
                 >
                   {t('replyToReview')}
-                </button>
+                </Button>
               )
             )}
           </FilterItem>
@@ -274,35 +284,32 @@ export default function ReviewsPage() {
       )}
 
       {/* Write Review Modal (Client rates Master) */}
-      {modalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm">
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-8 rounded-3xl max-w-md w-full space-y-4 shadow-2xl animate-fade-in">
-            <div className="flex justify-between items-center">
-              <h3 className="font-extrabold text-slate-900 dark:text-white text-lg">{t('modalTitle')}</h3>
-              <button onClick={() => setModalOpen(false)} className="text-slate-400 hover:text-slate-600">
-                <Icon name="X" size={20} />
-              </button>
-            </div>
+      <Dialog open={modalOpen} onOpenChange={setModalOpen}>
+        <DialogContent className="gap-4">
+            <DialogHeader>
+              <DialogTitle>{t('modalTitle')}</DialogTitle>
+            </DialogHeader>
 
             {completedBookings.length === 0 ? (
               <p className="text-xs text-slate-500">{t('noCompletedBookingsToReview')}</p>
             ) : (
               <>
                 <div className="space-y-2">
-                  <label className="text-xs font-bold text-slate-400">{t('bookingLabel')}</label>
-                  <select
-                    value={bookingId}
-                    onChange={(e) => setBookingId(e.target.value)}
-                    className="w-full p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs"
-                  >
-                    {completedBookings.map((b) => (
-                      <option key={b.id} value={b.id}>{b.serviceTitle} — {b.masterDisplayName}</option>
-                    ))}
-                  </select>
+                  <Label htmlFor="review-booking" className="text-slate-400">{t('bookingLabel')}</Label>
+                  <Select value={bookingId || undefined} onValueChange={setBookingId}>
+                    <SelectTrigger id="review-booking" className="p-3 rounded-xl">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {completedBookings.map((b) => (
+                        <SelectItem key={b.id} value={b.id}>{b.serviceTitle} — {b.masterDisplayName}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-xs font-bold text-slate-400">{t('ratingLabel')}</label>
+                  <Label className="text-slate-400">{t('ratingLabel')}</Label>
                   <div className="flex gap-2 text-amber-400">
                     {[1, 2, 3, 4, 5].map((s) => (
                       <Icon
@@ -317,10 +324,10 @@ export default function ReviewsPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-xs font-bold text-slate-400">{t('npsLabel')}</label>
+                  <Label className="text-slate-400">{t('npsLabel')}</Label>
                   <div className="flex gap-1">
                     {Array.from({ length: 11 }, (_, s) => s).map((s) => (
-                      <button
+                      <Button size="raw" variant="ghost"
                         key={s}
                         type="button"
                         onClick={() => setNpsScore(s)}
@@ -331,7 +338,7 @@ export default function ReviewsPage() {
                         }`}
                       >
                         {s}
-                      </button>
+                      </Button>
                     ))}
                   </div>
                   <div className="flex justify-between text-[10px] text-slate-400 font-semibold">
@@ -341,9 +348,9 @@ export default function ReviewsPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-xs font-bold text-slate-400">{t('wouldRecommendLabel')}</label>
+                  <Label className="text-slate-400">{t('wouldRecommendLabel')}</Label>
                   <div className="flex gap-2">
-                    <button
+                    <Button size="raw" variant="ghost"
                       type="button"
                       onClick={() => setWouldRecommend(true)}
                       className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition ${
@@ -353,8 +360,8 @@ export default function ReviewsPage() {
                       }`}
                     >
                       {t('yes')}
-                    </button>
-                    <button
+                    </Button>
+                    <Button size="raw" variant="ghost"
                       type="button"
                       onClick={() => setWouldRecommend(false)}
                       className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition ${
@@ -364,35 +371,37 @@ export default function ReviewsPage() {
                       }`}
                     >
                       {t('no')}
-                    </button>
+                    </Button>
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-xs font-bold text-slate-400">{t('commentsLabel')}</label>
-                  <textarea
+                  <Label htmlFor="review-comment" className="text-slate-400">{t('commentsLabel')}</Label>
+                  <Textarea
+                    id="review-comment"
                     rows={4}
                     value={comment}
                     onChange={(e) => setComment(e.target.value)}
                     placeholder={t('commentsPlaceholder')}
-                    className="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs"
+                    className="p-4"
                   />
                 </div>
 
                 {error && <p className="text-xs font-bold text-red-600 dark:text-red-400">{error}</p>}
 
-                <button
+                <Button
+                  variant="brand"
+                  size="xl"
                   onClick={handleSubmit}
                   disabled={submitting}
-                  className="w-full py-4 rounded-2xl bg-blue-600 text-white font-extrabold text-xs shadow-lg btn-ripple disabled:opacity-60"
+                  className="w-full"
                 >
                   {t('submitReview')}
-                </button>
+                </Button>
               </>
             )}
-          </div>
-        </div>
-      )}
+        </DialogContent>
+      </Dialog>
 
     </div>
   );

@@ -11,6 +11,14 @@ import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { AUDIT_ACTIONS, type AuditLog, type Paginated } from '@/lib/api/types';
 import { useDateFormat } from '@/lib/datetime';
 import { EmptyState } from '@/components/ui/EmptyState';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Card } from '@/components/ui/card';
+import { DatePicker } from '@/components/ui/date-picker';
+
+/** Radix has no empty-string option, so "any" travels as this sentinel. */
+const ANY = '__any';
 
 /** Colour-codes the destructive actions so a scan of the list surfaces them first. */
 function toneFor(action: string): string {
@@ -99,22 +107,24 @@ export default function AdminAuditLogsPage() {
         </div>
       )}
 
-      <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-5 shadow-xl">
+      <Card className="gap-0 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-5 shadow-xl">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
           <label className="space-y-1.5">
             <span className="font-bold text-slate-500">{t('actionLabel')}</span>
-            <select
-              value={action}
-              onChange={(e) => { setAction(e.target.value); setPage(1); }}
-              className="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-bold"
-            >
-              <option value="">{t('allActions')}</option>
-              {AUDIT_ACTIONS.map((a) => <option key={a} value={a}>{a}</option>)}
-            </select>
+            <Select value={action || ANY} onValueChange={(raw) => { const value = raw === ANY ? '' : raw; setAction(value); setPage(1); }}>
+              <SelectTrigger className="w-full p-2.5 rounded-xl font-bold">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value={ANY}>{t('allActions')}</SelectItem>
+              
+              {AUDIT_ACTIONS.map((a) => <SelectItem key={a} value={a}>{a}</SelectItem>)}
+              </SelectContent>
+            </Select>
           </label>
           <label className="space-y-1.5">
             <span className="font-bold text-slate-500">{t('entityTypeLabel')}</span>
-            <input
+            <Input
               value={entityType}
               onChange={(e) => { setEntityType(e.target.value); setPage(1); }}
               placeholder={t('entityTypePlaceholder')}
@@ -123,20 +133,20 @@ export default function AdminAuditLogsPage() {
           </label>
           <label className="space-y-1.5">
             <span className="font-bold text-slate-500">{t('fromLabel')}</span>
-            <input
-              type="date"
+            <DatePicker
               value={from}
-              onChange={(e) => { setFrom(e.target.value); setPage(1); }}
-              className="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-bold"
+              onChange={(value) => { setFrom(value); setPage(1); }}
+              aria-label={t('fromLabel')}
+              className="p-2.5 rounded-xl font-bold"
             />
           </label>
           <label className="space-y-1.5">
             <span className="font-bold text-slate-500">{t('toLabel')}</span>
-            <input
-              type="date"
+            <DatePicker
               value={to}
-              onChange={(e) => { setTo(e.target.value); setPage(1); }}
-              className="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-bold"
+              onChange={(value) => { setTo(value); setPage(1); }}
+              aria-label={t('toLabel')}
+              className="p-2.5 rounded-xl font-bold"
             />
           </label>
         </div>
@@ -145,9 +155,9 @@ export default function AdminAuditLogsPage() {
           <p className="text-xs font-bold text-slate-400">
             {result ? t('resultsCount', { count: result.meta.total }) : ''}
           </p>
-          <button onClick={resetFilters} className="text-xs font-bold text-purple-600 dark:text-purple-400 hover:underline">
+          <Button size="raw" variant="ghost" onClick={resetFilters} className="text-xs font-bold text-purple-600 dark:text-purple-400 hover:underline">
             {t('resetFilters')}
-          </button>
+          </Button>
         </div>
 
         {loading && (
@@ -168,7 +178,7 @@ export default function AdminAuditLogsPage() {
               const open = expandedId === log.id;
               return (
                 <div key={log.id} className="rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700 overflow-hidden">
-                  <button
+                  <Button size="raw" variant="ghost"
                     onClick={() => setExpandedId(open ? null : log.id)}
                     className="w-full p-4 flex items-center justify-between gap-3 text-left hover:bg-slate-100/60 dark:hover:bg-slate-800 transition"
                   >
@@ -187,7 +197,7 @@ export default function AdminAuditLogsPage() {
                       <span className="text-[10px] text-slate-400">{fmt.dateTime(log.createdAt)}</span>
                       <Icon name="chevrondown" size={14} className={`text-slate-400 transition-transform ${open ? 'rotate-180' : ''}`} />
                     </div>
-                  </button>
+                  </Button>
 
                   {open && (
                     <div className="px-4 pb-4 space-y-3 text-[11px]">
@@ -224,24 +234,24 @@ export default function AdminAuditLogsPage() {
 
         {!loading && result && result.meta.totalPages > 1 && (
           <div className="flex items-center justify-between pt-2">
-            <button
+            <Button size="raw" variant="ghost"
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page <= 1}
               className="px-4 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 text-xs font-bold disabled:opacity-40"
             >
               {t('prev')}
-            </button>
+            </Button>
             <span className="text-xs font-bold text-slate-500">{t('pageOf', { page, total: result.meta.totalPages })}</span>
-            <button
+            <Button size="raw" variant="ghost"
               onClick={() => setPage((p) => Math.min(result.meta.totalPages, p + 1))}
               disabled={page >= result.meta.totalPages}
               className="px-4 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 text-xs font-bold disabled:opacity-40"
             >
               {t('next')}
-            </button>
+            </Button>
           </div>
         )}
-      </div>
+      </Card>
     </DashboardLayout>
   );
 }

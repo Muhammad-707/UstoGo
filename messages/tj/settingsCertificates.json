@@ -7,6 +7,7 @@
   "certificateHint": "Сертификатҳои бо файл — дар саҳифаи оммавии шумо нишон дода мешаванд",
   "titlePlaceholder": "Номи сертификат",
   "issuerPlaceholder": "Додакунанда",
+  "issuedAtLabel": "Санаи додашуда",
   "uploadFile": "Пайваст кардани файл (расм/PDF)",
   "fileAttached": "✓ Файл пайваст шуд",
   "validationTitle": "Номи сертификат ҳатмист",

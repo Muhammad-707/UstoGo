@@ -11,6 +11,15 @@ import type { Category, City, MasterPublic } from '@/lib/api/types';
 import { getAvatarUrl } from '@/lib/placeholders';
 import { FavoriteButton } from '@/components/masters/FavoriteButton';
 import { FilterContainer, FilterItem, FilterButton, AnimatedGrid, AnimatedCard } from '@/components/ui/FilterAnimate';
+import { Input } from '@/components/ui/input';
+import { Slider } from '@/components/ui/slider';
+import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Card } from '@/components/ui/card';
+
+/** Radix has no empty-string option, so "any" travels as this sentinel. */
+const ANY = '__any';
 
 const SearchMap = dynamic(() => import('@/components/search/SearchMap'), {
   ssr: false,
@@ -158,7 +167,7 @@ export default function SearchClient({
         {/* Search Bar */}
         <div className="relative max-w-3xl">
           <Icon name="Search" size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
-          <input
+          <Input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -166,12 +175,12 @@ export default function SearchClient({
             className="w-full pl-12 pr-4 py-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 shadow-md transition"
           />
           {searchQuery && (
-            <button
+            <Button size="raw" variant="ghost"
               onClick={() => setSearchQuery('')}
               className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
             >
               <Icon name="X" size={18} />
-            </button>
+            </Button>
           )}
         </div>
       </div>
@@ -186,7 +195,7 @@ export default function SearchClient({
               <Icon name="Filter" size={18} className="text-blue-600 dark:text-sky-400" />
               {t('filters')}
             </h3>
-            <button
+            <Button size="raw" variant="ghost"
               onClick={() => {
                 setSelectedCategory('all');
                 setVerifiedOnly(false);
@@ -199,41 +208,46 @@ export default function SearchClient({
               className="text-xs text-blue-600 font-bold hover:underline"
             >
               {t('resetAll')}
-            </button>
+            </Button>
           </FilterItem>
 
           {/* Category Selector */}
           <FilterItem className="space-y-2">
             <label className="text-xs font-bold uppercase tracking-wider text-slate-400">{t('category')}</label>
-            <select
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-              className="w-full p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-900 dark:text-white focus:outline-none transition"
-            >
-              <option value="all">{t('allCategories', { count: flatCategories.length })}</option>
-              {flatCategories.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.name}
-                </option>
-              ))}
-            </select>
+            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+              <SelectTrigger className="w-full p-3 rounded-xl text-xs font-bold">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">{t('allCategories', { count: flatCategories.length })}</SelectItem>
+                {flatCategories.map((c) => (
+                  <SelectItem key={c.id} value={c.id}>
+                    {c.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </FilterItem>
 
           {/* City Selector */}
           <FilterItem className="space-y-2">
             <label className="text-xs font-bold uppercase tracking-wider text-slate-400">{t('city')}</label>
-            <select
-              value={selectedCity}
-              onChange={(e) => setSelectedCity(e.target.value)}
-              className="w-full p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-900 dark:text-white focus:outline-none transition"
+            <Select
+              value={selectedCity || ANY}
+              onValueChange={(value) => setSelectedCity(value === ANY ? '' : value)}
             >
-              <option value="">{t('allCities')}</option>
-              {cities.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.name}
-                </option>
-              ))}
-            </select>
+              <SelectTrigger className="w-full p-3 rounded-xl text-xs font-bold">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value={ANY}>{t('allCities')}</SelectItem>
+                {cities.map((c) => (
+                  <SelectItem key={c.id} value={c.id}>
+                    {c.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </FilterItem>
 
           {/* Near Me */}
@@ -246,33 +260,33 @@ export default function SearchClient({
                     <Icon name="MapPin" size={13} />
                     {t('nearMeActive')}
                   </span>
-                  <button onClick={() => setUserLocation(null)} className="text-slate-400 hover:text-red-500">
+                  <Button size="raw" variant="ghost" onClick={() => setUserLocation(null)} className="text-slate-400 hover:text-red-500">
                     <Icon name="X" size={13} />
-                  </button>
+                  </Button>
                 </div>
                 <div className="flex justify-between text-[11px] font-bold text-slate-500">
                   <span>{t('radiusLabel')}</span>
                   <span className="text-slate-900 dark:text-white">{t('radiusValue', { km: radiusKm })}</span>
                 </div>
-                <input
-                  type="range"
-                  min="5"
-                  max="200"
-                  step="5"
-                  value={radiusKm}
-                  onChange={(e) => setRadiusKm(Number(e.target.value))}
-                  className="w-full accent-blue-600 cursor-pointer"
+                <Slider
+                  min={5}
+                  max={200}
+                  step={5}
+                  value={[radiusKm]}
+                  onValueChange={([value]) => setRadiusKm(value)}
+                  aria-label={t('radiusLabel')}
+                  className="w-full cursor-pointer"
                 />
               </div>
             ) : (
-              <button
+              <Button size="raw" variant="ghost"
                 onClick={handleFindNearMe}
                 disabled={locating}
                 className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-700 dark:text-slate-300 hover:border-blue-500 transition disabled:opacity-60"
               >
                 <Icon name="MapPin" size={14} />
                 {locating ? t('locating') : t('nearMe')}
-              </button>
+              </Button>
             )}
             {locationError && <p className="text-[10px] font-bold text-red-500">{t('locationError')}</p>}
           </FilterItem>
@@ -280,29 +294,25 @@ export default function SearchClient({
           {/* Sort */}
           <FilterItem className="space-y-2">
             <label className="text-xs font-bold uppercase tracking-wider text-slate-400">{t('sortBy')}</label>
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              className="w-full p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-900 dark:text-white focus:outline-none transition"
-            >
-              <option value="">{t('sortDefault')}</option>
-              <option value="rating:desc">{t('sortRating')}</option>
-              <option value="price:asc">{t('sortPriceAsc')}</option>
-              <option value="price:desc">{t('sortPriceDesc')}</option>
-              <option value="createdAt:desc">{t('sortNewest')}</option>
-              {userLocation && <option value="distance:asc">{t('sortDistance')}</option>}
-            </select>
+            <Select value={sortBy || ANY} onValueChange={(value) => setSortBy(value === ANY ? '' : value)}>
+              <SelectTrigger className="w-full p-3 rounded-xl text-xs font-bold">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value={ANY}>{t('sortDefault')}</SelectItem>
+                <SelectItem value="rating:desc">{t('sortRating')}</SelectItem>
+                <SelectItem value="price:asc">{t('sortPriceAsc')}</SelectItem>
+                <SelectItem value="price:desc">{t('sortPriceDesc')}</SelectItem>
+                <SelectItem value="createdAt:desc">{t('sortNewest')}</SelectItem>
+                {userLocation && <SelectItem value="distance:asc">{t('sortDistance')}</SelectItem>}
+              </SelectContent>
+            </Select>
           </FilterItem>
 
           {/* Verified Toggle */}
           <FilterItem className="flex items-center justify-between pt-2">
             <span className="text-xs font-bold text-slate-700 dark:text-slate-300">{t('verifiedOnly')}</span>
-            <input
-              type="checkbox"
-              checked={verifiedOnly}
-              onChange={(e) => setVerifiedOnly(e.target.checked)}
-              className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 border-slate-300 cursor-pointer"
-            />
+            <Checkbox checked={verifiedOnly} onCheckedChange={(checked) => setVerifiedOnly(checked === true)} className="rounded text-blue-600 focus:ring-blue-500 border-slate-300 cursor-pointer size-4" />
           </FilterItem>
 
           {/* Rating Filter */}
@@ -333,14 +343,14 @@ export default function SearchClient({
               <span className="text-slate-400 uppercase tracking-wider">{t('maxRate')}</span>
               <span className="text-slate-900 dark:text-white">{t('perHour', { price: maxPrice })}</span>
             </div>
-            <input
-              type="range"
-              min="20"
-              max="500"
-              step="10"
-              value={maxPrice}
-              onChange={(e) => setMaxPrice(Number(e.target.value))}
-              className="w-full accent-blue-600 cursor-pointer"
+            <Slider
+              min={20}
+              max={500}
+              step={10}
+              value={[maxPrice]}
+              onValueChange={([value]) => setMaxPrice(value)}
+              aria-label={t('maxRate')}
+              className="w-full cursor-pointer"
             />
           </FilterItem>
         </FilterContainer>
@@ -401,20 +411,20 @@ export default function SearchClient({
           )}
 
           {viewMode !== 'map' && loading && page === 1 && (
-            <div className="glass-card rounded-3xl p-12 text-center text-sm text-slate-500 dark:text-slate-400 font-medium">
+            <Card className="rounded-3xl p-12 text-center text-sm text-slate-500 dark:text-slate-400 font-medium">
               Loading masters...
-            </div>
+            </Card>
           )}
 
           {!loading && error && (
-            <div className="glass-card rounded-3xl p-12 text-center text-sm text-slate-500 dark:text-slate-400 font-medium">
+            <Card className="rounded-3xl p-12 text-center text-sm text-slate-500 dark:text-slate-400 font-medium">
               Could not load masters. Please try again later.
-            </div>
+            </Card>
           )}
 
           {/* Master Cards Grid / List */}
           {viewMode !== 'map' && (!error && !(loading && page === 1) && masters.length === 0 ? (
-            <div className="glass-card rounded-3xl p-12 text-center space-y-4">
+            <Card className="gap-0 rounded-3xl p-12 text-center space-y-4">
               <div className="w-16 h-16 rounded-2xl bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-sky-400 mx-auto flex items-center justify-center">
                 <Icon name="Search" size={32} />
               </div>
@@ -422,122 +432,126 @@ export default function SearchClient({
               <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mx-auto">
                 {t('noResultsDesc')}
               </p>
-            </div>
+            </Card>
           ) : !error && viewMode === 'grid' ? (
             <AnimatedGrid animKey={filterKey} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {masters.map((m, idx) => (
-                <AnimatedCard key={m.id} index={idx % 3} className="glass-card rounded-3xl overflow-hidden border border-slate-200 dark:border-slate-800 flex flex-col justify-between group hover:-translate-y-1.5 hover:shadow-2xl hover:shadow-blue-500/10 hover:border-blue-200 dark:hover:border-sky-900 transition-[transform,box-shadow,border-color] duration-300">
-                  <div className="p-6 space-y-4">
-                    <div className="flex items-start gap-4">
-                      <img src={m.avatarUrl ?? getAvatarUrl(m.id, m.displayName)} alt={m.displayName} className="w-16 h-16 rounded-2xl object-cover shadow-md group-hover:scale-105 transition-transform duration-300" />
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-1.5">
-                          <h3 className="font-extrabold text-slate-900 dark:text-white text-base truncate">{m.displayName}</h3>
-                          {m.hasCertificates && <Icon name="ShieldCheck" size={16} className="text-blue-500 shrink-0" />}
+                <Card key={m.id} asChild>
+                  <AnimatedCard index={idx % 3} className="rounded-3xl overflow-hidden border border-slate-200 dark:border-slate-800 flex flex-col justify-between group hover:-translate-y-1.5 hover:shadow-2xl hover:shadow-blue-500/10 hover:border-blue-200 dark:hover:border-sky-900 transition-[transform,box-shadow,border-color] duration-300">
+                    <div className="p-6 space-y-4">
+                      <div className="flex items-start gap-4">
+                        <img src={m.avatarUrl ?? getAvatarUrl(m.id, m.displayName)} alt={m.displayName} className="w-16 h-16 rounded-2xl object-cover shadow-md group-hover:scale-105 transition-transform duration-300" />
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-1.5">
+                            <h3 className="font-extrabold text-slate-900 dark:text-white text-base truncate">{m.displayName}</h3>
+                            {m.hasCertificates && <Icon name="ShieldCheck" size={16} className="text-blue-500 shrink-0" />}
+                          </div>
+                          <p className="text-xs font-semibold text-blue-600 dark:text-sky-400 truncate">
+                            {m.categories.join(', ') || '—'}
+                          </p>
+                          <div className="flex items-center gap-1 text-xs text-amber-500 font-bold mt-1">
+                            <Icon name="Star" size={14} className="fill-amber-400" />
+                            <span>{m.ratingAverage} ({m.ratingCount})</span>
+                          </div>
                         </div>
-                        <p className="text-xs font-semibold text-blue-600 dark:text-sky-400 truncate">
-                          {m.categories.join(', ') || '—'}
-                        </p>
-                        <div className="flex items-center gap-1 text-xs text-amber-500 font-bold mt-1">
-                          <Icon name="Star" size={14} className="fill-amber-400" />
-                          <span>{m.ratingAverage} ({m.ratingCount})</span>
-                        </div>
+                        <FavoriteButton masterId={m.id} size="sm" />
                       </div>
-                      <FavoriteButton masterId={m.id} size="sm" />
+
+                      {m.bio && (
+                        <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">
+                          {m.bio}
+                        </p>
+                      )}
                     </div>
 
-                    {m.bio && (
-                      <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">
-                        {m.bio}
-                      </p>
-                    )}
-                  </div>
+                    <div className="p-6 pt-0 border-t border-slate-100 dark:border-slate-800/80 mt-4">
+                      <div className="flex items-center justify-between py-3 text-xs">
+                        <span className="text-slate-400 font-medium">{m.cityName}</span>
+                        <span className="font-extrabold text-slate-900 dark:text-white text-sm">
+                          {m.priceFrom ? t('perHour', { price: m.priceFrom }) : '—'}
+                        </span>
+                      </div>
 
-                  <div className="p-6 pt-0 border-t border-slate-100 dark:border-slate-800/80 mt-4">
-                    <div className="flex items-center justify-between py-3 text-xs">
-                      <span className="text-slate-400 font-medium">{m.cityName}</span>
-                      <span className="font-extrabold text-slate-900 dark:text-white text-sm">
-                        {m.priceFrom ? t('perHour', { price: m.priceFrom }) : '—'}
-                      </span>
+                      <div className="grid grid-cols-2 gap-2 mt-2">
+                        <Link
+                          href={`/master/${m.id}`}
+                          className="py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-center text-xs font-bold text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+                        >
+                          {t('profile')}
+                        </Link>
+                        <Link
+                          href={`/booking?master=${m.id}`}
+                          className="py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-center text-xs font-bold shadow transition btn-ripple"
+                        >
+                          {t('bookNow')}
+                        </Link>
+                      </div>
                     </div>
-
-                    <div className="grid grid-cols-2 gap-2 mt-2">
-                      <Link
-                        href={`/master/${m.id}`}
-                        className="py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-center text-xs font-bold text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
-                      >
-                        {t('profile')}
-                      </Link>
-                      <Link
-                        href={`/booking?master=${m.id}`}
-                        className="py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-center text-xs font-bold shadow transition btn-ripple"
-                      >
-                        {t('bookNow')}
-                      </Link>
-                    </div>
-                  </div>
-                </AnimatedCard>
+                  </AnimatedCard>
+                </Card>
               ))}
             </AnimatedGrid>
           ) : !error ? (
             <AnimatedGrid animKey={filterKey} className="space-y-4">
               {masters.map((m, idx) => (
-                <AnimatedCard key={m.id} index={idx} className="glass-card rounded-3xl p-6 border border-slate-200 dark:border-slate-800 flex flex-col md:flex-row items-center justify-between gap-6 hover:shadow-xl hover:border-blue-200 dark:hover:border-sky-900 transition-[box-shadow,border-color] duration-300">
-                  <div className="flex items-center gap-6">
-                    <img src={m.avatarUrl ?? getAvatarUrl(m.id, m.displayName)} alt={m.displayName} className="w-20 h-20 rounded-2xl object-cover shadow-md" />
-                    <div className="space-y-1">
+                <Card key={m.id} asChild>
+                  <AnimatedCard index={idx} className="rounded-3xl p-6 border border-slate-200 dark:border-slate-800 flex flex-col md:flex-row items-center justify-between gap-6 hover:shadow-xl hover:border-blue-200 dark:hover:border-sky-900 transition-[box-shadow,border-color] duration-300">
+                    <div className="flex items-center gap-6">
+                      <img src={m.avatarUrl ?? getAvatarUrl(m.id, m.displayName)} alt={m.displayName} className="w-20 h-20 rounded-2xl object-cover shadow-md" />
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                          <h3 className="font-extrabold text-slate-900 dark:text-white text-lg">{m.displayName}</h3>
+                          {m.hasCertificates && <Icon name="ShieldCheck" size={18} className="text-blue-500" />}
+                          <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 text-[10px] font-bold">
+                            {t('jobsDone', { count: m.completedBookingsCount })}
+                          </span>
+                        </div>
+                        <p className="text-xs font-semibold text-blue-600 dark:text-sky-400">
+                          {m.categories.join(', ') || '—'}
+                        </p>
+                        <div className="flex items-center gap-3 text-xs text-slate-500">
+                          <span className="flex items-center gap-1 text-amber-500 font-bold">
+                            <Icon name="Star" size={14} className="fill-amber-400" />
+                            {m.ratingAverage} ({t('reviewsCount', { count: m.ratingCount })})
+                          </span>
+                          <span>• {m.cityName}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-4 w-full md:w-auto justify-between md:justify-end border-t md:border-t-0 pt-4 md:pt-0 border-slate-100 dark:border-slate-800">
+                      <div className="text-right">
+                        <span className="text-[10px] text-slate-400 uppercase font-bold block">{t('rate')}</span>
+                        <span className="text-xl font-extrabold text-slate-900 dark:text-white">
+                          {m.priceFrom ? t('perHour', { price: m.priceFrom }) : '—'}
+                        </span>
+                      </div>
+
                       <div className="flex items-center gap-2">
-                        <h3 className="font-extrabold text-slate-900 dark:text-white text-lg">{m.displayName}</h3>
-                        {m.hasCertificates && <Icon name="ShieldCheck" size={18} className="text-blue-500" />}
-                        <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 text-[10px] font-bold">
-                          {t('jobsDone', { count: m.completedBookingsCount })}
-                        </span>
-                      </div>
-                      <p className="text-xs font-semibold text-blue-600 dark:text-sky-400">
-                        {m.categories.join(', ') || '—'}
-                      </p>
-                      <div className="flex items-center gap-3 text-xs text-slate-500">
-                        <span className="flex items-center gap-1 text-amber-500 font-bold">
-                          <Icon name="Star" size={14} className="fill-amber-400" />
-                          {m.ratingAverage} ({t('reviewsCount', { count: m.ratingCount })})
-                        </span>
-                        <span>• {m.cityName}</span>
+                        <FavoriteButton masterId={m.id} />
+                        <Link
+                          href={`/booking?master=${m.id}`}
+                          className="px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow transition btn-ripple"
+                        >
+                          {t('bookNow')}
+                        </Link>
                       </div>
                     </div>
-                  </div>
-
-                  <div className="flex items-center gap-4 w-full md:w-auto justify-between md:justify-end border-t md:border-t-0 pt-4 md:pt-0 border-slate-100 dark:border-slate-800">
-                    <div className="text-right">
-                      <span className="text-[10px] text-slate-400 uppercase font-bold block">{t('rate')}</span>
-                      <span className="text-xl font-extrabold text-slate-900 dark:text-white">
-                        {m.priceFrom ? t('perHour', { price: m.priceFrom }) : '—'}
-                      </span>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      <FavoriteButton masterId={m.id} />
-                      <Link
-                        href={`/booking?master=${m.id}`}
-                        className="px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow transition btn-ripple"
-                      >
-                        {t('bookNow')}
-                      </Link>
-                    </div>
-                  </div>
-                </AnimatedCard>
+                  </AnimatedCard>
+                </Card>
               ))}
             </AnimatedGrid>
           ) : null)}
 
           {viewMode !== 'map' && !error && page < totalPages && (
             <div className="text-center pt-2">
-              <button
+              <Button size="raw" variant="ghost"
                 onClick={() => setPage((p) => p + 1)}
                 disabled={loading}
                 className="px-8 py-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-sm font-bold text-slate-800 dark:text-slate-200 hover:border-blue-500 transition shadow-sm disabled:opacity-50"
               >
                 {loading ? 'Loading...' : 'Load more'}
-              </button>
+              </Button>
             </div>
           )}
 

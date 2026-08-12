@@ -5,6 +5,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 import { Icon } from '@/components/icons/LucideIcons';
 import { FilterContainer, FilterItem } from '@/components/ui/FilterAnimate';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 
 export default function FaqClient() {
   const t = useTranslations('faq');
@@ -32,12 +34,12 @@ export default function FaqClient() {
           const open = openIdx === idx;
           return (
             <FilterItem key={idx} index={idx}>
-              <div
-                className={`glass-card rounded-3xl border transition-colors duration-300 overflow-hidden ${
+              <Card
+                className={`rounded-3xl border transition-colors duration-300 overflow-hidden ${
                   open ? 'border-blue-300 dark:border-sky-800 shadow-lg' : 'border-slate-200 dark:border-slate-800'
                 }`}
               >
-                <button
+                <Button size="raw" variant="ghost"
                   onClick={() => setOpenIdx(open ? null : idx)}
                   className="w-full text-left p-6 font-bold text-slate-900 dark:text-white text-base flex justify-between items-center gap-4 group"
                 >
@@ -56,7 +58,7 @@ export default function FaqClient() {
                   >
                     <Icon name="ChevronDown" size={18} />
                   </motion.span>
-                </button>
+                </Button>
                 <AnimatePresence initial={false}>
                   {open && (
                     <motion.div
@@ -72,7 +74,7 @@ export default function FaqClient() {
                     </motion.div>
                   )}
                 </AnimatePresence>
-              </div>
+              </Card>
             </FilterItem>
           );
         })}

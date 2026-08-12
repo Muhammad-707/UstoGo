@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl';
 import { Icon } from '@/components/icons/LucideIcons';
 import type { CompletionCertificate } from '@/lib/api/types';
 import { useDateFormat } from '@/lib/datetime';
+import { Card } from '@/components/ui/card';
 
 export function CertificateCard({ certificate }: { certificate: CompletionCertificate }) {
   const t = useTranslations('certificate');
@@ -31,7 +32,7 @@ export function CertificateCard({ certificate }: { certificate: CompletionCertif
   }, [certificate.verificationCode]);
 
   return (
-    <div className="glass-card rounded-3xl border-2 border-amber-300 dark:border-amber-700 p-8 space-y-6 text-center bg-gradient-to-b from-amber-50/60 to-transparent dark:from-amber-950/20">
+    <Card className="gap-0 rounded-3xl border-2 border-amber-300 dark:border-amber-700 p-8 space-y-6 text-center bg-gradient-to-b from-amber-50/60 to-transparent dark:from-amber-950/20">
       <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 text-white flex items-center justify-center shadow-lg mx-auto">
         <Icon name="shieldcheck" size={26} />
       </div>
@@ -68,6 +69,6 @@ export function CertificateCard({ certificate }: { certificate: CompletionCertif
           <span className="text-slate-900 dark:text-white font-mono font-bold">{certificate.verificationCode}</span>
         </div>
       </div>
-    </div>
+    </Card>
   );
 }

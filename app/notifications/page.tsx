@@ -9,6 +9,8 @@ import { NOTIFICATION_TYPES, type NotificationItem } from '@/lib/api/types';
 import { FilterItem } from '@/components/ui/FilterAnimate';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { ClientPageHeader } from '@/components/client/ClientPageHeader';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 
 export default function NotificationsPage() {
   const t = useTranslations('notifications');
@@ -63,12 +65,12 @@ export default function NotificationsPage() {
       eyebrow={t('badge')}
       title={t('title')}
       action={
-        <button
+        <Button size="raw" variant="ghost"
           onClick={handleMarkAllRead}
           className="px-4 py-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition"
         >
           {t('markAllRead')}
-        </button>
+        </Button>
       }
     />
     <div className="page-shell page-shell-narrow py-12 space-y-8">
@@ -80,7 +82,7 @@ export default function NotificationsPage() {
       {/* The list is only drawn when there is one — an empty bordered shell around a
           single grey line reads as a component that failed rather than an empty inbox. */}
       {(loading || items.length > 0) && (
-      <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 divide-y divide-slate-100 dark:divide-slate-800 overflow-hidden">
+      <Card className="rounded-3xl border border-slate-200 dark:border-slate-800 divide-y divide-slate-100 dark:divide-slate-800 overflow-hidden">
         {loading && (
           <div className="divide-y divide-slate-100 dark:divide-slate-800">
             {Array.from({ length: 5 }).map((_, i) => (
@@ -118,7 +120,7 @@ export default function NotificationsPage() {
           </motion.div>
           </FilterItem>
         ))}
-      </div>
+      </Card>
       )}
     </div>
     </>

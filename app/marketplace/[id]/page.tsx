@@ -10,6 +10,7 @@ import { cartApi, productsApi, wishlistApi } from '@/lib/api/endpoints';
 import { ApiError } from '@/lib/api/client';
 import type { Product } from '@/lib/api/types';
 import { useMoney } from '@/lib/money';
+import { Button } from '@/components/ui/button';
 
 export default function ProductDetailPage() {
   const t = useTranslations('marketplace');
@@ -132,7 +133,7 @@ export default function ProductDetailPage() {
           {product.imageUrls.length > 1 && (
             <div className="flex gap-2 overflow-x-auto">
               {product.imageUrls.map((url, idx) => (
-                <button
+                <Button size="raw" variant="ghost"
                   key={url}
                   onClick={() => setActiveImage(idx)}
                   className={`w-16 h-16 shrink-0 rounded-xl overflow-hidden border-2 transition ${
@@ -140,7 +141,7 @@ export default function ProductDetailPage() {
                   }`}
                 >
                   <img src={url} alt="" className="w-full h-full object-cover" />
-                </button>
+                </Button>
               ))}
             </div>
           )}
@@ -172,37 +173,37 @@ export default function ProductDetailPage() {
               <div className="flex items-center gap-3">
                 <span className="text-xs font-bold text-slate-500">{t('quantity')}</span>
                 <div className="flex items-center gap-2 bg-slate-100 dark:bg-slate-800 rounded-xl p-1">
-                  <button
+                  <Button size="raw" variant="ghost"
                     onClick={() => setQuantity((q) => Math.max(1, q - 1))}
                     className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-white dark:hover:bg-slate-700 transition"
                   >
                     <Icon name="minus" size={14} />
-                  </button>
+                  </Button>
                   <span className="w-8 text-center text-sm font-bold">{quantity}</span>
-                  <button
+                  <Button size="raw" variant="ghost"
                     onClick={() => setQuantity((q) => Math.min(99, q + 1))}
                     className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-white dark:hover:bg-slate-700 transition"
                   >
                     <Icon name="plus" size={14} />
-                  </button>
+                  </Button>
                 </div>
               </div>
 
               <div className="flex items-center gap-3">
-                <button
+                <Button size="raw" variant="ghost"
                   onClick={handleAddToCart}
                   disabled={busy || !product.isActive}
                   className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-sm font-extrabold shadow-lg shadow-emerald-600/25 disabled:opacity-50 transition"
                 >
                   <Icon name="shoppingcart" size={16} />
                   {busy ? '...' : t('addToCart')}
-                </button>
-                <button
+                </Button>
+                <Button size="raw" variant="ghost"
                   onClick={handleToggleWishlist}
                   className="w-14 h-14 shrink-0 rounded-2xl border border-slate-200 dark:border-slate-700 flex items-center justify-center hover:bg-slate-50 dark:hover:bg-slate-800 transition"
                 >
                   <Icon name="heart" size={20} className={liked ? 'fill-red-500 text-red-500' : 'text-slate-400'} />
-                </button>
+                </Button>
               </div>
               {!product.isActive && (
                 <p className="text-xs font-bold text-red-500">{t('productUnavailable')}</p>

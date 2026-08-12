@@ -10,7 +10,12 @@ import { ServiceWorkerRegister } from '@/components/pwa/ServiceWorkerRegister';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { FavoritesProvider } from '@/contexts/FavoritesContext';
 import { SITE_URL } from '@/lib/seo';
+import { TooltipProvider } from '@/components/ui/tooltip';
+import { Toaster } from '@/components/ui/sonner';
+import { cn } from '@/lib/utils';
 
+// Inter stays the single typeface of the product; shadcn's `--font-sans` token
+// is pointed at it in globals.css instead of pulling in a second family.
 const inter = Inter({
   subsets: ['latin'],
   variable: '--font-inter',
@@ -53,7 +58,7 @@ export default async function RootLayout({
   const messages = await getMessages();
 
   return (
-    <html lang={locale} className={`${inter.variable} antialiased`} suppressHydrationWarning>
+    <html lang={locale} className={cn('antialiased font-sans', inter.variable)} suppressHydrationWarning>
       <head>
         <script
           dangerouslySetInnerHTML={{
@@ -65,11 +70,14 @@ export default async function RootLayout({
         <NextIntlClientProvider locale={locale} messages={messages}>
           <AuthProvider>
             <FavoritesProvider>
-              <Navbar />
-              <main className="flex-1 w-full">{children}</main>
-              <Footer />
-              <PagePreviewSwitcher />
-              <ServiceWorkerRegister />
+              <TooltipProvider delayDuration={200}>
+                <Navbar />
+                <main className="flex-1 w-full">{children}</main>
+                <Footer />
+                <PagePreviewSwitcher />
+                <ServiceWorkerRegister />
+                <Toaster richColors closeButton position="top-center" />
+              </TooltipProvider>
             </FavoritesProvider>
           </AuthProvider>
         </NextIntlClientProvider>

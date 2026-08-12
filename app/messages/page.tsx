@@ -10,6 +10,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { getAvatarUrl } from '@/lib/placeholders';
 import { waLink, waBookingText } from '@/lib/whatsapp';
 import { EmptyState } from '@/components/ui/EmptyState';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Card } from '@/components/ui/card';
 
 const WHATSAPP_STATUSES = new Set(['ACCEPTED', 'IN_PROGRESS', 'COMPLETED']);
 
@@ -39,42 +41,44 @@ function WhatsAppContactCard({
   if (!phone) return null;
 
   return (
-    <motion.div
+    <Card asChild>
+      <motion.div
       whileHover={{ y: -3 }}
       transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-      className="flex items-center gap-4 p-4 rounded-2xl glass-card border border-slate-200 dark:border-slate-800 hover:shadow-lg hover:border-emerald-200 dark:hover:border-emerald-900 transition-[box-shadow,border-color]"
+      className="flex items-center gap-4 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 hover:shadow-lg hover:border-emerald-200 dark:hover:border-emerald-900 transition-[box-shadow,border-color]"
     >
-      <img src={getAvatarUrl(id, name)} alt={name} className="w-12 h-12 rounded-2xl object-cover flex-shrink-0" />
-      <div className="flex-1 min-w-0">
-        <h4 className="text-sm font-bold text-slate-900 dark:text-white truncate">{name}</h4>
-        <p className="text-xs text-slate-500 truncate mt-0.5">{booking.serviceTitle}</p>
-        <span className="text-[10px] text-slate-400 mt-0.5 block">{booking.bookingNumber}</span>
-      </div>
-      {role === 'MASTER' && quickReplies.length > 0 && (
-        <select
-          value={selectedReplyId}
-          onChange={(e) => setSelectedReplyId(e.target.value)}
-          className="hidden md:block max-w-[160px] p-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[10px] font-bold text-slate-700 dark:text-slate-200"
-        >
-          <option value="">{t('quickReplyDefault')}</option>
-          {quickReplies.map((r) => (
-            <option key={r.id} value={r.id}>{r.text.slice(0, 40)}</option>
-          ))}
-        </select>
-      )}
-      {link && (
-        <a
-          href={link}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="btn-success flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-bold transition shrink-0"
-        >
-          <Icon name="whatsapp" size={16} />
-          <span className="hidden sm:inline">{t('whatsappButton')}</span>
-          <span className="sm:hidden">{t('whatsappButtonShort')}</span>
-        </a>
-      )}
-    </motion.div>
+        <img src={getAvatarUrl(id, name)} alt={name} className="w-12 h-12 rounded-2xl object-cover flex-shrink-0" />
+        <div className="flex-1 min-w-0">
+          <h4 className="text-sm font-bold text-slate-900 dark:text-white truncate">{name}</h4>
+          <p className="text-xs text-slate-500 truncate mt-0.5">{booking.serviceTitle}</p>
+          <span className="text-[10px] text-slate-400 mt-0.5 block">{booking.bookingNumber}</span>
+        </div>
+        {role === 'MASTER' && quickReplies.length > 0 && (
+          <Select value={selectedReplyId || undefined} onValueChange={setSelectedReplyId}>
+            <SelectTrigger className="hidden md:flex max-w-[160px] p-2 rounded-xl text-[10px] font-bold text-slate-700 dark:text-slate-200">
+              <SelectValue placeholder={t('quickReplyDefault')} />
+            </SelectTrigger>
+            <SelectContent>
+              {quickReplies.map((r) => (
+                <SelectItem key={r.id} value={r.id}>{r.text.slice(0, 40)}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
+        {link && (
+          <a
+            href={link}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-success flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-bold transition shrink-0"
+          >
+            <Icon name="whatsapp" size={16} />
+            <span className="hidden sm:inline">{t('whatsappButton')}</span>
+            <span className="sm:hidden">{t('whatsappButtonShort')}</span>
+          </a>
+        )}
+      </motion.div>
+    </Card>
   );
 }
 

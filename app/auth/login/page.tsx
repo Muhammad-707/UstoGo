@@ -8,6 +8,9 @@ import { Icon } from '@/components/icons/LucideIcons';
 import { useAuth, dashboardPathFor } from '@/contexts/AuthContext';
 import { ApiError } from '@/lib/api/client';
 import { PasswordInput } from '@/components/ui/PasswordInput';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { validateEmail, validateRequired, type ValidationErrorKey } from '@/lib/validation';
 import { AuthShell } from '@/components/auth/AuthShell';
 
@@ -85,14 +88,15 @@ export default function LoginPage() {
           <form onSubmit={handleTwoFactorSubmit} className="space-y-4">
             <p className="text-amber-600 dark:text-amber-400 text-xs font-bold">{t('twoFactorRequired')}</p>
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-slate-700 dark:text-slate-300">{t('twoFactorCodeLabel')}</label>
-              <input
+              <Label htmlFor="two-factor-code">{t('twoFactorCodeLabel')}</Label>
+              <Input
+                id="two-factor-code"
                 type="text"
                 inputMode="numeric"
                 autoComplete="one-time-code"
                 value={twoFactorCode}
                 onChange={(e) => setTwoFactorCode(e.target.value)}
-                className="w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-blue-500 tracking-widest text-center"
+                className="tracking-widest text-center"
                 placeholder="000000"
                 autoFocus
                 required
@@ -101,15 +105,12 @@ export default function LoginPage() {
 
             {error && <p className="text-red-500 text-sm">{error}</p>}
 
-            <button
-              type="submit"
-              disabled={submitting}
-              className="w-full py-4 rounded-2xl bg-blue-600 hover:bg-blue-700 disabled:opacity-60 disabled:cursor-not-allowed text-white font-extrabold text-xs shadow-lg transition btn-ripple"
-            >
+            <Button type="submit" variant="brand" size="xl" disabled={submitting} className="w-full">
               {submitting ? t('verifying') : t('verifyButton')}
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
+              variant="ghost"
               onClick={() => {
                 setTwoFactor(false);
                 setTwoFactorCode('');
@@ -118,17 +119,18 @@ export default function LoginPage() {
               className="w-full text-xs font-bold text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
             >
               {t('backToLogin')}
-            </button>
+            </Button>
           </form>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-slate-700 dark:text-slate-300">{t('emailLabel')}</label>
-              <input
+              <Label htmlFor="login-email">{t('emailLabel')}</Label>
+              <Input
+                id="login-email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className={`w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-800 border text-xs text-slate-900 dark:text-white focus:outline-none focus:border-blue-500 ${emailError ? 'border-red-500' : 'border-slate-200 dark:border-slate-700'}`}
+                aria-invalid={!!emailError}
                 required
               />
               {emailError && <p className="text-red-500 text-xs">{tv(emailError)}</p>}
@@ -136,15 +138,15 @@ export default function LoginPage() {
 
             <div className="space-y-1.5">
               <div className="flex justify-between items-center">
-                <label className="text-xs font-bold text-slate-700 dark:text-slate-300">{t('passwordLabel')}</label>
+                <Label htmlFor="login-password">{t('passwordLabel')}</Label>
                 <Link href="/auth/forgot-password" className="text-xs font-bold text-blue-600 hover:underline">
                   {t('forgot')}
                 </Link>
               </div>
               <PasswordInput
+                id="login-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-blue-500"
                 error={!!passwordError}
                 required
               />
@@ -155,13 +157,9 @@ export default function LoginPage() {
               <p className="text-red-500 text-sm">{error}</p>
             )}
 
-            <button
-              type="submit"
-              disabled={submitting}
-              className="w-full py-4 rounded-2xl bg-blue-600 hover:bg-blue-700 disabled:opacity-60 disabled:cursor-not-allowed text-white font-extrabold text-xs shadow-lg transition btn-ripple"
-            >
+            <Button type="submit" variant="brand" size="xl" disabled={submitting} className="w-full">
               {submitting ? t('signingIn') : t('signInButton')}
-            </button>
+            </Button>
           </form>
         )}
 

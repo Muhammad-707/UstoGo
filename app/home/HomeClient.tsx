@@ -14,6 +14,7 @@ import { getAvatarUrl } from '@/lib/placeholders';
 import { useAuth } from '@/contexts/AuthContext';
 import { FilterContainer, FilterItem } from '@/components/ui/FilterAnimate';
 import { useDateFormat } from '@/lib/datetime';
+import { Card } from '@/components/ui/card';
 
 function flattenLeafCategories(categories: Category[]): Category[] {
   const out: Category[] = [];
@@ -171,22 +172,24 @@ export default function ClientHomePage({
             return (
               <FilterItem key={cat.id} index={idx % 4}>
               <motion.div whileHover={{ y: -6 }} transition={{ type: 'spring', stiffness: 300, damping: 20 }}>
-              <Link
+              <Card asChild>
+                <Link
                 href={`/search?category=${cat.id}`}
-                className="glass-card rounded-2xl p-5 text-center flex flex-col items-center gap-3 group transition-shadow hover:shadow-xl"
+                className="rounded-2xl p-5 text-center flex flex-col items-center gap-3 group transition-shadow hover:shadow-xl"
               >
-                <div className="w-14 h-14 rounded-2xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-sky-400 flex items-center justify-center group-hover:scale-110 group-hover:-rotate-6 transition-transform duration-300">
-                  <Icon name={visual.iconName} size={26} />
-                </div>
-                <div className="space-y-1">
-                  <h4 className="text-xs font-bold text-slate-900 dark:text-white group-hover:text-blue-600 transition">
-                    {cat.name}
-                  </h4>
-                  <p className="text-[10px] text-slate-400 font-semibold">
-                    {stat ? `${t('mastersCountShort', { count: stat.count })}${stat.minPrice ? ` · ${perHour(stat.minPrice)}` : ''}` : ' '}
-                  </p>
-                </div>
-              </Link>
+                  <div className="w-14 h-14 rounded-2xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-sky-400 flex items-center justify-center group-hover:scale-110 group-hover:-rotate-6 transition-transform duration-300">
+                    <Icon name={visual.iconName} size={26} />
+                  </div>
+                  <div className="space-y-1">
+                    <h4 className="text-xs font-bold text-slate-900 dark:text-white group-hover:text-blue-600 transition">
+                      {cat.name}
+                    </h4>
+                    <p className="text-[10px] text-slate-400 font-semibold">
+                      {stat ? `${t('mastersCountShort', { count: stat.count })}${stat.minPrice ? ` · ${perHour(stat.minPrice)}` : ''}` : ' '}
+                    </p>
+                  </div>
+                </Link>
+              </Card>
               </motion.div>
               </FilterItem>
             );
@@ -209,43 +212,45 @@ export default function ClientHomePage({
         <FilterContainer className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {topMasters.map((m, idx) => (
             <FilterItem key={m.id} index={idx % 3}>
-            <motion.div
+            <Card asChild className="gap-0">
+              <motion.div
               whileHover={{ y: -6 }}
               transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-              className="glass-card rounded-2xl p-5 space-y-4 flex flex-col justify-between border border-slate-200 dark:border-slate-800 hover:shadow-xl hover:border-blue-200 dark:hover:border-sky-900 h-full transition-[box-shadow,border-color] duration-300"
+              className="rounded-2xl p-5 space-y-4 flex flex-col justify-between border border-slate-200 dark:border-slate-800 hover:shadow-xl hover:border-blue-200 dark:hover:border-sky-900 h-full transition-[box-shadow,border-color] duration-300"
             >
-              <div className="flex items-start gap-4">
-                <img src={m.avatarUrl || getAvatarUrl(m.id, m.displayName)} alt={m.displayName} className="w-16 h-16 rounded-2xl object-cover shadow" />
-                <div className="space-y-1">
-                  <div className="flex items-center gap-1.5">
-                    <h3 className="font-bold text-slate-900 dark:text-white text-sm">{m.displayName}</h3>
-                    {m.hasCertificates && <Icon name="ShieldCheck" size={15} className="text-blue-500" />}
+                <div className="flex items-start gap-4">
+                  <img src={m.avatarUrl || getAvatarUrl(m.id, m.displayName)} alt={m.displayName} className="w-16 h-16 rounded-2xl object-cover shadow" />
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-1.5">
+                      <h3 className="font-bold text-slate-900 dark:text-white text-sm">{m.displayName}</h3>
+                      {m.hasCertificates && <Icon name="ShieldCheck" size={15} className="text-blue-500" />}
+                    </div>
+                    <p className="text-xs text-blue-600 dark:text-sky-400 font-semibold">{m.cityName}</p>
+                    <div className="flex items-center gap-2 text-xs text-slate-500">
+                      <span className="flex items-center gap-1 text-amber-500 font-bold">
+                        <Icon name="Star" size={13} className="fill-amber-400" />
+                        {m.ratingAverage}
+                      </span>
+                    </div>
                   </div>
-                  <p className="text-xs text-blue-600 dark:text-sky-400 font-semibold">{m.cityName}</p>
-                  <div className="flex items-center gap-2 text-xs text-slate-500">
-                    <span className="flex items-center gap-1 text-amber-500 font-bold">
-                      <Icon name="Star" size={13} className="fill-amber-400" />
-                      {m.ratingAverage}
+                </div>
+
+                <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+                  <div>
+                    <span className="text-[10px] text-slate-400 uppercase font-bold block">{t('hourlyRate')}</span>
+                    <span className="text-sm font-extrabold text-slate-900 dark:text-white">
+                      {m.priceFrom ? perHour(m.priceFrom) : '—'}
                     </span>
                   </div>
+                  <Link
+                    href={`/booking?master=${m.id}`}
+                    className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow transition btn-ripple"
+                  >
+                    {t('bookCraftsman')}
+                  </Link>
                 </div>
-              </div>
-
-              <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
-                <div>
-                  <span className="text-[10px] text-slate-400 uppercase font-bold block">{t('hourlyRate')}</span>
-                  <span className="text-sm font-extrabold text-slate-900 dark:text-white">
-                    {m.priceFrom ? perHour(m.priceFrom) : '—'}
-                  </span>
-                </div>
-                <Link
-                  href={`/booking?master=${m.id}`}
-                  className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow transition btn-ripple"
-                >
-                  {t('bookCraftsman')}
-                </Link>
-              </div>
-            </motion.div>
+              </motion.div>
+            </Card>
             </FilterItem>
           ))}
         </FilterContainer>

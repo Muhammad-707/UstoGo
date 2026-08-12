@@ -9,6 +9,7 @@ import { useRequireAuth } from '@/hooks/useRequireAuth';
 import { ordersApi } from '@/lib/api/endpoints';
 import type { Order } from '@/lib/api/types';
 import { useDateFormat } from '@/lib/datetime';
+import { Card } from '@/components/ui/card';
 
 const STATUS_STYLE: Record<string, string> = {
   PAID: 'bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300',
@@ -61,7 +62,7 @@ export default function OrderDetailPage() {
         {t('backToOrders')}
       </Link>
 
-      <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-6 shadow-xl">
+      <Card className="gap-0 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-6 shadow-xl">
         <div className="flex items-center justify-between flex-wrap gap-3">
           <div>
             <p className="text-xs font-bold text-slate-400">{t('orderPlaced')}</p>
@@ -92,7 +93,7 @@ export default function OrderDetailPage() {
         </div>
 
         <p className="text-[10px] text-slate-400">{t('mockPaymentNote')}</p>
-      </div>
+      </Card>
     </div>
   );
 }

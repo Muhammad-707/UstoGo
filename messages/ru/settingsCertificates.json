@@ -7,6 +7,7 @@
   "certificateHint": "Сертификаты с прикреплённым файлом отображаются на вашей публичной странице",
   "titlePlaceholder": "Название сертификата",
   "issuerPlaceholder": "Кто выдал",
+  "issuedAtLabel": "Дата выдачи",
   "uploadFile": "Прикрепить файл (изображение/PDF)",
   "fileAttached": "✓ Файл прикреплён",
   "validationTitle": "Название сертификата обязательно",

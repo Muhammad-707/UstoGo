@@ -10,6 +10,15 @@ import { useRequireAuth } from '@/hooks/useRequireAuth';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import type { Category } from '@/lib/api/types';
 import { EmptyState } from '@/components/ui/EmptyState';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Card } from '@/components/ui/card';
+
+/** Radix has no empty-string option, so "any" travels as this sentinel. */
+const ANY = '__any';
 
 const EMPTY_FORM = { id: '', name: '', slug: '', parentId: '', description: '', sortOrder: '0', isActive: true };
 
@@ -114,10 +123,10 @@ export default function AdminCategoriesPage() {
       subtitle={t('subtitle')}
       action={
         <div className="flex items-center gap-2">
-          <button onClick={() => openCreate()} className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-white/15 hover:bg-white/25 backdrop-blur text-white text-xs font-bold transition">
+          <Button size="raw" variant="ghost" onClick={() => openCreate()} className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-white/15 hover:bg-white/25 backdrop-blur text-white text-xs font-bold transition">
             <Icon name="plus" size={14} />
             {t('addCategory')}
-          </button>
+          </Button>
           <Link href="/dashboard/admin" className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-white/15 hover:bg-white/25 backdrop-blur text-white text-xs font-bold transition">
             <Icon name="chevronleft" size={14} />
             {t('back')}
@@ -136,38 +145,44 @@ export default function AdminCategoriesPage() {
       </div>
 
       {formOpen && (
-        <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-4 shadow-xl">
+        <Card className="gap-0 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-4 shadow-xl">
           <h3 className="text-sm font-bold text-slate-900 dark:text-white">{form.id ? t('editCategory') : t('addCategory')}</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-            <input placeholder={t('nameLabel')} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-semibold" />
-            <input placeholder={t('slugLabel')} value={form.slug} disabled={!!form.id} onChange={(e) => setForm({ ...form, slug: e.target.value })} className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-semibold disabled:opacity-50" />
-            <select value={form.parentId} onChange={(e) => setForm({ ...form, parentId: e.target.value })} className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-semibold">
-              <option value="">{t('rootCategory')}</option>
+            <Input placeholder={t('nameLabel')} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-semibold" />
+            <Input placeholder={t('slugLabel')} value={form.slug} disabled={!!form.id} onChange={(e) => setForm({ ...form, slug: e.target.value })} className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-semibold disabled:opacity-50" />
+            <Select value={form.parentId || ANY} onValueChange={(raw) => { const value = raw === ANY ? '' : raw; setForm({ ...form, parentId: value }); }}>
+              <SelectTrigger className="w-auto p-3 rounded-xl font-semibold">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value={ANY}>{t('rootCategory')}</SelectItem>
+              
               {flat.filter((c) => c.id !== form.id).map((c) => (
-                <option key={c.id} value={c.id}>{'— '.repeat(c.depth)}{c.name}</option>
+                <SelectItem key={c.id} value={c.id}>{'— '.repeat(c.depth)}{c.name}</SelectItem>
               ))}
-            </select>
-            <input placeholder={t('sortOrderLabel')} type="number" value={form.sortOrder} onChange={(e) => setForm({ ...form, sortOrder: e.target.value })} className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-semibold" />
-            <textarea rows={2} placeholder={t('descriptionLabel')} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-semibold sm:col-span-2" />
+              </SelectContent>
+            </Select>
+            <Input placeholder={t('sortOrderLabel')} type="number" value={form.sortOrder} onChange={(e) => setForm({ ...form, sortOrder: e.target.value })} className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-semibold" />
+            <Textarea rows={2} placeholder={t('descriptionLabel')} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-semibold sm:col-span-2" />
             {form.id && (
               <label className="flex items-center gap-2 font-semibold text-slate-700 dark:text-slate-300">
-                <input type="checkbox" checked={form.isActive} onChange={(e) => setForm({ ...form, isActive: e.target.checked })} className="w-4 h-4" />
+                <Checkbox checked={form.isActive} onCheckedChange={(checked) => setForm({ ...form, isActive: checked === true })} className="size-4" />
                 {t('isActiveLabel')}
               </label>
             )}
           </div>
           <div className="flex items-center gap-2">
-            <button onClick={handleSave} disabled={saving} className="btn-success px-5 py-2.5 rounded-xl text-xs font-bold disabled:opacity-60 transition">
+            <Button size="raw" variant="ghost" onClick={handleSave} disabled={saving} className="btn-success px-5 py-2.5 rounded-xl text-xs font-bold disabled:opacity-60 transition">
               {saving ? '...' : t('save')}
-            </button>
-            <button onClick={() => setFormOpen(false)} className="px-5 py-2.5 rounded-xl bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition">
+            </Button>
+            <Button size="raw" variant="ghost" onClick={() => setFormOpen(false)} className="px-5 py-2.5 rounded-xl bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition">
               {t('cancel')}
-            </button>
+            </Button>
           </div>
-        </div>
+        </Card>
       )}
 
-      <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-4 shadow-xl">
+      <Card className="gap-0 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-4 shadow-xl">
         {loading && (
           <div className="space-y-2">
             {Array.from({ length: 5 }).map((_, idx) => <div key={idx} className="h-14 rounded-2xl bg-slate-50 dark:bg-slate-800/40 animate-pulse" />)}
@@ -189,15 +204,15 @@ export default function AdminCategoriesPage() {
                   <span className="text-[10px] text-slate-400 font-mono shrink-0">{c.slug}</span>
                 </div>
                 <div className="flex items-center gap-1.5 shrink-0">
-                  <button onClick={() => openCreate(c.id)} className="px-2.5 py-1.5 rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-[10px] font-bold transition">{t('addChild')}</button>
-                  <button onClick={() => openEdit(c)} className="px-2.5 py-1.5 rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-[10px] font-bold transition">{t('edit')}</button>
-                  <button onClick={() => handleDelete(c.id)} className="px-2.5 py-1.5 rounded-lg bg-red-600 hover:bg-red-700 text-white text-[10px] font-bold transition">{t('delete')}</button>
+                  <Button size="raw" variant="ghost" onClick={() => openCreate(c.id)} className="px-2.5 py-1.5 rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-[10px] font-bold transition">{t('addChild')}</Button>
+                  <Button size="raw" variant="ghost" onClick={() => openEdit(c)} className="px-2.5 py-1.5 rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-[10px] font-bold transition">{t('edit')}</Button>
+                  <Button size="raw" variant="ghost" onClick={() => handleDelete(c.id)} className="px-2.5 py-1.5 rounded-lg bg-red-600 hover:bg-red-700 text-white text-[10px] font-bold transition">{t('delete')}</Button>
                 </div>
               </div>
             ))}
           </div>
         )}
-      </div>
+      </Card>
     </DashboardLayout>
   );
 }

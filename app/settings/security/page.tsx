@@ -13,6 +13,9 @@ import { validatePassword, type ValidationErrorKey } from '@/lib/validation';
 import type { Session } from '@/lib/api/types';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { useDateFormat } from '@/lib/datetime';
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import { Card } from '@/components/ui/card';
 
 export default function SecuritySettingsPage() {
   const t = useTranslations('settingsSecurity');
@@ -119,38 +122,41 @@ export default function SecuritySettingsPage() {
       <PageHeader icon="key" eyebrow={t('accountSettings')} title={t('title')} />
     <div className="page-shell page-shell-narrow py-10 space-y-8">
       {/* Change Password */}
-      <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-xl space-y-4">
+      <Card className="gap-0 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-xl space-y-4">
         <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
           <Icon name="key" size={18} />
           {t('changePasswordTitle')}
         </h3>
         <form onSubmit={handleChangePassword} className="space-y-4">
           <div className="space-y-1.5">
-            <label className="text-xs font-bold text-slate-700 dark:text-slate-300">{t('currentPasswordLabel')}</label>
+            <Label htmlFor="current-password">{t('currentPasswordLabel')}</Label>
             <PasswordInput
+              id="current-password"
               value={currentPassword}
               onChange={(e) => setCurrentPassword(e.target.value)}
-              className="w-full p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs"
+              className="rounded-xl p-3"
               required
             />
           </div>
           <div className="space-y-1.5">
-            <label className="text-xs font-bold text-slate-700 dark:text-slate-300">{t('newPasswordLabel')}</label>
+            <Label htmlFor="new-password">{t('newPasswordLabel')}</Label>
             <PasswordInput
+              id="new-password"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
-              className="w-full p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs"
+              className="rounded-xl p-3"
               error={!!newPasswordError}
               required
             />
             {newPasswordError && <p className="text-red-500 text-xs">{tv(newPasswordError)}</p>}
           </div>
           <div className="space-y-1.5">
-            <label className="text-xs font-bold text-slate-700 dark:text-slate-300">{t('confirmPasswordLabel')}</label>
+            <Label htmlFor="confirm-password">{t('confirmPasswordLabel')}</Label>
             <PasswordInput
+              id="confirm-password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              className="w-full p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs"
+              className="rounded-xl p-3"
               error={!!confirmError}
               required
             />
@@ -158,33 +164,30 @@ export default function SecuritySettingsPage() {
           </div>
           {changeError && <p className="text-xs font-bold text-red-600 dark:text-red-400">{changeError}</p>}
           {changed && <p className="text-xs font-bold text-emerald-600 dark:text-emerald-400">{t('changeSuccess')}</p>}
-          <button
-            type="submit"
-            disabled={changing}
-            className="px-6 py-3 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-md disabled:opacity-60 transition"
-          >
+          <Button type="submit" variant="brand" disabled={changing} className="h-auto px-6 py-3 rounded-2xl text-xs shadow-md">
             {changing ? t('changing') : t('changePasswordButton')}
-          </button>
+          </Button>
         </form>
-      </div>
+      </Card>
 
       {/* Two-factor authentication (ADMIN accounts only — see the component) */}
       <TwoFactorSection />
 
       {/* Active Sessions */}
-      <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-xl space-y-4">
+      <Card className="gap-0 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-xl space-y-4">
         <div className="flex items-center justify-between">
           <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
             <Icon name="wifi" size={18} />
             {t('activeSessionsTitle')}
           </h3>
-          <button
+          <Button
+            variant="link"
             onClick={handleLogoutAll}
             disabled={loggingOutAll}
-            className="text-xs font-bold text-red-600 dark:text-red-400 hover:underline disabled:opacity-60"
+            className="h-auto p-0 text-xs font-bold text-red-600 dark:text-red-400"
           >
             {t('logoutAllDevices')}
-          </button>
+          </Button>
         </div>
 
         {sessionsLoading && <p className="text-xs text-slate-400 font-semibold">{t('loading')}</p>}
@@ -211,20 +214,21 @@ export default function SecuritySettingsPage() {
                   {session.ipAddress ? ` • ${session.ipAddress}` : ''}
                 </p>
               </div>
-              <button
+              <Button
+                variant="outline"
                 onClick={() => handleRevoke(session.id)}
                 disabled={revokingId === session.id}
-                className="shrink-0 px-4 py-2 rounded-xl border border-red-200 dark:border-red-900 text-red-600 dark:text-red-400 text-xs font-bold hover:bg-red-50 dark:hover:bg-red-950/40 transition disabled:opacity-50"
+                className="shrink-0 h-auto px-4 py-2 rounded-xl border-red-200 dark:border-red-900 text-red-600 dark:text-red-400 text-xs font-bold hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950/40"
               >
                 {t('revoke')}
-              </button>
+              </Button>
             </div>
           ))}
         </div>
-      </div>
+      </Card>
 
       {/* Data Export */}
-      <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-xl flex items-center justify-between gap-4">
+      <Card className="rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-xl flex items-center justify-between gap-4">
         <div>
           <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
             <Icon name="filetext" size={18} />
@@ -232,28 +236,31 @@ export default function SecuritySettingsPage() {
           </h3>
           <p className="text-xs text-slate-400 mt-1">{t('exportDataDesc')}</p>
         </div>
-        <button
+        <Button
+          variant="outline"
           onClick={handleExport}
           disabled={exporting}
-          className="shrink-0 px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-800 transition disabled:opacity-60"
+          className="shrink-0 h-auto px-5 py-2.5 rounded-xl border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-800"
         >
           {exporting ? t('exporting') : t('exportDataButton')}
-        </button>
-      </div>
+        </Button>
+      </Card>
 
-      <Link
+      <Card asChild>
+        <Link
         href="/settings/notifications"
-        className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-xl flex items-center justify-between gap-4 hover:border-blue-300 dark:hover:border-sky-700 transition"
+        className="rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-xl flex items-center justify-between gap-4 hover:border-blue-300 dark:hover:border-sky-700 transition"
       >
-        <div>
-          <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-            <Icon name="bell" size={18} />
-            {t('notificationPreferencesTitle')}
-          </h3>
-          <p className="text-xs text-slate-400 mt-1">{t('notificationPreferencesDesc')}</p>
-        </div>
-        <Icon name="arrowright" size={18} className="shrink-0 text-slate-400" />
-      </Link>
+          <div>
+            <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+              <Icon name="bell" size={18} />
+              {t('notificationPreferencesTitle')}
+            </h3>
+            <p className="text-xs text-slate-400 mt-1">{t('notificationPreferencesDesc')}</p>
+          </div>
+          <Icon name="arrowright" size={18} className="shrink-0 text-slate-400" />
+        </Link>
+      </Card>
     </div>
     </>
   );

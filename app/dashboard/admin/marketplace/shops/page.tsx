@@ -11,6 +11,15 @@ import { useRequireAuth } from '@/hooks/useRequireAuth';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import type { City, MarketplaceShop } from '@/lib/api/types';
 import { EmptyState } from '@/components/ui/EmptyState';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Card } from '@/components/ui/card';
+
+/** Radix has no empty-string option, so "any" travels as this sentinel. */
+const ANY = '__any';
 
 const ShopLocationPicker = dynamic(() => import('@/components/marketplace/ShopLocationPicker'), {
   ssr: false,
@@ -139,13 +148,13 @@ export default function AdminMarketplaceShopsPage() {
       subtitle={t('subtitle')}
       action={
         <div className="flex items-center gap-2">
-          <button
+          <Button size="raw" variant="ghost"
             onClick={openCreate}
             className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-white/15 hover:bg-white/25 backdrop-blur text-white text-xs font-bold transition"
           >
             <Icon name="plus" size={14} />
             {t('addShop')}
-          </button>
+          </Button>
           <Link
             href="/dashboard/admin"
             className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-white/15 hover:bg-white/25 backdrop-blur text-white text-xs font-bold transition"
@@ -163,21 +172,27 @@ export default function AdminMarketplaceShopsPage() {
       )}
 
       {formOpen && (
-        <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-4 shadow-xl">
+        <Card className="gap-0 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-4 shadow-xl">
           <h3 className="text-sm font-bold text-slate-900 dark:text-white">{form.id ? t('editShop') : t('addShop')}</h3>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-            <input placeholder={t('nameLabel')} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className={INPUT_CLASS} />
-            <select value={form.cityId} onChange={(e) => setForm({ ...form, cityId: e.target.value })} className={INPUT_CLASS}>
-              <option value="">{t('selectCity')}</option>
-              {cities.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
-            </select>
-            <input placeholder={t('addressLabel')} value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} className={`${INPUT_CLASS} sm:col-span-2`} />
-            <textarea placeholder={t('descriptionLabel')} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={3} className={`${INPUT_CLASS} sm:col-span-2 resize-y`} />
-            <input placeholder={t('phoneLabel')} value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} className={INPUT_CLASS} />
-            <input placeholder={t('workingHoursLabel')} value={form.workingHours} onChange={(e) => setForm({ ...form, workingHours: e.target.value })} className={INPUT_CLASS} />
+            <Input placeholder={t('nameLabel')} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className={INPUT_CLASS} />
+            <Select value={form.cityId || ANY} onValueChange={(raw) => { const value = raw === ANY ? '' : raw; setForm({ ...form, cityId: value }); }}>
+              <SelectTrigger className="w-auto INPUT_CLASS">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value={ANY}>{t('selectCity')}</SelectItem>
+              
+              {cities.map((c) => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}
+              </SelectContent>
+            </Select>
+            <Input placeholder={t('addressLabel')} value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} className={`${INPUT_CLASS} sm:col-span-2`} />
+            <Textarea placeholder={t('descriptionLabel')} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={3} className={`${INPUT_CLASS} sm:col-span-2 resize-y`} />
+            <Input placeholder={t('phoneLabel')} value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} className={INPUT_CLASS} />
+            <Input placeholder={t('workingHoursLabel')} value={form.workingHours} onChange={(e) => setForm({ ...form, workingHours: e.target.value })} className={INPUT_CLASS} />
             <label className="flex items-center gap-2 font-semibold text-slate-700 dark:text-slate-300">
-              <input type="checkbox" checked={form.isActive} onChange={(e) => setForm({ ...form, isActive: e.target.checked })} className="w-4 h-4" />
+              <Checkbox checked={form.isActive} onCheckedChange={(checked) => setForm({ ...form, isActive: checked === true })} className="size-4" />
               {t('isActiveLabel')}
             </label>
           </div>
@@ -199,17 +214,17 @@ export default function AdminMarketplaceShopsPage() {
           </div>
 
           <div className="flex items-center gap-2">
-            <button onClick={handleSave} disabled={saving} className="btn-success px-5 py-2.5 rounded-xl text-xs font-bold disabled:opacity-60 transition">
+            <Button size="raw" variant="ghost" onClick={handleSave} disabled={saving} className="btn-success px-5 py-2.5 rounded-xl text-xs font-bold disabled:opacity-60 transition">
               {saving ? '...' : t('save')}
-            </button>
-            <button onClick={() => setFormOpen(false)} className="px-5 py-2.5 rounded-xl bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition">
+            </Button>
+            <Button size="raw" variant="ghost" onClick={() => setFormOpen(false)} className="px-5 py-2.5 rounded-xl bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition">
               {t('cancel')}
-            </button>
+            </Button>
           </div>
-        </div>
+        </Card>
       )}
 
-      <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-4 shadow-xl">
+      <Card className="gap-0 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-4 shadow-xl">
         {loading && (
           <div className="space-y-2">
             {Array.from({ length: 3 }).map((_, idx) => <div key={idx} className="h-20 rounded-2xl bg-slate-50 dark:bg-slate-800/40 animate-pulse" />)}
@@ -229,14 +244,14 @@ export default function AdminMarketplaceShopsPage() {
                   {shop.workingHours && <p className="text-[11px] text-slate-400">{shop.workingHours}</p>}
                 </div>
                 <div className="flex items-center gap-2">
-                  <button onClick={() => openEdit(shop)} className="px-3.5 py-2 rounded-xl bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition">{t('edit')}</button>
-                  <button onClick={() => handleDelete(shop.id)} className="px-3.5 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold transition">{t('delete')}</button>
+                  <Button size="raw" variant="ghost" onClick={() => openEdit(shop)} className="px-3.5 py-2 rounded-xl bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition">{t('edit')}</Button>
+                  <Button size="raw" variant="ghost" onClick={() => handleDelete(shop.id)} className="px-3.5 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold transition">{t('delete')}</Button>
                 </div>
               </div>
             ))}
           </div>
         )}
-      </div>
+      </Card>
     </DashboardLayout>
   );
 }

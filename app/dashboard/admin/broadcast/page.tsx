@@ -9,6 +9,10 @@ import { ApiError } from '@/lib/api/client';
 import { useRequireAuth } from '@/hooks/useRequireAuth';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import type { UserRole } from '@/lib/api/types';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
+import { Card } from '@/components/ui/card';
 
 type Audience = 'ALL' | UserRole;
 
@@ -67,12 +71,12 @@ export default function AdminBroadcastPage() {
       }
     >
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-        <div className="lg:col-span-3 glass-card rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-6 shadow-xl">
+        <Card className="gap-0 lg:col-span-3 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-6 shadow-xl">
           <div className="space-y-2">
             <span className="text-xs font-bold text-slate-500">{t('audienceLabel')}</span>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
               {AUDIENCES.map((a) => (
-                <button
+                <Button size="raw" variant="ghost"
                   key={a}
                   onClick={() => setAudience(a)}
                   className={`py-2.5 rounded-xl text-xs font-bold transition ${
@@ -82,14 +86,14 @@ export default function AdminBroadcastPage() {
                   }`}
                 >
                   {t(`audience${a}`)}
-                </button>
+                </Button>
               ))}
             </div>
           </div>
 
           <label className="block space-y-1.5">
             <span className="text-xs font-bold text-slate-700 dark:text-slate-300">{t('titleLabel')}</span>
-            <input
+            <Input
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               maxLength={120}
@@ -100,7 +104,7 @@ export default function AdminBroadcastPage() {
 
           <label className="block space-y-1.5">
             <span className="text-xs font-bold text-slate-700 dark:text-slate-300">{t('messageLabel')}</span>
-            <textarea
+            <Textarea
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               rows={5}
@@ -119,22 +123,22 @@ export default function AdminBroadcastPage() {
           )}
 
           <div className="flex items-center gap-3">
-            <button
+            <Button size="raw" variant="ghost"
               onClick={handleSend}
               disabled={sending || !canSend}
               className="px-7 py-3 rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-700 hover:from-purple-700 hover:to-indigo-800 text-white text-xs font-extrabold shadow-lg shadow-purple-600/25 disabled:opacity-50 transition flex items-center gap-2"
             >
               <Icon name="bell" size={15} />
               {sending ? t('sending') : t('sendButton')}
-            </button>
+            </Button>
             <p className="text-[10px] text-slate-400 font-semibold">{t('irreversibleHint')}</p>
           </div>
-        </div>
+        </Card>
 
         {/* Live preview — exactly how the notification bell renders a payload. */}
         <div className="lg:col-span-2 space-y-3">
           <span className="text-xs font-bold text-slate-500">{t('previewLabel')}</span>
-          <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 p-5 shadow-xl">
+          <Card className="rounded-3xl border border-slate-200 dark:border-slate-800 p-5 shadow-xl">
             <div className="p-3 rounded-xl bg-blue-50/50 dark:bg-blue-950/20 flex gap-3 items-start">
               <div className="p-2 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-sky-400 mt-0.5 shrink-0">
                 <Icon name="sparkles" size={16} />
@@ -149,7 +153,7 @@ export default function AdminBroadcastPage() {
                 <span className="text-[10px] text-slate-400 mt-1 block">{t('previewJustNow')}</span>
               </div>
             </div>
-          </div>
+          </Card>
         </div>
       </div>
     </DashboardLayout>

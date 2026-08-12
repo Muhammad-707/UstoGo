@@ -11,6 +11,12 @@ import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import type { AdminReport, ReportStatus } from '@/lib/api/types';
 import { useDateFormat } from '@/lib/datetime';
 import { EmptyState } from '@/components/ui/EmptyState';
+import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Card } from '@/components/ui/card';
+
+/** Radix has no empty-string option, so "any" travels as this sentinel. */
+const ANY = '__any';
 
 const STATUS_STYLE: Record<ReportStatus, string> = {
   OPEN: 'bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300',
@@ -97,18 +103,19 @@ export default function AdminReportsPage() {
         </div>
       )}
 
-      <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-6 shadow-xl">
-        <select
-          value={status}
-          onChange={(e) => { setStatus(e.target.value as ReportStatus | ''); setPage(1); }}
-          className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold w-fit"
-        >
-          <option value="">{t('allStatuses')}</option>
-          <option value="OPEN">{t('statusOPEN')}</option>
-          <option value="REVIEWED">{t('statusREVIEWED')}</option>
-          <option value="RESOLVED">{t('statusRESOLVED')}</option>
-          <option value="REJECTED">{t('statusREJECTED')}</option>
-        </select>
+      <Card className="gap-0 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-6 shadow-xl">
+        <Select value={status || ANY} onValueChange={(raw) => { const value = raw === ANY ? '' : raw; setStatus(value as ReportStatus | ''); setPage(1); }}>
+          <SelectTrigger className="p-2.5 rounded-xl text-xs font-bold w-fit">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value={ANY}>{t('allStatuses')}</SelectItem>
+          <SelectItem value="OPEN">{t('statusOPEN')}</SelectItem>
+          <SelectItem value="REVIEWED">{t('statusREVIEWED')}</SelectItem>
+          <SelectItem value="RESOLVED">{t('statusRESOLVED')}</SelectItem>
+          <SelectItem value="REJECTED">{t('statusREJECTED')}</SelectItem>
+          </SelectContent>
+        </Select>
 
         {loading && (
           <div className="space-y-2">
@@ -152,26 +159,26 @@ export default function AdminReportsPage() {
 
                 {(r.status === 'OPEN' || r.status === 'REVIEWED') && (
                   <div className="flex flex-wrap gap-2 pt-1">
-                    <button
+                    <Button size="raw" variant="ghost"
                       onClick={() => handleResolve(r.id, 'RESOLVED')}
                       disabled={actingId === r.id}
                       className="btn-success px-4 py-2 rounded-xl text-xs font-bold disabled:opacity-60 transition"
                     >
                       {t('resolve')}
-                    </button>
-                    <button
+                    </Button>
+                    <Button size="raw" variant="ghost"
                       onClick={() => handleResolve(r.id, 'REJECTED')}
                       disabled={actingId === r.id}
                       className="px-4 py-2 rounded-xl bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold disabled:opacity-60 transition"
                     >
                       {t('reject')}
-                    </button>
-                    <button
+                    </Button>
+                    <Button size="raw" variant="ghost"
                       onClick={() => handleBlockReported(r.reportedUserId)}
                       className="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold transition"
                     >
                       {t('blockThisUser')}
-                    </button>
+                    </Button>
                   </div>
                 )}
               </div>
@@ -181,24 +188,24 @@ export default function AdminReportsPage() {
 
         {!loading && totalPages > 1 && (
           <div className="flex items-center justify-between pt-2">
-            <button
+            <Button size="raw" variant="ghost"
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page <= 1}
               className="px-4 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 text-xs font-bold disabled:opacity-40"
             >
               {t('prev')}
-            </button>
+            </Button>
             <span className="text-xs font-bold text-slate-500">{t('pageOf', { page, total: totalPages })}</span>
-            <button
+            <Button size="raw" variant="ghost"
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page >= totalPages}
               className="px-4 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 text-xs font-bold disabled:opacity-40"
             >
               {t('next')}
-            </button>
+            </Button>
           </div>
         )}
-      </div>
+      </Card>
     </DashboardLayout>
   );
 }

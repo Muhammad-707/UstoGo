@@ -12,6 +12,21 @@ import type { AdminUserListItem, UserProfile, UserRole, UserStatus } from '@/lib
 import { getAvatarUrl } from '@/lib/placeholders';
 import { useDateFormat } from '@/lib/datetime';
 import { EmptyState } from '@/components/ui/EmptyState';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Card } from '@/components/ui/card';
+
+/** Radix has no empty-string option, so "any" travels as this sentinel. */
+const ANY = '__any';
 
 const STATUS_STYLE: Record<UserStatus, string> = {
   ACTIVE: 'bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300',
@@ -124,37 +139,39 @@ export default function AdminUsersPage() {
         </div>
       )}
 
-      <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-6 shadow-xl">
+      <Card className="gap-0 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-6 shadow-xl">
         <div className="flex flex-wrap items-center gap-3">
           <div className="relative flex-1 min-w-[220px]">
             <Icon name="search" size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
-            <input
+            <Input
               value={search}
               onChange={(e) => { setSearch(e.target.value); setPage(1); }}
               placeholder={t('searchPlaceholder')}
               className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold"
             />
           </div>
-          <select
-            value={role}
-            onChange={(e) => { setRole(e.target.value as UserRole | ''); setPage(1); }}
-            className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold"
-          >
-            <option value="">{t('allRoles')}</option>
-            <option value="CLIENT">{t('roleCLIENT')}</option>
-            <option value="MASTER">{t('roleMASTER')}</option>
-            <option value="ADMIN">{t('roleADMIN')}</option>
-          </select>
-          <select
-            value={status}
-            onChange={(e) => { setStatus(e.target.value as UserStatus | ''); setPage(1); }}
-            className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold"
-          >
-            <option value="">{t('allStatuses')}</option>
-            <option value="ACTIVE">{t('statusACTIVE')}</option>
-            <option value="INACTIVE">{t('statusINACTIVE')}</option>
-            <option value="BLOCKED">{t('statusBLOCKED')}</option>
-          </select>
+          <Select value={role || ANY} onValueChange={(raw) => { const value = raw === ANY ? '' : raw; setRole(value as UserRole | ''); setPage(1); }}>
+            <SelectTrigger className="w-auto p-2.5 rounded-xl text-xs font-bold">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value={ANY}>{t('allRoles')}</SelectItem>
+            <SelectItem value="CLIENT">{t('roleCLIENT')}</SelectItem>
+            <SelectItem value="MASTER">{t('roleMASTER')}</SelectItem>
+            <SelectItem value="ADMIN">{t('roleADMIN')}</SelectItem>
+            </SelectContent>
+          </Select>
+          <Select value={status || ANY} onValueChange={(raw) => { const value = raw === ANY ? '' : raw; setStatus(value as UserStatus | ''); setPage(1); }}>
+            <SelectTrigger className="w-auto p-2.5 rounded-xl text-xs font-bold">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value={ANY}>{t('allStatuses')}</SelectItem>
+            <SelectItem value="ACTIVE">{t('statusACTIVE')}</SelectItem>
+            <SelectItem value="INACTIVE">{t('statusINACTIVE')}</SelectItem>
+            <SelectItem value="BLOCKED">{t('statusBLOCKED')}</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         {loading && (
@@ -210,21 +227,21 @@ export default function AdminUsersPage() {
                     </td>
                     <td className="py-3 pr-4" onClick={(e) => e.stopPropagation()}>
                       {u.status === 'BLOCKED' ? (
-                        <button
+                        <Button size="raw" variant="ghost"
                           onClick={() => handleUnblock(u.id)}
                           disabled={actingId === u.id}
                           className="btn-success px-3 py-1.5 rounded-xl disabled:opacity-60 font-bold transition"
                         >
                           {t('unblock')}
-                        </button>
+                        </Button>
                       ) : (
-                        <button
+                        <Button size="raw" variant="ghost"
                           onClick={() => handleBlock(u.id)}
                           disabled={actingId === u.id || u.role === 'ADMIN'}
                           className="px-3 py-1.5 rounded-xl bg-red-600 hover:bg-red-700 disabled:opacity-40 text-white font-bold shadow-sm transition"
                         >
                           {t('block')}
-                        </button>
+                        </Button>
                       )}
                     </td>
                   </tr>
@@ -236,34 +253,35 @@ export default function AdminUsersPage() {
 
         {!loading && totalPages > 1 && (
           <div className="flex items-center justify-between pt-2">
-            <button
+            <Button size="raw" variant="ghost"
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page <= 1}
               className="px-4 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 text-xs font-bold disabled:opacity-40"
             >
               {t('prev')}
-            </button>
+            </Button>
             <span className="text-xs font-bold text-slate-500">{t('pageOf', { page, total: totalPages })}</span>
-            <button
+            <Button size="raw" variant="ghost"
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page >= totalPages}
               className="px-4 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 text-xs font-bold disabled:opacity-40"
             >
               {t('next')}
-            </button>
+            </Button>
           </div>
         )}
-      </div>
+      </Card>
 
-      {(selected || selectedLoading) && (
-        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setSelected(null)}>
-          <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl w-full max-w-lg max-h-[85vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
-            <div className="bg-gradient-to-r from-purple-600 to-indigo-600 p-6 rounded-t-3xl flex items-center justify-between">
-              <h2 className="text-lg font-extrabold text-white">{t('detailTitle')}</h2>
-              <button onClick={() => setSelected(null)} className="p-2 rounded-xl bg-white/20 hover:bg-white/30 text-white transition">
-                <Icon name="x" size={16} />
-              </button>
-            </div>
+      <Dialog open={!!selected || selectedLoading} onOpenChange={(open) => !open && setSelected(null)}>
+        <DialogContent showCloseButton={false} className="sm:max-w-lg p-0 gap-0 overflow-hidden">
+            <DialogHeader className="bg-gradient-to-r from-purple-600 to-indigo-600 p-6 pr-6 flex-row items-center justify-between space-y-0">
+              <DialogTitle className="text-white">{t('detailTitle')}</DialogTitle>
+              <DialogClose asChild>
+                <Button size="icon" className="rounded-xl bg-white/20 hover:bg-white/30 text-white">
+                  <Icon name="x" size={16} />
+                </Button>
+              </DialogClose>
+            </DialogHeader>
             <div className="p-6 space-y-4">
               {selectedLoading && <div className="h-32 rounded-2xl bg-slate-50 dark:bg-slate-800/40 animate-pulse" />}
               {!selectedLoading && selected && (
@@ -312,9 +330,8 @@ export default function AdminUsersPage() {
                 </>
               )}
             </div>
-          </div>
-        </div>
-      )}
+        </DialogContent>
+      </Dialog>
     </DashboardLayout>
   );
 }

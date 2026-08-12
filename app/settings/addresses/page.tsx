@@ -7,6 +7,11 @@ import { citiesApi, savedAddressesApi } from '@/lib/api/endpoints';
 import { ApiError } from '@/lib/api/client';
 import type { City, SavedAddress } from '@/lib/api/types';
 import { ClientPageHeader } from '@/components/client/ClientPageHeader';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Card } from '@/components/ui/card';
 
 interface AddressFormState {
   label: string;
@@ -129,14 +134,15 @@ export default function SavedAddressesPage() {
       hint={t('pageHint')}
       action={
         !showForm && (
-          <button
+          <Button
+            variant="brand"
             onClick={() => setShowForm(true)}
             disabled={addresses.length >= 10}
-            className="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-md transition disabled:opacity-50 flex items-center gap-2"
+            className="h-auto px-5 py-2.5 rounded-xl text-xs shadow-md gap-2"
           >
             <Icon name="Calendar" size={14} />
             {t('addAddress')}
-          </button>
+          </Button>
         )
       }
     />
@@ -146,103 +152,110 @@ export default function SavedAddressesPage() {
       {loading && <p className="text-xs text-slate-400 font-semibold">{t('loading')}</p>}
 
       {showForm && (
-        <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-xl space-y-4">
+        <Card className="gap-0 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-xl space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-            <label className="space-y-1.5 sm:col-span-2">
-              <span className="font-bold text-slate-500">{t('labelLabel')}</span>
-              <input
+            <div className="space-y-1.5 sm:col-span-2">
+              <Label htmlFor="address-label" className="text-slate-500">{t('labelLabel')}</Label>
+              <Input
+                id="address-label"
                 type="text"
                 value={form.label}
                 onChange={(e) => setForm((f) => ({ ...f, label: e.target.value }))}
                 placeholder={t('labelPlaceholder')}
-                className="w-full p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-semibold"
+                className="p-3 rounded-xl font-semibold"
               />
-            </label>
-            <label className="space-y-1.5">
-              <span className="font-bold text-slate-500">{t('cityLabel')}</span>
-              <select
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="address-city" className="text-slate-500">{t('cityLabel')}</Label>
+              <Select
                 value={form.cityId}
-                onChange={(e) => setForm((f) => ({ ...f, cityId: e.target.value, district: '' }))}
-                className="w-full p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-semibold"
+                onValueChange={(value) => setForm((f) => ({ ...f, cityId: value, district: '' }))}
               >
-                <option value="">{t('selectCity')}</option>
-                {cities.map((c) => (
-                  <option key={c.id} value={c.id}>{c.name}</option>
-                ))}
-              </select>
-            </label>
-            <label className="space-y-1.5">
-              <span className="font-bold text-slate-500">{t('districtLabel')}</span>
-              {activeCity?.districts && activeCity.districts.length > 0 ? (
-                <select
-                  value={form.district}
-                  onChange={(e) => setForm((f) => ({ ...f, district: e.target.value }))}
-                  className="w-full p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-semibold"
-                >
-                  <option value="">{t('selectDistrict')}</option>
-                  {activeCity.districts.map((d) => (
-                    <option key={d.id} value={d.name}>{d.name}</option>
+                <SelectTrigger id="address-city" className="w-full p-3 rounded-xl font-semibold">
+                  <SelectValue placeholder={t('selectCity')} />
+                </SelectTrigger>
+                <SelectContent>
+                  {cities.map((c) => (
+                    <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
                   ))}
-                </select>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="address-district" className="text-slate-500">{t('districtLabel')}</Label>
+              {activeCity?.districts && activeCity.districts.length > 0 ? (
+                <Select
+                  value={form.district}
+                  onValueChange={(value) => setForm((f) => ({ ...f, district: value }))}
+                >
+                  <SelectTrigger id="address-district" className="w-full p-3 rounded-xl font-semibold">
+                    <SelectValue placeholder={t('selectDistrict')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {activeCity.districts.map((d) => (
+                      <SelectItem key={d.id} value={d.name}>{d.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               ) : (
-                <input
+                <Input
+                  id="address-district"
                   type="text"
                   value={form.district}
                   onChange={(e) => setForm((f) => ({ ...f, district: e.target.value }))}
-                  className="w-full p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-semibold"
+                  className="p-3 rounded-xl font-semibold"
                 />
               )}
-            </label>
-            <label className="space-y-1.5 sm:col-span-2">
-              <span className="font-bold text-slate-500">{t('lineLabel')}</span>
-              <input
+            </div>
+            <div className="space-y-1.5 sm:col-span-2">
+              <Label htmlFor="address-line" className="text-slate-500">{t('lineLabel')}</Label>
+              <Input
+                id="address-line"
                 type="text"
                 value={form.line}
                 onChange={(e) => setForm((f) => ({ ...f, line: e.target.value }))}
                 placeholder={t('linePlaceholder')}
-                className="w-full p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-semibold"
+                className="p-3 rounded-xl font-semibold"
               />
-            </label>
-            <label className="space-y-1.5">
-              <span className="font-bold text-slate-500">{t('phoneLabel')}</span>
-              <input
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="address-phone" className="text-slate-500">{t('phoneLabel')}</Label>
+              <Input
+                id="address-phone"
                 type="tel"
                 value={form.contactPhone}
                 onChange={(e) => setForm((f) => ({ ...f, contactPhone: e.target.value }))}
                 placeholder="+992 __ ___-__-__"
-                className="w-full p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-semibold"
+                className="p-3 rounded-xl font-semibold"
               />
-            </label>
+            </div>
           </div>
           <div className="flex items-center gap-3">
-            <button
-              onClick={handleSave}
-              disabled={saving}
-              className="px-6 py-3 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-md disabled:opacity-60 transition"
-            >
+            <Button variant="brand" onClick={handleSave} disabled={saving} className="h-auto px-6 py-3 rounded-2xl text-xs shadow-md">
               {saving ? t('saving') : t('save')}
-            </button>
-            <button
+            </Button>
+            <Button
+              variant="outline"
               onClick={resetForm}
-              className="px-6 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-extrabold text-xs hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+              className="h-auto px-6 py-3 rounded-2xl border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-extrabold text-xs hover:bg-slate-100 dark:hover:bg-slate-800"
             >
               {t('cancel')}
-            </button>
+            </Button>
           </div>
-        </div>
+        </Card>
       )}
 
       {!loading && addresses.length === 0 && !showForm && (
-        <div className="glass-card rounded-3xl p-12 text-center space-y-2">
+        <Card className="gap-0 rounded-3xl p-12 text-center space-y-2">
           <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">{t('empty')}</p>
-        </div>
+        </Card>
       )}
 
       <div className="space-y-4">
         {addresses.map((address) => (
-          <div
+          <Card
             key={address.id}
-            className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 p-6 flex items-start justify-between gap-4"
+            className="rounded-3xl border border-slate-200 dark:border-slate-800 p-6 flex items-start justify-between gap-4"
           >
             <div className="min-w-0">
               <div className="flex items-center gap-2">
@@ -260,29 +273,34 @@ export default function SavedAddressesPage() {
             </div>
             <div className="flex items-center gap-2 shrink-0">
               {!address.isDefault && (
-                <button
+                <Button
+                  variant="link"
                   onClick={() => handleSetDefault(address)}
-                  className="text-[11px] font-bold text-blue-600 dark:text-sky-400 hover:underline"
+                  className="h-auto p-0 text-[11px] font-bold text-blue-600 dark:text-sky-400"
                 >
                   {t('makeDefault')}
-                </button>
+                </Button>
               )}
-              <button
+              <Button
+                variant="ghost"
+                size="icon"
                 onClick={() => startEdit(address)}
-                className="p-2 rounded-lg text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+                className="rounded-lg text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"
                 aria-label={t('edit')}
               >
                 <Icon name="filetext" size={14} />
-              </button>
-              <button
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
                 onClick={() => handleRemove(address)}
-                className="p-2 rounded-lg text-red-500 hover:bg-red-50 dark:hover:bg-red-950/40 transition"
+                className="rounded-lg text-red-500 hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-950/40"
                 aria-label={t('delete')}
               >
                 <Icon name="X" size={14} />
-              </button>
+              </Button>
             </div>
-          </div>
+          </Card>
         ))}
       </div>
     </div>

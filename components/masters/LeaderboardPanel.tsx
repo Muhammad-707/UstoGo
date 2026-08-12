@@ -7,6 +7,10 @@ import { Icon } from '@/components/icons/LucideIcons';
 import { citiesApi, mastersApi } from '@/lib/api/endpoints';
 import type { City, LeaderboardBadge, LeaderboardEntry } from '@/lib/api/types';
 import { getAvatarUrl } from '@/lib/placeholders';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+
+/** Radix has no empty-string option, so "any" travels as this sentinel. */
+const ANY = '__any';
 
 const BADGE_ICON: Record<LeaderboardBadge, string> = {
   TOP_RATED: 'star',
@@ -71,18 +75,19 @@ export function LeaderboardPanel() {
           <p className="text-xs text-slate-500 dark:text-slate-400 max-w-lg">{t('subtitle')}</p>
         </div>
 
-        <select
-          value={cityId}
-          onChange={(e) => setCityId(e.target.value)}
-          className="px-4 py-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 shrink-0"
-        >
-          <option value="">{t('allCities')}</option>
-          {cities.map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.name}
-            </option>
-          ))}
-        </select>
+        <Select value={cityId || ANY} onValueChange={(value) => setCityId(value === ANY ? '' : value)}>
+          <SelectTrigger className="w-auto px-4 py-3 rounded-xl bg-white dark:bg-slate-800 text-xs font-bold text-slate-700 dark:text-slate-200 shrink-0">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value={ANY}>{t('allCities')}</SelectItem>
+            {cities.map((c) => (
+              <SelectItem key={c.id} value={c.id}>
+                {c.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       {loading && <p className="text-xs text-slate-400 font-semibold text-center py-8">{t('loading')}</p>}

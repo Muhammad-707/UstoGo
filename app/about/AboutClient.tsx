@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 import { Icon } from '@/components/icons/LucideIcons';
 import { FilterContainer, FilterItem } from '@/components/ui/FilterAnimate';
+import { Card } from '@/components/ui/card';
 
 const HERO_IMAGE = 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=2400&q=90';
 const MISSION_IMAGE = 'https://images.unsplash.com/photo-1504148455328-c376907d081c?auto=format&fit=crop&w=1600&q=90';
@@ -55,17 +56,19 @@ export default function AboutClient() {
         <FilterContainer className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {STATS.map((s, idx) => (
             <FilterItem key={s.labelKey} index={idx}>
-              <motion.div
+              <Card asChild>
+                <motion.div
                 whileHover={{ y: -6, scale: 1.03 }}
                 transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-                className="glass-card rounded-3xl p-5 sm:p-6 text-center border border-slate-200 dark:border-slate-800 h-full"
+                className="rounded-3xl p-5 sm:p-6 text-center border border-slate-200 dark:border-slate-800 h-full"
               >
-                <div className={`mx-auto mb-2 w-9 h-9 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center ${s.accent}`}>
-                  <Icon name={s.icon} size={18} />
-                </div>
-                <div className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">{s.value}</div>
-                <p className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 font-medium uppercase tracking-wider mt-1">{tc(s.labelKey)}</p>
-              </motion.div>
+                  <div className={`mx-auto mb-2 w-9 h-9 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center ${s.accent}`}>
+                    <Icon name={s.icon} size={18} />
+                  </div>
+                  <div className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">{s.value}</div>
+                  <p className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 font-medium uppercase tracking-wider mt-1">{tc(s.labelKey)}</p>
+                </motion.div>
+              </Card>
             </FilterItem>
           ))}
         </FilterContainer>

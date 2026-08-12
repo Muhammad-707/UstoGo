@@ -9,6 +9,10 @@ import { revalidateMastersCache } from '@/lib/api/revalidate';
 import { uploadFile } from '@/lib/api/upload';
 import type { Certificate } from '@/lib/api/types';
 import { MasterPageHeader } from '@/components/master/MasterPageHeader';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card } from '@/components/ui/card';
+import { DatePicker, todayISO } from '@/components/ui/date-picker';
 
 export default function CertificatesPage() {
   const t = useTranslations('settingsCertificates');
@@ -82,12 +86,12 @@ export default function CertificatesPage() {
       title={t('certificatesLicenses')}
       hint={t('certificateHint')}
       action={
-        <button
+        <Button
           onClick={() => setShowForm((s) => !s)}
-          className="px-5 py-2.5 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-extrabold text-xs shadow-lg shadow-amber-900/20 transition"
+          className="h-auto px-5 py-2.5 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-extrabold text-xs shadow-lg shadow-amber-900/20"
         >
           + {t('addNewLicense')}
-        </button>
+        </Button>
       }
     />
     <div className="page-shell page-shell-narrow py-10 space-y-8">
@@ -99,25 +103,26 @@ export default function CertificatesPage() {
       )}
 
       {showForm && (
-        <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 p-6 space-y-4 shadow-xl">
+        <Card className="gap-0 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 space-y-4 shadow-xl">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
-            <input
+            <Input
               placeholder={t('titlePlaceholder')}
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-semibold"
+              className="p-3 rounded-xl font-semibold"
             />
-            <input
+            <Input
               placeholder={t('issuerPlaceholder')}
               value={issuer}
               onChange={(e) => setIssuer(e.target.value)}
-              className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-semibold"
+              className="p-3 rounded-xl font-semibold"
             />
-            <input
-              type="date"
+            <DatePicker
               value={issuedAt}
-              onChange={(e) => setIssuedAt(e.target.value)}
-              className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-semibold"
+              onChange={setIssuedAt}
+              max={todayISO()}
+              aria-label={t('issuedAtLabel')}
+              className="p-3 rounded-xl"
             />
           </div>
           <div className="flex items-center gap-3 text-xs">
@@ -128,25 +133,27 @@ export default function CertificatesPage() {
               className="hidden"
               onChange={(e) => setFile(e.target.files?.[0] ?? null)}
             />
-            <button
+            <Button
+              variant="secondary"
               onClick={() => fileInputRef.current?.click()}
-              className="px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-bold"
+              className="h-auto px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-bold"
             >
               {file ? file.name : t('uploadFile')}
-            </button>
+            </Button>
             {file && <span className="text-[10px] text-emerald-600 font-bold">{t('fileAttached')}</span>}
           </div>
-          <button
+          <Button
+            variant="brand"
             onClick={handleAdd}
             disabled={adding}
-            className="px-5 py-2.5 rounded-2xl bg-amber-600 hover:bg-amber-700 text-white font-extrabold text-xs shadow-md disabled:opacity-60 transition"
+            className="h-auto px-5 py-2.5 rounded-2xl bg-amber-600 hover:bg-amber-700 shadow-amber-600/25 text-xs shadow-md"
           >
             {adding ? t('saving') : t('addNewLicense')}
-          </button>
-        </div>
+          </Button>
+        </Card>
       )}
 
-      <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 divide-y divide-slate-100 dark:divide-slate-800 shadow-xl overflow-hidden">
+      <Card className="rounded-3xl border border-slate-200 dark:border-slate-800 divide-y divide-slate-100 dark:divide-slate-800 shadow-xl overflow-hidden">
         {loading && <div className="p-6 text-xs text-slate-400 font-semibold">{t('loading')}</div>}
         {!loading && certs.length === 0 && (
           <div className="p-12 text-center space-y-3">
@@ -175,12 +182,12 @@ export default function CertificatesPage() {
                 )}
               </div>
             </div>
-            <button onClick={() => handleRemove(c.id)} className="text-slate-400 hover:text-red-500">
+            <Button variant="ghost" size="icon" onClick={() => handleRemove(c.id)} className="text-slate-400 hover:text-red-500">
               <Icon name="X" size={18} />
-            </button>
+            </Button>
           </div>
         ))}
-      </div>
+      </Card>
     </div>
     </>
   );

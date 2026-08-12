@@ -13,6 +13,20 @@ import { revalidateMastersCache } from '@/lib/api/revalidate';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import type { AdminMasterListItem, ApprovalStatus, Booking, Category, DashboardResponse, PlatformNps } from '@/lib/api/types';
 import { FilterContainer, FilterItem, InViewRow } from '@/components/ui/FilterAnimate';
+import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Card } from '@/components/ui/card';
+
+/** Radix has no empty-string option, so "any" travels as this sentinel. */
+const ANY = '__any';
 
 function flattenCategories(cats: Category[]): Category[] {
   return cats.flatMap((c) => (c.isLeaf ? [c] : flattenCategories(c.children ?? [])));
@@ -161,11 +175,11 @@ export default function AdminDashboardPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         {loading &&
           Array.from({ length: 4 }).map((_, idx) => (
-            <div key={idx} className="glass-card p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl h-[100px] animate-pulse" />
+            <Card key={idx} className="p-6 border-slate-200 dark:border-slate-800 shadow-xl h-[100px] animate-pulse" />
           ))}
         {!loading &&
           metrics.map((m, idx) => (
-            <div key={idx} className="glass-card p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl flex items-center justify-between group hover:shadow-2xl hover:-translate-y-0.5 transition-all duration-300">
+            <Card key={idx} className="p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl flex items-center justify-between group hover:shadow-2xl hover:-translate-y-0.5 transition-all duration-300">
               <div className="space-y-1">
                 <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{m.title}</span>
                 <h3 className="text-2xl font-extrabold text-slate-900 dark:text-white">{m.value}</h3>
@@ -174,14 +188,14 @@ export default function AdminDashboardPage() {
               <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${m.color} text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300`}>
                 <Icon name={m.icon} size={24} />
               </div>
-            </div>
+            </Card>
           ))}
       </div>
 
       {/* Chart + Quick Stats Row */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
         {/* Chart */}
-        <div className="lg:col-span-2 glass-card rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-6 shadow-xl">
+        <Card className="gap-0 lg:col-span-2 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-6 shadow-xl">
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-lg font-bold text-slate-900 dark:text-white">{t('chartTitle')}</h3>
@@ -207,10 +221,10 @@ export default function AdminDashboardPage() {
             <p className="text-xs text-slate-400 font-semibold text-center py-10">{t('noChartData')}</p>
           )}
           {loading && <div className="h-52 rounded-2xl bg-slate-50 dark:bg-slate-800/40 animate-pulse" />}
-        </div>
+        </Card>
 
         {/* Quick Stats */}
-        <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-xl space-y-4">
+        <Card className="gap-0 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-xl space-y-4">
           <h3 className="text-sm font-bold text-slate-900 dark:text-white">{t('quickStats')}</h3>
           <div className="space-y-3">
             {[
@@ -230,11 +244,11 @@ export default function AdminDashboardPage() {
               </div>
             ))}
           </div>
-        </div>
+        </Card>
       </div>
 
       {/* Platform NPS */}
-      <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-6 shadow-xl">
+      <Card className="gap-0 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-6 shadow-xl">
         <div>
           <h3 className="text-lg font-bold text-slate-900 dark:text-white">{t('npsTitle')}</h3>
           <p className="text-[10px] text-slate-400 font-semibold mt-0.5">{t('npsSubtitle')}</p>
@@ -264,10 +278,10 @@ export default function AdminDashboardPage() {
             </div>
           </div>
         )}
-      </div>
+      </Card>
 
       {/* Master Verification Table */}
-      <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-6 shadow-xl">
+      <Card className="gap-0 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-6 shadow-xl">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
             <h3 className="text-lg font-bold text-slate-900 dark:text-white">{t('verificationQueue')}</h3>
@@ -275,27 +289,30 @@ export default function AdminDashboardPage() {
           </div>
           <FilterContainer className="flex flex-wrap items-center gap-3">
             <FilterItem>
-              <select
-                value={approvalStatus}
-                onChange={(e) => setApprovalStatus(e.target.value as ApprovalStatus)}
-                className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold transition"
-              >
-                <option value="PENDING">{t('filterPending')}</option>
-                <option value="APPROVED">{t('filterApproved')}</option>
-                <option value="REJECTED">{t('filterRejected')}</option>
-              </select>
+              <Select value={approvalStatus} onValueChange={(value) => { setApprovalStatus(value as ApprovalStatus); }}>
+                <SelectTrigger className="w-auto p-2.5 rounded-xl text-xs font-bold">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                <SelectItem value="PENDING">{t('filterPending')}</SelectItem>
+                <SelectItem value="APPROVED">{t('filterApproved')}</SelectItem>
+                <SelectItem value="REJECTED">{t('filterRejected')}</SelectItem>
+                </SelectContent>
+              </Select>
             </FilterItem>
             <FilterItem index={1}>
-              <select
-                value={categoryId}
-                onChange={(e) => setCategoryId(e.target.value)}
-                className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold transition"
-              >
-                <option value="">{t('allCategories')}</option>
+              <Select value={categoryId || ANY} onValueChange={(raw) => { const value = raw === ANY ? '' : raw; setCategoryId(value); }}>
+                <SelectTrigger className="w-auto p-2.5 rounded-xl text-xs font-bold">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value={ANY}>{t('allCategories')}</SelectItem>
+                
                 {categories.map((c) => (
-                  <option key={c.id} value={c.id}>{c.name}</option>
+                  <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
                 ))}
-              </select>
+                </SelectContent>
+              </Select>
             </FilterItem>
           </FilterContainer>
         </div>
@@ -401,20 +418,20 @@ export default function AdminDashboardPage() {
                       <div className="flex gap-2">
                         {m.approvalStatus === 'PENDING' && (
                           <>
-                            <button
+                            <Button size="raw" variant="ghost"
                               onClick={() => handleApprove(m.id)}
                               disabled={actingId === m.id}
                               className="btn-success px-3 py-1.5 rounded-xl disabled:opacity-60 font-bold transition"
                             >
                               Approve
-                            </button>
-                            <button
+                            </Button>
+                            <Button size="raw" variant="ghost"
                               onClick={() => handleReject(m.id)}
                               disabled={actingId === m.id}
                               className="px-3 py-1.5 rounded-xl bg-red-600 hover:bg-red-700 disabled:opacity-60 text-white font-bold shadow-sm transition"
                             >
                               Reject
-                            </button>
+                            </Button>
                           </>
                         )}
                         <Link
@@ -431,23 +448,24 @@ export default function AdminDashboardPage() {
             </table>
           </div>
         )}
-      </div>
+      </Card>
 
       {/* Master Booking Details Overlay */}
-      {selectedMaster && (
-        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setSelectedMaster(null)}>
-          <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl w-full max-w-2xl max-h-[85vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
-            <div className="bg-gradient-to-r from-purple-600 to-indigo-600 p-6 rounded-t-3xl">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h2 className="text-xl font-extrabold text-white">{selectedMaster.displayName}</h2>
-                  <p className="text-purple-100 text-xs">{selectedMaster.email}</p>
-                </div>
-                <button onClick={() => setSelectedMaster(null)} className="p-2 rounded-xl bg-white/20 hover:bg-white/30 text-white transition">
-                  <Icon name="x" size={18} />
-                </button>
+      <Dialog open={!!selectedMaster} onOpenChange={(open) => !open && setSelectedMaster(null)}>
+        <DialogContent showCloseButton={false} className="sm:max-w-2xl p-0 gap-0 overflow-hidden">
+          {selectedMaster && (
+            <>
+            <DialogHeader className="bg-gradient-to-r from-purple-600 to-indigo-600 p-6 pr-6 flex-row items-center justify-between space-y-0">
+              <div>
+                <DialogTitle className="text-xl text-white">{selectedMaster.displayName}</DialogTitle>
+                <DialogDescription className="text-purple-100">{selectedMaster.email}</DialogDescription>
               </div>
-            </div>
+              <DialogClose asChild>
+                <Button size="icon" className="rounded-xl bg-white/20 hover:bg-white/30 text-white">
+                  <Icon name="x" size={18} />
+                </Button>
+              </DialogClose>
+            </DialogHeader>
 
             <div className="p-6 space-y-6">
               <div className="grid grid-cols-3 gap-4">
@@ -505,9 +523,10 @@ export default function AdminDashboardPage() {
                 </div>
               )}
             </div>
-          </div>
-        </div>
-      )}
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </DashboardLayout>
   );
 }

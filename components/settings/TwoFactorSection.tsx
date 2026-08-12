@@ -7,6 +7,9 @@ import { Icon } from '@/components/icons/LucideIcons';
 import { authApi } from '@/lib/api/endpoints';
 import { ApiError } from '@/lib/api/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card } from '@/components/ui/card';
 
 type Stage = 'idle' | 'enrolling' | 'disabling';
 
@@ -94,7 +97,7 @@ export function TwoFactorSection() {
   };
 
   return (
-    <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-xl space-y-5">
+    <Card className="gap-0 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-xl space-y-5">
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-start gap-3">
           <div
@@ -127,20 +130,22 @@ export function TwoFactorSection() {
       {stage === 'idle' && (
         <div className="flex items-center gap-3">
           {enabled ? (
-            <button
+            <Button
+              variant="outline"
               onClick={() => { setStage('disabling'); setCode(''); setError(null); setSuccess(null); }}
-              className="px-5 py-2.5 rounded-xl border border-red-200 dark:border-red-900 text-red-600 dark:text-red-400 text-xs font-bold hover:bg-red-50 dark:hover:bg-red-950/40 transition"
+              className="h-auto px-5 py-2.5 rounded-xl border-red-200 dark:border-red-900 text-red-600 dark:text-red-400 text-xs font-bold hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950/40"
             >
               {t('twoFactorDisableButton')}
-            </button>
+            </Button>
           ) : (
-            <button
+            <Button
+              variant="brand"
               onClick={startEnrolment}
               disabled={busy}
-              className="px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-extrabold shadow-md disabled:opacity-60 transition"
+              className="h-auto px-6 py-2.5 rounded-xl text-xs shadow-md"
             >
               {busy ? '...' : t('twoFactorEnableButton')}
-            </button>
+            </Button>
           )}
         </div>
       )}
@@ -169,12 +174,13 @@ export function TwoFactorSection() {
                 <p className="text-[10px] text-amber-600 dark:text-amber-400 font-bold">{t('twoFactorSecretOnce')}</p>
               </div>
 
-              <input
+              <Input
                 value={code}
                 onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
                 inputMode="numeric"
                 placeholder="000000"
-                className="w-full p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-center text-lg font-extrabold tracking-[0.4em] font-mono"
+                aria-label={t('twoFactorConfirmButton')}
+                className="p-3.5 rounded-xl text-center text-lg font-extrabold tracking-[0.4em] font-mono"
               />
             </div>
           </div>
@@ -182,16 +188,17 @@ export function TwoFactorSection() {
           {error && <p className="text-xs font-bold text-red-600 dark:text-red-400">{error}</p>}
 
           <div className="flex items-center gap-3">
-            <button
+            <Button
+              variant="brand"
               onClick={confirmEnrolment}
               disabled={busy}
-              className="px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-extrabold shadow-md disabled:opacity-60 transition"
+              className="h-auto px-6 py-2.5 rounded-xl text-xs shadow-md"
             >
               {busy ? '...' : t('twoFactorConfirmButton')}
-            </button>
-            <button onClick={reset} className="px-4 py-2.5 rounded-xl text-slate-500 text-xs font-bold hover:text-slate-700 dark:hover:text-slate-300 transition">
+            </Button>
+            <Button variant="ghost" onClick={reset} className="h-auto px-4 py-2.5 rounded-xl text-slate-500 text-xs font-bold hover:text-slate-700 dark:hover:text-slate-300">
               {t('cancel')}
-            </button>
+            </Button>
           </div>
         </div>
       )}
@@ -199,28 +206,30 @@ export function TwoFactorSection() {
       {stage === 'disabling' && (
         <div className="space-y-4 pt-4 border-t border-slate-100 dark:border-slate-800">
           <p className="text-xs text-slate-600 dark:text-slate-300">{t('twoFactorDisableHint')}</p>
-          <input
+          <Input
             value={code}
             onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
             inputMode="numeric"
             placeholder="000000"
-            className="w-full sm:w-56 p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-center text-lg font-extrabold tracking-[0.4em] font-mono"
+            aria-label={t('twoFactorDisableButton')}
+            className="w-full sm:w-56 p-3.5 rounded-xl text-center text-lg font-extrabold tracking-[0.4em] font-mono"
           />
           {error && <p className="text-xs font-bold text-red-600 dark:text-red-400">{error}</p>}
           <div className="flex items-center gap-3">
-            <button
+            <Button
+              variant="brand"
               onClick={confirmDisable}
               disabled={busy}
-              className="px-6 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-extrabold shadow-md disabled:opacity-60 transition"
+              className="h-auto px-6 py-2.5 rounded-xl text-xs shadow-md bg-red-600 hover:bg-red-700 shadow-red-600/25"
             >
               {busy ? '...' : t('twoFactorDisableButton')}
-            </button>
-            <button onClick={reset} className="px-4 py-2.5 rounded-xl text-slate-500 text-xs font-bold hover:text-slate-700 dark:hover:text-slate-300 transition">
+            </Button>
+            <Button variant="ghost" onClick={reset} className="h-auto px-4 py-2.5 rounded-xl text-slate-500 text-xs font-bold hover:text-slate-700 dark:hover:text-slate-300">
               {t('cancel')}
-            </button>
+            </Button>
           </div>
         </div>
       )}
-    </div>
+    </Card>
   );
 }

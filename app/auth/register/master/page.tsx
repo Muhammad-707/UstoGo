@@ -11,6 +11,10 @@ import type { City, Category } from '@/lib/api/types';
 import { PasswordInput } from '@/components/ui/PasswordInput';
 import { validateEmail, validateName, validatePassword, validatePhone, normalizePhone, type ValidationErrorKey } from '@/lib/validation';
 import { AuthShell } from '@/components/auth/AuthShell';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 function flattenCategories(cats: Category[]): Category[] {
   return cats.flatMap((c) => (c.isLeaf ? [c] : flattenCategories(c.children ?? [])));
@@ -116,51 +120,54 @@ export default function RegisterMasterPage() {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1">
-              <label className="text-xs font-bold text-slate-700 dark:text-slate-300">{t('fullNameLabel')}</label>
-              <input
+              <Label htmlFor="master-full-name">{t('fullNameLabel')}</Label>
+              <Input
+                id="master-full-name"
                 type="text"
                 placeholder={t('fullNamePlaceholder')}
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
-                className={`w-full p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border text-xs ${fieldErrors.fullName ? 'border-red-500' : 'border-slate-200 dark:border-slate-700'}`}
+                aria-invalid={!!fieldErrors.fullName}
                 required
               />
               {fieldErrors.fullName && <p className="text-red-500 text-xs">{tv(fieldErrors.fullName)}</p>}
             </div>
             <div className="space-y-1">
-              <label className="text-xs font-bold text-slate-700 dark:text-slate-300">{t('specialtyLabel')}</label>
-              <select
-                value={specialty}
-                onChange={(e) => setSpecialty(e.target.value)}
-                className="w-full p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold"
-              >
-                {categories.map((c) => (
-                  <option key={c.id} value={c.id}>{c.name}</option>
-                ))}
-              </select>
+              <Label htmlFor="master-specialty">{t('specialtyLabel')}</Label>
+              <Select value={specialty} onValueChange={setSpecialty}>
+                <SelectTrigger id="master-specialty" className="w-full font-bold">
+                  <SelectValue placeholder={t('specialtyLabel')} />
+                </SelectTrigger>
+                <SelectContent>
+                  {categories.map((c) => (
+                    <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1">
-              <label className="text-xs font-bold text-slate-700 dark:text-slate-300">{t('emailLabel')}</label>
-              <input
+              <Label htmlFor="master-email">{t('emailLabel')}</Label>
+              <Input
+                id="master-email"
                 type="email"
                 placeholder={t('emailPlaceholder')}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className={`w-full p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border text-xs ${fieldErrors.email ? 'border-red-500' : 'border-slate-200 dark:border-slate-700'}`}
+                aria-invalid={!!fieldErrors.email}
                 required
               />
               {fieldErrors.email && <p className="text-red-500 text-xs">{tv(fieldErrors.email)}</p>}
             </div>
             <div className="space-y-1">
-              <label className="text-xs font-bold text-slate-700 dark:text-slate-300">{t('passwordLabel')}</label>
+              <Label htmlFor="master-password">{t('passwordLabel')}</Label>
               <PasswordInput
+                id="master-password"
                 placeholder={t('passwordPlaceholder')}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs"
                 error={!!fieldErrors.password}
                 required
               />
@@ -170,53 +177,53 @@ export default function RegisterMasterPage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1">
-              <label className="text-xs font-bold text-slate-700 dark:text-slate-300">{t('phoneWhatsappLabel')}</label>
-              <input
+              <Label htmlFor="master-phone">{t('phoneWhatsappLabel')}</Label>
+              <Input
+                id="master-phone"
                 type="tel"
                 placeholder={t('phoneWhatsappPlaceholder')}
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                className={`w-full p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border text-xs ${fieldErrors.phone ? 'border-red-500' : 'border-slate-200 dark:border-slate-700'}`}
+                aria-invalid={!!fieldErrors.phone}
                 required
               />
               {fieldErrors.phone && <p className="text-red-500 text-xs">{tv(fieldErrors.phone)}</p>}
               <p className="text-[10px] text-slate-400">{t('phoneWhatsappHint')}</p>
             </div>
             <div className="space-y-1">
-              <label className="text-xs font-bold text-slate-700 dark:text-slate-300">{t('cityLabel')}</label>
-              <select
-                value={cityId}
-                onChange={(e) => setCityId(e.target.value)}
-                className={`w-full p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border text-xs font-bold ${fieldErrors.cityId ? 'border-red-500' : 'border-slate-200 dark:border-slate-700'}`}
-                required
-              >
-                <option value="" disabled>{t('cityPlaceholder')}</option>
-                {cities.map((c) => (
-                  <option key={c.id} value={c.id}>{c.name}</option>
-                ))}
-              </select>
+              <Label htmlFor="master-city">{t('cityLabel')}</Label>
+              <Select value={cityId} onValueChange={setCityId} required>
+                <SelectTrigger id="master-city" className="w-full font-bold" aria-invalid={!!fieldErrors.cityId}>
+                  <SelectValue placeholder={t('cityPlaceholder')} />
+                </SelectTrigger>
+                <SelectContent>
+                  {cities.map((c) => (
+                    <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1">
-              <label className="text-xs font-bold text-slate-700 dark:text-slate-300">{t('hourlyRateLabel')}</label>
-              <input type="number" placeholder="45" className="w-full p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs" />
+              <Label htmlFor="master-rate">{t('hourlyRateLabel')}</Label>
+              <Input id="master-rate" type="number" placeholder="45" />
             </div>
             <div className="space-y-1">
-              <label className="text-xs font-bold text-slate-700 dark:text-slate-300">{t('experienceLabel')}</label>
-              <input
+              <Label htmlFor="master-experience">{t('experienceLabel')}</Label>
+              <Input
+                id="master-experience"
                 type="number"
                 placeholder="10"
                 value={experienceYears}
                 onChange={(e) => setExperienceYears(e.target.value)}
-                className="w-full p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs"
               />
             </div>
           </div>
 
           <div className="space-y-1">
-            <label className="text-xs font-bold text-slate-700 dark:text-slate-300">{t('uploadLabel')}</label>
+            <Label>{t('uploadLabel')}</Label>
             <div className="p-4 border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-2xl text-center text-xs text-slate-400">
               {t('dragDropText')} <span className="text-blue-600 font-bold">{t('browse')}</span>
             </div>
@@ -224,13 +231,15 @@ export default function RegisterMasterPage() {
 
           {error && <p className="text-red-500 text-sm">{error}</p>}
 
-          <button
+          <Button
             type="submit"
+            variant="brand"
+            size="xl"
             disabled={submitting}
-            className="w-full py-4 rounded-2xl bg-amber-600 hover:bg-amber-700 disabled:opacity-60 disabled:cursor-not-allowed text-white font-extrabold text-xs shadow-lg btn-ripple"
+            className="w-full bg-amber-600 hover:bg-amber-700 shadow-amber-600/25 hover:shadow-amber-600/30"
           >
             {submitting ? t('submitting') : t('submitButton')}
-          </button>
+          </Button>
         </form>
 
         <p className="text-center text-xs text-slate-500">

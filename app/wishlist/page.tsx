@@ -10,6 +10,8 @@ import type { Product } from '@/lib/api/types';
 import { FilterContainer, FilterItem } from '@/components/ui/FilterAnimate';
 import { ClientPageHeader } from '@/components/client/ClientPageHeader';
 import { EmptyState } from '@/components/ui/EmptyState';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 
 export default function WishlistPage() {
   const t = useTranslations('marketplace');
@@ -83,7 +85,7 @@ export default function WishlistPage() {
         <FilterContainer className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
           {products.map((product, idx) => (
             <FilterItem key={product.id} index={idx % 4}>
-              <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden h-full flex flex-col">
+              <Card className="rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden h-full flex flex-col">
                 <div className="relative aspect-square bg-slate-100 dark:bg-slate-800">
                   <Link href={`/marketplace/${product.id}`}>
                     {product.imageUrls[0] ? (
@@ -94,13 +96,13 @@ export default function WishlistPage() {
                       </div>
                     )}
                   </Link>
-                  <button
+                  <Button size="raw" variant="ghost"
                     onClick={() => handleRemove(product.id)}
                     disabled={busyId === product.id}
                     className="absolute top-2 right-2 w-8 h-8 rounded-full bg-white/90 dark:bg-slate-900/90 backdrop-blur flex items-center justify-center shadow"
                   >
                     <Icon name="heart" size={15} className="fill-red-500 text-red-500" />
-                  </button>
+                  </Button>
                 </div>
                 <div className="p-4 flex flex-col flex-1 gap-2">
                   <Link href={`/marketplace/${product.id}`} className="text-sm font-bold text-slate-900 dark:text-white line-clamp-2 flex-1">
@@ -112,16 +114,16 @@ export default function WishlistPage() {
                     </span>
                     {product.oldPrice && <span className="text-xs text-slate-400 line-through">{product.oldPrice}</span>}
                   </div>
-                  <button
+                  <Button size="raw" variant="ghost"
                     onClick={() => handleAddToCart(product.id)}
                     disabled={busyId === product.id || !product.isActive}
                     className="mt-1 w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-xs font-bold hover:bg-emerald-600 dark:hover:bg-emerald-400 disabled:opacity-50 transition"
                   >
                     <Icon name="shoppingcart" size={13} />
                     {t('addToCart')}
-                  </button>
+                  </Button>
                 </div>
-              </div>
+              </Card>
             </FilterItem>
           ))}
         </FilterContainer>

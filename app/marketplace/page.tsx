@@ -11,6 +11,9 @@ import { ApiError } from '@/lib/api/client';
 import type { Product, ProductCategory } from '@/lib/api/types';
 import { FilterButton, FilterContainer, FilterItem } from '@/components/ui/FilterAnimate';
 import { useMoney } from '@/lib/money';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 
 export default function MarketplacePage() {
   const t = useTranslations('marketplace');
@@ -167,7 +170,7 @@ export default function MarketplacePage() {
       <div className="space-y-4">
         <div className="relative">
           <Icon name="search" size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
-          <input
+          <Input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -210,9 +213,9 @@ export default function MarketplacePage() {
       )}
 
       {!loading && products.length === 0 && (
-        <div className="glass-card rounded-3xl p-12 text-center">
+        <Card className="rounded-3xl p-12 text-center">
           <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">{t('noProducts')}</p>
-        </div>
+        </Card>
       )}
 
       {!loading && products.length > 0 && (
@@ -221,7 +224,7 @@ export default function MarketplacePage() {
             const liked = wishlistIds.has(product.id);
             return (
               <FilterItem key={product.id} index={idx % 4}>
-                <div className="group glass-card rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden h-full flex flex-col hover:shadow-xl hover:shadow-emerald-500/10 hover:border-emerald-200 dark:hover:border-emerald-900 transition-[box-shadow,border-color] duration-300">
+                <Card className="group rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden h-full flex flex-col hover:shadow-xl hover:shadow-emerald-500/10 hover:border-emerald-200 dark:hover:border-emerald-900 transition-[box-shadow,border-color] duration-300">
                   <Link href={`/marketplace/${product.id}`} className="relative aspect-square block overflow-hidden bg-slate-100 dark:bg-slate-800">
                     {product.imageUrls[0] ? (
                       <img
@@ -240,7 +243,7 @@ export default function MarketplacePage() {
                       </span>
                     )}
                     {isClient && (
-                      <button
+                      <Button size="raw" variant="ghost"
                         onClick={(e) => {
                           e.preventDefault();
                           handleToggleWishlist(product);
@@ -252,7 +255,7 @@ export default function MarketplacePage() {
                           size={15}
                           className={liked ? 'fill-red-500 text-red-500' : 'text-slate-400'}
                         />
-                      </button>
+                      </Button>
                     )}
                   </Link>
                   <div className="p-4 flex flex-col flex-1 gap-2">
@@ -270,16 +273,16 @@ export default function MarketplacePage() {
                         <span className="text-xs text-slate-400 line-through">{product.oldPrice}</span>
                       )}
                     </div>
-                    <button
+                    <Button size="raw" variant="ghost"
                       onClick={() => handleAddToCart(product)}
                       disabled={busyId === product.id}
                       className="mt-1 w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-xs font-bold hover:bg-emerald-600 dark:hover:bg-emerald-400 disabled:opacity-50 transition"
                     >
                       <Icon name="shoppingcart" size={13} />
                       {busyId === product.id ? '...' : t('addToCart')}
-                    </button>
+                    </Button>
                   </div>
-                </div>
+                </Card>
               </FilterItem>
             );
           })}
@@ -288,21 +291,21 @@ export default function MarketplacePage() {
 
       {!loading && totalPages > 1 && (
         <div className="flex items-center justify-between pt-2">
-          <button
+          <Button size="raw" variant="ghost"
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={page <= 1}
             className="px-4 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 text-xs font-bold disabled:opacity-40"
           >
             {t('prev')}
-          </button>
+          </Button>
           <span className="text-xs font-bold text-slate-500">{t('pageOf', { page, total: totalPages })}</span>
-          <button
+          <Button size="raw" variant="ghost"
             onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
             disabled={page >= totalPages}
             className="px-4 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 text-xs font-bold disabled:opacity-40"
           >
             {t('next')}
-          </button>
+          </Button>
         </div>
       )}
 

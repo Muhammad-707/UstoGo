@@ -8,6 +8,13 @@ import { ApiError } from '@/lib/api/client';
 import { revalidateMastersCache } from '@/lib/api/revalidate';
 import type { Category, MasterService, PricingSuggestion } from '@/lib/api/types';
 import { MasterPageHeader } from '@/components/master/MasterPageHeader';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { cn } from '@/lib/utils';
+import { Card } from '@/components/ui/card';
 
 type PriceType = 'FIXED' | 'HOURLY' | 'FROM';
 
@@ -234,7 +241,7 @@ export default function MasterServicesPage() {
       title={t('servicesPricing')}
       hint={t('pageHint')}
       action={
-        <button
+        <Button
           onClick={() => {
             if (myCategoryIds.length === 0) {
               setError(t('noCategoryAttached'));
@@ -246,10 +253,10 @@ export default function MasterServicesPage() {
               setForm({ ...EMPTY_FORM, categoryId: myCategoryIds[0] });
             }
           }}
-          className="px-5 py-2.5 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-extrabold text-xs shadow-lg shadow-amber-900/20 transition"
+          className="h-auto px-5 py-2.5 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-extrabold text-xs shadow-lg shadow-amber-900/20"
         >
           + {t('addService')}
-        </button>
+        </Button>
       }
     />
     <div className="page-shell page-shell-narrow py-10 space-y-8">
@@ -261,7 +268,7 @@ export default function MasterServicesPage() {
       )}
 
       {/* My categories */}
-      <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 p-6 space-y-4 shadow-xl">
+      <Card className="gap-0 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 space-y-4 shadow-xl">
         <h3 className="text-sm font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
           <Icon name="award" size={16} className="text-amber-500" />
           {t('myCategories')}
@@ -276,138 +283,160 @@ export default function MasterServicesPage() {
               className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-50 dark:bg-amber-950/50 text-amber-800 dark:text-amber-300 text-xs font-bold"
             >
               {c.name}
-              <button onClick={() => handleDetachCategory(c.id)} className="hover:text-red-500" title={t('detach')}>
+              <Button
+                variant="ghost"
+                size="icon-xs"
+                onClick={() => handleDetachCategory(c.id)}
+                className="hover:text-red-500 hover:bg-transparent"
+                title={t('detach')}
+              >
                 ×
-              </button>
+              </Button>
             </span>
           ))}
         </div>
         {unattachedLeaves.length > 0 && (
           <div className="flex flex-wrap items-center gap-2">
-            <select
-              value={attachCategoryId}
-              onChange={(e) => setAttachCategoryId(e.target.value)}
-              className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold"
-            >
-              <option value="">{t('selectCategoryToAttach')}</option>
-              {unattachedLeaves.map((c) => (
-                <option key={c.id} value={c.id}>{c.name}</option>
-              ))}
-            </select>
-            <button
+            <Select value={attachCategoryId} onValueChange={setAttachCategoryId}>
+              <SelectTrigger className="w-auto min-w-56 p-2.5 rounded-xl font-semibold">
+                <SelectValue placeholder={t('selectCategoryToAttach')} />
+              </SelectTrigger>
+              <SelectContent>
+                {unattachedLeaves.map((c) => (
+                  <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Button
+              variant="secondary"
               onClick={handleAttachCategory}
-              className="px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-bold hover:bg-amber-100 dark:hover:bg-amber-950 transition"
+              className="h-auto px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-bold hover:bg-amber-100 dark:hover:bg-amber-950"
             >
               {t('attach')}
-            </button>
+            </Button>
           </div>
         )}
-      </div>
+      </Card>
 
       {/* Add / edit form */}
       {showForm && (
-        <div className="glass-card rounded-3xl border border-amber-200 dark:border-amber-800/40 p-6 space-y-4 shadow-xl">
+        <Card className="gap-0 rounded-3xl border border-amber-200 dark:border-amber-800/40 p-6 space-y-4 shadow-xl">
           <h3 className="text-sm font-extrabold text-slate-900 dark:text-white">
             {editingId !== null ? t('editService') : t('newService')}
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-            <label className="space-y-1">
-              <span className="font-bold text-slate-500">{t('titleLabel')}</span>
-              <input
+            <div className="space-y-1">
+              <Label htmlFor="service-title" className="text-slate-500">{t('titleLabel')}</Label>
+              <Input
+                id="service-title"
                 value={form.title}
                 onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))}
-                className="w-full p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-semibold"
+                className="p-3 rounded-xl font-semibold"
               />
-            </label>
-            <label className="space-y-1">
-              <span className="font-bold text-slate-500">{t('categoryLabel')}</span>
-              <select
+            </div>
+            <div className="space-y-1">
+              <Label htmlFor="service-category" className="text-slate-500">{t('categoryLabel')}</Label>
+              <Select
                 value={form.categoryId}
-                onChange={(e) => setForm((f) => ({ ...f, categoryId: e.target.value }))}
-                className="w-full p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-semibold"
+                onValueChange={(value) => setForm((f) => ({ ...f, categoryId: value }))}
               >
-                {myCategories.map((c) => (
-                  <option key={c.id} value={c.id}>{c.name}</option>
-                ))}
-              </select>
-            </label>
-            <label className="space-y-1 sm:col-span-2">
-              <span className="font-bold text-slate-500">{t('descriptionLabel')}</span>
-              <textarea
+                <SelectTrigger id="service-category" className="w-full p-3 rounded-xl font-semibold">
+                  <SelectValue placeholder={t('categoryLabel')} />
+                </SelectTrigger>
+                <SelectContent>
+                  {myCategories.map((c) => (
+                    <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1 sm:col-span-2">
+              <Label htmlFor="service-description" className="text-slate-500">{t('descriptionLabel')}</Label>
+              <Textarea
+                id="service-description"
                 value={form.description}
                 onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
                 rows={3}
-                className="w-full p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-semibold"
+                className="p-3 rounded-xl font-semibold"
               />
-            </label>
-            <label className="space-y-1">
-              <span className="font-bold text-slate-500">{t('priceTypeLabel')}</span>
-              <select
+            </div>
+            <div className="space-y-1">
+              <Label htmlFor="service-price-type" className="text-slate-500">{t('priceTypeLabel')}</Label>
+              <Select
                 value={form.priceType}
-                onChange={(e) => setForm((f) => ({ ...f, priceType: e.target.value as PriceType }))}
-                className="w-full p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-semibold"
+                onValueChange={(value) => setForm((f) => ({ ...f, priceType: value as PriceType }))}
               >
-                {PRICE_TYPES.map((pt) => (
-                  <option key={pt} value={pt}>{t(`priceType${pt}`)}</option>
-                ))}
-              </select>
-            </label>
-            <label className="space-y-1">
-              <span className="font-bold text-slate-500">{t('priceLabel')}</span>
-              <input
+                <SelectTrigger id="service-price-type" className="w-full p-3 rounded-xl font-semibold">
+                  <SelectValue placeholder={t('priceTypeLabel')} />
+                </SelectTrigger>
+                <SelectContent>
+                  {PRICE_TYPES.map((pt) => (
+                    <SelectItem key={pt} value={pt}>{t(`priceType${pt}`)}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1">
+              <Label htmlFor="service-price" className="text-slate-500">{t('priceLabel')}</Label>
+              <Input
+                id="service-price"
                 type="number"
                 min="0.01"
                 step="0.01"
                 value={form.price}
                 onChange={(e) => setForm((f) => ({ ...f, price: e.target.value }))}
-                className="w-full p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-semibold"
+                className="p-3 rounded-xl font-semibold"
               />
               {priceSuggestion?.suggestedMedian && (
-                <button
+                <Button
                   type="button"
+                  variant="link"
                   onClick={() => setForm((f) => ({ ...f, price: priceSuggestion.suggestedMedian as string }))}
-                  className="text-[10px] text-blue-600 dark:text-sky-400 font-bold hover:underline text-left"
+                  className="h-auto p-0 justify-start text-[10px] text-blue-600 dark:text-sky-400 font-bold text-left whitespace-normal"
                 >
                   {t('pricingSuggestionHint', {
                     min: priceSuggestion.suggestedMin ?? '—',
                     max: priceSuggestion.suggestedMax ?? '—',
                   })}
-                </button>
+                </Button>
               )}
-            </label>
-            <label className="space-y-1">
-              <span className="font-bold text-slate-500">{t('durationLabel')}</span>
-              <input
+            </div>
+            <div className="space-y-1">
+              <Label htmlFor="service-duration" className="text-slate-500">{t('durationLabel')}</Label>
+              <Input
+                id="service-duration"
                 type="number"
                 min="15"
                 step="15"
                 value={form.durationMinutes}
                 onChange={(e) => setForm((f) => ({ ...f, durationMinutes: e.target.value }))}
-                className="w-full p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-semibold"
+                className="p-3 rounded-xl font-semibold"
               />
               {durationHint && <span className="text-[10px] text-slate-400 font-bold">{durationHint}</span>}
-            </label>
+            </div>
           </div>
           <div className="flex items-center gap-3">
-            <button
+            <Button
+              variant="brand"
               onClick={handleSave}
               disabled={saving}
-              className="px-5 py-2.5 rounded-2xl bg-amber-600 hover:bg-amber-700 text-white font-extrabold text-xs shadow-md disabled:opacity-60 transition"
+              className="h-auto px-5 py-2.5 rounded-2xl bg-amber-600 hover:bg-amber-700 shadow-amber-600/25 text-xs shadow-md"
             >
               {saving ? t('saving') : t('save')}
-            </button>
-            <button
+            </Button>
+            <Button
+              variant="secondary"
               onClick={resetForm}
-              className="px-5 py-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-bold transition"
+              className="h-auto px-5 py-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-bold"
             >
               {t('cancel')}
-            </button>
+            </Button>
           </div>
-        </div>
+        </Card>
       )}
 
       {/* Services list */}
-      <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 p-6 space-y-4 shadow-xl">
+      <Card className="gap-0 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 space-y-4 shadow-xl">
         <h3 className="text-sm font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
           <Icon name="sparkles" size={16} className="text-amber-500" />
           {t('myServicesTitle', { count: services.length })}
@@ -447,27 +476,29 @@ export default function MasterServicesPage() {
               </div>
               <div className="flex items-center gap-3">
                 <span className="font-extrabold text-amber-600 dark:text-amber-400 text-sm">{s.price} {s.currency}</span>
-                <button
+                <Button
+                  variant="ghost"
                   onClick={() => handleToggleActive(s)}
-                  className={`px-3 py-1.5 rounded-xl text-[10px] font-extrabold transition ${
+                  className={cn(
+                    'h-auto px-3 py-1.5 rounded-xl text-[10px] font-extrabold',
                     (s.isActive ?? true)
-                      ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300'
-                      : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300'
-                  }`}
+                      ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-200 dark:hover:bg-emerald-900'
+                      : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300',
+                  )}
                 >
                   {(s.isActive ?? true) ? t('active') : t('inactive')}
-                </button>
-                <button onClick={() => startEdit(s)} className="text-slate-400 hover:text-amber-600 font-bold">
+                </Button>
+                <Button variant="ghost" onClick={() => startEdit(s)} className="h-auto p-1 text-xs text-slate-400 hover:text-amber-600 hover:bg-transparent font-bold">
                   {t('edit')}
-                </button>
-                <button onClick={() => handleRemove(s)} className="text-slate-400 hover:text-red-500 font-bold">
+                </Button>
+                <Button variant="ghost" onClick={() => handleRemove(s)} className="h-auto p-1 text-xs text-slate-400 hover:text-red-500 hover:bg-transparent font-bold">
                   {t('delete')}
-                </button>
+                </Button>
               </div>
             </div>
           ))}
         </div>
-      </div>
+      </Card>
     </div>
     </>
   );

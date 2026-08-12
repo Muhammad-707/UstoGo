@@ -6,6 +6,8 @@ import { useTranslations } from 'next-intl';
 import { Icon } from '@/components/icons/LucideIcons';
 import { categoriesApi } from '@/lib/api/endpoints';
 import type { Category } from '@/lib/api/types';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 
 export const Footer: React.FC = () => {
   const t = useTranslations('common');
@@ -39,16 +41,17 @@ export const Footer: React.FC = () => {
 
           <div className="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto">
             <div className="relative w-full sm:w-80">
-              <input
+              <Input
                 type="email"
                 placeholder={t('enterEmail')}
-                className="w-full px-5 py-3.5 rounded-2xl bg-slate-950/80 border border-slate-700/80 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 transition"
+                aria-label={t('enterEmail')}
+                className="h-auto w-full px-5 py-3.5 rounded-2xl bg-slate-950/80 border-slate-700/80 text-white placeholder:text-slate-500 text-sm dark:bg-slate-950/80"
               />
             </div>
-            <button className="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm shadow-lg shadow-blue-600/30 transition btn-ripple flex items-center justify-center gap-2 whitespace-nowrap">
+            <Button className="w-full sm:w-auto h-auto px-6 py-3.5 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm shadow-lg shadow-blue-600/30 btn-ripple gap-2 whitespace-nowrap">
               <span>{t('subscribe')}</span>
               <Icon name="ArrowRight" size={16} />
-            </button>
+            </Button>
           </div>
         </div>
 

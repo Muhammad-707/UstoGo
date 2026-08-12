@@ -7,6 +7,7 @@
   "certificateHint": "Certificates with a file attached appear on your public page",
   "titlePlaceholder": "Certificate title",
   "issuerPlaceholder": "Issuer",
+  "issuedAtLabel": "Issue date",
   "uploadFile": "Attach file (image/PDF)",
   "fileAttached": "✓ File attached",
   "validationTitle": "Certificate title is required",

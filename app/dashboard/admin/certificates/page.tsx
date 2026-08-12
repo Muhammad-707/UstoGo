@@ -10,6 +10,8 @@ import { useRequireAuth } from '@/hooks/useRequireAuth';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import type { AdminCertificate } from '@/lib/api/types';
 import { EmptyState } from '@/components/ui/EmptyState';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 
 export default function AdminCertificatesPage() {
   const t = useTranslations('adminCertificates');
@@ -101,10 +103,10 @@ export default function AdminCertificatesPage() {
         </div>
       )}
 
-      <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-6 shadow-xl">
+      <Card className="gap-0 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-6 shadow-xl">
         <div className="flex items-center gap-2">
           {(['pending', 'verified', 'all'] as const).map((f) => (
-            <button
+            <Button size="raw" variant="ghost"
               key={f}
               onClick={() => { setFilter(f); setPage(1); }}
               className={`px-4 py-2 rounded-xl text-xs font-bold transition ${
@@ -114,7 +116,7 @@ export default function AdminCertificatesPage() {
               }`}
             >
               {f === 'pending' ? t('filterPending') : f === 'verified' ? t('filterVerified') : t('filterAll')}
-            </button>
+            </Button>
           ))}
         </div>
 
@@ -148,28 +150,28 @@ export default function AdminCertificatesPage() {
                 {c.issuedBy && <p className="text-[11px] text-slate-400">{t('issuedBy', { issuer: c.issuedBy })}</p>}
 
                 <div className="flex flex-wrap gap-2 pt-1">
-                  <button
+                  <Button size="raw" variant="ghost"
                     onClick={() => handleView(c.fileId)}
                     className="px-4 py-2 rounded-xl bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition"
                   >
                     {t('viewFile')}
-                  </button>
+                  </Button>
                   {!c.verifiedAt && (
                     <>
-                      <button
+                      <Button size="raw" variant="ghost"
                         onClick={() => handleVerify(c.id)}
                         disabled={actingId === c.id}
                         className="btn-success px-4 py-2 rounded-xl text-xs font-bold disabled:opacity-60 transition"
                       >
                         {t('verify')}
-                      </button>
-                      <button
+                      </Button>
+                      <Button size="raw" variant="ghost"
                         onClick={() => handleReject(c.id)}
                         disabled={actingId === c.id}
                         className="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold disabled:opacity-60 transition"
                       >
                         {t('reject')}
-                      </button>
+                      </Button>
                     </>
                   )}
                 </div>
@@ -180,24 +182,24 @@ export default function AdminCertificatesPage() {
 
         {!loading && totalPages > 1 && (
           <div className="flex items-center justify-between pt-2">
-            <button
+            <Button size="raw" variant="ghost"
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page <= 1}
               className="px-4 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 text-xs font-bold disabled:opacity-40"
             >
               {t('prev')}
-            </button>
+            </Button>
             <span className="text-xs font-bold text-slate-500">{t('pageOf', { page, total: totalPages })}</span>
-            <button
+            <Button size="raw" variant="ghost"
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page >= totalPages}
               className="px-4 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 text-xs font-bold disabled:opacity-40"
             >
               {t('next')}
-            </button>
+            </Button>
           </div>
         )}
-      </div>
+      </Card>
     </DashboardLayout>
   );
 }

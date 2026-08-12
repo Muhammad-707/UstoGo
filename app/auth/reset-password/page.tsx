@@ -9,6 +9,8 @@ import { ApiError } from '@/lib/api/client';
 import { PasswordInput } from '@/components/ui/PasswordInput';
 import { validatePassword, type ValidationErrorKey } from '@/lib/validation';
 import { AuthShell } from '@/components/auth/AuthShell';
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
 
 function ResetPasswordForm() {
   const t = useTranslations('authResetPassword');
@@ -53,9 +55,9 @@ function ResetPasswordForm() {
           <div className="space-y-4">
             <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white">{t('invalidLinkTitle')}</h2>
             <p className="text-xs text-slate-500">{t('invalidLinkDesc')}</p>
-            <Link href="/auth/forgot-password" className="inline-block px-6 py-3 rounded-xl bg-blue-600 text-white font-bold text-xs">
-              {t('requestNewLink')}
-            </Link>
+            <Button asChild variant="brand" className="h-auto px-6 py-3 rounded-xl text-xs">
+              <Link href="/auth/forgot-password">{t('requestNewLink')}</Link>
+            </Button>
           </div>
         ) : done ? (
           <div className="space-y-4">
@@ -64,9 +66,9 @@ function ResetPasswordForm() {
             </div>
             <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white">{t('successTitle')}</h2>
             <p className="text-xs text-slate-500">{t('successDesc')}</p>
-            <Link href="/auth/login" className="inline-block px-6 py-3 rounded-xl bg-blue-600 text-white font-bold text-xs">
-              {t('goToLogin')}
-            </Link>
+            <Button asChild variant="brand" className="h-auto px-6 py-3 rounded-xl text-xs">
+              <Link href="/auth/login">{t('goToLogin')}</Link>
+            </Button>
           </div>
         ) : (
           <>
@@ -77,35 +79,33 @@ function ResetPasswordForm() {
 
             <form onSubmit={handleSubmit} className="space-y-4 text-left">
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-700 dark:text-slate-300">{t('newPasswordLabel')}</label>
+                <Label htmlFor="reset-password">{t('newPasswordLabel')}</Label>
                 <PasswordInput
+                  id="reset-password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs"
+                  className="p-4"
                   error={!!passwordError}
                   required
                 />
                 {passwordError && <p className="text-red-500 text-xs">{tv(passwordError)}</p>}
               </div>
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-700 dark:text-slate-300">{t('confirmPasswordLabel')}</label>
+                <Label htmlFor="reset-password-confirm">{t('confirmPasswordLabel')}</Label>
                 <PasswordInput
+                  id="reset-password-confirm"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs"
+                  className="p-4"
                   error={!!confirmError}
                   required
                 />
                 {confirmError && <p className="text-red-500 text-xs">{confirmError}</p>}
               </div>
               {error && <p className="text-red-500 text-sm">{error}</p>}
-              <button
-                type="submit"
-                disabled={submitting}
-                className="w-full py-4 rounded-2xl bg-blue-600 text-white font-extrabold text-xs shadow-lg btn-ripple disabled:opacity-60 disabled:cursor-not-allowed"
-              >
+              <Button type="submit" variant="brand" size="xl" disabled={submitting} className="w-full">
                 {submitting ? t('resetting') : t('resetButton')}
-              </button>
+              </Button>
             </form>
 
             <Link href="/auth/login" className="block text-xs font-bold text-slate-500 hover:underline">

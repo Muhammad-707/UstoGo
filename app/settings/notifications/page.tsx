@@ -8,6 +8,9 @@ import { notificationsApi } from '@/lib/api/endpoints';
 import { ApiError } from '@/lib/api/client';
 import type { NotificationPreferences, NotificationType } from '@/lib/api/types';
 import { PageHeader } from '@/components/layout/PageHeader';
+import { Button } from '@/components/ui/button';
+import { Switch } from '@/components/ui/switch';
+import { Card } from '@/components/ui/card';
 
 const GROUPS: { key: string; icon: string; types: NotificationType[] }[] = [
   {
@@ -97,9 +100,9 @@ export default function NotificationPreferencesPage() {
 
       {preferences &&
         GROUPS.map((group) => (
-          <div
+          <Card
             key={group.key}
-            className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-xl space-y-1"
+            className="gap-0 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-xl space-y-1"
           >
             <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2 mb-3">
               <Icon name={group.icon} size={18} />
@@ -113,35 +116,30 @@ export default function NotificationPreferencesPage() {
                     <div className="min-w-0">
                       <p className="text-sm font-bold text-slate-900 dark:text-white">{t(`type.${type}`)}</p>
                     </div>
-                    <button
-                      onClick={() => toggle(type)}
+                    <Switch
+                      checked={enabled}
+                      onCheckedChange={() => toggle(type)}
                       disabled={savingType === type}
-                      role="switch"
-                      aria-checked={enabled}
-                      className={`relative w-10 h-6 rounded-full shrink-0 transition disabled:opacity-60 ${
-                        enabled ? 'bg-emerald-500' : 'bg-slate-300 dark:bg-slate-700'
-                      }`}
-                    >
-                      <span
-                        className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform ${
-                          enabled ? 'translate-x-4' : 'translate-x-0'
-                        }`}
-                      />
-                    </button>
+                      aria-label={t(`type.${type}`)}
+                      className="shrink-0 data-[state=checked]:bg-emerald-500"
+                    />
                   </div>
                 );
               })}
             </div>
-          </div>
+          </Card>
         ))}
 
-      <Link
-        href="/settings/security"
-        className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-extrabold text-xs hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+      <Button
+        asChild
+        variant="outline"
+        className="w-fit h-auto gap-2 px-5 py-3 rounded-2xl border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-extrabold text-xs hover:bg-slate-100 dark:hover:bg-slate-800"
       >
-        <Icon name="key" size={14} />
-        {t('backToSecurity')}
-      </Link>
+        <Link href="/settings/security">
+          <Icon name="key" size={14} />
+          {t('backToSecurity')}
+        </Link>
+      </Button>
     </div>
     </>
   );

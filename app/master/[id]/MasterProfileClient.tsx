@@ -17,6 +17,23 @@ import { waLink } from '@/lib/whatsapp';
 import { getAvatarUrl, getCoverUrl, PLACEHOLDER_REVIEWER_AVATAR } from '@/lib/placeholders';
 import { FavoriteButton } from '@/components/masters/FavoriteButton';
 import { FilterItem } from '@/components/ui/FilterAnimate';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
+import { Card } from '@/components/ui/card';
+
+/** Radix has no empty-string option, so "any" travels as this sentinel. */
+const ANY = '__any';
 
 type TabId = 'about' | 'services' | 'gallery' | 'reviews' | 'hours';
 
@@ -149,12 +166,12 @@ export default function MasterProfileClient() {
           <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white">{t('loadErrorTitle')}</h1>
           <p className="text-xs text-slate-500">{t('loadErrorBody')}</p>
         </div>
-        <button
+        <Button size="raw" variant="ghost"
           onClick={() => setReloadKey((k) => k + 1)}
           className="px-8 py-3.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-lg transition btn-ripple"
         >
           {t('retry')}
-        </button>
+        </Button>
       </div>
     );
   }
@@ -294,7 +311,7 @@ export default function MasterProfileClient() {
             </Link>
 
             {user?.role === 'CLIENT' && (
-              <button
+              <Button size="raw" variant="ghost"
                 onClick={() => {
                   setShowQuoteModal(true);
                   setQuoteSent(false);
@@ -306,7 +323,7 @@ export default function MasterProfileClient() {
               >
                 <Icon name="calculator" size={16} />
                 <span>{t('requestQuote')}</span>
-              </button>
+              </Button>
             )}
           </div>
 
@@ -327,7 +344,7 @@ export default function MasterProfileClient() {
                 { id: 'reviews' as TabId, label: t('tabReviews', { count: reviews.length }) },
                 { id: 'hours' as TabId, label: t('tabHours') },
               ].map((tab) => (
-                <button
+                <Button size="raw" variant="ghost"
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
                   className={`pb-4 text-sm font-bold transition whitespace-nowrap relative ${
@@ -344,7 +361,7 @@ export default function MasterProfileClient() {
                       transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                     />
                   )}
-                </button>
+                </Button>
               ))}
             </div>
 
@@ -448,20 +465,22 @@ export default function MasterProfileClient() {
                   </div>
                 ) : (
                   services.map((s, idx) => (
-                    <FilterItem
-                      key={s.id}
+                    <Card key={s.id} asChild>
+                      <FilterItem
+                     
                       index={idx}
-                      className="glass-card p-6 rounded-3xl border border-slate-200 dark:border-slate-800 flex items-center justify-between gap-4 hover:shadow-lg hover:border-blue-200 dark:hover:border-sky-900 transition-[box-shadow,border-color] duration-300"
+                      className="p-6 rounded-3xl border border-slate-200 dark:border-slate-800 flex items-center justify-between gap-4 hover:shadow-lg hover:border-blue-200 dark:hover:border-sky-900 transition-[box-shadow,border-color] duration-300"
                     >
-                      <div>
-                        <h4 className="text-sm font-bold text-slate-900 dark:text-white">{s.title}</h4>
-                        {s.description && <p className="text-xs text-slate-500 mt-1">{s.description}</p>}
-                        <p className="text-xs text-slate-400 mt-1">{s.durationMinutes} {t('minutes')}</p>
-                      </div>
-                      <span className="text-sm font-extrabold text-slate-900 dark:text-white whitespace-nowrap">
-                        {money(s.price)}
-                      </span>
-                    </FilterItem>
+                        <div>
+                          <h4 className="text-sm font-bold text-slate-900 dark:text-white">{s.title}</h4>
+                          {s.description && <p className="text-xs text-slate-500 mt-1">{s.description}</p>}
+                          <p className="text-xs text-slate-400 mt-1">{s.durationMinutes} {t('minutes')}</p>
+                        </div>
+                        <span className="text-sm font-extrabold text-slate-900 dark:text-white whitespace-nowrap">
+                          {money(s.price)}
+                        </span>
+                      </FilterItem>
+                    </Card>
                   ))
                 )}
               </div>
@@ -508,34 +527,36 @@ export default function MasterProfileClient() {
                   </div>
                 ) : (
                   reviews.map((rev, idx) => (
-                    <FilterItem
-                      key={rev.id}
+                    <Card key={rev.id} asChild className="gap-0">
+                      <FilterItem
+                     
                       index={idx}
-                      className="glass-card p-6 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-4 hover:shadow-lg transition-shadow duration-300"
+                      className="p-6 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-4 hover:shadow-lg transition-shadow duration-300"
                     >
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <img src={PLACEHOLDER_REVIEWER_AVATAR} alt={rev.clientName ?? ''} className="w-10 h-10 rounded-full object-cover" />
-                          <div>
-                            <h4 className="text-sm font-bold text-slate-900 dark:text-white">{rev.clientName ?? t('anonymousClient')}</h4>
-                            <p className="text-xs text-slate-400">{new Date(rev.createdAt).toLocaleDateString(locale)}</p>
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <img src={PLACEHOLDER_REVIEWER_AVATAR} alt={rev.clientName ?? ''} className="w-10 h-10 rounded-full object-cover" />
+                            <div>
+                              <h4 className="text-sm font-bold text-slate-900 dark:text-white">{rev.clientName ?? t('anonymousClient')}</h4>
+                              <p className="text-xs text-slate-400">{new Date(rev.createdAt).toLocaleDateString(locale)}</p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-1.5">
+                            {renderStars(Number(rev.rating))}
+                            <span className="text-xs font-bold text-slate-700 dark:text-slate-200">{rev.rating}.0</span>
                           </div>
                         </div>
-                        <div className="flex items-center gap-1.5">
-                          {renderStars(Number(rev.rating))}
-                          <span className="text-xs font-bold text-slate-700 dark:text-slate-200">{rev.rating}.0</span>
-                        </div>
-                      </div>
-                      {rev.comment && (
-                        <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">{rev.comment}</p>
-                      )}
-                      {rev.reply && (
-                        <div className="p-4 rounded-2xl bg-blue-50 dark:bg-slate-800 text-xs text-slate-700 dark:text-slate-300 space-y-1">
-                          <span className="font-bold text-blue-600 dark:text-sky-400">{t('responseFrom', { name: master.displayName })}</span>
-                          <p>{rev.reply.body}</p>
-                        </div>
-                      )}
-                    </FilterItem>
+                        {rev.comment && (
+                          <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">{rev.comment}</p>
+                        )}
+                        {rev.reply && (
+                          <div className="p-4 rounded-2xl bg-blue-50 dark:bg-slate-800 text-xs text-slate-700 dark:text-slate-300 space-y-1">
+                            <span className="font-bold text-blue-600 dark:text-sky-400">{t('responseFrom', { name: master.displayName })}</span>
+                            <p>{rev.reply.body}</p>
+                          </div>
+                        )}
+                      </FilterItem>
+                    </Card>
                   ))
                 )}
               </div>
@@ -609,80 +630,81 @@ export default function MasterProfileClient() {
 
       </div>
 
-      {showQuoteModal && (
-        <div
-          className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4"
-          onClick={() => setShowQuoteModal(false)}
-        >
-          <div
-            className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl w-full max-w-md p-6 sm:p-8 space-y-4"
-            onClick={(e) => e.stopPropagation()}
-          >
+      <Dialog open={showQuoteModal} onOpenChange={setShowQuoteModal}>
+        <DialogContent showCloseButton={!quoteSent} className="gap-4">
             {quoteSent ? (
               <div className="text-center space-y-3 py-4">
                 <div className="w-12 h-12 rounded-2xl bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-300 flex items-center justify-center mx-auto">
                   <Icon name="checkcircle2" size={22} />
                 </div>
-                <h3 className="text-base font-extrabold text-slate-900 dark:text-white">{t('quoteSentTitle')}</h3>
-                <p className="text-xs text-slate-400">{t('quoteSentBody')}</p>
-                <Link
-                  href="/quotes"
-                  className="inline-block mt-2 text-xs font-bold text-blue-600 dark:text-sky-400 hover:underline"
-                >
-                  {t('viewMyQuotes')}
-                </Link>
+                <DialogHeader className="space-y-1 pr-0 items-center text-center">
+                  <DialogTitle className="text-base">{t('quoteSentTitle')}</DialogTitle>
+                  <DialogDescription>{t('quoteSentBody')}</DialogDescription>
+                </DialogHeader>
+                <Button asChild variant="link" className="h-auto p-0 mt-2 text-xs font-bold text-blue-600 dark:text-sky-400">
+                  <Link href="/quotes">{t('viewMyQuotes')}</Link>
+                </Button>
               </div>
             ) : (
               <>
-                <h3 className="text-lg font-extrabold text-slate-900 dark:text-white">{t('requestQuoteTitle')}</h3>
+                <DialogHeader>
+                  <DialogTitle>{t('requestQuoteTitle')}</DialogTitle>
+                </DialogHeader>
                 {services.length > 0 && (
-                  <label className="block space-y-1.5">
-                    <span className="text-xs font-bold text-slate-700 dark:text-slate-300">{t('quoteServiceLabel')}</span>
-                    <select
-                      value={quoteServiceId}
-                      onChange={(e) => setQuoteServiceId(e.target.value)}
-                      className="w-full p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold"
+                  <div className="space-y-1.5">
+                    <Label htmlFor="quote-service">{t('quoteServiceLabel')}</Label>
+                    <Select
+                      value={quoteServiceId || ANY}
+                      onValueChange={(value) => setQuoteServiceId(value === ANY ? '' : value)}
                     >
-                      <option value="">{t('quoteServiceAny')}</option>
-                      {services.map((s) => (
-                        <option key={s.id} value={s.id}>{s.title}</option>
-                      ))}
-                    </select>
-                  </label>
+                      <SelectTrigger id="quote-service" className="p-3 rounded-xl">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value={ANY}>{t('quoteServiceAny')}</SelectItem>
+                        {services.map((s) => (
+                          <SelectItem key={s.id} value={s.id}>{s.title}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                 )}
-                <label className="block space-y-1.5">
-                  <span className="text-xs font-bold text-slate-700 dark:text-slate-300">{t('quoteDescriptionLabel')}</span>
-                  <textarea
+                <div className="space-y-1.5">
+                  <Label htmlFor="quote-description">{t('quoteDescriptionLabel')}</Label>
+                  <Textarea
+                    id="quote-description"
                     value={quoteDescription}
                     onChange={(e) => setQuoteDescription(e.target.value)}
                     rows={4}
                     minLength={10}
                     maxLength={1000}
                     placeholder={t('quoteDescriptionPlaceholder')}
-                    className="w-full p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold"
+                    className="p-3 rounded-xl font-semibold"
                   />
-                </label>
+                </div>
                 {quoteError && <p className="text-xs font-bold text-red-600 dark:text-red-400">{quoteError}</p>}
-                <div className="flex items-center justify-end gap-3 pt-2">
-                  <button
-                    onClick={() => setShowQuoteModal(false)}
-                    className="px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-extrabold text-xs hover:bg-slate-100 dark:hover:bg-slate-800 transition"
-                  >
-                    {t('cancelAction')}
-                  </button>
-                  <button
+                <DialogFooter>
+                  <DialogClose asChild>
+                    <Button
+                      variant="outline"
+                      className="h-auto px-5 py-2.5 rounded-xl border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-extrabold text-xs hover:bg-slate-100 dark:hover:bg-slate-800"
+                    >
+                      {t('cancelAction')}
+                    </Button>
+                  </DialogClose>
+                  <Button
+                    variant="brand"
                     onClick={submitQuoteRequest}
                     disabled={quoteSubmitting}
-                    className="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow transition disabled:opacity-60"
+                    className="h-auto px-5 py-2.5 rounded-xl text-xs shadow"
                   >
                     {quoteSubmitting ? t('sendingQuote') : t('sendQuoteRequest')}
-                  </button>
-                </div>
+                  </Button>
+                </DialogFooter>
               </>
             )}
-          </div>
-        </div>
-      )}
+        </DialogContent>
+      </Dialog>
 
     </div>
   );

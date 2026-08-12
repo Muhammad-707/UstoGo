@@ -15,6 +15,13 @@ const MAX_ATTACHMENTS = 5;
 import { useRequireAuth } from '@/hooks/useRequireAuth';
 import { getAvatarUrl } from '@/lib/placeholders';
 import { useMoney } from '@/lib/money';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Card } from '@/components/ui/card';
+import { cn } from '@/lib/utils';
+import { DatePicker, todayISO } from '@/components/ui/date-picker';
 
 // The backend rejects bookings made less than 2 hours in advance (SLOT_TOO_SOON).
 const MIN_BOOKING_ADVANCE_MS = 2 * 60 * 60 * 1000;
@@ -56,7 +63,7 @@ export default function BookingWizardPage() {
   const [servicesLoading, setServicesLoading] = useState(false);
   const [selectedServiceId, setSelectedServiceId] = useState<string>('');
 
-  const [date, setDate] = useState<string>(() => new Date().toISOString().slice(0, 10));
+  const [date, setDate] = useState<string>(todayISO);
   const [slots, setSlots] = useState<string[]>([]);
   const [busySlots, setBusySlots] = useState<string[]>([]);
   const [slotsLoading, setSlotsLoading] = useState(false);
@@ -313,47 +320,84 @@ export default function BookingWizardPage() {
         </h1>
       </div>
 
-      {/* Step Progress Bar */}
+      {/* Step Progress Bar.
+          The label sits under its own dot, and the rail is drawn as two half
+          segments per step — so the line joins circle to circle and never runs
+          through a word. (It used to be one absolute bar behind everything, masked
+          by a white pill that stopped applying at `sm`, which is why the desktop
+          layout had a line struck through every label.) */}
       {!bookingConfirmed && (
-        <div className="relative flex items-center justify-between pb-6 px-4">
-          <div className="absolute left-8 right-8 top-4 h-0.5 bg-slate-200 dark:bg-slate-800 -z-10" />
-          <motion.div
-            className="absolute left-8 top-4 h-0.5 bg-gradient-to-r from-blue-600 to-emerald-500 -z-10"
-            initial={false}
-            animate={{ width: `calc(${((step - 1) / 3) * 100}% - ${((step - 1) / 3) * 4}rem)` }}
-            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-          />
+        <ol className="flex items-start pb-6">
           {[
             { num: 1, label: t('stepService') },
             { num: 2, label: t('stepSchedule') },
             { num: 3, label: t('stepLocation') },
             { num: 4, label: t('stepConfirmation') },
-          ].map((s) => (
-            <div key={s.num} className="flex flex-col sm:flex-row items-center gap-2 bg-white dark:bg-slate-900 sm:bg-transparent sm:dark:bg-transparent px-1">
-              <motion.div
-                animate={{ scale: step === s.num ? 1.1 : 1 }}
-                transition={{ type: 'spring', stiffness: 400, damping: 20 }}
-                className={`w-8 h-8 rounded-full font-bold text-xs flex items-center justify-center transition-colors ${
-                  step === s.num
-                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30'
-                    : step > s.num
-                    ? 'bg-emerald-500 text-white'
-                    : 'bg-slate-200 dark:bg-slate-800 text-slate-500'
-                }`}
-              >
-                {step > s.num ? '✓' : s.num}
-              </motion.div>
-              <span className="text-xs font-bold text-slate-700 dark:text-slate-300 hidden sm:inline">
-                {s.label}
-              </span>
-            </div>
-          ))}
-        </div>
+          ].map((s, idx, all) => {
+            const isDone = step > s.num;
+            const isCurrent = step === s.num;
+            const railBase = 'absolute top-4 h-0.5 -translate-y-1/2 rounded-full transition-colors duration-500';
+
+            return (
+              <li key={s.num} className="relative flex-1 flex flex-col items-center gap-2.5 text-center">
+                {idx > 0 && (
+                  <span
+                    aria-hidden
+                    className={cn(
+                      railBase,
+                      'left-0 right-1/2 mr-5',
+                      step >= s.num ? 'bg-emerald-500' : 'bg-slate-200 dark:bg-slate-800',
+                    )}
+                  />
+                )}
+                {idx < all.length - 1 && (
+                  <span
+                    aria-hidden
+                    className={cn(
+                      railBase,
+                      'left-1/2 right-0 ml-5',
+                      isDone ? 'bg-emerald-500' : 'bg-slate-200 dark:bg-slate-800',
+                    )}
+                  />
+                )}
+
+                <motion.div
+                  animate={{ scale: isCurrent ? 1.1 : 1 }}
+                  transition={{ type: 'spring', stiffness: 400, damping: 20 }}
+                  aria-current={isCurrent ? 'step' : undefined}
+                  className={cn(
+                    'relative w-8 h-8 rounded-full font-bold text-xs flex items-center justify-center transition-colors',
+                    isCurrent
+                      ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30 ring-4 ring-blue-600/15'
+                      : isDone
+                        ? 'bg-emerald-500 text-white'
+                        : 'bg-slate-200 dark:bg-slate-800 text-slate-500',
+                  )}
+                >
+                  {isDone ? <Icon name="check" size={15} className="stroke-[3]" /> : s.num}
+                </motion.div>
+
+                <span
+                  className={cn(
+                    'px-1 text-[10px] sm:text-xs font-bold leading-tight transition-colors',
+                    isCurrent
+                      ? 'text-blue-600 dark:text-sky-400'
+                      : isDone
+                        ? 'text-slate-700 dark:text-slate-300'
+                        : 'text-slate-400 dark:text-slate-500',
+                  )}
+                >
+                  {s.label}
+                </span>
+              </li>
+            );
+          })}
+        </ol>
       )}
 
       {/* Confirmation View Screen */}
       {bookingConfirmed ? (
-        <div className="glass-card p-8 sm:p-12 rounded-3xl border border-slate-200 dark:border-slate-800 text-center space-y-6 shadow-2xl animate-fade-in">
+        <Card className="gap-0 p-8 sm:p-12 rounded-3xl border border-slate-200 dark:border-slate-800 text-center space-y-6 shadow-2xl animate-fade-in">
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
@@ -403,10 +447,10 @@ export default function BookingWizardPage() {
               {t('backToHome')}
             </Link>
           </div>
-        </div>
+        </Card>
       ) : (
         /* Booking Step Form Wrapper */
-        <div className="glass-card p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl space-y-8">
+        <Card className="gap-0 p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl space-y-8">
 
           {/* STEP 1: Select Master & Service */}
           {step === 1 && (
@@ -446,7 +490,7 @@ export default function BookingWizardPage() {
                 ) : (
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {services.map((svc) => (
-                      <button
+                      <Button size="raw" variant="ghost"
                         key={svc.id}
                         type="button"
                         onClick={() => setSelectedServiceId(svc.id)}
@@ -460,7 +504,7 @@ export default function BookingWizardPage() {
                         <div className={selectedServiceId === svc.id ? 'text-blue-100' : 'text-slate-400'}>
                           {money(svc.price)}
                         </div>
-                      </button>
+                      </Button>
                     ))}
                   </div>
                 )}
@@ -468,7 +512,7 @@ export default function BookingWizardPage() {
 
               <div className="space-y-3">
                 <label className="text-xs font-bold uppercase tracking-wider text-slate-400">{t('jobDescription')}</label>
-                <textarea
+                <Textarea
                   rows={3}
                   value={jobNotes}
                   onChange={(e) => setJobNotes(e.target.value)}
@@ -484,12 +528,12 @@ export default function BookingWizardPage() {
                     <div key={src} className="relative w-20 h-20 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-700">
                       {/* eslint-disable-next-line @next/next/no-img-element -- transient local object URL, not an optimizable remote asset */}
                       <img src={src} alt="" className="w-full h-full object-cover" />
-                      <button
+                      <Button size="raw" variant="ghost"
                         onClick={() => removeAttachment(index)}
                         className="absolute top-1 right-1 w-5 h-5 rounded-full bg-black/60 text-white flex items-center justify-center"
                       >
                         <Icon name="X" size={10} />
-                      </button>
+                      </Button>
                     </div>
                   ))}
                   {attachmentFileIds.length < MAX_ATTACHMENTS && (
@@ -513,13 +557,13 @@ export default function BookingWizardPage() {
                 <p className="text-[10px] text-slate-400">{t('attachPhotosHint', { max: MAX_ATTACHMENTS })}</p>
               </div>
 
-              <button
+              <Button size="raw" variant="ghost"
                 onClick={() => setStep(2)}
                 disabled={!selectedServiceId}
                 className="w-full py-4 rounded-2xl bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-extrabold text-xs shadow-lg transition btn-ripple"
               >
                 {t('continueToSchedule')}
-              </button>
+              </Button>
             </div>
           )}
 
@@ -530,12 +574,12 @@ export default function BookingWizardPage() {
 
               <div className="space-y-2">
                 <label className="text-xs font-bold uppercase tracking-wider text-slate-400">{t('appointmentDate')}</label>
-                <input
-                  type="date"
+                <DatePicker
                   value={date}
-                  min={new Date().toISOString().slice(0, 10)}
-                  onChange={(e) => setDate(e.target.value)}
-                  className="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition"
+                  min={todayISO()}
+                  onChange={setDate}
+                  aria-label={t('appointmentDate')}
+                  className="p-4 font-bold"
                 />
               </div>
 
@@ -552,7 +596,7 @@ export default function BookingWizardPage() {
                 ) : (
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {slots.map((slot) => (
-                      <button
+                      <Button size="raw" variant="ghost"
                         key={slot}
                         onClick={() => setTimeSlot(slot)}
                         className={`p-3.5 rounded-2xl text-xs font-bold border transition-all hover:-translate-y-0.5 ${
@@ -562,7 +606,7 @@ export default function BookingWizardPage() {
                         }`}
                       >
                         {formatSlotLabel(slot, selectedService?.durationMinutes)}
-                      </button>
+                      </Button>
                     ))}
                     {busySlots.map((slot) => (
                       <div
@@ -580,19 +624,19 @@ export default function BookingWizardPage() {
               </div>
 
               <div className="flex gap-4">
-                <button
+                <Button size="raw" variant="ghost"
                   onClick={() => setStep(1)}
                   className="flex-1 py-4 rounded-2xl border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-700 dark:text-slate-300"
                 >
                   {t('back')}
-                </button>
-                <button
+                </Button>
+                <Button size="raw" variant="ghost"
                   onClick={() => setStep(3)}
                   disabled={!timeSlot}
                   className="flex-1 py-4 rounded-2xl bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-extrabold text-xs shadow-lg transition btn-ripple"
                 >
                   {t('continueToAddress')}
-                </button>
+                </Button>
               </div>
             </div>
           )}
@@ -607,7 +651,7 @@ export default function BookingWizardPage() {
                   <span className="text-xs font-bold uppercase tracking-wider text-slate-400">{t('savedAddressesLabel')}</span>
                   <div className="flex flex-wrap gap-2">
                     {savedAddresses.map((address) => (
-                      <button
+                      <Button size="raw" variant="ghost"
                         key={address.id}
                         onClick={() => applySavedAddress(address)}
                         className={`px-4 py-2 rounded-xl text-xs font-bold border transition ${
@@ -617,7 +661,7 @@ export default function BookingWizardPage() {
                         }`}
                       >
                         {address.label}
-                      </button>
+                      </Button>
                     ))}
                   </div>
                 </div>
@@ -626,46 +670,52 @@ export default function BookingWizardPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label className="text-xs font-bold uppercase tracking-wider text-slate-400">{t('cityLabel')}</label>
-                  <select
-                    value={cityId}
-                    onChange={(e) => {
-                      setCityId(e.target.value);
+                  <Select
+                    value={cityId || undefined}
+                    onValueChange={(value) => {
+                      setCityId(value);
                       setDistrict('');
                       setSelectedSavedAddressId(null);
                     }}
-                    className="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition"
                   >
-                    <option value="">{t('selectCity')}</option>
-                    {cities.map((city) => (
-                      <option key={city.id} value={city.id}>
-                        {city.name}
-                      </option>
-                    ))}
-                  </select>
+                    <SelectTrigger className="w-full p-4 rounded-2xl text-xs font-bold">
+                      <SelectValue placeholder={t('selectCity')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {cities.map((city) => (
+                        <SelectItem key={city.id} value={city.id}>
+                          {city.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
 
                 <div className="space-y-2">
                   <label className="text-xs font-bold uppercase tracking-wider text-slate-400">{t('districtLabel')}</label>
-                  <select
-                    value={district}
-                    onChange={(e) => setDistrict(e.target.value)}
+                  <Select
+                    value={district || undefined}
+                    onValueChange={setDistrict}
                     disabled={!activeCity}
-                    className="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-900 dark:text-white focus:outline-none disabled:opacity-50"
                   >
-                    <option value="">{t('selectDistrict')}</option>
-                    {activeDistricts.map((d) => (
-                      <option key={d.id} value={d.name}>
-                        {d.name}
-                      </option>
-                    ))}
-                  </select>
+                    <SelectTrigger className="w-full p-4 rounded-2xl text-xs font-bold">
+                      <SelectValue placeholder={t('selectDistrict')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {activeDistricts.map((d) => (
+                        <SelectItem key={d.id} value={d.name}>
+                          {d.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label className="text-xs font-bold uppercase tracking-wider text-slate-400">{t('streetLabel')}</label>
-                  <input
+                  <Input
                     type="text"
                     value={street}
                     onChange={(e) => setStreet(e.target.value)}
@@ -677,7 +727,7 @@ export default function BookingWizardPage() {
                   <label className="text-xs font-bold uppercase tracking-wider text-slate-400">
                     {t('houseLabel')} <span className="text-slate-400 normal-case">{t('optional')}</span>
                   </label>
-                  <input
+                  <Input
                     type="text"
                     value={house}
                     onChange={(e) => setHouse(e.target.value)}
@@ -689,7 +739,7 @@ export default function BookingWizardPage() {
 
               <div className="space-y-2">
                 <label className="text-xs font-bold uppercase tracking-wider text-slate-400">{t('phoneLabel')}</label>
-                  <input
+                  <Input
                     type="tel"
                     value={contactPhone}
                     onChange={(e) => setContactPhone(e.target.value)}
@@ -704,19 +754,19 @@ export default function BookingWizardPage() {
               </div>
 
               <div className="flex gap-4">
-                <button
+                <Button size="raw" variant="ghost"
                   onClick={() => setStep(2)}
                   className="flex-1 py-4 rounded-2xl border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-700 dark:text-slate-300"
                 >
                   {t('back')}
-                </button>
-                <button
+                </Button>
+                <Button size="raw" variant="ghost"
                   onClick={() => setStep(4)}
                   disabled={!district || !street.trim()}
                   className="flex-1 py-4 rounded-2xl bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-extrabold text-xs shadow-lg transition btn-ripple"
                 >
                   {t('reviewOrder')}
-                </button>
+                </Button>
               </div>
             </div>
           )}
@@ -772,18 +822,18 @@ export default function BookingWizardPage() {
                 <p className="text-xs font-bold text-red-600 dark:text-red-400 text-center">{submitError}</p>
               )}
 
-              <button
+              <Button size="raw" variant="ghost"
                 onClick={handleConfirm}
                 disabled={submitting}
                 className="btn-success w-full py-4 rounded-2xl disabled:opacity-60 font-extrabold text-sm transition btn-ripple flex items-center justify-center gap-2"
               >
                 {submitting && <Spinner className="w-4 h-4 border-white/40 border-t-white" />}
                 {t('confirmAndPay', { amount: money(totalPrice) })}
-              </button>
+              </Button>
             </div>
           )}
 
-        </div>
+        </Card>
       )}
 
     </div>

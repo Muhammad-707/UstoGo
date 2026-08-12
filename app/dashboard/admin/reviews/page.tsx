@@ -13,6 +13,8 @@ import { getAvatarUrl } from '@/lib/placeholders';
 import type { Paginated, Review } from '@/lib/api/types';
 import { useDateFormat } from '@/lib/datetime';
 import { EmptyState } from '@/components/ui/EmptyState';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 
 export default function AdminReviewsPage() {
   const t = useTranslations('adminReviews');
@@ -84,7 +86,7 @@ export default function AdminReviewsPage() {
         </div>
       )}
 
-      <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-5 shadow-xl">
+      <Card className="gap-0 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-5 shadow-xl">
         <p className="text-xs font-bold text-slate-400">
           {result ? t('resultsCount', { count: result.meta.total }) : ''}
         </p>
@@ -158,21 +160,21 @@ export default function AdminReviewsPage() {
 
                     <div className="flex items-center gap-2 pt-1">
                       {hidden ? (
-                        <button
+                        <Button size="raw" variant="ghost"
                           onClick={() => moderate(review, false)}
                           disabled={actingId === review.id}
                           className="btn-success px-4 py-2 rounded-xl text-xs font-bold disabled:opacity-60 transition"
                         >
                           {t('unhide')}
-                        </button>
+                        </Button>
                       ) : (
-                        <button
+                        <Button size="raw" variant="ghost"
                           onClick={() => moderate(review, true)}
                           disabled={actingId === review.id}
                           className="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold disabled:opacity-60 transition"
                         >
                           {t('hide')}
-                        </button>
+                        </Button>
                       )}
                       <Link
                         href={`/master/${review.masterId}`}
@@ -190,26 +192,26 @@ export default function AdminReviewsPage() {
 
         {!loading && result && result.meta.totalPages > 1 && (
           <div className="flex items-center justify-between pt-2">
-            <button
+            <Button size="raw" variant="ghost"
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page <= 1}
               className="px-4 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 text-xs font-bold disabled:opacity-40"
             >
               {t('prev')}
-            </button>
+            </Button>
             <span className="text-xs font-bold text-slate-500">
               {t('pageOf', { page, total: result.meta.totalPages })}
             </span>
-            <button
+            <Button size="raw" variant="ghost"
               onClick={() => setPage((p) => Math.min(result.meta.totalPages, p + 1))}
               disabled={page >= result.meta.totalPages}
               className="px-4 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 text-xs font-bold disabled:opacity-40"
             >
               {t('next')}
-            </button>
+            </Button>
           </div>
         )}
-      </div>
+      </Card>
     </DashboardLayout>
   );
 }

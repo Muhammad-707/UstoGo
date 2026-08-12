@@ -11,6 +11,10 @@ import type { City } from '@/lib/api/types';
 import { PasswordInput } from '@/components/ui/PasswordInput';
 import { validateEmail, validateName, validatePassword, validatePhone, normalizePhone, type ValidationErrorKey } from '@/lib/validation';
 import { AuthShell } from '@/components/auth/AuthShell';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 type FieldErrors = Partial<Record<'fullName' | 'email' | 'password' | 'phone' | 'cityId', ValidationErrorKey>>;
 
@@ -96,77 +100,75 @@ export default function RegisterClientPage() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-1">
-            <label className="text-xs font-bold text-slate-700 dark:text-slate-300">{t('fullNameLabel')}</label>
-            <input
+            <Label htmlFor="register-full-name">{t('fullNameLabel')}</Label>
+            <Input
+              id="register-full-name"
               type="text"
               placeholder={t('fullNamePlaceholder')}
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
-              className={`w-full p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border text-xs ${fieldErrors.fullName ? 'border-red-500' : 'border-slate-200 dark:border-slate-700'}`}
+              aria-invalid={!!fieldErrors.fullName}
               required
             />
             {fieldErrors.fullName && <p className="text-red-500 text-xs">{tv(fieldErrors.fullName)}</p>}
           </div>
           <div className="space-y-1">
-            <label className="text-xs font-bold text-slate-700 dark:text-slate-300">{t('emailLabel')}</label>
-            <input
+            <Label htmlFor="register-email">{t('emailLabel')}</Label>
+            <Input
+              id="register-email"
               type="email"
               placeholder={t('emailPlaceholder')}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className={`w-full p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border text-xs ${fieldErrors.email ? 'border-red-500' : 'border-slate-200 dark:border-slate-700'}`}
+              aria-invalid={!!fieldErrors.email}
               required
             />
             {fieldErrors.email && <p className="text-red-500 text-xs">{tv(fieldErrors.email)}</p>}
           </div>
           <div className="space-y-1">
-            <label className="text-xs font-bold text-slate-700 dark:text-slate-300">{t('passwordLabel')}</label>
+            <Label htmlFor="register-password">{t('passwordLabel')}</Label>
             <PasswordInput
+              id="register-password"
               placeholder={t('passwordPlaceholder')}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs"
               error={!!fieldErrors.password}
               required
             />
             {fieldErrors.password && <p className="text-red-500 text-xs">{tv(fieldErrors.password)}</p>}
           </div>
           <div className="space-y-1">
-            <label className="text-xs font-bold text-slate-700 dark:text-slate-300">{t('phoneLabel')}</label>
-            <input
+            <Label htmlFor="register-phone">{t('phoneLabel')}</Label>
+            <Input
+              id="register-phone"
               type="tel"
               placeholder={t('phonePlaceholder')}
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              className={`w-full p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border text-xs ${fieldErrors.phone ? 'border-red-500' : 'border-slate-200 dark:border-slate-700'}`}
+              aria-invalid={!!fieldErrors.phone}
               required
             />
             {fieldErrors.phone && <p className="text-red-500 text-xs">{tv(fieldErrors.phone)}</p>}
           </div>
           <div className="space-y-1">
-            <label className="text-xs font-bold text-slate-700 dark:text-slate-300">{t('cityLabel')}</label>
-            <select
-              value={cityId}
-              onChange={(e) => setCityId(e.target.value)}
-              className={`w-full p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border text-xs font-bold ${fieldErrors.cityId ? 'border-red-500' : 'border-slate-200 dark:border-slate-700'}`}
-              required
-            >
-              <option value="" disabled>{t('cityPlaceholder')}</option>
-              {cities.map((c) => (
-                <option key={c.id} value={c.id}>{c.name}</option>
-              ))}
-            </select>
+            <Label htmlFor="register-city">{t('cityLabel')}</Label>
+            <Select value={cityId} onValueChange={setCityId} required>
+              <SelectTrigger id="register-city" className="w-full font-bold" aria-invalid={!!fieldErrors.cityId}>
+                <SelectValue placeholder={t('cityPlaceholder')} />
+              </SelectTrigger>
+              <SelectContent>
+                {cities.map((c) => (
+                  <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           {error && <p className="text-red-500 text-sm">{error}</p>}
 
-          <button
-            type="submit"
-            disabled={submitting}
-            className="w-full py-4 rounded-2xl bg-blue-600 hover:bg-blue-700 disabled:opacity-60 disabled:cursor-not-allowed text-white font-extrabold text-xs shadow-lg btn-ripple"
-          >
+          <Button type="submit" variant="brand" size="xl" disabled={submitting} className="w-full">
             {submitting ? t('registering') : t('registerButton')}
-          </button>
+          </Button>
         </form>
 
         <p className="text-center text-xs text-slate-500">

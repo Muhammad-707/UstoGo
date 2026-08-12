@@ -10,6 +10,23 @@ import { locales, localeMeta, type Locale } from '@/i18n/locales';
 import { useAuth, dashboardPathFor } from '@/contexts/AuthContext';
 import { cartApi, notificationsApi } from '@/lib/api/endpoints';
 import { NOTIFICATION_TYPES, type NotificationItem } from '@/lib/api/types';
+import { Button } from '@/components/ui/button';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { Separator } from '@/components/ui/separator';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { cn } from '@/lib/utils';
+
+/** The icon cluster buttons all share this shape — one place to change their feel. */
+const clusterButton =
+  'h-9 w-9 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white';
 
 export const Navbar: React.FC = () => {
   const pathname = usePathname();
@@ -26,9 +43,6 @@ export const Navbar: React.FC = () => {
   const { user, loading, logout } = useAuth();
   const [darkMode, setDarkMode] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [userDropdown, setUserDropdown] = useState(false);
-  const [langDropdown, setLangDropdown] = useState(false);
-  const [notifOpen, setNotifOpen] = useState(false);
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [cartCount, setCartCount] = useState(0);
@@ -50,7 +64,6 @@ export const Navbar: React.FC = () => {
 
   const handleLogout = async () => {
     await logout();
-    setUserDropdown(false);
     router.push('/');
   };
 
@@ -143,7 +156,6 @@ export const Navbar: React.FC = () => {
 
   useEffect(() => {
     if (bookLabelRef.current) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- measures rendered text, unavailable before paint
       setBookLabelWidth(bookLabelRef.current.offsetWidth);
     }
   }, [bookLabel]);
@@ -179,17 +191,19 @@ export const Navbar: React.FC = () => {
           {navLinks.map((link) => {
             const isActive = isLinkActive(link.href);
             return (
-              <Link
+              <Button
                 key={link.href}
-                href={link.href}
-                className={`px-3 py-2 rounded-xl text-[13px] font-bold whitespace-nowrap transition-all duration-200 ${
+                asChild
+                variant="ghost"
+                className={cn(
+                  'h-auto px-3 py-2 rounded-xl text-[13px] font-bold whitespace-nowrap',
                   isActive
-                    ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-sky-400 shadow-sm'
-                    : 'text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white hover:bg-slate-100/60 dark:hover:bg-slate-800/60'
-                }`}
+                    ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-sky-400 shadow-sm hover:bg-blue-50 dark:hover:bg-blue-950/60'
+                    : 'text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white hover:bg-slate-100/60 dark:hover:bg-slate-800/60',
+                )}
               >
-                {link.label}
-              </Link>
+                <Link href={link.href}>{link.label}</Link>
+              </Button>
             );
           })}
         </nav>
@@ -200,29 +214,26 @@ export const Navbar: React.FC = () => {
           {/* Icon cluster: notifications, cart, theme — one surface instead of three */}
           <div className="flex items-center gap-0.5 p-1 rounded-2xl bg-slate-100/80 dark:bg-slate-800/60">
             {user && (
-              <div className="relative">
-                <button
-                  onClick={() => setNotifOpen(!notifOpen)}
-                  className="p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-700 transition relative block"
-                  aria-label={t('notificationsTitle')}
-                >
-                  <Icon name="Bell" size={17} />
-                  {unreadCount > 0 && (
-                    <span className="absolute top-0.5 right-0.5 w-4 h-4 bg-red-500 text-white text-[9px] font-extrabold rounded-full flex items-center justify-center border-2 border-slate-100 dark:border-slate-800">
-                      {unreadCount}
-                    </span>
-                  )}
-                </button>
-
-                {notifOpen && (
-                  <div className="absolute right-0 top-full mt-3 w-80 sm:w-96 bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 p-4 z-50 animate-fade-in">
-                    <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
-                      <h4 className="text-sm font-bold text-slate-900 dark:text-white">{t('notificationsTitle')}</h4>
-                      <Link href="/notifications" className="text-xs font-semibold text-blue-600 hover:underline">
-                        {t('viewAll')}
-                      </Link>
-                    </div>
-                    <div className="divide-y divide-slate-100 dark:divide-slate-800/60 max-h-72 overflow-y-auto">
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="ghost" size="icon" className={cn(clusterButton, 'relative')} aria-label={t('notificationsTitle')}>
+                    <Icon name="Bell" size={17} />
+                    {unreadCount > 0 && (
+                      <span className="absolute top-0.5 right-0.5 w-4 h-4 bg-red-500 text-white text-[9px] font-extrabold rounded-full flex items-center justify-center border-2 border-slate-100 dark:border-slate-800">
+                        {unreadCount}
+                      </span>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent align="end" sideOffset={12} className="w-80 sm:w-96 rounded-2xl p-4">
+                  <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+                    <h4 className="text-sm font-bold text-slate-900 dark:text-white">{t('notificationsTitle')}</h4>
+                    <Link href="/notifications" className="text-xs font-semibold text-blue-600 hover:underline">
+                      {t('viewAll')}
+                    </Link>
+                  </div>
+                  <ScrollArea className="max-h-72">
+                    <div className="divide-y divide-slate-100 dark:divide-slate-800/60">
                       {notifications.length === 0 && (
                         <p className="py-8 text-center text-xs font-semibold text-slate-400">{tn('empty')}</p>
                       )}
@@ -237,11 +248,12 @@ export const Navbar: React.FC = () => {
                         return (
                           <div
                             key={n.id}
-                            className={`py-3 flex gap-3 items-start px-2 rounded-xl transition ${
+                            className={cn(
+                              'py-3 flex gap-3 items-start px-2 rounded-xl transition',
                               n.isRead
                                 ? 'hover:bg-slate-50 dark:hover:bg-slate-800/40'
-                                : 'bg-blue-50/60 dark:bg-blue-950/30 hover:bg-blue-50 dark:hover:bg-blue-950/50'
-                            }`}
+                                : 'bg-blue-50/60 dark:bg-blue-950/30 hover:bg-blue-50 dark:hover:bg-blue-950/50',
+                            )}
                           >
                             <div className="p-2 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-sky-400 mt-0.5 shrink-0">
                               <Icon name={notificationIcon(n.type)} size={16} />
@@ -262,121 +274,118 @@ export const Navbar: React.FC = () => {
                         );
                       })}
                     </div>
-                  </div>
-                )}
-              </div>
+                  </ScrollArea>
+                </PopoverContent>
+              </Popover>
             )}
 
             {user?.role === 'CLIENT' && (
-              <Link
-                href="/cart"
-                className="p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-700 transition relative block"
-                aria-label={t('cart')}
-              >
-                <Icon name="shoppingcart" size={17} />
-                {cartCount > 0 && (
-                  <span className="absolute top-0.5 right-0.5 w-4 h-4 bg-emerald-500 text-white text-[9px] font-extrabold rounded-full flex items-center justify-center border-2 border-slate-100 dark:border-slate-800">
-                    {cartCount}
-                  </span>
-                )}
-              </Link>
+              <Button asChild variant="ghost" size="icon" className={cn(clusterButton, 'relative')} aria-label={t('cart')}>
+                <Link href="/cart">
+                  <Icon name="shoppingcart" size={17} />
+                  {cartCount > 0 && (
+                    <span className="absolute top-0.5 right-0.5 w-4 h-4 bg-emerald-500 text-white text-[9px] font-extrabold rounded-full flex items-center justify-center border-2 border-slate-100 dark:border-slate-800">
+                      {cartCount}
+                    </span>
+                  )}
+                </Link>
+              </Button>
             )}
 
-            <button
+            <Button
+              variant="ghost"
+              size="icon"
               onClick={toggleTheme}
-              className="p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-700 transition flex items-center justify-center"
+              className={clusterButton}
               title={t('toggleThemeTooltip')}
+              aria-label={t('toggleThemeTooltip')}
             >
               {darkMode ? <Icon name="Sun" size={17} className="text-amber-400" /> : <Icon name="Moon" size={17} />}
-            </button>
+            </Button>
 
             {/* Language Switcher */}
-            <div className="relative">
-              <button
-                onClick={() => setLangDropdown(!langDropdown)}
-                onBlur={() => setTimeout(() => setLangDropdown(false), 200)}
-                className="flex items-center gap-1 px-2 py-2 rounded-xl hover:bg-white dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition duration-200"
-                title={t('selectLanguage')}
-              >
-                <span>{currentLangObj.flag}</span>
-                <span className="hidden 2xl:inline">{currentLangObj.label}</span>
-                <Icon name="ChevronDown" size={13} className={`transition-transform ${langDropdown ? 'rotate-180' : ''}`} />
-              </button>
-
-              {langDropdown && (
-                <div className="absolute right-0 top-full mt-3 w-40 bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 p-2 z-50 animate-fade-in">
-                  {languages.map((l) => (
-                    <button
-                      key={l.code}
-                      onClick={() => {
-                        setLang(l.code);
-                        setLangDropdown(false);
-                      }}
-                      className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold transition ${
-                        lang === l.code
-                          ? 'bg-blue-600 text-white'
-                          : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800'
-                      }`}
-                    >
-                      <span>{l.flag}</span>
-                      <span>{l.label}</span>
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  className="h-9 gap-1 px-2 rounded-xl text-slate-700 dark:text-slate-200 text-xs font-bold hover:bg-white dark:hover:bg-slate-700 [&[data-state=open]>svg]:rotate-180"
+                  title={t('selectLanguage')}
+                >
+                  <span>{currentLangObj.flag}</span>
+                  <span className="hidden 2xl:inline">{currentLangObj.label}</span>
+                  <Icon name="ChevronDown" size={13} className="transition-transform" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" sideOffset={12} className="w-40 rounded-2xl p-2">
+                {languages.map((l) => (
+                  <DropdownMenuItem
+                    key={l.code}
+                    onSelect={() => setLang(l.code)}
+                    className={cn(
+                      'gap-2.5 px-3 py-2 rounded-xl text-xs font-bold cursor-pointer',
+                      lang === l.code && 'bg-blue-600 text-white focus:bg-blue-600 focus:text-white',
+                    )}
+                  >
+                    <span>{l.flag}</span>
+                    <span>{l.label}</span>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
 
           {/* User Profile / Login */}
           {user ? (
-            <div className="relative hidden sm:block">
-              <button
-                onClick={() => setUserDropdown(!userDropdown)}
-                onBlur={() => setTimeout(() => setUserDropdown(false), 200)}
-                className="flex items-center gap-2 pl-1.5 pr-2.5 py-1.5 rounded-2xl border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
-              >
-                <span className="w-7 h-7 rounded-xl bg-gradient-to-br from-blue-600 to-sky-500 text-white flex items-center justify-center text-[11px] font-extrabold shrink-0">
-                  {(user.masterProfile?.displayName || user.clientProfile?.firstName || user.email)
-                    .charAt(0)
-                    .toUpperCase()}
-                </span>
-                <span className="hidden lg:inline max-w-[110px] truncate">
-                  {user.masterProfile?.displayName || user.clientProfile?.firstName || user.email}
-                </span>
-                <Icon name="ChevronDown" size={13} className={`transition-transform ${userDropdown ? 'rotate-180' : ''}`} />
-              </button>
-
-              {userDropdown && (
-                <div className="absolute right-0 top-full mt-3 w-52 bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200/80 dark:border-slate-800 p-2 z-50 animate-fade-in">
-                  <Link
-                    href={dashboardPathFor(user.role)}
-                    className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-blue-50 dark:hover:bg-blue-950/50 hover:text-blue-600 transition"
+            <div className="hidden sm:block">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="h-auto gap-2 pl-1.5 pr-2.5 py-1.5 rounded-2xl border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 [&[data-state=open]>svg]:rotate-180"
                   >
-                    <div className="w-7 h-7 rounded-lg bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-sky-400 flex items-center justify-center">
-                      <Icon name="User" size={15} />
-                    </div>
-                    {t('myDashboard')}
-                  </Link>
-                  <button
-                    onClick={handleLogout}
-                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-red-600 hover:bg-red-50 dark:hover:bg-red-950/40 transition"
+                    <span className="w-7 h-7 rounded-xl bg-gradient-to-br from-blue-600 to-sky-500 text-white flex items-center justify-center text-[11px] font-extrabold shrink-0">
+                      {(user.masterProfile?.displayName || user.clientProfile?.firstName || user.email)
+                        .charAt(0)
+                        .toUpperCase()}
+                    </span>
+                    <span className="hidden lg:inline max-w-[110px] truncate">
+                      {user.masterProfile?.displayName || user.clientProfile?.firstName || user.email}
+                    </span>
+                    <Icon name="ChevronDown" size={13} className="transition-transform" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" sideOffset={12} className="w-52 rounded-2xl p-2">
+                  <DropdownMenuItem asChild className="px-3 py-2.5 rounded-xl text-xs font-semibold cursor-pointer">
+                    <Link href={dashboardPathFor(user.role)} className="gap-3">
+                      <div className="w-7 h-7 rounded-lg bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-sky-400 flex items-center justify-center">
+                        <Icon name="User" size={15} />
+                      </div>
+                      {t('myDashboard')}
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    variant="destructive"
+                    onSelect={handleLogout}
+                    className="gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold cursor-pointer"
                   >
                     <div className="w-7 h-7 rounded-lg bg-red-100 dark:bg-red-900/40 text-red-600 flex items-center justify-center">
                       <Icon name="LogOut" size={15} />
                     </div>
                     {t('logOut')}
-                  </button>
-                </div>
-              )}
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           ) : (
             !loading && (
-              <Link
-                href="/auth/login"
-                className="hidden sm:inline-flex px-3.5 py-2.5 rounded-2xl text-xs font-bold text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+              <Button
+                asChild
+                variant="outline"
+                className="hidden sm:inline-flex h-auto px-3.5 py-2.5 rounded-2xl text-xs font-bold text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800"
               >
-                {t('logIn')}
-              </Link>
+                <Link href="/auth/login">{t('logIn')}</Link>
+              </Button>
             )
           )}
 
@@ -389,112 +398,140 @@ export const Navbar: React.FC = () => {
               `title`/`aria-label` carry the same words for anyone not using a mouse, and
               focus opens it too so the keyboard path is not icon-only. */}
           {isClientView && (
-            <Link
-              href="/booking"
-              title={bookLabel}
-              aria-label={bookLabel}
-              onMouseEnter={() => setBookOpen(true)}
-              onMouseLeave={() => setBookOpen(false)}
-              onFocus={() => setBookOpen(true)}
-              onBlur={() => setBookOpen(false)}
-              className="hidden md:inline-flex items-center h-11 px-3.5 rounded-2xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white text-xs font-bold shadow-lg shadow-blue-600/25 hover:shadow-xl hover:shadow-blue-600/35 transition-shadow duration-300"
+            <Button
+              asChild
+              className="hidden md:inline-flex h-11 px-3.5 rounded-2xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white text-xs font-bold shadow-lg shadow-blue-600/25 hover:shadow-xl hover:shadow-blue-600/35 transition-shadow duration-300"
             >
-              <Icon name="Calendar" size={17} className="shrink-0" />
-              <span
-                className="overflow-hidden whitespace-nowrap transition-[width,opacity] duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]"
-                style={{ width: bookOpen ? bookLabelWidth : 0, opacity: bookOpen ? 1 : 0 }}
+              <Link
+                href="/booking"
+                title={bookLabel}
+                aria-label={bookLabel}
+                onMouseEnter={() => setBookOpen(true)}
+                onMouseLeave={() => setBookOpen(false)}
+                onFocus={() => setBookOpen(true)}
+                onBlur={() => setBookOpen(false)}
               >
-                <span ref={bookLabelRef} className="inline-block pl-2">
-                  {bookLabel}
+                <Icon name="Calendar" size={17} className="shrink-0" />
+                <span
+                  className="overflow-hidden whitespace-nowrap transition-[width,opacity] duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]"
+                  style={{ width: bookOpen ? bookLabelWidth : 0, opacity: bookOpen ? 1 : 0 }}
+                >
+                  <span ref={bookLabelRef} className="inline-block pl-2">
+                    {bookLabel}
+                  </span>
                 </span>
-              </span>
-            </Link>
+              </Link>
+            </Button>
           )}
 
-          {/* Mobile Menu Button */}
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-2.5 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 xl:hidden"
-            aria-label="Menu"
-          >
-            <Icon name={mobileMenuOpen ? 'X' : 'Menu'} size={21} />
-          </button>
+          {/* Mobile Navigation Drawer */}
+          <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+            <SheetTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-10 w-10 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 xl:hidden"
+                aria-label="Menu"
+              >
+                <Icon name="Menu" size={21} />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="right" className="w-[88vw] max-w-sm p-0 xl:hidden">
+              <SheetHeader className="border-b border-slate-200 dark:border-slate-800">
+                <SheetTitle className="flex items-center gap-2 text-base font-extrabold">
+                  <span className="w-8 h-8 rounded-lg bg-gradient-to-tr from-blue-600 to-sky-400 flex items-center justify-center text-white">
+                    <Icon name="Wrench" size={16} className="stroke-[2.5]" />
+                  </span>
+                  Usto<span className="-ml-2 text-blue-600 dark:text-sky-400">Go</span>
+                </SheetTitle>
+              </SheetHeader>
+
+              <ScrollArea className="flex-1">
+                <div className="px-4 py-5 space-y-2">
+                  <Button
+                    asChild
+                    variant="ghost"
+                    className={cn(
+                      'w-full h-auto justify-start px-4 py-3 rounded-xl text-sm font-semibold',
+                      pathname === '/'
+                        ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-sky-400'
+                        : 'text-slate-700 dark:text-slate-200 hover:bg-blue-50 dark:hover:bg-blue-950/50',
+                    )}
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <Link href="/">{t('landing')}</Link>
+                  </Button>
+                  {navLinks.map((link) => (
+                    <Button
+                      key={link.href}
+                      asChild
+                      variant="ghost"
+                      className={cn(
+                        'w-full h-auto justify-start px-4 py-3 rounded-xl text-sm font-semibold',
+                        isLinkActive(link.href)
+                          ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-sky-400'
+                          : 'text-slate-700 dark:text-slate-200 hover:bg-blue-50 dark:hover:bg-blue-950/50',
+                      )}
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      <Link href={link.href}>{link.label}</Link>
+                    </Button>
+                  ))}
+
+                  <Separator className="my-3" />
+
+                  {isClientView && (
+                    <Button
+                      asChild
+                      className="md:hidden w-full h-auto justify-center gap-2 px-4 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold shadow-lg shadow-blue-600/25"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      <Link href="/booking">
+                        <Icon name="Calendar" size={16} />
+                        {t('bookService')}
+                      </Link>
+                    </Button>
+                  )}
+                  {user ? (
+                    <>
+                      <Button
+                        asChild
+                        variant="ghost"
+                        className="w-full h-auto justify-start gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-blue-50 dark:hover:bg-blue-950"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        <Link href={dashboardPathFor(user.role)}>{t('myDashboard')}</Link>
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        onClick={() => {
+                          setMobileMenuOpen(false);
+                          handleLogout();
+                        }}
+                        className="w-full h-auto justify-start gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-red-600 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950/40"
+                      >
+                        {t('logOut')}
+                      </Button>
+                    </>
+                  ) : (
+                    !loading && (
+                      <Button
+                        asChild
+                        variant="ghost"
+                        className="w-full h-auto justify-start gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-blue-50 dark:hover:bg-blue-950"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        <Link href="/auth/login">{t('logIn')}</Link>
+                      </Button>
+                    )
+                  )}
+                </div>
+              </ScrollArea>
+            </SheetContent>
+          </Sheet>
         </div>
 
       </div>
-
-      {/* Mobile Navigation Drawer */}
-      {mobileMenuOpen && (
-        <div className="xl:hidden border-t border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl px-4 py-5 space-y-2 animate-fade-in max-h-[calc(100vh-72px)] overflow-y-auto">
-          <Link
-            href="/"
-            onClick={() => setMobileMenuOpen(false)}
-            className={`block px-4 py-3 rounded-xl text-sm font-semibold transition ${
-              pathname === '/'
-                ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-sky-400'
-                : 'text-slate-700 dark:text-slate-200 hover:bg-blue-50 dark:hover:bg-blue-950/50'
-            }`}
-          >
-            {t('landing')}
-          </Link>
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              onClick={() => setMobileMenuOpen(false)}
-              className={`block px-4 py-3 rounded-xl text-sm font-semibold transition ${
-                isLinkActive(link.href)
-                  ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-sky-400'
-                  : 'text-slate-700 dark:text-slate-200 hover:bg-blue-50 dark:hover:bg-blue-950/50'
-              }`}
-            >
-              {link.label}
-            </Link>
-          ))}
-          <div className="pt-3 border-t border-slate-100 dark:border-slate-800 space-y-2">
-            {isClientView && (
-              <Link
-                href="/booking"
-                onClick={() => setMobileMenuOpen(false)}
-                className="md:hidden flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-blue-600 text-white text-sm font-bold shadow-lg shadow-blue-600/25"
-              >
-                <Icon name="Calendar" size={16} />
-                {t('bookService')}
-              </Link>
-            )}
-            {user ? (
-              <>
-                <Link
-                  href={dashboardPathFor(user.role)}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-blue-50 dark:hover:bg-blue-950"
-                >
-                  {t('myDashboard')}
-                </Link>
-                <button
-                  onClick={() => {
-                    setMobileMenuOpen(false);
-                    handleLogout();
-                  }}
-                  className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-red-600 hover:bg-red-50 dark:hover:bg-red-950/40"
-                >
-                  {t('logOut')}
-                </button>
-              </>
-            ) : (
-              !loading && (
-                <Link
-                  href="/auth/login"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-blue-50 dark:hover:bg-blue-950"
-                >
-                  {t('logIn')}
-                </Link>
-              )
-            )}
-          </div>
-        </div>
-      )}
     </header>
   );
 };

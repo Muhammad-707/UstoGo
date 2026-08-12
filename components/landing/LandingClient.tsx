@@ -13,6 +13,8 @@ import { getAvatarUrl, getCoverUrl } from '@/lib/placeholders';
 
 import HeroSlider from '@/components/layout/HeroSlider';
 import { FilterItem } from '@/components/ui/FilterAnimate';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 
 const STATS = [
   { value: '50,000+', labelKey: 'completedJobs', icon: 'CheckCircle2', accent: 'text-sky-600 dark:text-sky-400', glow: 'shadow-sky-500/10 dark:shadow-sky-500/20', ring: 'from-sky-500/10 dark:from-sky-500/20', tint: 'from-sky-50 to-white dark:from-transparent dark:to-transparent', iconBg: 'bg-sky-100 dark:bg-white/10', border: 'border-sky-100 dark:border-white/10' },
@@ -141,7 +143,7 @@ export default function LandingClient({
           </div>
 
           <div className="flex items-center gap-2">
-            <button
+            <Button size="raw" variant="ghost"
               onClick={() => setCategoryFilter('all')}
               className={`px-4 py-2 rounded-xl text-xs font-bold transition ${
                 categoryFilter === 'all'
@@ -150,8 +152,8 @@ export default function LandingClient({
               }`}
             >
               {t('allServices')} ({leafCategories.length})
-            </button>
-            <button
+            </Button>
+            <Button size="raw" variant="ghost"
               onClick={() => setCategoryFilter('popular')}
               className={`px-4 py-2 rounded-xl text-xs font-bold transition ${
                 categoryFilter === 'popular'
@@ -160,7 +162,7 @@ export default function LandingClient({
               }`}
             >
               {t('filterPopular')}
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -172,51 +174,53 @@ export default function LandingClient({
             return (
               <FilterItem key={cat.id} index={idx % 5}>
               <motion.div whileHover={{ y: -8 }} transition={{ type: 'spring', stiffness: 300, damping: 20 }} className="h-full">
-              <Link
+              <Card asChild>
+                <Link
                 href={`/search?category=${cat.id}`}
-                className="glass-card rounded-3xl p-6 group flex flex-col justify-between h-56 transition-all duration-300 relative overflow-hidden"
+                className="rounded-3xl p-6 group flex flex-col justify-between h-56 transition-all duration-300 relative overflow-hidden"
               >
-                {/* Animated color wash */}
-                <motion.div
-                  className={`absolute inset-0 bg-gradient-to-br ${visual.bgGradient}`}
-                  animate={{ opacity: [0.2, 0.75, 0.2] }}
-                  transition={{ duration: 2.8, repeat: Infinity, ease: 'easeInOut', delay: idx * 0.25 }}
-                />
-                {/* Decorative oversized icon ghost */}
-                <div className="absolute -right-4 -bottom-4 text-slate-900/[0.03] dark:text-white/[0.04] group-hover:scale-110 group-hover:rotate-6 transition-transform duration-500">
-                  <Icon name={visual.iconName} size={112} />
-                </div>
-
-                {/* Top Icon */}
-                <div className="relative flex items-center justify-between">
-                  <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${visual.bgGradient} flex items-center justify-center text-blue-600 dark:text-sky-400 shadow-sm group-hover:scale-110 group-hover:-rotate-6 transition-transform duration-300`}>
-                    <Icon name={visual.iconName} size={24} />
+                  {/* Animated color wash */}
+                  <motion.div
+                    className={`absolute inset-0 bg-gradient-to-br ${visual.bgGradient}`}
+                    animate={{ opacity: [0.2, 0.75, 0.2] }}
+                    transition={{ duration: 2.8, repeat: Infinity, ease: 'easeInOut', delay: idx * 0.25 }}
+                  />
+                  {/* Decorative oversized icon ghost */}
+                  <div className="absolute -right-4 -bottom-4 text-slate-900/[0.03] dark:text-white/[0.04] group-hover:scale-110 group-hover:rotate-6 transition-transform duration-500">
+                    <Icon name={visual.iconName} size={112} />
                   </div>
-                  <div className="w-8 h-8 rounded-full bg-white/80 dark:bg-slate-800/80 flex items-center justify-center text-slate-400 dark:text-slate-500 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
-                    <Icon name="ArrowUpRight" size={16} />
+
+                  {/* Top Icon */}
+                  <div className="relative flex items-center justify-between">
+                    <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${visual.bgGradient} flex items-center justify-center text-blue-600 dark:text-sky-400 shadow-sm group-hover:scale-110 group-hover:-rotate-6 transition-transform duration-300`}>
+                      <Icon name={visual.iconName} size={24} />
+                    </div>
+                    <div className="w-8 h-8 rounded-full bg-white/80 dark:bg-slate-800/80 flex items-center justify-center text-slate-400 dark:text-slate-500 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
+                      <Icon name="ArrowUpRight" size={16} />
+                    </div>
                   </div>
-                </div>
 
-                {/* Text info */}
-                <div className="relative space-y-1 mt-4">
-                  <h3 className="font-bold text-slate-900 dark:text-white text-base group-hover:text-blue-600 dark:group-hover:text-sky-400 transition">
-                    {cat.name}
-                  </h3>
-                  {cat.description && (
-                    <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2">
-                      {cat.description}
-                    </p>
-                  )}
-                </div>
+                  {/* Text info */}
+                  <div className="relative space-y-1 mt-4">
+                    <h3 className="font-bold text-slate-900 dark:text-white text-base group-hover:text-blue-600 dark:group-hover:text-sky-400 transition">
+                      {cat.name}
+                    </h3>
+                    {cat.description && (
+                      <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2">
+                        {cat.description}
+                      </p>
+                    )}
+                  </div>
 
-                {/* Footer details */}
-                <div className="relative pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-xs text-slate-500">
-                  <span>{tCategories('verifiedMasters', { count: stat?.count ?? 0 })}</span>
-                  {stat?.minPrice != null && (
-                    <span className="font-extrabold text-slate-900 dark:text-white">{tCategories('startingFrom', { price: perHour(stat.minPrice) })}</span>
-                  )}
-                </div>
-              </Link>
+                  {/* Footer details */}
+                  <div className="relative pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-xs text-slate-500">
+                    <span>{tCategories('verifiedMasters', { count: stat?.count ?? 0 })}</span>
+                    {stat?.minPrice != null && (
+                      <span className="font-extrabold text-slate-900 dark:text-white">{tCategories('startingFrom', { price: perHour(stat.minPrice) })}</span>
+                    )}
+                  </div>
+                </Link>
+              </Card>
               </motion.div>
               </FilterItem>
             );
@@ -313,82 +317,84 @@ export default function LandingClient({
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {topMasters.map((master, idx) => (
             <FilterItem key={master.id} index={idx % 3}>
-            <motion.div
+            <Card asChild>
+              <motion.div
               whileHover={{ y: -8 }}
               transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-              className="glass-card rounded-3xl overflow-hidden border border-slate-200 dark:border-slate-800 group hover:shadow-2xl hover:shadow-blue-500/10 dark:hover:shadow-sky-500/10 hover:border-blue-200 dark:hover:border-sky-900 transition-[box-shadow,border-color] duration-300"
+              className="rounded-3xl overflow-hidden border border-slate-200 dark:border-slate-800 group hover:shadow-2xl hover:shadow-blue-500/10 dark:hover:shadow-sky-500/10 hover:border-blue-200 dark:hover:border-sky-900 transition-[box-shadow,border-color] duration-300"
             >
-              {/* Cover Header */}
-              <div className="h-32 relative overflow-hidden">
-                <img src={master.bannerUrl || getCoverUrl(master.id)} alt={master.displayName} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 ease-out" />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 to-transparent" />
-                <div className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-slate-900/80 backdrop-blur-md text-amber-400 text-xs font-bold flex items-center gap-1">
-                  <Icon name="Star" size={14} className="fill-amber-400 text-amber-400" />
-                  <span>{master.ratingAverage}</span>
+                {/* Cover Header */}
+                <div className="h-32 relative overflow-hidden">
+                  <img src={master.bannerUrl || getCoverUrl(master.id)} alt={master.displayName} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 ease-out" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 to-transparent" />
+                  <div className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-slate-900/80 backdrop-blur-md text-amber-400 text-xs font-bold flex items-center gap-1">
+                    <Icon name="Star" size={14} className="fill-amber-400 text-amber-400" />
+                    <span>{master.ratingAverage}</span>
+                  </div>
                 </div>
-              </div>
 
-              {/* Avatar & Content */}
-              <div className="p-6 relative pt-0">
-                <div className="-mt-12 flex items-end justify-between mb-4">
-                  <div className="relative">
-                    <motion.div
-                      className="absolute -inset-1 rounded-2xl bg-gradient-to-br from-blue-500 to-sky-400 blur"
-                      animate={{ opacity: [0.35, 0.85, 0.35] }}
-                      transition={{ duration: 2.6, repeat: Infinity, ease: 'easeInOut', delay: idx * 0.3 }}
-                    />
-                    <img src={master.avatarUrl || getAvatarUrl(master.id, master.displayName)} alt={master.displayName} className="relative w-20 h-20 rounded-2xl object-cover border-4 border-white dark:border-slate-900 shadow-xl group-hover:scale-105 transition-transform duration-300" />
-                    {master.hasCertificates && (
-                      <div className="absolute -bottom-1 -right-1 p-1 bg-blue-600 text-white rounded-full">
-                        <Icon name="ShieldCheck" size={14} />
-                      </div>
+                {/* Avatar & Content */}
+                <div className="p-6 relative pt-0">
+                  <div className="-mt-12 flex items-end justify-between mb-4">
+                    <div className="relative">
+                      <motion.div
+                        className="absolute -inset-1 rounded-2xl bg-gradient-to-br from-blue-500 to-sky-400 blur"
+                        animate={{ opacity: [0.35, 0.85, 0.35] }}
+                        transition={{ duration: 2.6, repeat: Infinity, ease: 'easeInOut', delay: idx * 0.3 }}
+                      />
+                      <img src={master.avatarUrl || getAvatarUrl(master.id, master.displayName)} alt={master.displayName} className="relative w-20 h-20 rounded-2xl object-cover border-4 border-white dark:border-slate-900 shadow-xl group-hover:scale-105 transition-transform duration-300" />
+                      {master.hasCertificates && (
+                        <div className="absolute -bottom-1 -right-1 p-1 bg-blue-600 text-white rounded-full">
+                          <Icon name="ShieldCheck" size={14} />
+                        </div>
+                      )}
+                    </div>
+                    <div className="text-right">
+                      <span className="text-xs text-slate-500 dark:text-slate-400">{t('hourlyRate')}</span>
+                      <p className="text-xl font-extrabold text-slate-900 dark:text-white">
+                        {master.priceFrom ? perHour(master.priceFrom) : '—'}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <h3 className="text-lg font-extrabold text-slate-900 dark:text-white">{master.displayName}</h3>
+                    <p className="text-xs font-semibold text-blue-600 dark:text-sky-400">{master.cityName}</p>
+                    {master.bio && (
+                      <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">{master.bio}</p>
                     )}
                   </div>
-                  <div className="text-right">
-                    <span className="text-xs text-slate-500 dark:text-slate-400">{t('hourlyRate')}</span>
-                    <p className="text-xl font-extrabold text-slate-900 dark:text-white">
-                      {master.priceFrom ? perHour(master.priceFrom) : '—'}
-                    </p>
-                  </div>
-                </div>
 
-                <div className="space-y-2">
-                  <h3 className="text-lg font-extrabold text-slate-900 dark:text-white">{master.displayName}</h3>
-                  <p className="text-xs font-semibold text-blue-600 dark:text-sky-400">{master.cityName}</p>
-                  {master.bio && (
-                    <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">{master.bio}</p>
+                  {/* Skills tags */}
+                  {master.categories.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5 mt-4">
+                      {master.categories.slice(0, 3).map((skill, idx) => (
+                        <span key={idx} className="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-[11px] font-medium text-slate-600 dark:text-slate-300">
+                          {skill}
+                        </span>
+                      ))}
+                    </div>
                   )}
-                </div>
 
-                {/* Skills tags */}
-                {master.categories.length > 0 && (
-                  <div className="flex flex-wrap gap-1.5 mt-4">
-                    {master.categories.slice(0, 3).map((skill, idx) => (
-                      <span key={idx} className="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-[11px] font-medium text-slate-600 dark:text-slate-300">
-                        {skill}
-                      </span>
-                    ))}
+                  {/* Action CTA */}
+                  <div className="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center gap-3">
+                    <Link
+                      href={`/master/${master.id}`}
+                      className="flex-1 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-center text-xs font-bold text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+                    >
+                      {t('viewDetails')}
+                    </Link>
+                    <Link
+                      href={`/booking?master=${master.id}`}
+                      className="flex-1 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-center text-xs font-bold shadow-md transition btn-ripple"
+                    >
+                      {t('bookNow')}
+                    </Link>
                   </div>
-                )}
 
-                {/* Action CTA */}
-                <div className="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center gap-3">
-                  <Link
-                    href={`/master/${master.id}`}
-                    className="flex-1 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-center text-xs font-bold text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
-                  >
-                    {t('viewDetails')}
-                  </Link>
-                  <Link
-                    href={`/booking?master=${master.id}`}
-                    className="flex-1 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-center text-xs font-bold shadow-md transition btn-ripple"
-                  >
-                    {t('bookNow')}
-                  </Link>
                 </div>
-
-              </div>
-            </motion.div>
+              </motion.div>
+            </Card>
             </FilterItem>
           ))}
         </div>

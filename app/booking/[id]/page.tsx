@@ -23,6 +23,22 @@ import { useAuth } from '@/contexts/AuthContext';
 import { getAvatarUrl } from '@/lib/placeholders';
 import { useMoney } from '@/lib/money';
 import { useDateFormat } from '@/lib/datetime';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Card } from '@/components/ui/card';
+import { DatePicker, todayISO } from '@/components/ui/date-picker';
 
 const STATUS_KEY: Record<string, string> = {
   PENDING: 'statusPending',
@@ -437,7 +453,7 @@ export default function BookingDetailsPage() {
     <div className="page-shell page-shell-narrow py-12 space-y-8">
 
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 glass-card p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl">
+      <Card className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl">
         <div>
           <div className="flex items-center gap-3">
             <span className="px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-sky-300 text-xs font-mono font-extrabold">
@@ -475,24 +491,24 @@ export default function BookingDetailsPage() {
           )}
 
           {(isClient || isMaster) && booking.status === 'COMPLETED' && (
-            <button
+            <Button size="raw" variant="ghost"
               onClick={handleDownloadReceipt}
               disabled={downloadingReceipt}
               className="px-5 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-extrabold text-xs hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center gap-2 disabled:opacity-60"
             >
               <Icon name="filetext" size={16} />
               <span>{downloadingReceipt ? t('downloadingReceipt') : t('downloadReceipt')}</span>
-            </button>
+            </Button>
           )}
 
           {(isClient || isMaster) && booking.status === 'COMPLETED' && (
-            <button
+            <Button size="raw" variant="ghost"
               onClick={handleViewCertificate}
               className="px-5 py-3 rounded-2xl border border-amber-200 dark:border-amber-900 text-amber-600 dark:text-amber-400 font-extrabold text-xs hover:bg-amber-50 dark:hover:bg-amber-950/40 transition flex items-center gap-2"
             >
               <Icon name="shieldcheck" size={16} />
               <span>{t('viewCertificate')}</span>
-            </button>
+            </Button>
           )}
 
           {booking.masterWhatsappPhone && ['ACCEPTED', 'IN_PROGRESS'].includes(booking.status) && (() => {
@@ -512,37 +528,37 @@ export default function BookingDetailsPage() {
           })()}
 
           {canClientReschedule && (
-            <button
+            <Button size="raw" variant="ghost"
               onClick={handleOpenReschedule}
               disabled={actionPending}
               className="px-5 py-3 rounded-2xl border border-blue-200 dark:border-sky-900 text-blue-600 dark:text-sky-400 font-extrabold text-xs hover:bg-blue-50 dark:hover:bg-sky-950/40 transition disabled:opacity-50 flex items-center gap-2"
             >
               <Icon name="calendar" size={16} />
               {t('rescheduleButton')}
-            </button>
+            </Button>
           )}
 
           {canClientCancel && (
-            <button
+            <Button size="raw" variant="ghost"
               onClick={handleCancel}
               disabled={actionPending}
               className="px-5 py-3 rounded-2xl border border-red-200 dark:border-red-900 text-red-600 dark:text-red-400 font-extrabold text-xs hover:bg-red-50 dark:hover:bg-red-950/40 transition disabled:opacity-50"
             >
               Cancel Booking
-            </button>
+            </Button>
           )}
 
           {canMasterAccept && (
-            <button
+            <Button size="raw" variant="ghost"
               onClick={() => runAction(() => bookingsApi.accept(booking.id))}
               disabled={actionPending}
               className="btn-success px-5 py-3 rounded-2xl font-extrabold text-xs transition disabled:opacity-50"
             >
               Accept
-            </button>
+            </Button>
           )}
           {canMasterReject && (
-            <button
+            <Button size="raw" variant="ghost"
               onClick={() => {
                 const reason = window.prompt('Reason for rejection:') ?? '';
                 if (reason) runAction(() => bookingsApi.reject(booking.id, reason));
@@ -551,28 +567,28 @@ export default function BookingDetailsPage() {
               className="px-5 py-3 rounded-2xl border border-red-200 dark:border-red-900 text-red-600 dark:text-red-400 font-extrabold text-xs hover:bg-red-50 dark:hover:bg-red-950/40 transition disabled:opacity-50"
             >
               Reject
-            </button>
+            </Button>
           )}
           {canMasterStart && (
-            <button
+            <Button size="raw" variant="ghost"
               onClick={() => runAction(() => bookingsApi.start(booking.id))}
               disabled={actionPending}
               className="px-5 py-3 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-md transition disabled:opacity-50"
             >
               Start Job
-            </button>
+            </Button>
           )}
           {canMasterComplete && (
-            <button
+            <Button size="raw" variant="ghost"
               onClick={() => runAction(() => bookingsApi.complete(booking.id))}
               disabled={actionPending}
               className="btn-success px-5 py-3 rounded-2xl font-extrabold text-xs transition disabled:opacity-50"
             >
               Mark Completed
-            </button>
+            </Button>
           )}
         </div>
-      </div>
+      </Card>
 
       {/* Reporting the counterparty needs their *user* id, which only the two
           participants of a booking ever see — this is the one place it is available. */}
@@ -601,8 +617,8 @@ export default function BookingDetailsPage() {
         const short = confirmed && paid < agreed ? (agreed - paid).toFixed(2) : null;
 
         return (
-          <div
-            className={`glass-card p-6 sm:p-7 rounded-3xl border shadow-xl ${
+          <Card
+            className={`p-6 sm:p-7 rounded-3xl border shadow-xl ${
               confirmed
                 ? 'border-emerald-200 dark:border-emerald-900/60'
                 : 'border-amber-200 dark:border-amber-900/60'
@@ -663,17 +679,17 @@ export default function BookingDetailsPage() {
                 </div>
 
                 {!confirmed && isClient && (
-                  <button
+                  <Button size="raw" variant="ghost"
                     onClick={openPaymentModal}
                     className="px-6 py-3 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-xs font-extrabold shadow-lg shadow-emerald-600/25 transition flex items-center gap-2"
                   >
                     <Icon name="checkcircle2" size={16} />
                     {t('confirmPaymentButton')}
-                  </button>
+                  </Button>
                 )}
               </div>
             </div>
-          </div>
+          </Card>
         );
       })()}
 
@@ -683,7 +699,7 @@ export default function BookingDetailsPage() {
         <div className="lg:col-span-2 space-y-8">
 
           {/* Stage Progress Timeline */}
-          <div className="glass-card p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-6 shadow-xl">
+          <Card className="gap-0 p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-6 shadow-xl">
             <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
               <Icon name="Clock" size={20} className="text-blue-600 dark:text-sky-400" />
               {t('liveTimeline')}
@@ -729,11 +745,11 @@ export default function BookingDetailsPage() {
                 })}
               </div>
             )}
-          </div>
+          </Card>
 
           {/* Live "On My Way" Tracking */}
           {isClient && booking.status === 'IN_PROGRESS' && masterLiveLocation && (
-            <div className="glass-card p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-4 shadow-xl">
+            <Card className="gap-0 p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-4 shadow-xl">
               <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 <Icon name="mappin" size={20} className="text-blue-600 dark:text-sky-400" />
                 {t('liveTrackingTitle')}
@@ -746,11 +762,11 @@ export default function BookingDetailsPage() {
                     : null
                 }
               />
-            </div>
+            </Card>
           )}
 
           {/* Master Info Card */}
-          <div className="glass-card p-6 rounded-3xl border border-slate-200 dark:border-slate-800 flex items-center justify-between shadow-lg">
+          <Card className="p-6 rounded-3xl border border-slate-200 dark:border-slate-800 flex items-center justify-between shadow-lg">
             <div className="flex items-center gap-4">
               <img src={getAvatarUrl(booking.masterId, booking.masterDisplayName)} alt={booking.masterDisplayName} className="w-14 h-14 rounded-2xl object-cover" />
               <div>
@@ -764,13 +780,13 @@ export default function BookingDetailsPage() {
             >
               {t('profile')}
             </Link>
-          </div>
+          </Card>
 
         </div>
 
         {/* Receipt Sidebar */}
         <div className="space-y-6">
-          <div className="glass-card p-6 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-4 shadow-xl">
+          <Card className="gap-0 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-4 shadow-xl">
             <h3 className="text-sm font-bold uppercase tracking-wider text-slate-400">{t('paymentAndAddress')}</h3>
 
             <div className="space-y-3 text-xs">
@@ -823,59 +839,54 @@ export default function BookingDetailsPage() {
                 </div>
               )}
             </div>
-          </div>
+          </Card>
         </div>
 
       </div>
 
-      {showCertificateModal && (
-        <div
-          className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4"
-          onClick={() => setShowCertificateModal(false)}
-        >
-          <div className="w-full max-w-md" onClick={(e) => e.stopPropagation()}>
-            {certificateLoading || !certificate ? (
-              <div className="glass-card rounded-3xl p-12 text-center">
-                <p className="text-xs text-slate-400 font-semibold">{t('loadingCertificate')}</p>
-              </div>
-            ) : (
-              <CertificateCard certificate={certificate} />
-            )}
-            <button
-              onClick={() => setShowCertificateModal(false)}
-              className="w-full mt-4 px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-extrabold text-xs hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+      <Dialog open={showCertificateModal} onOpenChange={setShowCertificateModal}>
+        <DialogContent showCloseButton={false} className="bg-transparent dark:bg-transparent border-0 shadow-none p-0 gap-4">
+          <DialogHeader className="sr-only">
+            <DialogTitle>{t('certificateTitle')}</DialogTitle>
+          </DialogHeader>
+          {certificateLoading || !certificate ? (
+            <Card className="p-12 text-center">
+              <p className="text-xs text-slate-400 font-semibold">{t('loadingCertificate')}</p>
+            </Card>
+          ) : (
+            <CertificateCard certificate={certificate} />
+          )}
+          <DialogClose asChild>
+            <Button
+              variant="outline"
+              className="w-full h-auto px-5 py-2.5 rounded-xl border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 font-extrabold text-xs hover:bg-slate-100 dark:hover:bg-slate-800"
             >
               {t('cancelModalDismiss')}
-            </button>
-          </div>
-        </div>
-      )}
+            </Button>
+          </DialogClose>
+        </DialogContent>
+      </Dialog>
 
-      {showRescheduleModal && (
-        <div
-          className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4"
-          onClick={() => setShowRescheduleModal(false)}
-        >
-          <div
-            className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl w-full max-w-md p-6 sm:p-8 space-y-4"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h3 className="text-lg font-extrabold text-slate-900 dark:text-white">{t('rescheduleModalTitle')}</h3>
-            <p className="text-[11px] text-slate-400">{t('rescheduleModalHint')}</p>
-            <label className="block space-y-1.5">
-              <span className="text-xs font-bold text-slate-700 dark:text-slate-300">{t('rescheduleDateLabel')}</span>
-              <input
-                type="date"
+      <Dialog open={showRescheduleModal} onOpenChange={setShowRescheduleModal}>
+        <DialogContent className="gap-4">
+            <DialogHeader>
+              <DialogTitle>{t('rescheduleModalTitle')}</DialogTitle>
+              <DialogDescription>{t('rescheduleModalHint')}</DialogDescription>
+            </DialogHeader>
+            <div className="space-y-1.5">
+              <Label htmlFor="reschedule-date">{t('rescheduleDateLabel')}</Label>
+              <DatePicker
+                id="reschedule-date"
                 value={rescheduleDate}
-                min={new Date().toISOString().slice(0, 10)}
-                onChange={(e) => setRescheduleDate(e.target.value)}
-                className="w-full p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold"
+                min={todayISO()}
+                onChange={setRescheduleDate}
+                className="p-3 rounded-xl"
               />
-            </label>
+            </div>
 
             {rescheduleDate && (
               <div className="space-y-1.5">
-                <span className="text-xs font-bold text-slate-700 dark:text-slate-300">{t('rescheduleSlotLabel')}</span>
+                <Label>{t('rescheduleSlotLabel')}</Label>
                 {rescheduleSlotsLoading ? (
                   <p className="text-xs text-slate-400">{t('loadingSlots')}</p>
                 ) : rescheduleSlots.length === 0 ? (
@@ -883,7 +894,7 @@ export default function BookingDetailsPage() {
                 ) : (
                   <div className="grid grid-cols-3 gap-2">
                     {rescheduleSlots.map((slot) => (
-                      <button
+                      <Button size="raw" variant="ghost"
                         key={slot}
                         onClick={() => setSelectedRescheduleSlot(slot)}
                         className={`px-3 py-2 rounded-xl text-xs font-bold border transition ${
@@ -893,7 +904,7 @@ export default function BookingDetailsPage() {
                         }`}
                       >
                         {new Date(slot).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                      </button>
+                      </Button>
                     ))}
                   </div>
                 )}
@@ -902,167 +913,167 @@ export default function BookingDetailsPage() {
 
             {rescheduleError && <p className="text-xs font-bold text-red-600 dark:text-red-400">{rescheduleError}</p>}
 
-            <div className="flex items-center justify-end gap-3 pt-2">
-              <button
-                onClick={() => setShowRescheduleModal(false)}
-                className="px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-extrabold text-xs hover:bg-slate-100 dark:hover:bg-slate-800 transition"
-              >
-                {t('cancelModalDismiss')}
-              </button>
-              <button
+            <DialogFooter>
+              <DialogClose asChild>
+                <Button
+                  variant="outline"
+                  className="h-auto px-5 py-2.5 rounded-xl border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-extrabold text-xs hover:bg-slate-100 dark:hover:bg-slate-800"
+                >
+                  {t('cancelModalDismiss')}
+                </Button>
+              </DialogClose>
+              <Button
+                variant="brand"
                 onClick={confirmReschedule}
                 disabled={!selectedRescheduleSlot || rescheduling}
-                className="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow transition disabled:opacity-60"
+                className="h-auto px-5 py-2.5 rounded-xl text-xs shadow"
               >
                 {rescheduling ? t('rescheduling') : t('rescheduleModalConfirm')}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+              </Button>
+            </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
-      {showCancelModal && (
-        <div
-          className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4"
-          onClick={() => setShowCancelModal(false)}
-        >
-          <div
-            className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl w-full max-w-md p-6 sm:p-8 space-y-4"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h3 className="text-lg font-extrabold text-slate-900 dark:text-white">{t('cancelModalTitle')}</h3>
-            <label className="block space-y-1.5">
-              <span className="text-xs font-bold text-slate-700 dark:text-slate-300">{t('cancelReasonLabel')}</span>
-              <select
-                value={cancelReasonCode}
-                onChange={(e) => setCancelReasonCode(e.target.value as CancellationReasonCode | '')}
-                className="w-full p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold"
+      <Dialog open={showCancelModal} onOpenChange={setShowCancelModal}>
+        <DialogContent className="gap-4">
+            <DialogHeader>
+              <DialogTitle>{t('cancelModalTitle')}</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-1.5">
+              <Label htmlFor="cancel-reason">{t('cancelReasonLabel')}</Label>
+              <Select
+                value={cancelReasonCode || undefined}
+                onValueChange={(value) => setCancelReasonCode(value as CancellationReasonCode)}
               >
-                <option value="">{t('cancelReasonPlaceholder')}</option>
-                {CANCELLATION_REASON_CODES.map((code) => (
-                  <option key={code} value={code}>{t(`cancelReasonCode.${code}`)}</option>
-                ))}
-              </select>
-            </label>
-            <label className="block space-y-1.5">
-              <span className="text-xs font-bold text-slate-700 dark:text-slate-300">{t('cancelDetailsLabel')}</span>
-              <textarea
+                <SelectTrigger id="cancel-reason" className="p-3 rounded-xl">
+                  <SelectValue placeholder={t('cancelReasonPlaceholder')} />
+                </SelectTrigger>
+                <SelectContent>
+                  {CANCELLATION_REASON_CODES.map((code) => (
+                    <SelectItem key={code} value={code}>{t(`cancelReasonCode.${code}`)}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="cancel-details">{t('cancelDetailsLabel')}</Label>
+              <Textarea
+                id="cancel-details"
                 value={cancelReasonText}
                 onChange={(e) => setCancelReasonText(e.target.value)}
                 rows={3}
                 maxLength={500}
-                className="w-full p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold"
+                className="p-3 rounded-xl font-semibold"
               />
-            </label>
-            <div className="flex items-center justify-end gap-3 pt-2">
-              <button
-                onClick={() => setShowCancelModal(false)}
-                className="px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-extrabold text-xs hover:bg-slate-100 dark:hover:bg-slate-800 transition"
-              >
-                {t('cancelModalDismiss')}
-              </button>
-              <button
+            </div>
+            <DialogFooter>
+              <DialogClose asChild>
+                <Button
+                  variant="outline"
+                  className="h-auto px-5 py-2.5 rounded-xl border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-extrabold text-xs hover:bg-slate-100 dark:hover:bg-slate-800"
+                >
+                  {t('cancelModalDismiss')}
+                </Button>
+              </DialogClose>
+              <Button
+                variant="brand"
                 onClick={confirmCancel}
                 disabled={actionPending}
-                className="px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-extrabold text-xs shadow transition disabled:opacity-60"
+                className="h-auto px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 shadow-red-600/25 text-xs shadow"
               >
                 {t('cancelModalConfirm')}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+              </Button>
+            </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Confirm payment modal (FR-7.7) */}
-      {showPaymentModal && (
-        <div
-          className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4"
-          onClick={() => setShowPaymentModal(false)}
-        >
-          <div
-            className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl w-full max-w-md p-6 sm:p-8 space-y-5"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-start gap-3">
-              <div className="w-10 h-10 shrink-0 rounded-2xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
-                <Icon name="dollarsign" size={18} />
-              </div>
-              <div>
-                <h3 className="text-lg font-extrabold text-slate-900 dark:text-white">{t('paymentModalTitle')}</h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{t('paymentModalSubtitle')}</p>
-              </div>
+      <Dialog open={showPaymentModal} onOpenChange={setShowPaymentModal}>
+        <DialogContent className="gap-5">
+          <DialogHeader className="flex-row items-start gap-3 space-y-0">
+            <div className="w-10 h-10 shrink-0 rounded-2xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+              <Icon name="dollarsign" size={18} />
             </div>
-
-            <div className="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700">
-              <span className="text-xs font-bold text-slate-500">{t('paymentAgreedLabel')}</span>
-              <span className="text-sm font-extrabold text-slate-900 dark:text-white">
-                {money(booking.price)}
-              </span>
+            <div className="space-y-0.5">
+              <DialogTitle>{t('paymentModalTitle')}</DialogTitle>
+              <DialogDescription>{t('paymentModalSubtitle')}</DialogDescription>
             </div>
+          </DialogHeader>
 
-            <label className="block space-y-1.5">
-              <span className="text-xs font-bold text-slate-700 dark:text-slate-300">{t('paymentAmountLabel')}</span>
-              <div className="relative">
-                <input
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  value={paidAmount}
-                  onChange={(e) => setPaidAmount(e.target.value)}
-                  className="w-full p-3.5 pr-16 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm font-extrabold"
-                />
-                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">
-                  {booking.currency}
-                </span>
-              </div>
-              <button
-                type="button"
-                onClick={() => setPaidAmount(booking.price)}
-                className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 hover:underline"
-              >
-                {t('paymentPaidInFull')}
-              </button>
-            </label>
+          <div className="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700">
+            <span className="text-xs font-bold text-slate-500">{t('paymentAgreedLabel')}</span>
+            <span className="text-sm font-extrabold text-slate-900 dark:text-white">
+              {money(booking.price)}
+            </span>
+          </div>
 
-            <label className="block space-y-1.5">
-              <span className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                {t('paymentNoteLabel')}
-                {Number(paidAmount) < Number(booking.price) && (
-                  <span className="text-red-500"> *</span>
-                )}
-              </span>
-              <textarea
-                value={paymentNote}
-                onChange={(e) => setPaymentNote(e.target.value)}
-                rows={3}
-                maxLength={500}
-                placeholder={t('paymentNotePlaceholder')}
-                className="w-full p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold"
+          <div className="space-y-1.5">
+            <Label htmlFor="payment-amount">{t('paymentAmountLabel')}</Label>
+            <div className="relative">
+              <Input
+                id="payment-amount"
+                type="number"
+                min="0"
+                step="0.01"
+                value={paidAmount}
+                onChange={(e) => setPaidAmount(e.target.value)}
+                className="p-3.5 pr-16 rounded-xl text-sm font-extrabold"
               />
-            </label>
+              <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">
+                {booking.currency}
+              </span>
+            </div>
+            <Button
+              type="button"
+              variant="link"
+              onClick={() => setPaidAmount(booking.price)}
+              className="h-auto p-0 text-[11px] font-bold text-emerald-600 dark:text-emerald-400"
+            >
+              {t('paymentPaidInFull')}
+            </Button>
+          </div>
 
-            {paymentError && (
-              <p className="text-xs font-bold text-red-600 dark:text-red-400">{paymentError}</p>
-            )}
+          <div className="space-y-1.5">
+            <Label htmlFor="payment-note">
+              {t('paymentNoteLabel')}
+              {Number(paidAmount) < Number(booking.price) && (
+                <span className="text-red-500"> *</span>
+              )}
+            </Label>
+            <Textarea
+              id="payment-note"
+              value={paymentNote}
+              onChange={(e) => setPaymentNote(e.target.value)}
+              rows={3}
+              maxLength={500}
+              placeholder={t('paymentNotePlaceholder')}
+              className="p-3 rounded-xl font-semibold"
+            />
+          </div>
 
-            <div className="flex items-center justify-end gap-3 pt-1">
-              <button
-                onClick={() => setShowPaymentModal(false)}
-                className="px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-extrabold text-xs hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+          {paymentError && (
+            <p className="text-xs font-bold text-red-600 dark:text-red-400">{paymentError}</p>
+          )}
+
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button
+                variant="outline"
+                className="h-auto px-5 py-2.5 rounded-xl border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-extrabold text-xs hover:bg-slate-100 dark:hover:bg-slate-800"
               >
                 {t('cancelModalDismiss')}
-              </button>
-              <button
-                onClick={confirmPayment}
-                disabled={confirmingPayment}
-                className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-extrabold text-xs shadow-lg shadow-emerald-600/25 transition disabled:opacity-60"
-              >
-                {confirmingPayment ? '...' : t('confirmPaymentButton')}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+              </Button>
+            </DialogClose>
+            <Button
+              onClick={confirmPayment}
+              disabled={confirmingPayment}
+              className="h-auto px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-extrabold text-xs shadow-lg shadow-emerald-600/25"
+            >
+              {confirmingPayment ? '...' : t('confirmPaymentButton')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
     </div>
   );

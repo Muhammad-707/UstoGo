@@ -20,6 +20,8 @@ import { getAvatarUrl } from '@/lib/placeholders';
 import { FilterContainer, FilterItem } from '@/components/ui/FilterAnimate';
 import { AnalyticsSection } from '@/components/master/AnalyticsSection';
 import { EmptyState } from '@/components/ui/EmptyState';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 
 
 export default function MasterDashboardPage() {
@@ -358,7 +360,7 @@ export default function MasterDashboardPage() {
             </div>
           </div>
           {masterProfile.approvalStatus === 'APPROVED' ? (
-            <button
+            <Button size="raw" variant="ghost"
               onClick={handleToggleAvailability}
               disabled={togglingActive}
               className={`shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-2xl border text-xs font-extrabold transition disabled:opacity-60 ${
@@ -374,7 +376,7 @@ export default function MasterDashboardPage() {
                 }`}
               />
               {masterProfile.isActive ? t('statusActive') : t('statusInactive')}
-            </button>
+            </Button>
           ) : (
             <div className="shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-white/10 border border-white/10 text-xs font-extrabold">
               <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
@@ -386,8 +388,8 @@ export default function MasterDashboardPage() {
 
       {/* Moderation feedback — the only place a rejected master learns why and can act. */}
       {masterProfile && masterProfile.approvalStatus !== 'APPROVED' && (
-        <div
-          className={`glass-card rounded-3xl border p-6 sm:p-8 shadow-xl space-y-4 ${
+        <Card
+          className={`gap-0 rounded-3xl border p-6 sm:p-8 shadow-xl space-y-4 ${
             masterProfile.approvalStatus === 'REJECTED'
               ? 'border-red-200 dark:border-red-900/60'
               : 'border-amber-200 dark:border-amber-900/60'
@@ -435,21 +437,21 @@ export default function MasterDashboardPage() {
               >
                 {t('moderationEditProfile')}
               </Link>
-              <button
+              <Button size="raw" variant="ghost"
                 onClick={handleResubmit}
                 disabled={resubmitting}
                 className="px-6 py-2.5 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white text-xs font-extrabold shadow-lg shadow-amber-500/25 disabled:opacity-60 transition"
               >
                 {resubmitting ? '...' : t('moderationResubmit')}
-              </button>
+              </Button>
             </div>
           )}
-        </div>
+        </Card>
       )}
 
       {/* Reliability & Instant Book */}
       {status && masterProfile?.approvalStatus === 'APPROVED' && (
-        <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+        <Card className="rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-6">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-500 text-white flex items-center justify-center shadow-lg shrink-0">
               <Icon name="shieldcheck" size={22} />
@@ -468,7 +470,7 @@ export default function MasterDashboardPage() {
               <p className="text-xs font-bold text-slate-900 dark:text-white">{t('instantBookTitle')}</p>
               <p className="text-[10px] text-slate-400 max-w-[160px]">{t('instantBookDesc')}</p>
             </div>
-            <button
+            <Button size="raw" variant="ghost"
               onClick={handleToggleInstantBook}
               disabled={togglingInstantBook}
               role="switch"
@@ -482,24 +484,26 @@ export default function MasterDashboardPage() {
                   status.instantBookEnabled ? 'translate-x-5' : 'translate-x-0'
                 }`}
               />
-            </button>
+            </Button>
           </div>
-        </div>
+        </Card>
       )}
 
       {/* Metrics Grid */}
       <FilterContainer className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {metrics.map((m, idx) => (
-          <FilterItem key={idx} index={idx} className="glass-card p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl flex items-center justify-between hover:shadow-2xl hover:-translate-y-0.5 transition">
-            <div className="space-y-1">
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">{m.title}</span>
-              <h3 className="text-2xl font-extrabold text-slate-900 dark:text-white">{m.value}</h3>
-              {m.growth && <span className="text-[10px] font-bold text-emerald-500">{m.growth}</span>}
-            </div>
-            <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${m.color} text-white flex items-center justify-center shadow-lg`}>
-              <Icon name={m.icon} size={22} />
-            </div>
-          </FilterItem>
+          <Card key={idx} asChild>
+            <FilterItem index={idx} className="p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl flex items-center justify-between hover:shadow-2xl hover:-translate-y-0.5 transition">
+              <div className="space-y-1">
+                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">{m.title}</span>
+                <h3 className="text-2xl font-extrabold text-slate-900 dark:text-white">{m.value}</h3>
+                {m.growth && <span className="text-[10px] font-bold text-emerald-500">{m.growth}</span>}
+              </div>
+              <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${m.color} text-white flex items-center justify-center shadow-lg`}>
+                <Icon name={m.icon} size={22} />
+              </div>
+            </FilterItem>
+          </Card>
         ))}
       </FilterContainer>
 
@@ -507,7 +511,7 @@ export default function MasterDashboardPage() {
       <AnalyticsSection stats={stats} loading={statsLoading} />
 
       {/* My NPS */}
-      <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-4 shadow-xl">
+      <Card className="gap-0 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-4 shadow-xl">
         <div>
           <h3 className="text-sm font-bold text-slate-900 dark:text-white">{t('myNpsTitle')}</h3>
           <p className="text-[10px] text-slate-400 font-semibold mt-0.5">{t('myNpsSubtitle')}</p>
@@ -534,7 +538,7 @@ export default function MasterDashboardPage() {
             </div>
           </div>
         )}
-      </div>
+      </Card>
 
       {/* Quick Actions */}
       <div>
@@ -542,22 +546,24 @@ export default function MasterDashboardPage() {
         <FilterContainer className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-4">
           {quickActions.map((qa, idx) => (
             <FilterItem key={qa.href} index={idx}>
-              <Link
+              <Card asChild>
+                <Link
                 href={qa.href}
-                className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 shadow-md p-5 flex flex-col items-center gap-3 text-center hover:border-amber-400 hover:shadow-lg transition group"
+                className="rounded-3xl border border-slate-200 dark:border-slate-800 shadow-md p-5 flex flex-col items-center gap-3 text-center hover:border-amber-400 hover:shadow-lg transition group"
               >
-                <div className={`w-11 h-11 rounded-2xl ${qa.color} text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition`}>
-                  <Icon name={qa.icon} size={20} />
-                </div>
-                <span className="text-[11px] font-bold text-slate-700 dark:text-slate-200 leading-tight">{qa.label}</span>
-              </Link>
+                  <div className={`w-11 h-11 rounded-2xl ${qa.color} text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition`}>
+                    <Icon name={qa.icon} size={20} />
+                  </div>
+                  <span className="text-[11px] font-bold text-slate-700 dark:text-slate-200 leading-tight">{qa.label}</span>
+                </Link>
+              </Card>
             </FilterItem>
           ))}
         </FilterContainer>
       </div>
 
       {/* Pending Job Requests */}
-      <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-6 shadow-xl">
+      <Card className="gap-0 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-6 shadow-xl">
         <h3 className="text-lg font-bold text-slate-900 dark:text-white">{t('pendingApprovals')}</h3>
         {loading && <p className="text-xs text-slate-400 font-semibold">{t('loadingRequests')}</p>}
         {!loading && pending.length === 0 && (
@@ -596,31 +602,31 @@ export default function MasterDashboardPage() {
                 )}
               </div>
               <div className="flex items-center gap-3">
-                <button
+                <Button size="raw" variant="ghost"
                   disabled={actingId === b.id}
                   onClick={() => handleDecline(b.id)}
                   className="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-bold hover:bg-red-100 hover:text-red-600 transition disabled:opacity-50"
                 >
                   {t('decline')}
-                </button>
-                <button
+                </Button>
+                <Button size="raw" variant="ghost"
                   disabled={actingId === b.id}
                   onClick={() => handleAccept(b.id)}
                   className="btn-success px-5 py-2 rounded-xl text-xs font-bold transition disabled:opacity-50"
                 >
                   {t('acceptJob', { price: money(b.price) })}
-                </button>
+                </Button>
               </div>
             </FilterItem>
           ))}
         </div>
-      </div>
+      </Card>
 
       {/* Upcoming + Schedule */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
         {/* Upcoming Bookings */}
-        <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-4 shadow-xl">
+        <Card className="gap-0 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-4 shadow-xl">
           <h3 className="text-lg font-bold text-slate-900 dark:text-white">{t('upcomingJobs')}</h3>
           {!loading && upcoming.length === 0 && (
             <EmptyState variant="inline" icon="calendar" title={t('noUpcomingJobs')} />
@@ -641,32 +647,32 @@ export default function MasterDashboardPage() {
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
                   <span className="text-sm font-extrabold text-slate-900 dark:text-white">{money(b.price)}</span>
-                  <button
+                  <Button size="raw" variant="ghost"
                     disabled={actingId === b.id}
                     onClick={() => handleStart(b.id)}
                     className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow transition disabled:opacity-50"
                   >
                     {t('startJob')}
-                  </button>
+                  </Button>
                 </div>
               </FilterItem>
             ))}
           </div>
-        </div>
+        </Card>
 
         {/* Weekly Schedule Preview */}
-        <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-4 shadow-xl">
+        <Card className="gap-0 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-4 shadow-xl">
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-bold text-slate-900 dark:text-white">{t('weeklySchedule')}</h3>
             <div className="flex items-center gap-4">
-              <button
+              <Button size="raw" variant="ghost"
                 onClick={handleExportSchedule}
                 disabled={exportingSchedule}
                 className="text-xs font-bold text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-sky-400 disabled:opacity-60 flex items-center gap-1.5"
               >
                 <Icon name="calendar" size={13} />
                 {exportingSchedule ? t('exportingSchedule') : t('exportSchedule')}
-              </button>
+              </Button>
               <Link href="/settings/schedule" className="text-xs font-bold text-blue-600 dark:text-sky-400 hover:underline">
                 {t('editSchedule')}
               </Link>
@@ -707,7 +713,7 @@ export default function MasterDashboardPage() {
               })}
             </div>
           )}
-        </div>
+        </Card>
 
       </div>
 

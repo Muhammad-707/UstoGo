@@ -8,6 +8,18 @@ import { reportsApi } from '@/lib/api/endpoints';
 import { ApiError } from '@/lib/api/client';
 import { useAuth } from '@/contexts/AuthContext';
 import type { ReportType } from '@/lib/api/types';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 
 const TYPES: ReportType[] = ['SPAM', 'FRAUD', 'ABUSE', 'OTHER'];
 
@@ -67,57 +79,47 @@ export function ReportUserButton({
 
   return (
     <>
-      <button
+      <Button size="raw" variant="ghost"
         type="button"
         onClick={openModal}
         className={`inline-flex items-center gap-1.5 text-[11px] font-bold text-slate-400 hover:text-red-500 transition ${className}`}
       >
         <Icon name="filetext" size={13} />
         {t('reportButton')}
-      </button>
+      </Button>
 
-      {open && (
-        <div
-          className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4"
-          onClick={() => setOpen(false)}
-        >
-          <div
-            className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl w-full max-w-md p-6 sm:p-8 space-y-5"
-            onClick={(e) => e.stopPropagation()}
-          >
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent showCloseButton={!sent} className="gap-5">
             {sent ? (
               <div className="text-center space-y-4 py-4">
                 <div className="w-12 h-12 mx-auto rounded-2xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
                   <Icon name="checkcircle2" size={22} />
                 </div>
-                <div className="space-y-1">
-                  <h3 className="text-base font-extrabold text-slate-900 dark:text-white">{t('sentTitle')}</h3>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">{t('sentBody')}</p>
-                </div>
-                <button
-                  onClick={() => setOpen(false)}
-                  className="px-6 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-bold transition"
-                >
-                  {t('close')}
-                </button>
+                <DialogHeader className="space-y-1 pr-0 text-center items-center">
+                  <DialogTitle className="text-base">{t('sentTitle')}</DialogTitle>
+                  <DialogDescription>{t('sentBody')}</DialogDescription>
+                </DialogHeader>
+                <DialogClose asChild>
+                  <Button
+                    variant="secondary"
+                    className="h-auto px-6 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-bold"
+                  >
+                    {t('close')}
+                  </Button>
+                </DialogClose>
               </div>
             ) : (
               <>
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <h3 className="text-lg font-extrabold text-slate-900 dark:text-white">{t('modalTitle')}</h3>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{t('modalSubtitle')}</p>
-                  </div>
-                  <button onClick={() => setOpen(false)} className="text-slate-400 hover:text-slate-600 shrink-0">
-                    <Icon name="x" size={18} />
-                  </button>
-                </div>
+                <DialogHeader>
+                  <DialogTitle>{t('modalTitle')}</DialogTitle>
+                  <DialogDescription>{t('modalSubtitle')}</DialogDescription>
+                </DialogHeader>
 
                 <div className="space-y-2">
-                  <span className="text-xs font-bold text-slate-700 dark:text-slate-300">{t('typeLabel')}</span>
+                  <Label>{t('typeLabel')}</Label>
                   <div className="grid grid-cols-2 gap-2">
                     {TYPES.map((option) => (
-                      <button
+                      <Button size="raw" variant="ghost"
                         key={option}
                         type="button"
                         onClick={() => setType(option)}
@@ -128,45 +130,48 @@ export function ReportUserButton({
                         }`}
                       >
                         {t(`type${option}`)}
-                      </button>
+                      </Button>
                     ))}
                   </div>
                 </div>
 
-                <label className="block space-y-1.5">
-                  <span className="text-xs font-bold text-slate-700 dark:text-slate-300">{t('descriptionLabel')}</span>
-                  <textarea
+                <div className="space-y-1.5">
+                  <Label htmlFor="report-description">{t('descriptionLabel')}</Label>
+                  <Textarea
+                    id="report-description"
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     rows={4}
                     maxLength={1000}
                     placeholder={t('descriptionPlaceholder')}
-                    className="w-full p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold"
+                    className="p-3 rounded-xl font-semibold"
                   />
-                </label>
+                </div>
 
                 {error && <p className="text-xs font-bold text-red-600 dark:text-red-400">{error}</p>}
 
-                <div className="flex items-center justify-end gap-3">
-                  <button
-                    onClick={() => setOpen(false)}
-                    className="px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-extrabold text-xs hover:bg-slate-100 dark:hover:bg-slate-800 transition"
-                  >
-                    {t('cancel')}
-                  </button>
-                  <button
+                <DialogFooter>
+                  <DialogClose asChild>
+                    <Button
+                      variant="outline"
+                      className="h-auto px-5 py-2.5 rounded-xl border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-extrabold text-xs hover:bg-slate-100 dark:hover:bg-slate-800"
+                    >
+                      {t('cancel')}
+                    </Button>
+                  </DialogClose>
+                  <Button
+                    variant="brand"
                     onClick={submit}
                     disabled={sending}
-                    className="px-6 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-extrabold text-xs shadow disabled:opacity-60 transition"
+                    className="h-auto px-6 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 shadow-red-600/25 text-xs shadow"
                   >
                     {sending ? '...' : t('submitButton')}
-                  </button>
-                </div>
+                  </Button>
+                </DialogFooter>
               </>
             )}
-          </div>
-        </div>
-      )}
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

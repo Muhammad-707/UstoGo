@@ -10,6 +10,7 @@ import type { Category, MasterPublic } from '@/lib/api/types';
 import { getCategoryVisual } from '@/lib/categoryVisuals';
 import { FilterContainer, FilterButton, AnimatedGrid, AnimatedCard } from '@/components/ui/FilterAnimate';
 import { useMoney } from '@/lib/money';
+import { Card } from '@/components/ui/card';
 
 function flattenLeafCategories(categories: Category[]): Category[] {
   const out: Category[] = [];
@@ -165,44 +166,46 @@ export default function CategoriesClient() {
             return (
               <AnimatedCard key={cat.id} index={idx % 3}>
                 <motion.div whileHover={{ y: -8 }} transition={{ type: 'spring', stiffness: 300, damping: 20 }} className="h-full">
-                <Link
+                <Card asChild>
+                  <Link
                   href={`/search?category=${cat.id}`}
-                  className="glass-card rounded-3xl p-8 group flex flex-col justify-between h-64 border border-slate-200 dark:border-slate-800 relative overflow-hidden transition-shadow duration-300 hover:shadow-2xl"
+                  className="rounded-3xl p-8 group flex flex-col justify-between h-64 border border-slate-200 dark:border-slate-800 relative overflow-hidden transition-shadow duration-300 hover:shadow-2xl"
                 >
-                  {/* Hover glow wash */}
-                  <div className={`absolute inset-0 bg-gradient-to-br ${visual.bgGradient} opacity-0 group-hover:opacity-60 dark:group-hover:opacity-20 transition-opacity duration-500`} />
-                  {/* Decorative oversized icon ghost */}
-                  <div className="absolute -right-6 -bottom-6 text-slate-900/[0.03] dark:text-white/[0.04] group-hover:scale-110 group-hover:rotate-6 transition-transform duration-500">
-                    <Icon name={visual.iconName} size={140} />
-                  </div>
-
-                  <div className="relative flex items-start justify-between">
-                    <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${visual.bgGradient} flex items-center justify-center text-blue-600 dark:text-sky-400 shadow-sm group-hover:scale-110 group-hover:-rotate-6 transition-transform duration-300`}>
-                      <Icon name={visual.iconName} size={28} />
+                    {/* Hover glow wash */}
+                    <div className={`absolute inset-0 bg-gradient-to-br ${visual.bgGradient} opacity-0 group-hover:opacity-60 dark:group-hover:opacity-20 transition-opacity duration-500`} />
+                    {/* Decorative oversized icon ghost */}
+                    <div className="absolute -right-6 -bottom-6 text-slate-900/[0.03] dark:text-white/[0.04] group-hover:scale-110 group-hover:rotate-6 transition-transform duration-500">
+                      <Icon name={visual.iconName} size={140} />
                     </div>
-                    <div className="w-8 h-8 rounded-full bg-white/80 dark:bg-slate-800/80 flex items-center justify-center text-slate-400 dark:text-slate-500 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
-                      <Icon name="ArrowUpRight" size={16} />
+
+                    <div className="relative flex items-start justify-between">
+                      <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${visual.bgGradient} flex items-center justify-center text-blue-600 dark:text-sky-400 shadow-sm group-hover:scale-110 group-hover:-rotate-6 transition-transform duration-300`}>
+                        <Icon name={visual.iconName} size={28} />
+                      </div>
+                      <div className="w-8 h-8 rounded-full bg-white/80 dark:bg-slate-800/80 flex items-center justify-center text-slate-400 dark:text-slate-500 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
+                        <Icon name="ArrowUpRight" size={16} />
+                      </div>
                     </div>
-                  </div>
 
-                  <div className="relative space-y-2 mt-4">
-                    <h3 className="text-xl font-extrabold text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-sky-400 transition">
-                      {cat.name}
-                    </h3>
-                    {cat.description && (
-                      <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">
-                        {cat.description}
-                      </p>
-                    )}
-                  </div>
+                    <div className="relative space-y-2 mt-4">
+                      <h3 className="text-xl font-extrabold text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-sky-400 transition">
+                        {cat.name}
+                      </h3>
+                      {cat.description && (
+                        <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">
+                          {cat.description}
+                        </p>
+                      )}
+                    </div>
 
-                  <div className="relative pt-4 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-xs">
-                    <span className="text-slate-500 font-medium">{t('verifiedMasters', { count: stat?.count ?? 0 })}</span>
-                    {stat?.minPrice != null && (
-                      <span className="font-extrabold text-slate-900 dark:text-white">{t('startingFrom', { price: perHour(stat.minPrice) })}</span>
-                    )}
-                  </div>
-                </Link>
+                    <div className="relative pt-4 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-xs">
+                      <span className="text-slate-500 font-medium">{t('verifiedMasters', { count: stat?.count ?? 0 })}</span>
+                      {stat?.minPrice != null && (
+                        <span className="font-extrabold text-slate-900 dark:text-white">{t('startingFrom', { price: perHour(stat.minPrice) })}</span>
+                      )}
+                    </div>
+                  </Link>
+                </Card>
                 </motion.div>
               </AnimatedCard>
             );

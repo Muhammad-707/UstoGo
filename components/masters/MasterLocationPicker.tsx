@@ -8,6 +8,7 @@ import { useTranslations } from 'next-intl';
 import { Icon } from '@/components/icons/LucideIcons';
 import { masterCabinetApi } from '@/lib/api/endpoints';
 import { ApiError } from '@/lib/api/client';
+import { Button } from '@/components/ui/button';
 
 const DUSHANBE_CENTER: [number, number] = [38.5598, 68.787];
 
@@ -102,7 +103,7 @@ export default function MasterLocationPicker({
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium max-w-lg">{t('locationHint')}</p>
-        <button
+        <Button size="raw" variant="ghost"
           type="button"
           onClick={handleUseMyLocation}
           disabled={locating}
@@ -110,7 +111,7 @@ export default function MasterLocationPicker({
         >
           <Icon name="navigation" size={14} className={locating ? 'animate-pulse' : ''} />
           {locating ? t('locating') : t('useMyLocation')}
-        </button>
+        </Button>
       </div>
 
       <div className="h-[320px] w-full rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-700 relative z-0">
@@ -144,23 +145,23 @@ export default function MasterLocationPicker({
       {error && <p className="text-xs font-bold text-red-600 dark:text-red-400">{error}</p>}
 
       <div className="flex items-center gap-3">
-        <button
+        <Button size="raw" variant="ghost"
           type="button"
           onClick={handleSave}
           disabled={saving || !point}
           className="px-5 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-extrabold disabled:opacity-50 transition"
         >
           {saving ? '...' : t('saveLocation')}
-        </button>
+        </Button>
         {(point || (initialLatitude != null)) && (
-          <button
+          <Button size="raw" variant="ghost"
             type="button"
             onClick={handleClear}
             disabled={saving}
             className="px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-bold disabled:opacity-50 transition"
           >
             {t('clearLocation')}
-          </button>
+          </Button>
         )}
       </div>
     </div>

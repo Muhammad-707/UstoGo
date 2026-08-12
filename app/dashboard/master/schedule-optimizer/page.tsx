@@ -8,12 +8,15 @@ import { ApiError } from '@/lib/api/client';
 import type { ScheduleOptimizerResult } from '@/lib/api/types';
 import { MasterPageHeader } from '@/components/master/MasterPageHeader';
 import { useDateFormat } from '@/lib/datetime';
+import { Input } from '@/components/ui/input';
+import { Card } from '@/components/ui/card';
+import { DatePicker, todayISO } from '@/components/ui/date-picker';
 
 export default function ScheduleOptimizerPage() {
   const t = useTranslations('scheduleOptimizer');
   const fmt = useDateFormat();
 
-  const [date, setDate] = useState(() => new Date().toISOString().slice(0, 10));
+  const [date, setDate] = useState(todayISO);
   const [result, setResult] = useState<ScheduleOptimizerResult | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -44,11 +47,11 @@ export default function ScheduleOptimizerPage() {
       title={t('title')}
       hint={t('pageHint')}
       action={
-        <input
-          type="date"
+        <DatePicker
           value={date}
-          onChange={(e) => setDate(e.target.value)}
-          className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold"
+          onChange={setDate}
+          aria-label={t('title')}
+          className="w-auto min-w-52 p-3 rounded-xl font-bold"
         />
       }
     />
@@ -60,13 +63,13 @@ export default function ScheduleOptimizerPage() {
       {result && !loading && (
         <>
           {result.stops.length === 0 ? (
-            <div className="glass-card rounded-3xl p-12 text-center space-y-2">
+            <Card className="gap-0 rounded-3xl p-12 text-center space-y-2">
               <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">{t('empty')}</p>
-            </div>
+            </Card>
           ) : (
             <>
               {result.estimatedSavingsKm > 0 && (
-                <div className="glass-card rounded-3xl border border-emerald-200 dark:border-emerald-900 bg-emerald-50/60 dark:bg-emerald-950/20 p-6 flex items-center gap-4">
+                <Card className="rounded-3xl border border-emerald-200 dark:border-emerald-900 bg-emerald-50/60 dark:bg-emerald-950/20 p-6 flex items-center gap-4">
                   <div className="w-12 h-12 rounded-2xl bg-emerald-500 text-white flex items-center justify-center shadow-lg shrink-0">
                     <Icon name="trendingup" size={22} />
                   </div>
@@ -81,12 +84,12 @@ export default function ScheduleOptimizerPage() {
                       })}
                     </p>
                   </div>
-                </div>
+                </Card>
               )}
 
               <div className="space-y-3">
                 {result.stops.map((stop, index) => (
-                  <div key={stop.bookingId} className="glass-card rounded-2xl border border-slate-200 dark:border-slate-800 p-4 flex items-center gap-4">
+                  <Card key={stop.bookingId} className="rounded-2xl border border-slate-200 dark:border-slate-800 p-4 flex items-center gap-4">
                     <div className="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center font-extrabold text-xs shrink-0">
                       {stop.order}
                     </div>
@@ -97,7 +100,7 @@ export default function ScheduleOptimizerPage() {
                       </p>
                     </div>
                     {index < result.stops.length - 1 && <Icon name="arrowright" size={14} className="text-slate-300 shrink-0" />}
-                  </div>
+                  </Card>
                 ))}
               </div>
             </>

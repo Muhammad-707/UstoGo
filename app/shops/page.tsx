@@ -8,6 +8,8 @@ import { Icon } from '@/components/icons/LucideIcons';
 import { marketplaceShopsApi } from '@/lib/api/endpoints';
 import type { MarketplaceShop } from '@/lib/api/types';
 import { FilterContainer, FilterItem } from '@/components/ui/FilterAnimate';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 
 const ShopMap = dynamic(() => import('@/components/marketplace/ShopMap'), {
   ssr: false,
@@ -80,14 +82,14 @@ export default function ShopsPage() {
           </div>
         </div>
         <div className="flex items-center gap-2 shrink-0">
-          <button
+          <Button size="raw" variant="ghost"
             onClick={handleNearMe}
             disabled={locating}
             className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold disabled:opacity-60 transition"
           >
             <Icon name="navigation" size={16} className={locating ? 'animate-pulse' : ''} />
             {locating ? t('locating') : t('nearMe')}
-          </button>
+          </Button>
           <Link
             href="/marketplace"
             className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-xs font-bold shadow-lg shadow-emerald-600/25 transition"
@@ -111,16 +113,16 @@ export default function ShopsPage() {
       )}
 
       {!loading && shops.length === 0 && (
-        <div className="glass-card rounded-3xl p-12 text-center">
+        <Card className="rounded-3xl p-12 text-center">
           <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">{t('noShops')}</p>
-        </div>
+        </Card>
       )}
 
       {!loading && shops.length > 0 && (
         <FilterContainer className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {shops.map((shop, idx) => (
             <FilterItem key={shop.id} index={idx % 3}>
-              <div className="glass-card rounded-3xl p-6 border border-slate-200 dark:border-slate-800 space-y-3 h-full hover:shadow-xl hover:shadow-emerald-500/10 hover:border-emerald-200 dark:hover:border-emerald-900 transition-[box-shadow,border-color] duration-300">
+              <Card className="gap-0 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 space-y-3 h-full hover:shadow-xl hover:shadow-emerald-500/10 hover:border-emerald-200 dark:hover:border-emerald-900 transition-[box-shadow,border-color] duration-300">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
                     <Icon name="store" size={18} />
@@ -151,7 +153,7 @@ export default function ShopsPage() {
                     {shop.phone}
                   </a>
                 )}
-              </div>
+              </Card>
             </FilterItem>
           ))}
         </FilterContainer>

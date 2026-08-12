@@ -12,6 +12,7 @@ import type { Cart } from '@/lib/api/types';
 import { ClientPageHeader } from '@/components/client/ClientPageHeader';
 import { useMoney } from '@/lib/money';
 import { EmptyState } from '@/components/ui/EmptyState';
+import { Button } from '@/components/ui/button';
 
 export default function CartPage() {
   const t = useTranslations('cart');
@@ -179,23 +180,23 @@ export default function CartPage() {
 
                 <div className="flex items-center justify-between sm:justify-end gap-3 sm:gap-5 shrink-0">
                   <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 rounded-2xl p-1" aria-label={t('quantity')}>
-                    <button
+                    <Button size="raw" variant="ghost"
                       onClick={() => handleSetQuantity(item.productId, item.quantity - 1)}
                       disabled={busyId === item.productId || !item.isAvailable || item.quantity <= 1}
                       className="w-8 h-8 rounded-xl flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-700 hover:shadow-sm disabled:opacity-30 transition"
                     >
                       <Icon name="minus" size={13} />
-                    </button>
+                    </Button>
                     <span className="w-7 text-center text-sm font-extrabold text-slate-900 dark:text-white tabular-nums">
                       {item.quantity}
                     </span>
-                    <button
+                    <Button size="raw" variant="ghost"
                       onClick={() => handleSetQuantity(item.productId, item.quantity + 1)}
                       disabled={busyId === item.productId || !item.isAvailable}
                       className="w-8 h-8 rounded-xl flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-700 hover:shadow-sm disabled:opacity-30 transition"
                     >
                       <Icon name="plus" size={13} />
-                    </button>
+                    </Button>
                   </div>
 
                   <div className="text-right min-w-[92px]">
@@ -205,7 +206,7 @@ export default function CartPage() {
                     </p>
                   </div>
 
-                  <button
+                  <Button size="raw" variant="ghost"
                     onClick={() => handleRemove(item.productId)}
                     disabled={busyId === item.productId}
                     title={t('remove')}
@@ -213,7 +214,7 @@ export default function CartPage() {
                     className="w-9 h-9 shrink-0 rounded-xl flex items-center justify-center text-slate-300 dark:text-slate-600 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/40 disabled:opacity-40 transition"
                   >
                     <Icon name="trash2" size={16} />
-                  </button>
+                  </Button>
                 </div>
               </div>
             ))}
@@ -253,14 +254,14 @@ export default function CartPage() {
                 )}
               </div>
 
-              <button
+              <Button size="raw" variant="ghost"
                 onClick={handleCheckout}
                 disabled={checkingOut || !canCheckout}
                 className="w-full sm:w-auto px-8 py-4 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-sm font-extrabold shadow-lg shadow-emerald-600/30 hover:shadow-xl hover:shadow-emerald-600/40 disabled:opacity-50 disabled:shadow-none transition-all duration-200 btn-ripple flex items-center justify-center gap-2"
               >
                 {checkingOut ? '…' : t('checkout')}
                 {!checkingOut && <Icon name="arrowright" size={16} />}
-              </button>
+              </Button>
             </div>
           </div>
         </>

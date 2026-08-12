@@ -13,6 +13,20 @@ import type { Booking, BookingDetail, BookingStatus, Paginated } from '@/lib/api
 import { useMoney } from '@/lib/money';
 import { useDateFormat } from '@/lib/datetime';
 import { EmptyState } from '@/components/ui/EmptyState';
+import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Card } from '@/components/ui/card';
+
+/** Radix has no empty-string option, so "any" travels as this sentinel. */
+const ANY = '__any';
 
 const STATUSES: BookingStatus[] = [
   'PENDING',
@@ -122,16 +136,18 @@ export default function AdminBookingsPage() {
         </div>
       )}
 
-      <div className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-5 shadow-xl">
+      <Card className="gap-0 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-5 shadow-xl">
         <div className="flex items-center justify-between gap-3 flex-wrap">
-          <select
-            value={status}
-            onChange={(e) => { setStatus(e.target.value); setPage(1); }}
-            className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold"
-          >
-            <option value="">{t('allStatuses')}</option>
-            {STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
-          </select>
+          <Select value={status || ANY} onValueChange={(raw) => { const value = raw === ANY ? '' : raw; setStatus(value); setPage(1); }}>
+            <SelectTrigger className="w-auto p-2.5 rounded-xl text-xs font-bold">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value={ANY}>{t('allStatuses')}</SelectItem>
+            
+            {STATUSES.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+            </SelectContent>
+          </Select>
           <p className="text-xs font-bold text-slate-400">
             {result ? t('resultsCount', { count: result.meta.total }) : ''}
           </p>
@@ -177,12 +193,12 @@ export default function AdminBookingsPage() {
                     </td>
                     <td className="py-3 text-right font-extrabold text-slate-900 dark:text-white">{money(b.price)}</td>
                     <td className="py-3 text-right">
-                      <button
+                      <Button size="raw" variant="ghost"
                         onClick={() => openDetail(b.id)}
                         className="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-[11px] font-bold hover:bg-slate-200 dark:hover:bg-slate-700 transition"
                       >
                         {t('view')}
-                      </button>
+                      </Button>
                     </td>
                   </InViewRow>
                 ))}
@@ -193,49 +209,37 @@ export default function AdminBookingsPage() {
 
         {!loading && result && result.meta.totalPages > 1 && (
           <div className="flex items-center justify-between pt-2">
-            <button
+            <Button size="raw" variant="ghost"
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page <= 1}
               className="px-4 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 text-xs font-bold disabled:opacity-40"
             >
               {t('prev')}
-            </button>
+            </Button>
             <span className="text-xs font-bold text-slate-500">{t('pageOf', { page, total: result.meta.totalPages })}</span>
-            <button
+            <Button size="raw" variant="ghost"
               onClick={() => setPage((p) => Math.min(result.meta.totalPages, p + 1))}
               disabled={page >= result.meta.totalPages}
               className="px-4 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 text-xs font-bold disabled:opacity-40"
             >
               {t('next')}
-            </button>
+            </Button>
           </div>
         )}
-      </div>
+      </Card>
 
-      {(detail || detailLoading) && (
-        <div
-          className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4"
-          onClick={() => setDetail(null)}
-        >
-          <div
-            className="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl w-full max-w-lg p-6 sm:p-8 space-y-5 max-h-[85vh] overflow-y-auto"
-            onClick={(e) => e.stopPropagation()}
-          >
+      <Dialog open={!!detail || detailLoading} onOpenChange={(open) => !open && setDetail(null)}>
+        <DialogContent className="sm:max-w-lg gap-5">
             {detailLoading && <p className="text-xs text-slate-400 font-semibold py-8 text-center">{t('loading')}</p>}
 
             {detail && (
               <>
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <span className="text-[11px] font-mono font-extrabold text-purple-600 dark:text-purple-400">
-                      {detail.bookingNumber}
-                    </span>
-                    <h3 className="text-lg font-extrabold text-slate-900 dark:text-white">{detail.serviceTitle}</h3>
-                  </div>
-                  <button onClick={() => setDetail(null)} className="text-slate-400 hover:text-slate-600 shrink-0">
-                    <Icon name="x" size={18} />
-                  </button>
-                </div>
+                <DialogHeader>
+                  <span className="text-[11px] font-mono font-extrabold text-purple-600 dark:text-purple-400">
+                    {detail.bookingNumber}
+                  </span>
+                  <DialogTitle>{detail.serviceTitle}</DialogTitle>
+                </DialogHeader>
 
                 <div className="grid grid-cols-2 gap-3 text-xs">
                   <p><span className="font-bold text-slate-400">{t('colClient')}:</span> {detail.clientName}</p>
@@ -270,19 +274,19 @@ export default function AdminBookingsPage() {
                 )}
 
                 {cancellable(detail.status) && (
-                  <button
+                  <Button
+                    variant="brand"
                     onClick={() => handleForceCancel(detail.id)}
                     disabled={cancelling}
-                    className="w-full py-3 rounded-2xl bg-red-600 hover:bg-red-700 text-white text-xs font-extrabold shadow disabled:opacity-60 transition"
+                    className="w-full h-auto py-3 rounded-2xl bg-red-600 hover:bg-red-700 shadow-red-600/25 text-xs shadow"
                   >
                     {cancelling ? '...' : t('forceCancel')}
-                  </button>
+                  </Button>
                 )}
               </>
             )}
-          </div>
-        </div>
-      )}
+        </DialogContent>
+      </Dialog>
     </DashboardLayout>
   );
 }
