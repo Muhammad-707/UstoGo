@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import FaqClient from './FaqClient';
+import { FAQ_QUESTION_NUMBERS } from '@/lib/faq';
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('faq');
@@ -20,7 +21,9 @@ async function FaqStructuredData() {
   const json = {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
-    mainEntity: [1, 2, 3, 4].map((n) => ({
+    // Driven by the same list the page renders — see `lib/faq.ts`. Two hand-kept copies
+    // meant a question added on screen was quietly missing from what Google indexed.
+    mainEntity: FAQ_QUESTION_NUMBERS.map((n) => ({
       '@type': 'Question',
       name: t(`q${n}`),
       acceptedAnswer: { '@type': 'Answer', text: t(`a${n}`) },
