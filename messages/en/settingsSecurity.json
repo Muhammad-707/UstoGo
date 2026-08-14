@@ -44,5 +44,6 @@
   "twoFactorEnableFailed": "That code was not accepted.",
   "twoFactorDisableFailed": "Could not disable 2FA.",
   "twoFactorEnabledOk": "Two-factor authentication is now enabled.",
-  "twoFactorDisabledOk": "Two-factor authentication is now disabled."
+  "twoFactorDisabledOk": "Two-factor authentication is now disabled.",
+  "noSessionsDesc": "This is the only device signed in to your account."
 }

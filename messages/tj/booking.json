@@ -57,5 +57,12 @@
   "selectServiceLabel": "Хизматрасониро интихоб кунед",
   "serviceWord": "Хизматрасонӣ",
   "browseCraftsmen": "Дидани устоҳо",
-  "priceFromLabel": "Аз {price}"
+  "priceFromLabel": "Аз {price}",
+  "craftsmanNotFound": "Усто ёфт нашуд",
+  "genericError": "Хатогӣ рӯй дод. Лутфан аз нав кӯшиш кунед.",
+  "summaryTitle": "Хулосаи фармоиш",
+  "summaryEmpty": "Ҳангоми пур кардани қадамҳо ин ҷо хулоса пайдо мешавад.",
+  "summaryStep": "Қадами {current} аз {total}",
+  "noBookableServices": "Ин усто ҳанӯз хизматрасонии фармоишшаванда надорад.",
+  "masterLoadFailed": "Ин усто бор нашуд."
 }

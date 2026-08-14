@@ -11,6 +11,7 @@ import { EmptyState } from '@/components/ui/EmptyState';
 import { ClientPageHeader } from '@/components/client/ClientPageHeader';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function NotificationsPage() {
   const t = useTranslations('notifications');
@@ -87,10 +88,10 @@ export default function NotificationsPage() {
           <div className="divide-y divide-slate-100 dark:divide-slate-800">
             {Array.from({ length: 5 }).map((_, i) => (
               <div key={i} className="p-5 flex items-start gap-4">
-                <div className="w-11 h-11 rounded-2xl bg-slate-100 dark:bg-slate-800 animate-pulse" />
+                <Skeleton className="h-11 w-11 rounded-2xl" />
                 <div className="flex-1 space-y-2 pt-1">
-                  <div className="h-3 w-1/3 rounded bg-slate-100 dark:bg-slate-800 animate-pulse" />
-                  <div className="h-2.5 w-2/3 rounded bg-slate-100 dark:bg-slate-800 animate-pulse" />
+                  <Skeleton className="h-3 w-1/3" />
+                  <Skeleton className="h-2.5 w-2/3" />
                 </div>
               </div>
             ))}

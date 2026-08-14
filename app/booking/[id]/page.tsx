@@ -5,7 +5,9 @@ import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { BadgeCheck, CircleCheckBig, FileText, Hammer } from 'lucide-react';
 import { Icon } from '@/components/icons/LucideIcons';
+import { Skeleton } from '@/components/ui/skeleton';
 import { bookingsApi, citiesApi, mastersApi, reviewsApi } from '@/lib/api/endpoints';
 import { ApiError } from '@/lib/api/client';
 import { downloadFile } from '@/lib/api/download';
@@ -14,7 +16,7 @@ import { ReportUserButton } from '@/components/reports/ReportUserButton';
 
 const LiveTrackingMap = dynamic(() => import('@/components/booking/LiveTrackingMap'), {
   ssr: false,
-  loading: () => <div className="h-[320px] w-full rounded-3xl bg-slate-50 dark:bg-slate-800/40 animate-pulse" />,
+  loading: () => <Skeleton className="h-[320px] w-full rounded-3xl" />,
 });
 import { waLink, waBookingText } from '@/lib/whatsapp';
 import { getBookingsSocket } from '@/lib/bookings/socket';
@@ -64,11 +66,8 @@ const STATUS_BADGE_CLASS: Record<string, string> = {
   CANCELLED_BY_ADMIN: 'bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-300',
 };
 
-function Spinner() {
-  return (
-    <div className="w-6 h-6 rounded-full border-2 border-slate-300 dark:border-slate-700 border-t-blue-600 dark:border-t-sky-400 animate-spin" />
-  );
-}
+/** One glyph per stage, in the order the stages happen. */
+const TIMELINE_ICONS = [FileText, BadgeCheck, Hammer, CircleCheckBig];
 
 export default function BookingDetailsPage() {
   const t = useTranslations('bookingDetail');
@@ -161,7 +160,7 @@ export default function BookingDetailsPage() {
       if (err instanceof ApiError && err.status === 404) {
         setNotFound(true);
       } else {
-        setError(err instanceof ApiError ? err.message : 'Failed to load booking.');
+        setError(err instanceof ApiError ? err.message : t('loadFailed'));
       }
     } finally {
       setLoading(false);
@@ -275,7 +274,7 @@ export default function BookingDetailsPage() {
       if (err instanceof ApiError && (err.code === 'TOO_EARLY_TO_START' || err.status === 422)) {
         setActionError(t('startJobTooEarly'));
       } else {
-        setActionError(err instanceof ApiError ? err.message : 'Action failed. Please try again.');
+        setActionError(err instanceof ApiError ? err.message : t('actionFailed'));
       }
     } finally {
       setActionPending(false);
@@ -329,7 +328,7 @@ export default function BookingDetailsPage() {
       setBooking((prev) => (prev ? { ...prev, ...updated } : prev));
       setShowRescheduleModal(false);
     } catch (err) {
-      setRescheduleError(err instanceof ApiError ? err.message : 'Failed to reschedule.');
+      setRescheduleError(err instanceof ApiError ? err.message : t('rescheduleFailed'));
     } finally {
       setRescheduling(false);
     }
@@ -391,9 +390,18 @@ export default function BookingDetailsPage() {
   };
 
   if (loading) {
+    /* Shaped like the page it replaces — header band, timeline column, sidebar — so
+       nothing jumps when the booking lands. */
     return (
-      <div className="page-shell page-shell-narrow py-20 flex justify-center">
-        <Spinner />
+      <div className="page-shell space-y-8 py-12">
+        <Skeleton className="h-40 w-full rounded-[2rem]" />
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+          <div className="space-y-8 lg:col-span-2">
+            <Skeleton className="h-72 w-full rounded-3xl" />
+            <Skeleton className="h-52 w-full rounded-3xl" />
+          </div>
+          <Skeleton className="h-80 w-full rounded-3xl" />
+        </div>
       </div>
     );
   }
@@ -410,7 +418,7 @@ export default function BookingDetailsPage() {
           href="/dashboard/client"
           className="inline-block px-8 py-3.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-lg transition btn-ripple"
         >
-          Back to Dashboard
+          {t('backToDashboard')}
         </Link>
       </div>
     );
@@ -422,7 +430,7 @@ export default function BookingDetailsPage() {
         <div className="w-16 h-16 bg-red-100 dark:bg-red-950 text-red-500 rounded-full flex items-center justify-center mx-auto">
           <Icon name="X" size={28} />
         </div>
-        <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white">{error ?? 'Something went wrong'}</h1>
+        <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white">{error ?? t('genericError')}</h1>
       </div>
     );
   }
@@ -432,10 +440,10 @@ export default function BookingDetailsPage() {
   const scheduledTime = scheduled.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
   const timeline = [
-    { label: 'Booking Request Placed', completed: true, timestamp: booking.createdAt },
-    { label: 'Craftsman Confirmed', completed: !!booking.acceptedAt, timestamp: booking.acceptedAt },
-    { label: 'Work in Progress', completed: !!booking.startedAt, timestamp: booking.startedAt },
-    { label: 'Job Completed & Verified', completed: !!booking.completedAt, timestamp: booking.completedAt },
+    { label: t('timelinePlaced'), completed: true, timestamp: booking.createdAt },
+    { label: t('timelineConfirmed'), completed: !!booking.acceptedAt, timestamp: booking.acceptedAt },
+    { label: t('timelineInProgress'), completed: !!booking.startedAt, timestamp: booking.startedAt },
+    { label: t('timelineCompleted'), completed: !!booking.completedAt, timestamp: booking.completedAt },
   ];
 
   const isClient = user?.role === 'CLIENT';
@@ -449,25 +457,32 @@ export default function BookingDetailsPage() {
   const canMasterStart = isMaster && booking.status === 'ACCEPTED' && new Date(booking.scheduledAt).getTime() <= Date.now();
   const canMasterComplete = isMaster && booking.status === 'IN_PROGRESS';
 
+  const doneSteps = timeline.filter((s) => s.completed).length;
+  const cancelled = !!booking.cancelledAt;
+
   return (
-    <div className="page-shell page-shell-narrow py-12 space-y-8">
+    <div className="page-shell py-12 space-y-8">
 
       {/* Header */}
-      <Card className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl">
-        <div>
-          <div className="flex items-center gap-3">
-            <span className="px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-sky-300 text-xs font-mono font-extrabold">
-              {booking.bookingNumber}
-            </span>
-            <span className={`px-3 py-1 rounded-full text-xs font-bold ${STATUS_BADGE_CLASS[booking.status] ?? 'bg-slate-100 text-slate-700'}`}>
-              {tc(STATUS_KEY[booking.status] ?? 'statusPending')}
-            </span>
+      <Card className="overflow-hidden rounded-[2rem] border border-slate-200 p-0 shadow-xl dark:border-slate-800">
+        <div className="flex flex-col justify-between gap-5 p-6 sm:flex-row sm:items-center sm:p-8">
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="rounded-full bg-blue-100 px-3 py-1 font-mono text-xs font-extrabold text-blue-700 dark:bg-blue-950 dark:text-sky-300">
+                {booking.bookingNumber}
+              </span>
+              <span className={`rounded-full px-3 py-1 text-xs font-bold ${STATUS_BADGE_CLASS[booking.status] ?? 'bg-slate-100 text-slate-700'}`}>
+                {tc(STATUS_KEY[booking.status] ?? 'statusPending')}
+              </span>
+            </div>
+            <h1 className="mt-2 text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl dark:text-white">
+              {booking.serviceTitle}
+            </h1>
+            <p className="mt-1 flex items-center gap-1.5 text-xs text-slate-500">
+              <Icon name="calendar" size={13} />
+              {t('scheduledFor', { date: scheduledDate, time: scheduledTime })}
+            </p>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white mt-2">
-            {booking.serviceTitle}
-          </h1>
-          <p className="text-xs text-slate-500 mt-1">{t('scheduledFor', { date: scheduledDate, time: scheduledTime })}</p>
-        </div>
 
         <div className="flex flex-wrap items-center gap-3">
           {isClient && booking.status === 'COMPLETED' && !alreadyReviewed && (
@@ -544,7 +559,7 @@ export default function BookingDetailsPage() {
               disabled={actionPending}
               className="px-5 py-3 rounded-2xl border border-red-200 dark:border-red-900 text-red-600 dark:text-red-400 font-extrabold text-xs hover:bg-red-50 dark:hover:bg-red-950/40 transition disabled:opacity-50"
             >
-              Cancel Booking
+              {t('cancelBooking')}
             </Button>
           )}
 
@@ -554,7 +569,7 @@ export default function BookingDetailsPage() {
               disabled={actionPending}
               className="btn-success px-5 py-3 rounded-2xl font-extrabold text-xs transition disabled:opacity-50"
             >
-              Accept
+              {t('accept')}
             </Button>
           )}
           {canMasterReject && (
@@ -566,7 +581,7 @@ export default function BookingDetailsPage() {
               disabled={actionPending}
               className="px-5 py-3 rounded-2xl border border-red-200 dark:border-red-900 text-red-600 dark:text-red-400 font-extrabold text-xs hover:bg-red-50 dark:hover:bg-red-950/40 transition disabled:opacity-50"
             >
-              Reject
+              {t('reject')}
             </Button>
           )}
           {canMasterStart && (
@@ -575,7 +590,7 @@ export default function BookingDetailsPage() {
               disabled={actionPending}
               className="px-5 py-3 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-md transition disabled:opacity-50"
             >
-              Start Job
+              {t('startJob')}
             </Button>
           )}
           {canMasterComplete && (
@@ -584,10 +599,39 @@ export default function BookingDetailsPage() {
               disabled={actionPending}
               className="btn-success px-5 py-3 rounded-2xl font-extrabold text-xs transition disabled:opacity-50"
             >
-              Mark Completed
+              {t('markCompleted')}
             </Button>
           )}
         </div>
+        </div>
+
+        {/* Progress rail — the four stages as one bar. The timeline lower down has the
+            timestamps; this says "where are we" without scrolling to find out. */}
+        {!cancelled && (
+          <div className="border-t border-slate-100 px-6 py-5 sm:px-8 dark:border-slate-800">
+            <div className="mb-2.5 flex items-center justify-between">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                {t('progressLabel')}
+              </span>
+              <span className="text-[11px] font-bold text-slate-500 tabular-nums dark:text-slate-400">
+                {t('stepOfTotal', { done: doneSteps, total: timeline.length })}
+              </span>
+            </div>
+            <div className="flex gap-1.5">
+              {timeline.map((s, idx) => (
+                <div
+                  key={idx}
+                  title={s.label}
+                  className={`h-1.5 flex-1 rounded-full transition-colors duration-500 ${
+                    s.completed
+                      ? 'bg-gradient-to-r from-emerald-500 to-teal-400'
+                      : 'bg-slate-200 dark:bg-slate-800'
+                  }`}
+                />
+              ))}
+            </div>
+          </div>
+        )}
       </Card>
 
       {/* Reporting the counterparty needs their *user* id, which only the two
@@ -714,36 +758,55 @@ export default function BookingDetailsPage() {
                 </p>
               </div>
             ) : (
-              <div className="relative pl-6 border-l-2 border-slate-200 dark:border-slate-800 space-y-8">
+              /* The rail is drawn per-step rather than as one long border: a single
+                 border-left is grey for its whole height, so a booking three quarters
+                 done looked exactly like one that had just been placed. */
+              <ol className="space-y-0">
                 {timeline.map((item, idx) => {
                   const isCurrent = item.completed && (idx === timeline.length - 1 || !timeline[idx + 1].completed);
+                  const isLast = idx === timeline.length - 1;
+                  const StepIcon = TIMELINE_ICONS[idx] ?? CircleCheckBig;
                   return (
-                  <div key={idx} className="relative">
-                    <div
-                      className={`absolute -left-[31px] top-0.5 w-4 h-4 rounded-full border-2 border-white dark:border-slate-900 ${
-                        item.completed
-                          ? 'bg-emerald-500 ring-4 ring-emerald-100 dark:ring-emerald-950'
-                          : 'bg-slate-300 dark:bg-slate-700'
-                      } ${isCurrent ? 'animate-pulse' : ''}`}
-                    />
-                    <div>
-                      <h4
-                        className={`text-sm font-bold ${
+                    <li key={idx} className="relative flex gap-4 pb-8 last:pb-0">
+                      {/* Connector to the next step */}
+                      {!isLast && (
+                        <span
+                          aria-hidden
+                          className={`absolute left-[17px] top-9 bottom-0 w-0.5 rounded-full transition-colors duration-500 ${
+                            timeline[idx + 1].completed ? 'bg-emerald-500' : 'bg-slate-200 dark:bg-slate-800'
+                          }`}
+                        />
+                      )}
+
+                      <span
+                        className={`relative z-10 flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-colors duration-300 ${
                           item.completed
-                            ? 'text-slate-900 dark:text-white'
-                            : 'text-slate-400 dark:text-slate-500'
+                            ? 'bg-gradient-to-br from-emerald-500 to-teal-500 text-white shadow-lg shadow-emerald-500/25'
+                            : 'bg-slate-100 text-slate-400 dark:bg-slate-800 dark:text-slate-600'
                         }`}
                       >
-                        {item.label}
-                      </h4>
-                      <p className="text-xs text-slate-400 mt-0.5">
-                        {item.timestamp ? fmt.dateTime(item.timestamp) : '—'}
-                      </p>
-                    </div>
-                  </div>
+                        {isCurrent && (
+                          <span className="absolute inset-0 animate-ping rounded-full bg-emerald-400/40" />
+                        )}
+                        <StepIcon size={16} strokeWidth={2.4} className="relative" />
+                      </span>
+
+                      <div className="min-w-0 pt-1.5">
+                        <h4
+                          className={`text-sm font-bold ${
+                            item.completed ? 'text-slate-900 dark:text-white' : 'text-slate-400 dark:text-slate-500'
+                          }`}
+                        >
+                          {item.label}
+                        </h4>
+                        <p className="mt-0.5 text-xs text-slate-400">
+                          {item.timestamp ? fmt.dateTime(item.timestamp) : '—'}
+                        </p>
+                      </div>
+                    </li>
                   );
                 })}
-              </div>
+              </ol>
             )}
           </Card>
 
@@ -851,7 +914,7 @@ export default function BookingDetailsPage() {
           </DialogHeader>
           {certificateLoading || !certificate ? (
             <Card className="rounded-3xl p-12 text-center">
-              <p className="text-xs text-slate-400 font-semibold">{t('loadingCertificate')}</p>
+              <Skeleton className="h-40 w-full rounded-2xl" />
             </Card>
           ) : (
             <CertificateCard certificate={certificate} />

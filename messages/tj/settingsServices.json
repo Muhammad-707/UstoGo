@@ -40,5 +40,6 @@
   "validationCategoryRequired": "Категорияро интихоб кунед",
   "validationPriceInvalid": "Нархи дуруст ворид кунед (аз 0 зиёд)",
   "validationDurationInvalid": "Давомнокӣ бояд аз 15 дақиқа ва зарби 15 бошад",
-  "confirmDeleteService": "Хизматрасонии «{title}»-ро нест кардани хостед?"
+  "confirmDeleteService": "Хизматрасонии «{title}»-ро нест кардани хостед?",
+  "noServicesDesc": "Хизматрасониҳои худро бо нарх илова кунед — муштариён маҳз ҳаминро дар ҷустуҷӯ мебинанд."
 }

@@ -9,5 +9,6 @@
   "newReplyPlaceholder": "I'm running about 15 minutes late...",
   "add": "Add",
   "limitReached": "You've reached the limit of 20 quick replies.",
-  "empty": "No quick replies yet."
+  "empty": "No quick replies yet.",
+  "emptyDesc": "Saved replies save you typing in chat. Create your first one."
 }

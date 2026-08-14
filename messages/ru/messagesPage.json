@@ -7,5 +7,6 @@
   "whatsappButton": "WhatsApp",
   "whatsappButtonShort": "WA",
   "quickReplyDefault": "Сообщение по умолчанию",
-  "emptyDesc": "После подтверждения заказа отсюда можно написать второй стороне в WhatsApp."
+  "emptyDesc": "После подтверждения заказа отсюда можно написать второй стороне в WhatsApp.",
+  "errLoadBookings": "Не удалось загрузить заказы."
 }

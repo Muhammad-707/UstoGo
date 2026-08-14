@@ -7,5 +7,6 @@
   "whatsappButton": "WhatsApp",
   "whatsappButtonShort": "WA",
   "quickReplyDefault": "Default message",
-  "emptyDesc": "Once a booking is accepted you can reach the other side on WhatsApp from here."
+  "emptyDesc": "Once a booking is accepted you can reach the other side on WhatsApp from here.",
+  "errLoadBookings": "Failed to load bookings."
 }

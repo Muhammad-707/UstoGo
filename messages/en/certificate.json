@@ -9,5 +9,10 @@
   "codeLabel": "Code",
   "loading": "Loading…",
   "notFoundTitle": "Certificate not found",
-  "notFoundBody": "This code doesn't match a completion certificate on UstoGo."
+  "notFoundBody": "This code doesn't match a completion certificate on UstoGo.",
+  "errorTitle": "Could not verify",
+  "errorBody": "We could not reach the server just now. Try again in a few minutes.",
+  "exploreAction": "Find a master",
+  "whatIsTitle": "What does this certificate prove?",
+  "whatIsBody": "UstoGo issues a coded certificate for every completed job. The code shows the work really was booked through the platform and signed off by the client."
 }

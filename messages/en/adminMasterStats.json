@@ -20,5 +20,9 @@
   "activate": "Reactivate master",
   "deactivate": "Suspend master",
   "deactivateReasonPrompt": "Reason for suspending this master (at least 10 characters):",
-  "toggleActiveFailed": "Could not change the master's state."
+  "toggleActiveFailed": "Could not change the master's state.",
+  "errLoad": "Failed to load master statistics.",
+  "errApprove": "Failed to approve master.",
+  "errReject": "Failed to reject master.",
+  "errLoadFile": "Failed to load the file."
 }

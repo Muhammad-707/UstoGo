@@ -90,5 +90,11 @@
   "totalWord": "ҳамагӣ",
   "loadingShort": "Боркунӣ…",
   "completionRateTitle": "Фоизи иҷрои фармоишҳо",
-  "revenueByCategory": "Даромад аз рӯи категория"
+  "revenueByCategory": "Даромад аз рӯи категория",
+  "errAccept": "Қабули фармоиш номуваффақ шуд.",
+  "errDecline": "Рад кардани фармоиш номуваффақ шуд.",
+  "errStartJob": "Оғози кор номуваффақ шуд.",
+  "errAvailability": "Навсозии дастрасӣ номуваффақ шуд.",
+  "errInstantBook": "Навсозии фармоиши фаврӣ номуваффақ шуд.",
+  "errLoadBookings": "Фармоишҳо бор нашуданд."
 }

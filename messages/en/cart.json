@@ -16,5 +16,7 @@
   "saved": "You save {amount}",
   "continueShopping": "Continue shopping",
   "summary": "Order summary",
-  "emptyDesc": "Add the materials and tools you need, then check out in one go."
+  "emptyDesc": "Add the materials and tools you need, then check out in one go.",
+  "savingsLabel": "You save",
+  "trustSecure": "Secure payment and money-back guarantee"
 }

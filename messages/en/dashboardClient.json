@@ -39,5 +39,14 @@
   "masterCompleted": "Completed",
   "masterCategories": "Categories",
   "yearsShort": "{years} yrs",
-  "kmShort": "{km} km"
+  "kmShort": "{km} km",
+  "writeOnWhatsApp": "Write on WhatsApp",
+  "viewFullProfile": "View full profile",
+  "filterAll": "All",
+  "filterActive": "Active",
+  "filterCompleted": "Completed",
+  "activeNow": "In progress now",
+  "activeNowDesc": "Follow your master on the live map.",
+  "trackLive": "Track live",
+  "noBookingsFiltered": "No bookings with this status"
 }

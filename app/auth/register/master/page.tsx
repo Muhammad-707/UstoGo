@@ -100,7 +100,7 @@ export default function RegisterMasterPage() {
       await masterCabinetApi.submit().catch(() => {});
       router.push('/dashboard/master');
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Something went wrong. Please try again.');
+      setError(err instanceof ApiError ? err.message : t('genericError'));
     } finally {
       setSubmitting(false);
     }

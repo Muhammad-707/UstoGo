@@ -25,5 +25,7 @@
   "makeDefault": "Make default",
   "edit": "Edit",
   "delete": "Delete",
-  "confirmDelete": "Remove \"{label}\"?"
+  "confirmDelete": "Remove \"{label}\"?",
+  "emptyDesc": "Save an address once and every new booking will fill it in for you.",
+  "addFirst": "Add an address"
 }

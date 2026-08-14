@@ -84,7 +84,7 @@ export default function RegisterClientPage() {
       });
       router.push('/dashboard/client');
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Something went wrong. Please try again.');
+      setError(err instanceof ApiError ? err.message : t('genericError'));
     } finally {
       setSubmitting(false);
     }

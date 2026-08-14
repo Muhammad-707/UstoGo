@@ -40,5 +40,6 @@
   "validationCategoryRequired": "Please choose a category",
   "validationPriceInvalid": "Enter a valid price (greater than 0)",
   "validationDurationInvalid": "Duration must be at least 15 minutes and a multiple of 15",
-  "confirmDeleteService": "Delete the service “{title}”?"
+  "confirmDeleteService": "Delete the service “{title}”?",
+  "noServicesDesc": "Add your services with prices — this is exactly what clients see in search."
 }

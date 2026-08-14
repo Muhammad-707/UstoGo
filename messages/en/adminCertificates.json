@@ -14,5 +14,9 @@
   "verified": "Verified",
   "prev": "Previous",
   "next": "Next",
-  "pageOf": "Page {page} of {total}"
+  "pageOf": "Page {page} of {total}",
+  "errLoad": "Failed to load certificates.",
+  "errVerify": "Failed to verify certificate.",
+  "errReject": "Failed to reject certificate.",
+  "errLoadFile": "Failed to load the file."
 }

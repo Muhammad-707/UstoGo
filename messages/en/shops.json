@@ -9,5 +9,11 @@
   "locating": "Locating...",
   "geoDenied": "Could not determine your location. Allow geolocation in your browser.",
   "nearYouSubtitle": "{count} shops near you, nearest first",
-  "kmAway": "{km} km"
+  "kmAway": "{km} km",
+  "statShops": "Shops",
+  "statCities": "Cities",
+  "statNearest": "KM to nearest",
+  "allCities": "All cities",
+  "noShopsDesc": "No retail partner has been added to the map yet. You can still order from the online shop.",
+  "noShopsInCity": "No shops in {city} yet. Try another city."
 }

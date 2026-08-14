@@ -13,5 +13,7 @@
   "backToLogin": "← Back to login",
   "noAccount": "Don't have an account?",
   "registerAsClient": "Register as Client",
-  "joinAsMaster": "Join as Master"
+  "joinAsMaster": "Join as Master",
+  "genericError": "Something went wrong. Please try again.",
+  "invalidCode": "Invalid code. Please try again."
 }

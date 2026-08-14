@@ -8,20 +8,14 @@ import { useTranslations } from 'next-intl';
 
 import { useMoney } from '@/lib/money';
 import type { Category, MasterPublic } from '@/lib/api/types';
-import { getCategoryVisual } from '@/lib/categoryVisuals';
 import { getAvatarUrl, getCoverUrl } from '@/lib/placeholders';
 
+import { CategoryCard } from '@/components/categories/CategoryCard';
 import HeroSlider from '@/components/layout/HeroSlider';
+import { SITE_STAT_DEFS, StatBand } from '@/components/stats/StatBand';
 import { FilterItem } from '@/components/ui/FilterAnimate';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-
-const STATS = [
-  { value: '50,000+', labelKey: 'completedJobs', icon: 'CheckCircle2', accent: 'text-sky-600 dark:text-sky-400', glow: 'shadow-sky-500/10 dark:shadow-sky-500/20', ring: 'from-sky-500/10 dark:from-sky-500/20', tint: 'from-sky-50 to-white dark:from-transparent dark:to-transparent', iconBg: 'bg-sky-100 dark:bg-white/10', border: 'border-sky-100 dark:border-white/10' },
-  { value: '1,420+', labelKey: 'verifiedMasters', icon: 'ShieldCheck', accent: 'text-emerald-600 dark:text-emerald-400', glow: 'shadow-emerald-500/10 dark:shadow-emerald-500/20', ring: 'from-emerald-500/10 dark:from-emerald-500/20', tint: 'from-emerald-50 to-white dark:from-transparent dark:to-transparent', iconBg: 'bg-emerald-100 dark:bg-white/10', border: 'border-emerald-100 dark:border-white/10' },
-  { value: '4.95 / 5', labelKey: 'avgRating', icon: 'Star', accent: 'text-amber-600 dark:text-amber-400', glow: 'shadow-amber-500/10 dark:shadow-amber-500/20', ring: 'from-amber-500/10 dark:from-amber-500/20', tint: 'from-amber-50 to-white dark:from-transparent dark:to-transparent', iconBg: 'bg-amber-100 dark:bg-white/10', border: 'border-amber-100 dark:border-white/10' },
-  { value: '100%', labelKey: 'insuranceGuarantee', icon: 'ShieldCheck', accent: 'text-purple-600 dark:text-purple-400', glow: 'shadow-purple-500/10 dark:shadow-purple-500/20', ring: 'from-purple-500/10 dark:from-purple-500/20', tint: 'from-purple-50 to-white dark:from-transparent dark:to-transparent', iconBg: 'bg-purple-100 dark:bg-white/10', border: 'border-purple-100 dark:border-white/10' },
-] as const;
 
 function flattenLeafCategories(categories: Category[]): Category[] {
   const out: Category[] = [];
@@ -79,54 +73,16 @@ export default function LandingClient({
       {/* 1. HERO SECTION (CINEMATIC FULLSCREEN SLIDER) */}
       <HeroSlider /> 
 
-      {/* 2. STATS BAR SECTION */}
-      <section className="relative py-16 text-slate-900 dark:text-white shadow-xl dark:shadow-2xl overflow-hidden bg-slate-50 dark:bg-slate-950">
-        {/* Base gradient wash */}
-        <div className="absolute inset-0 bg-gradient-to-b from-white via-slate-50 to-white dark:from-blue-900 dark:via-slate-950 dark:to-indigo-950" />
-        {/* Ambient glow orbs */}
-        <div className="absolute -top-24 -left-24 w-80 h-80 rounded-full bg-sky-300/15 dark:bg-sky-500/20 blur-3xl animate-float" />
-        <div className="absolute -bottom-32 -right-16 w-96 h-96 rounded-full bg-purple-300/15 dark:bg-purple-500/20 blur-3xl animate-float" style={{ animationDelay: '1.5s' }} />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full bg-emerald-200/10 dark:bg-emerald-500/10 blur-3xl" />
-        {/* Faint grid pattern */}
-        <div
-          className="absolute inset-0 opacity-[0.06] dark:opacity-[0.07]"
-          style={{
-            backgroundImage: 'linear-gradient(rgba(15,23,42,0.7) 1px, transparent 1px), linear-gradient(90deg, rgba(15,23,42,0.7) 1px, transparent 1px)',
-            backgroundSize: '48px 48px',
-          }}
+      {/* 2. STATS BAR SECTION
+             Nothing behind the cards on purpose. This band used to stack a gradient
+             wash, three blurred colour orbs and two 48px grid patterns behind four
+             tinted cards — five layers of decoration competing with the only thing
+             here that carries information. The cards sit on the page. */}
+      <section className="py-4">
+        <StatBand
+          className="page-shell"
+          items={SITE_STAT_DEFS.map((s) => ({ ...s, label: t(s.labelKey) }))}
         />
-        <div
-          className="absolute inset-0 opacity-0 dark:opacity-[0.07]"
-          style={{
-            backgroundImage: 'linear-gradient(rgba(255,255,255,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.6) 1px, transparent 1px)',
-            backgroundSize: '48px 48px',
-          }}
-        />
-
-        <div className="relative page-shell grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-          {STATS.map((s, idx) => (
-            <FilterItem key={s.labelKey} index={idx}>
-              <motion.div
-                whileHover={{ y: -6, scale: 1.03 }}
-                transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-                className={`group relative h-full rounded-3xl p-5 sm:p-6 text-center bg-gradient-to-b ${s.tint} dark:bg-white/[0.04] border ${s.border} backdrop-blur-md shadow-lg ${s.glow} hover:shadow-xl hover:border-opacity-60 dark:hover:bg-white/[0.08] dark:hover:border-white/20 transition-all`}
-              >
-                <motion.div
-                  className={`absolute inset-0 rounded-3xl bg-gradient-to-b ${s.ring} to-transparent`}
-                  animate={{ opacity: [0.25, 0.9, 0.25] }}
-                  transition={{ duration: 2.6, repeat: Infinity, ease: 'easeInOut', delay: idx * 0.35 }}
-                />
-                <div className="relative space-y-1.5">
-                  <div className={`mx-auto mb-2 w-9 h-9 rounded-xl ${s.iconBg} flex items-center justify-center ${s.accent} group-hover:scale-110 transition-transform duration-300`}>
-                    <Icon name={s.icon} size={18} />
-                  </div>
-                  <div className={`text-2xl sm:text-4xl font-extrabold ${s.accent} tracking-tight`}>{s.value}</div>
-                  <p className="text-[11px] sm:text-xs text-slate-600 dark:text-slate-300 font-medium uppercase tracking-wider">{t(s.labelKey)}</p>
-                </div>
-              </motion.div>
-            </FilterItem>
-          ))}
-        </div>
       </section>
 
       {/* 3. POPULAR CATEGORIES SECTION */}
@@ -169,59 +125,16 @@ export default function LandingClient({
         {/* Category Cards Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
           {displayedCategories.slice(0, 10).map((cat, idx) => {
-            const visual = getCategoryVisual(cat.slug);
             const stat = categoryStats.get(cat.name);
             return (
               <FilterItem key={cat.id} index={idx % 5}>
-              <motion.div whileHover={{ y: -8 }} transition={{ type: 'spring', stiffness: 300, damping: 20 }} className="h-full">
-              <Card asChild>
-                <Link
-                href={`/search?category=${cat.id}`}
-                className="rounded-3xl p-6 group flex flex-col justify-between h-56 transition-all duration-300 relative overflow-hidden"
-              >
-                  {/* Animated color wash */}
-                  <motion.div
-                    className={`absolute inset-0 bg-gradient-to-br ${visual.bgGradient}`}
-                    animate={{ opacity: [0.2, 0.75, 0.2] }}
-                    transition={{ duration: 2.8, repeat: Infinity, ease: 'easeInOut', delay: idx * 0.25 }}
-                  />
-                  {/* Decorative oversized icon ghost */}
-                  <div className="absolute -right-4 -bottom-4 text-slate-900/[0.03] dark:text-white/[0.04] group-hover:scale-110 group-hover:rotate-6 transition-transform duration-500">
-                    <Icon name={visual.iconName} size={112} />
-                  </div>
-
-                  {/* Top Icon */}
-                  <div className="relative flex items-center justify-between">
-                    <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${visual.bgGradient} flex items-center justify-center text-blue-600 dark:text-sky-400 shadow-sm group-hover:scale-110 group-hover:-rotate-6 transition-transform duration-300`}>
-                      <Icon name={visual.iconName} size={24} />
-                    </div>
-                    <div className="w-8 h-8 rounded-full bg-white/80 dark:bg-slate-800/80 flex items-center justify-center text-slate-400 dark:text-slate-500 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
-                      <Icon name="ArrowUpRight" size={16} />
-                    </div>
-                  </div>
-
-                  {/* Text info */}
-                  <div className="relative space-y-1 mt-4">
-                    <h3 className="font-bold text-slate-900 dark:text-white text-base group-hover:text-blue-600 dark:group-hover:text-sky-400 transition">
-                      {cat.name}
-                    </h3>
-                    {cat.description && (
-                      <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2">
-                        {cat.description}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* Footer details */}
-                  <div className="relative pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-xs text-slate-500">
-                    <span>{tCategories('verifiedMasters', { count: stat?.count ?? 0 })}</span>
-                    {stat?.minPrice != null && (
-                      <span className="font-extrabold text-slate-900 dark:text-white">{tCategories('startingFrom', { price: perHour(stat.minPrice) })}</span>
-                    )}
-                  </div>
-                </Link>
-              </Card>
-              </motion.div>
+                <CategoryCard
+                  variant="compact"
+                  category={cat}
+                  mastersCount={stat?.count ?? 0}
+                  mastersLabel={tCategories('verifiedMasters', { count: stat?.count ?? 0 })}
+                  priceLabel={stat?.minPrice != null ? tCategories('startingFrom', { price: perHour(stat.minPrice) }) : null}
+                />
               </FilterItem>
             );
           })}

@@ -46,7 +46,7 @@ export default function LoginPage() {
       }
       router.push(dashboardPathFor(result.user?.role ?? 'CLIENT'));
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Something went wrong. Please try again.');
+      setError(err instanceof ApiError ? err.message : t('genericError'));
     } finally {
       setSubmitting(false);
     }
@@ -61,7 +61,7 @@ export default function LoginPage() {
       const me = await completeTwoFactor(twoFactorCode.trim());
       router.push(dashboardPathFor(me.role));
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Invalid code. Please try again.');
+      setError(err instanceof ApiError ? err.message : t('invalidCode'));
     } finally {
       setSubmitting(false);
     }

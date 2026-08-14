@@ -39,5 +39,14 @@
   "masterCompleted": "Иҷрошуда",
   "masterCategories": "Категорияҳо",
   "yearsShort": "{years} сол",
-  "kmShort": "{km} км"
+  "kmShort": "{km} км",
+  "writeOnWhatsApp": "Навиштан дар WhatsApp",
+  "viewFullProfile": "Дидани профили пурра",
+  "filterAll": "Ҳама",
+  "filterActive": "Фаъол",
+  "filterCompleted": "Анҷомёфта",
+  "activeNow": "Ҳозир дар ҷараён",
+  "activeNowDesc": "Ҳаракати устои худро дар харита пайгирӣ кунед.",
+  "trackLive": "Пайгирии зинда",
+  "noBookingsFiltered": "Дар ин ҳолат фармоиш нест"
 }

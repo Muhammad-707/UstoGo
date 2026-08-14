@@ -14,5 +14,6 @@
   "registerButton": "Сабти Ном",
   "registering": "Сохтани ҳисоб...",
   "alreadyHaveAccount": "Ҳисоб доред?",
-  "logIn": "Вуруд"
+  "logIn": "Вуруд",
+  "genericError": "Хатогӣ рӯй дод. Лутфан аз нав кӯшиш кунед."
 }

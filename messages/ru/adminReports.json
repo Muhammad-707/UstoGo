@@ -21,5 +21,9 @@
   "statusOPEN": "Открыта",
   "statusREVIEWED": "Рассмотрена",
   "statusRESOLVED": "Решена",
-  "statusREJECTED": "Отклонена"
+  "statusREJECTED": "Отклонена",
+  "errLoad": "Не удалось загрузить жалобы.",
+  "errResolve": "Не удалось закрыть жалобу.",
+  "errBlock": "Не удалось заблокировать пользователя.",
+  "blockReasonPrompt": "Причина блокировки аккаунта (10–500 символов):"
 }

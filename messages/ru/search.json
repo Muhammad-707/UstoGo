@@ -37,5 +37,14 @@
   "radiusLabel": "Радиус поиска",
   "radiusValue": "{km} км",
   "distanceAway": "{km} км от вас",
-  "clearLocation": "Очистить"
+  "clearLocation": "Очистить",
+  "subtitle": "Каждый мастер проверен, цены известны до начала работы.",
+  "loadErrorTitle": "Не удалось загрузить мастеров",
+  "loadErrorDesc": "Нет связи с сервером. Пожалуйста, попробуйте позже.",
+  "loadMore": "Показать ещё",
+  "loadingMore": "Загрузка…",
+  "activeFilters": "Активные фильтры",
+  "statMasters": "Мастеров",
+  "statCities": "Городов",
+  "statAvgRating": "Средняя оценка"
 }

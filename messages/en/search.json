@@ -37,5 +37,14 @@
   "radiusLabel": "Search Radius",
   "radiusValue": "{km} km",
   "distanceAway": "{km} km away",
-  "clearLocation": "Clear"
+  "clearLocation": "Clear",
+  "subtitle": "Every master is background-checked, and the price is known before work starts.",
+  "loadErrorTitle": "Could not load masters",
+  "loadErrorDesc": "We lost the connection to the server. Please try again in a moment.",
+  "loadMore": "Load more",
+  "loadingMore": "Loading…",
+  "activeFilters": "Active filters",
+  "statMasters": "Masters",
+  "statCities": "Cities",
+  "statAvgRating": "Average rating"
 }

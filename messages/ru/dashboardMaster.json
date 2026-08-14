@@ -90,5 +90,11 @@
   "totalWord": "всего",
   "loadingShort": "Загрузка…",
   "completionRateTitle": "Завершаемость заказов",
-  "revenueByCategory": "Доход по категориям"
+  "revenueByCategory": "Доход по категориям",
+  "errAccept": "Не удалось принять заказ.",
+  "errDecline": "Не удалось отклонить заказ.",
+  "errStartJob": "Не удалось начать работу.",
+  "errAvailability": "Не удалось обновить доступность.",
+  "errInstantBook": "Не удалось обновить мгновенный заказ.",
+  "errLoadBookings": "Не удалось загрузить заказы."
 }

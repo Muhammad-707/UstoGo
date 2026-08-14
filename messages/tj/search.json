@@ -37,5 +37,14 @@
   "radiusLabel": "Радиуси ҷустуҷӯ",
   "radiusValue": "{km} км",
   "distanceAway": "{km} км дуртар",
-  "clearLocation": "Тоза кардан"
+  "clearLocation": "Тоза кардан",
+  "subtitle": "Ҳар усто санҷида шудааст, нархҳо пеш аз оғози кор маълуманд.",
+  "loadErrorTitle": "Устоҳо бор нашуданд",
+  "loadErrorDesc": "Пайвастшавӣ ба сервер қатъ шуд. Лутфан баъдтар аз нав кӯшиш кунед.",
+  "loadMore": "Боз нишон додан",
+  "loadingMore": "Боркунӣ…",
+  "activeFilters": "Филтрҳои фаъол",
+  "statMasters": "Устоҳо",
+  "statCities": "Шаҳрҳо",
+  "statAvgRating": "Баҳои миёна"
 }

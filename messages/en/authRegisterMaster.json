@@ -22,5 +22,6 @@
   "submitButton": "Submit Master Application",
   "submitting": "Submitting Application...",
   "alreadyMaster": "Already a master?",
-  "logIn": "Log in"
+  "logIn": "Log in",
+  "genericError": "Something went wrong. Please try again."
 }

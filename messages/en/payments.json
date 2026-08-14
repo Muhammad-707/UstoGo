@@ -7,5 +7,10 @@
   "payDirectlyNotice": "UstoGo doesn't process payments yet — you pay your master directly when the job is done.",
   "transactionsTitle": "Completed Bookings",
   "loading": "Loading…",
-  "noTransactions": "No completed bookings yet."
+  "noTransactions": "No completed bookings yet.",
+  "noTransactionsDesc": "It shows up here once your first booking is complete.",
+  "findMaster": "Find a master",
+  "statAverage": "Average per booking",
+  "statMasters": "Masters worked with",
+  "exportReceipt": "Receipt"
 }

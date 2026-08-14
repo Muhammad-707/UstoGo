@@ -117,7 +117,6 @@ export default function BookingWizardPage() {
         if (defaultAddress) applySavedAddress(defaultAddress);
       })
       .catch(() => setSavedAddresses([]));
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- applySavedAddress is a stable local setter chain, not worth memoizing
   }, [user?.clientProfile?.cityId]);
 
   const activeCity = cities.find((city) => city.id === cityId) ?? null;
@@ -137,7 +136,7 @@ export default function BookingWizardPage() {
         if (!cancelled) setMaster(m);
       })
       .catch((err) => {
-        if (!cancelled) setMasterError(err instanceof ApiError ? err.message : 'Failed to load this craftsman.');
+        if (!cancelled) setMasterError(err instanceof ApiError ? err.message : t('masterLoadFailed'));
       })
       .finally(() => {
         if (!cancelled) setMasterLoading(false);
@@ -257,7 +256,7 @@ export default function BookingWizardPage() {
       setCreatedBookingId(created.id);
       setBookingConfirmed(true);
     } catch (err) {
-      setSubmitError(err instanceof ApiError ? err.message : 'Something went wrong. Please try again.');
+      setSubmitError(err instanceof ApiError ? err.message : t('genericError'));
     } finally {
       setSubmitting(false);
     }
@@ -296,19 +295,34 @@ export default function BookingWizardPage() {
         <div className="w-16 h-16 bg-red-100 dark:bg-red-950 text-red-500 rounded-full flex items-center justify-center mx-auto">
           <Icon name="X" size={28} />
         </div>
-        <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white">{masterError ?? 'Craftsman not found'}</h1>
+        <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white">{masterError ?? t('craftsmanNotFound')}</h1>
         <Link
           href="/search"
           className="inline-block px-8 py-3.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-lg transition btn-ripple"
         >
-          Browse Craftsmen
+          {t('browseCraftsmen')}
         </Link>
       </div>
     );
   }
 
+  /**
+   * What the reader has chosen so far, for the rail beside the form. A four-step
+   * checkout that never shows the running total makes people scroll back a step to
+   * check what they picked — so the summary follows them down instead.
+   */
+  const summaryRows = [
+    { label: t('craftsman'), value: master.displayName },
+    { label: t('serviceWord'), value: selectedService?.title ?? null },
+    {
+      label: t('scheduledDate'),
+      value: date ? `${date}${timeSlot ? ` · ${formatSlotLabel(timeSlot, selectedService?.durationMinutes)}` : ''}` : null,
+    },
+    { label: t('serviceAddress'), value: street ? `${street}${house ? `, ${house}` : ''}` : null },
+  ].filter((r) => r.value);
+
   return (
-    <div className="page-shell page-shell-narrow py-12 space-y-8">
+    <div className="page-shell py-12">
 
       {/* Page Title */}
       <div className="text-center space-y-2">
@@ -319,6 +333,9 @@ export default function BookingWizardPage() {
           {t('pageTitle')}
         </h1>
       </div>
+
+      <div className={cn('mt-8 grid items-start gap-8', !bookingConfirmed && 'lg:grid-cols-[1fr_320px]')}>
+        <div className="min-w-0 space-y-8">
 
       {/* Step Progress Bar.
           The label sits under its own dot, and the rail is drawn as two half
@@ -485,7 +502,7 @@ export default function BookingWizardPage() {
                   </div>
                 ) : services.length === 0 ? (
                   <p className="text-xs text-slate-500 p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
-                    This craftsman has no bookable services yet.
+                    {t('noBookableServices')}
                   </p>
                 ) : (
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -494,16 +511,19 @@ export default function BookingWizardPage() {
                         key={svc.id}
                         type="button"
                         onClick={() => setSelectedServiceId(svc.id)}
-                        className={`p-3.5 rounded-2xl text-left text-xs font-bold border transition-all hover:-translate-y-0.5 ${
+                        /* `flex-col items-start`: the Button base is an inline-flex row,
+                           which laid the title and the price out side by side with no
+                           gap — "Pipe repair250,00 somoni" on one line. */
+                        className={`flex flex-col items-start gap-0.5 rounded-2xl border p-3.5 text-left text-xs font-bold transition-all hover:-translate-y-0.5 ${
                           selectedServiceId === svc.id
-                            ? 'bg-blue-600 text-white border-blue-600 shadow-md shadow-blue-600/20'
-                            : 'bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-blue-300 dark:hover:border-sky-800 hover:shadow-md'
+                            ? 'border-blue-600 bg-blue-600 text-white shadow-md shadow-blue-600/20'
+                            : 'border-slate-200 bg-slate-50 text-slate-700 hover:border-blue-300 hover:shadow-md dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:border-sky-800'
                         }`}
                       >
-                        <div>{svc.title}</div>
-                        <div className={selectedServiceId === svc.id ? 'text-blue-100' : 'text-slate-400'}>
+                        <span className="whitespace-normal">{svc.title}</span>
+                        <span className={selectedServiceId === svc.id ? 'text-blue-100' : 'text-slate-400'}>
                           {money(svc.price)}
-                        </div>
+                        </span>
                       </Button>
                     ))}
                   </div>
@@ -835,6 +855,52 @@ export default function BookingWizardPage() {
 
         </Card>
       )}
+
+        </div>
+
+        {/* Running summary rail */}
+        {!bookingConfirmed && (
+          <aside className="lg:sticky lg:top-[88px]">
+            <div className="relative overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl shadow-slate-900/5 dark:border-slate-800 dark:bg-slate-900">
+              <div className="h-1 bg-gradient-to-r from-blue-500 via-sky-400 to-emerald-400" />
+              <div className="pointer-events-none absolute -right-10 -top-16 h-48 w-48 rounded-full bg-blue-500/10 blur-3xl" />
+
+              <div className="relative space-y-5 p-6">
+                <div>
+                  <p className="text-[11px] font-extrabold uppercase tracking-[0.15em] text-slate-400">
+                    {t('summaryTitle')}
+                  </p>
+                  <p className="mt-1 text-[11px] font-semibold text-blue-600 dark:text-sky-400">
+                    {t('summaryStep', { current: step, total: 4 })}
+                  </p>
+                </div>
+
+                {summaryRows.length === 0 ? (
+                  <p className="text-xs leading-relaxed text-slate-500 dark:text-slate-400">{t('summaryEmpty')}</p>
+                ) : (
+                  <dl className="space-y-3 border-t border-slate-100 pt-4 dark:border-slate-800">
+                    {summaryRows.map((row) => (
+                      <div key={row.label} className="flex items-start justify-between gap-3">
+                        <dt className="shrink-0 text-[11px] font-semibold text-slate-400">{row.label}</dt>
+                        <dd className="text-right text-xs font-bold text-slate-900 dark:text-white">{row.value}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                )}
+
+                {selectedService && (
+                  <div className="border-t border-slate-100 pt-4 dark:border-slate-800">
+                    <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">{t('totalAmount')}</p>
+                    <p className="mt-1 text-3xl font-extrabold leading-none tracking-tight text-slate-900 tabular-nums dark:text-white">
+                      {money(totalPrice)}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </aside>
+        )}
+      </div>
 
     </div>
   );

@@ -15,5 +15,18 @@
   "mockPaymentNote": "Пардохт озмоишӣ аст — ягон маълумоти корт ҷамъоварӣ нашудааст.",
   "noOrdersDesc": "Ҳар чизе, ки аз маркетплейс мехаред, дар ин ҷо бо ҳолати расонидан пайдо мешавад.",
   "statusPAID": "Пардохтшуда",
-  "statusCANCELLED": "Бекоршуда"
+  "statusCANCELLED": "Бекоршуда",
+  "filterAll": "Ҳама",
+  "statTotalOrders": "Ҳамаи фармоишҳо",
+  "statTotalSpent": "Сарф шудааст",
+  "orderNumber": "Фармоиши №{code}",
+  "viewOrder": "Кушодан",
+  "orderSummary": "Хулосаи фармоиш",
+  "items": "Маҳсулот",
+  "reorder": "Такрори фармоиш",
+  "reordered": "Ба сабад илова шуд",
+  "reorderFailed": "Илова кардан ба сабад номуваффақ шуд",
+  "itemsTotal": "Арзиши маҳсулот",
+  "noOrdersFiltered": "Дар ин ҳолат фармоиш нест",
+  "noOrdersFilteredDesc": "Филтрро иваз кунед ё ба ҳамаи фармоишҳо нигаред."
 }

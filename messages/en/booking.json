@@ -57,5 +57,12 @@
   "selectServiceLabel": "Select a service",
   "serviceWord": "Service",
   "browseCraftsmen": "Browse craftsmen",
-  "priceFromLabel": "From {price}"
+  "priceFromLabel": "From {price}",
+  "craftsmanNotFound": "Craftsman not found",
+  "genericError": "Something went wrong. Please try again.",
+  "summaryTitle": "Booking summary",
+  "summaryEmpty": "Your summary builds up here as you fill in the steps.",
+  "summaryStep": "Step {current} of {total}",
+  "noBookableServices": "This craftsman has no bookable services yet.",
+  "masterLoadFailed": "Failed to load this craftsman."
 }

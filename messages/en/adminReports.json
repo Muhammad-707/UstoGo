@@ -21,5 +21,9 @@
   "statusOPEN": "Open",
   "statusREVIEWED": "Reviewed",
   "statusRESOLVED": "Resolved",
-  "statusREJECTED": "Rejected"
+  "statusREJECTED": "Rejected",
+  "errLoad": "Failed to load reports.",
+  "errResolve": "Failed to resolve report.",
+  "errBlock": "Failed to block user.",
+  "blockReasonPrompt": "Reason for blocking this account (10-500 characters):"
 }

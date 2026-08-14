@@ -7,5 +7,6 @@
   "whatsappButton": "WhatsApp",
   "whatsappButtonShort": "WA",
   "quickReplyDefault": "Паёми пешфарз",
-  "emptyDesc": "Пас аз тасдиқи фармоиш аз ин ҷо ба тарафи дуюм дар WhatsApp навишта метавонед."
+  "emptyDesc": "Пас аз тасдиқи фармоиш аз ин ҷо ба тарафи дуюм дар WhatsApp навишта метавонед.",
+  "errLoadBookings": "Фармоишҳо бор нашуданд."
 }

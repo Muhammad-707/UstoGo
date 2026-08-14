@@ -14,5 +14,6 @@
   "registerButton": "Register Account",
   "registering": "Creating Account...",
   "alreadyHaveAccount": "Already have an account?",
-  "logIn": "Log in"
+  "logIn": "Log in",
+  "genericError": "Something went wrong. Please try again."
 }

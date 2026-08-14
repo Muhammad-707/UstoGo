@@ -6,5 +6,18 @@
   "filterPopular": "Самые Популярные",
   "filterLuxury": "Люкс и Премиум",
   "verifiedMasters": "{count} проверенных мастеров",
-  "startingFrom": "От {price}"
+  "startingFrom": "От {price}",
+  "searchPlaceholder": "Сантехник, электрик, покраска...",
+  "statCategories": "Категорий услуг",
+  "statMasters": "Проверенных мастеров",
+  "statCities": "Городов обслуживания",
+  "resultsCount": "Показано категорий: {count}",
+  "sectionTitle": "Каталог услуг",
+  "tagPopular": "Популярно",
+  "tagPremium": "Премиум",
+  "noResultsTitle": "Категории не найдены",
+  "noResultsDesc": "Попробуйте другой запрос или сбросьте фильтры.",
+  "clearFilters": "Сбросить фильтры",
+  "errorTitle": "Не удалось загрузить категории",
+  "errorDesc": "Нет связи с сервером. Пожалуйста, попробуйте позже."
 }

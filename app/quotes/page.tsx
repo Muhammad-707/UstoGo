@@ -3,7 +3,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
-import { Icon } from '@/components/icons/LucideIcons';
 import { quotesApi } from '@/lib/api/endpoints';
 import { ApiError } from '@/lib/api/client';
 import type { PriceType, Quote } from '@/lib/api/types';
@@ -16,6 +15,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const PRICE_TYPES: PriceType[] = ['FIXED', 'HOURLY', 'FROM'];
 
@@ -124,7 +124,13 @@ export default function QuotesPage() {
     <div className="page-shell page-shell-narrow py-10 space-y-8">
 
       {error && <p className="text-xs font-bold text-red-600 dark:text-red-400">{error}</p>}
-      {loading && <p className="text-xs text-slate-400 font-semibold">{t('loading')}</p>}
+      {loading && (
+          <div className="space-y-3">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <Skeleton key={i} className="h-28 rounded-3xl" />
+            ))}
+          </div>
+        )}
       {!loading && quotes.length === 0 && (
         <EmptyState
           icon="calculator"

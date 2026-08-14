@@ -11,6 +11,9 @@ import { ApiError } from '@/lib/api/client';
 import type { Product } from '@/lib/api/types';
 import { useMoney } from '@/lib/money';
 import { Button } from '@/components/ui/button';
+import { EmptyState } from '@/components/ui/EmptyState';
+import { Skeleton } from '@/components/ui/skeleton';
+import { RecommendedProducts } from '@/components/marketplace/RecommendedProducts';
 
 export default function ProductDetailPage() {
   const t = useTranslations('marketplace');
@@ -85,11 +88,14 @@ export default function ProductDetailPage() {
   if (loading) {
     return (
       <div className="page-shell py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-          <div className="aspect-square rounded-3xl bg-slate-50 dark:bg-slate-800/40 animate-pulse" />
+        <div className="grid grid-cols-1 gap-10 lg:grid-cols-2">
+          <Skeleton className="aspect-square rounded-3xl" />
           <div className="space-y-4">
-            <div className="h-8 w-2/3 rounded-xl bg-slate-50 dark:bg-slate-800/40 animate-pulse" />
-            <div className="h-24 rounded-xl bg-slate-50 dark:bg-slate-800/40 animate-pulse" />
+            <Skeleton className="h-3 w-24" />
+            <Skeleton className="h-9 w-2/3" />
+            <Skeleton className="h-8 w-32" />
+            <Skeleton className="h-24 w-full" />
+            <Skeleton className="h-14 w-full rounded-2xl" />
           </div>
         </div>
       </div>
@@ -98,11 +104,15 @@ export default function ProductDetailPage() {
 
   if (notFound || !product) {
     return (
-      <div className="page-shell page-shell-narrow py-20 text-center space-y-4">
-        <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">{t('productNotFound')}</p>
-        <Link href="/marketplace" className="text-xs font-bold text-emerald-600 hover:underline">
-          {t('backToShop')}
-        </Link>
+      <div className="page-shell py-16">
+        <EmptyState
+          icon="package"
+          tone="emerald"
+          title={t('productNotFound')}
+          description={t('productNotFoundDesc')}
+          actionLabel={t('backToShop')}
+          actionHref="/marketplace"
+        />
       </div>
     );
   }
@@ -125,8 +135,8 @@ export default function ProductDetailPage() {
               </div>
             )}
             {product.discountPercent != null && (
-              <span className="absolute top-3 left-3 px-2.5 py-1 rounded-lg bg-red-600 text-white text-xs font-extrabold">
-                -{product.discountPercent}%
+              <span className="absolute left-4 top-4 rounded-full bg-gradient-to-r from-rose-600 to-red-500 px-3 py-1.5 text-xs font-extrabold text-white shadow-lg shadow-rose-600/30">
+                −{product.discountPercent}%
               </span>
             )}
           </div>
@@ -221,8 +231,12 @@ export default function ProductDetailPage() {
         </div>
       </div>
 
+      {/* Same rail the cart, wishlist and order pages carry, aimed at this product's
+          own category so a dead end becomes a next step. */}
+      <RecommendedProducts excludeIds={[product.id]} categoryId={product.categoryId} onAdded={showToast} />
+
       {toast && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 px-5 py-3 rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-xs font-bold shadow-2xl animate-fade-in">
+        <div className="animate-fade-in fixed bottom-6 left-1/2 z-50 -translate-x-1/2 rounded-2xl bg-slate-900 px-5 py-3 text-xs font-bold text-white shadow-2xl dark:bg-white dark:text-slate-900">
           {toast}
         </div>
       )}

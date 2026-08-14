@@ -6,5 +6,18 @@
   "filterPopular": "Машҳуртаринҳо",
   "filterLuxury": "Люкс ва Премиум",
   "verifiedMasters": "{count} Устои Санҷидашуда",
-  "startingFrom": "Аз {price}"
+  "startingFrom": "Аз {price}",
+  "searchPlaceholder": "Сантехник, барқчӣ, ранголойӣ...",
+  "statCategories": "Категорияҳои хизматрасонӣ",
+  "statMasters": "Устоҳои санҷидашуда",
+  "statCities": "Шаҳрҳои хизматрасонӣ",
+  "resultsCount": "{count} категория нишон дода шуд",
+  "sectionTitle": "Феҳристи хизматрасониҳо",
+  "tagPopular": "Машҳур",
+  "tagPremium": "Премиум",
+  "noResultsTitle": "Ҳеҷ категория ёфт нашуд",
+  "noResultsDesc": "Калимаи дигарро нависед ё филтрҳоро тоза кунед.",
+  "clearFilters": "Тоза кардани филтрҳо",
+  "errorTitle": "Категорияҳо бор нашуданд",
+  "errorDesc": "Пайвастшавӣ ба сервер қатъ шуд. Лутфан баъдтар аз нав кӯшиш кунед."
 }

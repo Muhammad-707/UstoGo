@@ -57,5 +57,12 @@
   "selectServiceLabel": "Выберите услугу",
   "serviceWord": "Услуга",
   "browseCraftsmen": "Смотреть мастеров",
-  "priceFromLabel": "От {price}"
+  "priceFromLabel": "От {price}",
+  "craftsmanNotFound": "Мастер не найден",
+  "genericError": "Что-то пошло не так. Пожалуйста, попробуйте ещё раз.",
+  "summaryTitle": "Итоги заказа",
+  "summaryEmpty": "Здесь появятся итоги по мере заполнения шагов.",
+  "summaryStep": "Шаг {current} из {total}",
+  "noBookableServices": "У этого мастера пока нет услуг для заказа.",
+  "masterLoadFailed": "Не удалось загрузить мастера."
 }

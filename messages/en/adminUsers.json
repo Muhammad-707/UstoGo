@@ -37,5 +37,8 @@
   "statusACTIVE": "Active",
   "statusINACTIVE": "Inactive",
   "statusBLOCKED": "Blocked",
-  "detailEmail": "Email"
+  "detailEmail": "Email",
+  "errLoad": "Failed to load users.",
+  "errBlock": "Failed to block user.",
+  "errUnblock": "Failed to unblock user."
 }

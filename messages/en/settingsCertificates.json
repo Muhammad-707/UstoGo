@@ -16,5 +16,6 @@
   "loadFailed": "Failed to load certificates",
   "noCertificates": "No certificates added yet",
   "loading": "Loading...",
-  "saving": "Saving..."
+  "saving": "Saving...",
+  "noCertificatesDesc": "Upload your training certificates — they appear on your profile and build trust."
 }

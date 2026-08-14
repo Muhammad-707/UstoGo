@@ -40,5 +40,6 @@
   "validationCategoryRequired": "Выберите категорию",
   "validationPriceInvalid": "Введите корректную цену (больше 0)",
   "validationDurationInvalid": "Длительность должна быть не менее 15 минут и кратна 15",
-  "confirmDeleteService": "Удалить услугу «{title}»?"
+  "confirmDeleteService": "Удалить услугу «{title}»?",
+  "noServicesDesc": "Добавьте свои услуги с ценами — именно их клиенты видят в поиске."
 }

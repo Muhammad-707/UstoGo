@@ -30,5 +30,6 @@
   "remove": "Remove",
   "noExceptions": "No exceptions yet",
   "exceptionFailed": "Failed to save the exception",
-  "loading": "Loading..."
+  "loading": "Loading...",
+  "noExceptionsDesc": "Add days off or holidays — no bookings will be taken on those dates."
 }

@@ -90,5 +90,11 @@
   "totalWord": "total",
   "loadingShort": "Loading…",
   "completionRateTitle": "Booking completion",
-  "revenueByCategory": "Revenue by category"
+  "revenueByCategory": "Revenue by category",
+  "errAccept": "Failed to accept booking.",
+  "errDecline": "Failed to decline booking.",
+  "errStartJob": "Failed to start job.",
+  "errAvailability": "Failed to update availability.",
+  "errInstantBook": "Failed to update instant-book.",
+  "errLoadBookings": "Failed to load bookings."
 }

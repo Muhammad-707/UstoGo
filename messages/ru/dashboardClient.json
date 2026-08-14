@@ -39,5 +39,14 @@
   "masterCompleted": "Выполнено",
   "masterCategories": "Категории",
   "yearsShort": "{years} лет",
-  "kmShort": "{km} км"
+  "kmShort": "{km} км",
+  "writeOnWhatsApp": "Написать в WhatsApp",
+  "viewFullProfile": "Открыть полный профиль",
+  "filterAll": "Все",
+  "filterActive": "Активные",
+  "filterCompleted": "Завершённые",
+  "activeNow": "Сейчас в работе",
+  "activeNowDesc": "Следите за мастером на карте.",
+  "trackLive": "Отслеживать",
+  "noBookingsFiltered": "Заказов в этом статусе нет"
 }

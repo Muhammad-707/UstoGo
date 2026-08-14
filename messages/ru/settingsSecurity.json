@@ -44,5 +44,6 @@
   "twoFactorEnableFailed": "Код не принят.",
   "twoFactorDisableFailed": "Не удалось отключить 2FA.",
   "twoFactorEnabledOk": "Двухфакторная аутентификация включена.",
-  "twoFactorDisabledOk": "Двухфакторная аутентификация отключена."
+  "twoFactorDisabledOk": "Двухфакторная аутентификация отключена.",
+  "noSessionsDesc": "В аккаунт вошло только это устройство."
 }

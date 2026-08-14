@@ -15,5 +15,18 @@
   "mockPaymentNote": "Payment is mocked — no card data was ever collected.",
   "noOrdersDesc": "Anything you buy from the marketplace shows up here with its delivery status.",
   "statusPAID": "Paid",
-  "statusCANCELLED": "Cancelled"
+  "statusCANCELLED": "Cancelled",
+  "filterAll": "All",
+  "statTotalOrders": "Orders placed",
+  "statTotalSpent": "Total spent",
+  "orderNumber": "Order #{code}",
+  "viewOrder": "Open",
+  "orderSummary": "Order summary",
+  "items": "Items",
+  "reorder": "Order again",
+  "reordered": "Added to cart",
+  "reorderFailed": "Could not add to cart",
+  "itemsTotal": "Items total",
+  "noOrdersFiltered": "No orders with this status",
+  "noOrdersFilteredDesc": "Change the filter or look at all your orders."
 }

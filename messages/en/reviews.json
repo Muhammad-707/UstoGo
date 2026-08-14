@@ -27,5 +27,10 @@
   "replyFailed": "Failed to send reply.",
   "submitReviewFailed": "Failed to submit review.",
   "tabReviews": "Reviews",
-  "tabLeaderboard": "Leaderboard"
+  "tabLeaderboard": "Leaderboard",
+  "ratingBreakdown": "Rating breakdown",
+  "noReviewsDesc": "Reviews show up here once your first booking is complete.",
+  "anonymousClient": "Client",
+  "recommends": "Recommends",
+  "reviewsCount": "{count} reviews"
 }

@@ -21,5 +21,9 @@
   "statusOPEN": "Кушода",
   "statusREVIEWED": "Дидашуда",
   "statusRESOLVED": "Ҳалшуда",
-  "statusREJECTED": "Радшуда"
+  "statusREJECTED": "Радшуда",
+  "errLoad": "Шикоятҳо бор нашуданд.",
+  "errResolve": "Ҳал кардани шикоят номуваффақ шуд.",
+  "errBlock": "Баста кардани корбар номуваффақ шуд.",
+  "blockReasonPrompt": "Сабаби бастани ин ҳисоб (10–500 аломат):"
 }

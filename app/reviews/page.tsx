@@ -1,16 +1,30 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Icon } from '@/components/icons/LucideIcons';
 import { useTranslations } from 'next-intl';
+import {
+  MessageSquareQuote,
+  PenLine,
+  Quote,
+  Reply,
+  Send,
+  Star,
+  ThumbsUp,
+  TrendingUp,
+  type LucideIcon,
+} from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { reviewsApi, bookingsApi } from '@/lib/api/endpoints';
 import { ApiError } from '@/lib/api/client';
 import type { Review, Booking } from '@/lib/api/types';
 import { getAvatarUrl } from '@/lib/placeholders';
+import { cn } from '@/lib/utils';
 import { FilterContainer, FilterItem } from '@/components/ui/FilterAnimate';
+import { EmptyState } from '@/components/ui/EmptyState';
 import { LeaderboardPanel } from '@/components/masters/LeaderboardPanel';
+import { Skeleton } from '@/components/ui/skeleton';
 import { useDateFormat } from '@/lib/datetime';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -101,6 +115,20 @@ export default function ReviewsPage() {
   const avgRating =
     reviews.length > 0 ? (reviews.reduce((s, r) => s + r.rating, 0) / reviews.length).toFixed(2) : '—';
 
+  /**
+   * Five buckets, always all five. Rendering only the ratings that happen to exist
+   * makes a page with three 5-star reviews look like a full distribution — the empty
+   * rows are the point of a breakdown.
+   */
+  const distribution = useMemo(() => {
+    const counts = [5, 4, 3, 2, 1].map((stars) => ({
+      stars,
+      count: reviews.filter((r) => Math.round(r.rating) === stars).length,
+    }));
+    const max = Math.max(1, ...counts.map((c) => c.count));
+    return counts.map((c) => ({ ...c, percent: (c.count / max) * 100 }));
+  }, [reviews]);
+
   const handleReply = async (reviewId: string) => {
     const body = (replyDrafts[reviewId] ?? '').trim();
     if (!body) return;
@@ -141,33 +169,56 @@ export default function ReviewsPage() {
     }
   };
 
-  const tabs: Array<{ id: ReviewsTab; label: string; icon: string }> = [
-    { id: 'reviews', label: t('tabReviews'), icon: 'MessageSquare' },
-    { id: 'leaderboard', label: t('tabLeaderboard'), icon: 'trendingup' },
+  const tabs: Array<{ id: ReviewsTab; label: string; Icon: LucideIcon }> = [
+    { id: 'reviews', label: t('tabReviews'), Icon: MessageSquareQuote },
+    { id: 'leaderboard', label: t('tabLeaderboard'), Icon: TrendingUp },
   ];
 
   return (
-    <div className="page-shell py-12 space-y-10">
+    <div className="pb-24">
 
-      {/* Reviews / Leaderboard switcher */}
-      <div className="flex justify-center">
-        <div className="inline-flex items-center gap-1 p-1.5 rounded-2xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
-          {tabs.map((item) => (
-            <Button size="raw" variant="ghost"
-              key={item.id}
-              onClick={() => setTab(item.id)}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-extrabold transition-all duration-200 ${
-                tab === item.id
-                  ? 'bg-white dark:bg-slate-800 text-blue-600 dark:text-sky-400 shadow-md'
-                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
-              }`}
-            >
-              <Icon name={item.icon} size={15} />
-              {item.label}
-            </Button>
-          ))}
+      {/* HERO — the page title and the switcher in one band, on the page's own
+          background. The switcher used to float above a card with nothing around it,
+          which read as a stray control rather than as this page's navigation. */}
+      <section className="relative isolate overflow-hidden border-b border-slate-200/70 dark:border-slate-800/70">
+        <div className="absolute -left-40 -top-40 h-96 w-96 rounded-full bg-amber-400/10 blur-3xl" />
+        <div className="absolute -bottom-48 right-1/4 h-96 w-96 rounded-full bg-blue-500/10 blur-3xl" />
+
+        <div className="page-shell relative flex flex-col items-start justify-between gap-6 py-12 lg:flex-row lg:items-end">
+          <div className="space-y-3">
+            <span className="inline-flex items-center gap-2 rounded-full bg-blue-100 px-3 py-1 text-xs font-bold uppercase tracking-wider text-blue-700 dark:bg-blue-950/70 dark:text-sky-300">
+              <MessageSquareQuote size={13} />
+              {t('badge')}
+            </span>
+            <h1 className="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl xl:text-5xl dark:text-white">
+              {t('title')}
+            </h1>
+            <p className="max-w-lg text-sm leading-relaxed text-slate-600 dark:text-slate-400">{t('subtitle')}</p>
+          </div>
+
+          <div className="inline-flex shrink-0 items-center gap-1 rounded-2xl border border-slate-200 bg-white p-1.5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+            {tabs.map((item) => (
+              <Button
+                size="raw"
+                variant="ghost"
+                key={item.id}
+                onClick={() => setTab(item.id)}
+                className={cn(
+                  'flex items-center gap-2 rounded-xl px-5 py-2.5 text-xs font-extrabold transition-all duration-200',
+                  tab === item.id
+                    ? 'bg-blue-600 text-white shadow-md shadow-blue-600/25'
+                    : 'text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
+                )}
+              >
+                <item.Icon size={15} />
+                {item.label}
+              </Button>
+            ))}
+          </div>
         </div>
-      </div>
+      </section>
+
+      <div className="page-shell space-y-10 py-10">
 
       {/* `key` on the wrapper restarts the entry animation on every switch — without it
           React reuses the node and the incoming panel simply appears. */}
@@ -180,108 +231,231 @@ export default function ReviewsPage() {
       {tab === 'reviews' && (
       <div key="reviews" className="space-y-10 animate-tab-in">
 
-      {/* Header & Rating Breakdown */}
-      <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 border border-slate-200 dark:border-slate-800 shadow-xl flex flex-col md:flex-row items-center justify-between gap-8">
-        <div className="space-y-2 text-center md:text-left">
-          <span className="text-xs font-extrabold uppercase tracking-widest text-blue-600 dark:text-sky-400">
-            {t('badge')}
-          </span>
-          <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white">{t('title')}</h1>
-          <p className="text-xs text-slate-500">{t('subtitle')}</p>
-        </div>
+      {/* Rating summary */}
+      <section className="relative overflow-hidden rounded-[2rem] border border-slate-200 bg-white p-6 shadow-[0_1px_2px_rgba(15,23,42,0.04)] sm:p-8 dark:border-slate-800 dark:bg-slate-900">
+        <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-amber-400/10 blur-3xl" />
 
-        <div className="flex items-center gap-6">
-          <div className="text-center">
-            <span className="text-4xl font-extrabold text-slate-900 dark:text-white">{avgRating}</span>
-            <div className="flex items-center gap-1 text-amber-500 justify-center mt-1">
-              {[...Array(5)].map((_, i) => (
-                <Icon key={i} name="Star" size={16} className="fill-amber-400" />
+        <div className="relative flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
+          {/* Score + distribution */}
+          <div className="flex flex-1 flex-col gap-6 sm:flex-row sm:items-center">
+            <div className="shrink-0 text-center sm:pr-6 sm:text-left">
+              {/* With no reviews this is an em dash, and an em dash at 48px extrabold
+                  reads as a black bar, not as "no score yet" — so it greys out. */}
+              <div
+                className={cn(
+                  'text-5xl font-extrabold tracking-tight tabular-nums',
+                  reviews.length > 0 ? 'text-slate-900 dark:text-white' : 'text-slate-300 dark:text-slate-700'
+                )}
+              >
+                {avgRating}
+              </div>
+              <div className="mt-2 flex items-center justify-center gap-0.5 sm:justify-start">
+                {[1, 2, 3, 4, 5].map((s) => (
+                  <Star
+                    key={s}
+                    size={15}
+                    className={
+                      reviews.length > 0 && s <= Math.round(Number(avgRating))
+                        ? 'fill-amber-400 text-amber-400'
+                        : 'text-slate-300 dark:text-slate-700'
+                    }
+                  />
+                ))}
+              </div>
+              <span className="mt-2 block text-[11px] font-semibold text-slate-500 dark:text-slate-400">
+                {t('basedOn', { count: reviews.length })}
+              </span>
+            </div>
+
+            {/* Capped: left to grow, five bars stretch the width of the card and the
+                breakdown starts reading as a chart of something much bigger. */}
+            <div className="w-full max-w-xs space-y-1.5 sm:border-l sm:border-slate-200 sm:pl-6 dark:sm:border-slate-800">
+              <p className="mb-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                {t('ratingBreakdown')}
+              </p>
+              {distribution.map((row) => (
+                <div key={row.stars} className="flex items-center gap-2.5">
+                  <span className="flex w-6 shrink-0 items-center gap-0.5 text-[11px] font-bold text-slate-500 tabular-nums dark:text-slate-400">
+                    {row.stars}
+                    <Star size={10} className="fill-amber-400 text-amber-400" />
+                  </span>
+                  <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-800">
+                    <div
+                      className="h-full rounded-full bg-gradient-to-r from-amber-400 to-orange-400 transition-[width] duration-700"
+                      style={{ width: `${row.percent}%` }}
+                    />
+                  </div>
+                  <span className="w-5 shrink-0 text-right text-[11px] font-semibold text-slate-400 tabular-nums">
+                    {row.count}
+                  </span>
+                </div>
               ))}
             </div>
-            <span className="text-[11px] text-slate-400 block mt-1">{t('basedOn', { count: reviews.length })}</span>
           </div>
 
           {!isMaster && (
-            <Button size="raw" variant="ghost"
+            <Button
+              size="raw"
+              variant="ghost"
               onClick={openModal}
-              className="px-6 py-3.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-lg transition btn-ripple"
+              className="btn-ripple inline-flex shrink-0 items-center justify-center gap-2 rounded-2xl bg-blue-600 px-6 py-3.5 text-xs font-extrabold text-white shadow-lg shadow-blue-600/25 transition hover:bg-blue-700"
             >
+              <PenLine size={15} />
               {t('writeReview')}
             </Button>
           )}
-
         </div>
-      </div>
+      </section>
 
-      {/* Reviews List */}
-      {loading && <p className="text-xs text-slate-400 font-semibold">{t('loading')}</p>}
-      {!loading && reviews.length === 0 && <p className="text-xs text-slate-400 font-semibold">{t('noReviewsYet')}</p>}
-      <FilterContainer className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {reviews.map((rev, idx) => (
-          <FilterItem key={rev.id} index={idx % 2} className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-4 shadow-lg">
-            <div className="flex items-center justify-between">
+      {/* Reviews list */}
+      {loading && (
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="space-y-4 rounded-3xl border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-900">
               <div className="flex items-center gap-3">
-                <img src={getAvatarUrl(rev.clientId, rev.clientName)} alt="" className="w-12 h-12 rounded-2xl object-cover" />
-                <div>
-                  <span className="text-[11px] text-slate-400">{fmt.date(rev.createdAt)}</span>
+                <Skeleton className="h-12 w-12 rounded-2xl" />
+                <div className="flex-1 space-y-2">
+                  <Skeleton className="h-3.5 w-1/3" />
+                  <Skeleton className="h-2.5 w-1/4" />
                 </div>
               </div>
-              <div className="flex items-center gap-1 text-amber-500 font-bold text-xs">
-                <Icon name="Star" size={14} className="fill-amber-400" />
-                <span>{rev.rating}.0</span>
-              </div>
+              <Skeleton className="h-3 w-full" />
+              <Skeleton className="h-3 w-4/5" />
             </div>
+          ))}
+        </div>
+      )}
 
-            {rev.comment && <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">{rev.comment}</p>}
+      {!loading && reviews.length === 0 && (
+        <EmptyState
+          icon="MessageSquare"
+          title={t('noReviewsYet')}
+          description={t('noReviewsDesc')}
+          actionLabel={isMaster ? undefined : t('writeReview')}
+          actionHref={isMaster ? undefined : '/orders'}
+        />
+      )}
 
-            {rev.reply && (
-              <div className="p-4 rounded-2xl bg-blue-50 dark:bg-slate-800/80 text-xs text-slate-700 dark:text-slate-300 space-y-1">
-                <span className="font-bold text-blue-600 dark:text-sky-400">{t('craftsmanResponse')}</span>
-                <p>{rev.reply.body}</p>
-              </div>
-            )}
+      {!loading && reviews.length > 0 && (
+        <FilterContainer className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          {reviews.map((rev, idx) => (
+            <FilterItem key={rev.id} index={idx % 2} className="h-full">
+              <article className="group relative flex h-full flex-col gap-4 overflow-hidden rounded-3xl border border-slate-200 bg-white p-6 shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition-[box-shadow,border-color] duration-300 hover:border-blue-200 hover:shadow-[0_24px_48px_-24px_rgba(15,23,42,0.25)] dark:border-slate-800 dark:bg-slate-900 dark:hover:border-sky-900/80">
 
-            {isMaster && !rev.reply && (
-              replyOpenFor === rev.id ? (
-                <div className="space-y-2">
-                  <Textarea
-                    rows={2}
-                    value={replyDrafts[rev.id] ?? ''}
-                    onChange={(e) => setReplyDrafts((prev) => ({ ...prev, [rev.id]: e.target.value }))}
-                    placeholder={t('replyPlaceholder')}
-                    className="w-full p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs"
-                  />
-                  <div className="flex items-center gap-2">
-                    <Button size="raw" variant="ghost"
-                      onClick={() => handleReply(rev.id)}
-                      disabled={replySubmittingFor === rev.id || !(replyDrafts[rev.id] ?? '').trim()}
-                      className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold disabled:opacity-50"
-                    >
-                      {t('sendReply')}
-                    </Button>
-                    <Button size="raw" variant="ghost"
-                      onClick={() => setReplyOpenFor(null)}
-                      className="px-4 py-2 rounded-xl text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 text-xs font-bold"
-                    >
-                      {t('cancelReply')}
-                    </Button>
+                {/* Oversized quote mark, behind the content. */}
+                <Quote
+                  size={72}
+                  className="pointer-events-none absolute -right-2 -top-3 text-slate-100 dark:text-slate-800/70"
+                  strokeWidth={1.5}
+                />
+
+                <header className="relative flex items-start justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <img
+                      src={getAvatarUrl(rev.clientId, rev.clientName)}
+                      alt=""
+                      className="h-12 w-12 rounded-2xl object-cover ring-2 ring-white dark:ring-slate-900"
+                    />
+                    <div className="leading-tight">
+                      <p className="text-sm font-extrabold text-slate-900 dark:text-white">
+                        {rev.clientName || t('anonymousClient')}
+                      </p>
+                      <span className="text-[11px] text-slate-400">{fmt.date(rev.createdAt)}</span>
+                    </div>
                   </div>
-                </div>
-              ) : (
-                <Button size="raw" variant="ghost"
-                  onClick={() => setReplyOpenFor(rev.id)}
-                  className="text-xs font-bold text-blue-600 dark:text-sky-400 hover:underline"
-                >
-                  {t('replyToReview')}
-                </Button>
-              )
-            )}
-          </FilterItem>
-        ))}
-      </FilterContainer>
+
+                  <div className="flex shrink-0 items-center gap-0.5 rounded-full bg-amber-50 px-2.5 py-1.5 dark:bg-amber-500/10">
+                    {[1, 2, 3, 4, 5].map((s) => (
+                      <Star
+                        key={s}
+                        size={12}
+                        className={
+                          s <= rev.rating ? 'fill-amber-400 text-amber-400' : 'text-amber-200 dark:text-amber-500/30'
+                        }
+                      />
+                    ))}
+                  </div>
+                </header>
+
+                {rev.comment && (
+                  <p className="relative text-sm leading-relaxed text-slate-600 dark:text-slate-300">{rev.comment}</p>
+                )}
+
+                {rev.wouldRecommend && (
+                  <span className="relative inline-flex w-fit items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1.5 text-[11px] font-bold text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-300">
+                    <ThumbsUp size={12} />
+                    {t('recommends')}
+                  </span>
+                )}
+
+                {rev.reply && (
+                  <div className="relative mt-auto space-y-1.5 rounded-2xl border-l-[3px] border-blue-500 bg-blue-50/70 p-4 dark:bg-slate-800/70">
+                    <span className="flex items-center gap-1.5 text-[11px] font-bold text-blue-600 dark:text-sky-400">
+                      <Reply size={12} />
+                      {t('craftsmanResponse')}
+                    </span>
+                    <p className="text-xs leading-relaxed text-slate-700 dark:text-slate-300">{rev.reply.body}</p>
+                  </div>
+                )}
+
+                {isMaster && !rev.reply && (
+                  <div className="relative mt-auto pt-1">
+                    {replyOpenFor === rev.id ? (
+                      <div className="space-y-2">
+                        <Textarea
+                          rows={2}
+                          value={replyDrafts[rev.id] ?? ''}
+                          onChange={(e) => setReplyDrafts((prev) => ({ ...prev, [rev.id]: e.target.value }))}
+                          placeholder={t('replyPlaceholder')}
+                          className="w-full rounded-xl border border-slate-200 bg-slate-50 p-3 text-xs dark:border-slate-700 dark:bg-slate-800"
+                        />
+                        <div className="flex items-center gap-2">
+                          <Button
+                            size="raw"
+                            variant="ghost"
+                            onClick={() => handleReply(rev.id)}
+                            disabled={replySubmittingFor === rev.id || !(replyDrafts[rev.id] ?? '').trim()}
+                            className="flex items-center gap-1.5 rounded-xl bg-blue-600 px-4 py-2 text-xs font-bold text-white transition hover:bg-blue-700 disabled:opacity-50"
+                          >
+                            <Send size={12} />
+                            {t('sendReply')}
+                          </Button>
+                          <Button
+                            size="raw"
+                            variant="ghost"
+                            onClick={() => setReplyOpenFor(null)}
+                            className="rounded-xl px-4 py-2 text-xs font-bold text-slate-500 transition hover:text-slate-700 dark:hover:text-slate-300"
+                          >
+                            {t('cancelReply')}
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <Button
+                        size="raw"
+                        variant="ghost"
+                        onClick={() => setReplyOpenFor(rev.id)}
+                        className={cn(
+                          'inline-flex items-center gap-1.5 rounded-xl border border-slate-200 px-4 py-2 text-xs font-bold text-slate-600 transition',
+                          'hover:border-blue-300 hover:text-blue-600 dark:border-slate-800 dark:text-slate-300 dark:hover:text-sky-400'
+                        )}
+                      >
+                        <Reply size={13} />
+                        {t('replyToReview')}
+                      </Button>
+                    )}
+                  </div>
+                )}
+              </article>
+            </FilterItem>
+          ))}
+        </FilterContainer>
+      )}
 
       </div>
       )}
+
+      </div>
 
       {/* Write Review Modal (Client rates Master) */}
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>

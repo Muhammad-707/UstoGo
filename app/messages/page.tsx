@@ -12,6 +12,7 @@ import { waLink, waBookingText } from '@/lib/whatsapp';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const WHATSAPP_STATUSES = new Set(['ACCEPTED', 'IN_PROGRESS', 'COMPLETED']);
 
@@ -100,11 +101,11 @@ export default function WhatsAppContactsPage() {
       const relevant = res.items.filter((b) => WHATSAPP_STATUSES.has(b.status));
       setBookings(relevant);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load bookings.');
+      setError(err instanceof Error ? err.message : t('errLoadBookings'));
     } finally {
       setLoading(false);
     }
-  }, [user]);
+  }, [user, t]);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- fetches bookings on mount/user change
@@ -149,7 +150,7 @@ export default function WhatsAppContactsPage() {
       {loading && (
         <div className="space-y-3">
           {Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="h-20 rounded-2xl bg-slate-100 dark:bg-slate-800 animate-pulse" />
+            <Skeleton key={i} className="h-20 rounded-2xl" />
           ))}
         </div>
       )}

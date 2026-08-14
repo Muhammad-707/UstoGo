@@ -44,5 +44,6 @@
   "twoFactorEnableFailed": "Ин рамз қабул нашуд.",
   "twoFactorDisableFailed": "Хомӯш кардани 2FA номуваффақ шуд.",
   "twoFactorEnabledOk": "Аутентификатсияи дуомила фаъол шуд.",
-  "twoFactorDisabledOk": "Аутентификатсияи дуомила хомӯш шуд."
+  "twoFactorDisabledOk": "Аутентификатсияи дуомила хомӯш шуд.",
+  "noSessionsDesc": "Танҳо ҳамин дастгоҳ ба ҳисоби шумо ворид шудааст."
 }

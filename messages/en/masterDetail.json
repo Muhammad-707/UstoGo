@@ -58,5 +58,18 @@
   "verified": "Verified",
   "noAbout": "No information added yet.",
   "anonymousClient": "Client",
-  "minutes": "min"
+  "minutes": "min",
+  "statRating": "Rating",
+  "statJobs": "Jobs completed",
+  "statYears": "Years experience",
+  "statRadius": "Service radius",
+  "trustTitle": "The UstoGo guarantee",
+  "shareProfile": "Share",
+  "trustPoint1": "Payment is held until you approve the finished work",
+  "trustPoint2": "This master passed document and background checks",
+  "trustPoint3": "Call-out and on-site estimate are free",
+  "noAboutDesc": "This master has not written a profile yet. Ask them directly.",
+  "noServicesDesc": "The service list is not filled in yet. Ask about the work and the price directly.",
+  "noGalleryDesc": "No photos of finished work have been uploaded yet.",
+  "noReviewsDesc": "No reviews yet. You could leave the first one."
 }

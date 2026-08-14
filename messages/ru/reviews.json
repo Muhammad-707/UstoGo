@@ -27,5 +27,10 @@
   "replyFailed": "Не удалось отправить ответ.",
   "submitReviewFailed": "Не удалось отправить отзыв.",
   "tabReviews": "Отзывы",
-  "tabLeaderboard": "Рейтинг"
+  "tabLeaderboard": "Рейтинг",
+  "ratingBreakdown": "Распределение оценок",
+  "noReviewsDesc": "Отзывы появятся здесь после первого завершённого заказа.",
+  "anonymousClient": "Клиент",
+  "recommends": "Рекомендует",
+  "reviewsCount": "{count} отзывов"
 }
