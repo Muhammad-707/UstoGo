@@ -8,9 +8,9 @@ import { ApiError } from '@/lib/api/client';
 import type { ScheduleOptimizerResult } from '@/lib/api/types';
 import { MasterPageHeader } from '@/components/master/MasterPageHeader';
 import { useDateFormat } from '@/lib/datetime';
-import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { DatePicker, todayISO } from '@/components/ui/date-picker';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function ScheduleOptimizerPage() {
   const t = useTranslations('scheduleOptimizer');
@@ -58,7 +58,13 @@ export default function ScheduleOptimizerPage() {
     <div className="page-shell page-shell-narrow py-10 space-y-8">
 
       {error && <p className="text-xs font-bold text-red-600 dark:text-red-400">{error}</p>}
-      {loading && <p className="text-xs text-slate-400 font-semibold">{t('loading')}</p>}
+      {loading && (
+          <div className="space-y-3">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <Skeleton key={i} className="h-20 rounded-2xl" />
+            ))}
+          </div>
+        )}
 
       {result && !loading && (
         <>

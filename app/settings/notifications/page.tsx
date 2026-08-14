@@ -11,6 +11,7 @@ import { PageHeader } from '@/components/layout/PageHeader';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Card } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const GROUPS: { key: string; icon: string; types: NotificationType[] }[] = [
   {
@@ -95,7 +96,13 @@ export default function NotificationPreferencesPage() {
     <>
       <PageHeader icon="bell" eyebrow={t('accountSettings')} title={t('title')} hint={t('subtitle')} />
     <div className="page-shell page-shell-narrow py-10 space-y-8">
-      {loading && <p className="text-xs text-slate-400 font-semibold">{t('loading')}</p>}
+      {loading && (
+          <div className="space-y-3">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <Skeleton key={i} className="h-16 rounded-2xl" />
+            ))}
+          </div>
+        )}
       {error && <p className="text-xs font-bold text-red-600 dark:text-red-400">{error}</p>}
 
       {preferences &&

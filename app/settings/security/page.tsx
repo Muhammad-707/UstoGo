@@ -16,6 +16,8 @@ import { useDateFormat } from '@/lib/datetime';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Card } from '@/components/ui/card';
+import { EmptyState } from '@/components/ui/EmptyState';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function SecuritySettingsPage() {
   const t = useTranslations('settingsSecurity');
@@ -190,9 +192,20 @@ export default function SecuritySettingsPage() {
           </Button>
         </div>
 
-        {sessionsLoading && <p className="text-xs text-slate-400 font-semibold">{t('loading')}</p>}
+        {sessionsLoading && (
+          <div className="space-y-3">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <Skeleton key={i} className="h-16 rounded-2xl" />
+            ))}
+          </div>
+        )}
         {!sessionsLoading && sessions.length === 0 && (
-          <p className="text-xs text-slate-400 font-semibold">{t('noSessions')}</p>
+          <EmptyState
+            variant="inline"
+            icon="shieldcheck"
+            title={t('noSessions')}
+            description={t('noSessionsDesc')}
+          />
         )}
 
         <div className="divide-y divide-slate-100 dark:divide-slate-800">

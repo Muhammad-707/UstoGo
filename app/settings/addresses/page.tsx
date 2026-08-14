@@ -12,6 +12,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card } from '@/components/ui/card';
+import { EmptyState } from '@/components/ui/EmptyState';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface AddressFormState {
   label: string;
@@ -149,7 +151,13 @@ export default function SavedAddressesPage() {
     <div className="page-shell page-shell-narrow py-10 space-y-8">
 
       {error && <p className="text-xs font-bold text-red-600 dark:text-red-400">{error}</p>}
-      {loading && <p className="text-xs text-slate-400 font-semibold">{t('loading')}</p>}
+      {loading && (
+          <div className="space-y-3">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <Skeleton key={i} className="h-28 rounded-3xl" />
+            ))}
+          </div>
+        )}
 
       {showForm && (
         <Card className="rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-xl space-y-4">
@@ -246,9 +254,7 @@ export default function SavedAddressesPage() {
       )}
 
       {!loading && addresses.length === 0 && !showForm && (
-        <Card className="rounded-3xl p-12 text-center space-y-2">
-          <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">{t('empty')}</p>
-        </Card>
+        <EmptyState icon="mappin" tone="blue" title={t('empty')} description={t('emptyDesc')} />
       )}
 
       <div className="space-y-4">

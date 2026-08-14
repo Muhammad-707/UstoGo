@@ -22,10 +22,11 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
 import { Card } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const MasterLocationPicker = dynamic(() => import('@/components/masters/MasterLocationPicker'), {
   ssr: false,
-  loading: () => <div className="h-[320px] w-full rounded-2xl bg-slate-50 dark:bg-slate-800/40 animate-pulse" />,
+  loading: () => <Skeleton className="h-[320px] w-full rounded-2xl" />,
 });
 
 export default function EditProfilePage() {

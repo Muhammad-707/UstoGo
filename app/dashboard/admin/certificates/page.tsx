@@ -10,6 +10,7 @@ import { useRequireAuth } from '@/hooks/useRequireAuth';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import type { AdminCertificate } from '@/lib/api/types';
 import { EmptyState } from '@/components/ui/EmptyState';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 
@@ -37,7 +38,7 @@ export default function AdminCertificatesPage() {
       setCertificates(res.items);
       setTotalPages(res.meta.totalPages);
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Failed to load certificates.');
+      setError(err instanceof ApiError ? err.message : t('errLoad'));
     } finally {
       setLoading(false);
     }
@@ -54,7 +55,7 @@ export default function AdminCertificatesPage() {
       const { url } = await filesApi.url(fileId);
       window.open(url, '_blank', 'noopener,noreferrer');
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Failed to load the file.');
+      setError(err instanceof ApiError ? err.message : t('errLoadFile'));
     }
   };
 
@@ -64,7 +65,7 @@ export default function AdminCertificatesPage() {
       await adminApi.certificates.verify(id);
       await load();
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Failed to verify certificate.');
+      setError(err instanceof ApiError ? err.message : t('errVerify'));
     } finally {
       setActingId(null);
     }
@@ -76,7 +77,7 @@ export default function AdminCertificatesPage() {
       await adminApi.certificates.reject(id);
       await load();
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Failed to reject certificate.');
+      setError(err instanceof ApiError ? err.message : t('errReject'));
     } finally {
       setActingId(null);
     }
@@ -90,7 +91,7 @@ export default function AdminCertificatesPage() {
       action={
         <Link
           href="/dashboard/admin"
-          className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-white/15 hover:bg-white/25 backdrop-blur text-white text-xs font-bold transition"
+          className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs font-bold text-slate-700 shadow-sm transition hover:border-slate-300 hover:text-slate-900 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300 dark:hover:text-white"
         >
           <Icon name="chevronleft" size={14} />
           {t('back')}
@@ -123,7 +124,7 @@ export default function AdminCertificatesPage() {
         {loading && (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {Array.from({ length: 4 }).map((_, idx) => (
-              <div key={idx} className="h-28 rounded-2xl bg-slate-50 dark:bg-slate-800/40 animate-pulse" />
+              <Skeleton key={idx} className="h-28 rounded-2xl" />
             ))}
           </div>
         )}

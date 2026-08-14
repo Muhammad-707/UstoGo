@@ -13,6 +13,7 @@ import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import type { AdminMasterStats, MasterPublic } from '@/lib/api/types';
 import { getAvatarUrl } from '@/lib/placeholders';
 import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Card } from '@/components/ui/card';
 
 const STARS = ['5', '4', '3', '2', '1'] as const;
@@ -41,7 +42,7 @@ export default function AdminMasterStatsPage() {
         setMaster(m);
         setStats(s);
       } catch (err) {
-        if (!cancelled) setError(err instanceof ApiError ? err.message : 'Failed to load master statistics.');
+        if (!cancelled) setError(err instanceof ApiError ? err.message : t('errLoad'));
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -84,7 +85,7 @@ export default function AdminMasterStatsPage() {
       action={
         <Link
           href="/dashboard/admin"
-          className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-white/15 hover:bg-white/25 backdrop-blur text-white text-xs font-bold transition"
+          className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs font-bold text-slate-700 shadow-sm transition hover:border-slate-300 hover:text-slate-900 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300 dark:hover:text-white"
         >
           <Icon name="chevronleft" size={14} />
           {t('back')}
@@ -100,7 +101,7 @@ export default function AdminMasterStatsPage() {
       {loading && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           {Array.from({ length: 4 }).map((_, idx) => (
-            <Card key={idx} className="p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl h-[100px] animate-pulse" />
+            <Skeleton key={idx} className="h-[100px] rounded-3xl" />
           ))}
         </div>
       )}

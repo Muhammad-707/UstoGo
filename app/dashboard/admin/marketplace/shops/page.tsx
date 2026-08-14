@@ -11,6 +11,7 @@ import { useRequireAuth } from '@/hooks/useRequireAuth';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import type { City, MarketplaceShop } from '@/lib/api/types';
 import { EmptyState } from '@/components/ui/EmptyState';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
@@ -23,7 +24,7 @@ const ANY = '__any';
 
 const ShopLocationPicker = dynamic(() => import('@/components/marketplace/ShopLocationPicker'), {
   ssr: false,
-  loading: () => <div className="h-[300px] w-full rounded-2xl bg-slate-50 dark:bg-slate-800/40 animate-pulse" />,
+  loading: () => <Skeleton className="h-[300px] w-full rounded-2xl" />,
 });
 
 const EMPTY_FORM = {
@@ -150,14 +151,14 @@ export default function AdminMarketplaceShopsPage() {
         <div className="flex items-center gap-2">
           <Button size="raw" variant="ghost"
             onClick={openCreate}
-            className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-white/15 hover:bg-white/25 backdrop-blur text-white text-xs font-bold transition"
+            className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs font-bold text-slate-700 shadow-sm transition hover:border-slate-300 hover:text-slate-900 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300 dark:hover:text-white"
           >
             <Icon name="plus" size={14} />
             {t('addShop')}
           </Button>
           <Link
             href="/dashboard/admin"
-            className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-white/15 hover:bg-white/25 backdrop-blur text-white text-xs font-bold transition"
+            className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs font-bold text-slate-700 shadow-sm transition hover:border-slate-300 hover:text-slate-900 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300 dark:hover:text-white"
           >
             <Icon name="chevronleft" size={14} />
             {t('back')}
@@ -227,7 +228,7 @@ export default function AdminMarketplaceShopsPage() {
       <Card className="rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-4 shadow-xl">
         {loading && (
           <div className="space-y-2">
-            {Array.from({ length: 3 }).map((_, idx) => <div key={idx} className="h-20 rounded-2xl bg-slate-50 dark:bg-slate-800/40 animate-pulse" />)}
+            {Array.from({ length: 3 }).map((_, idx) => <Skeleton key={idx} className="h-20 rounded-2xl" />)}
           </div>
         )}
         {!loading && shops.length === 0 && <EmptyState icon="store" title={t('noResults')} />}

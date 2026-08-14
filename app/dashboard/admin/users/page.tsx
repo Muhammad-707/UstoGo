@@ -12,6 +12,7 @@ import type { AdminUserListItem, UserProfile, UserRole, UserStatus } from '@/lib
 import { getAvatarUrl } from '@/lib/placeholders';
 import { useDateFormat } from '@/lib/datetime';
 import { EmptyState } from '@/components/ui/EmptyState';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -19,7 +20,6 @@ import {
   Dialog,
   DialogClose,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
@@ -68,7 +68,7 @@ export default function AdminUsersPage() {
       setUsers(res.items);
       setTotalPages(res.meta.totalPages);
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Failed to load users.');
+      setError(err instanceof ApiError ? err.message : t('errLoad'));
     } finally {
       setLoading(false);
     }
@@ -100,7 +100,7 @@ export default function AdminUsersPage() {
       await adminApi.users.block(id, reason.trim());
       await load();
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Failed to block user.');
+      setError(err instanceof ApiError ? err.message : t('errBlock'));
     } finally {
       setActingId(null);
     }
@@ -112,7 +112,7 @@ export default function AdminUsersPage() {
       await adminApi.users.unblock(id);
       await load();
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Failed to unblock user.');
+      setError(err instanceof ApiError ? err.message : t('errUnblock'));
     } finally {
       setActingId(null);
     }
@@ -126,7 +126,7 @@ export default function AdminUsersPage() {
       action={
         <Link
           href="/dashboard/admin"
-          className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-white/15 hover:bg-white/25 backdrop-blur text-white text-xs font-bold transition"
+          className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs font-bold text-slate-700 shadow-sm transition hover:border-slate-300 hover:text-slate-900 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300 dark:hover:text-white"
         >
           <Icon name="chevronleft" size={14} />
           {t('back')}
@@ -177,7 +177,7 @@ export default function AdminUsersPage() {
         {loading && (
           <div className="space-y-2">
             {Array.from({ length: 5 }).map((_, idx) => (
-              <div key={idx} className="h-14 rounded-2xl bg-slate-50 dark:bg-slate-800/40 animate-pulse" />
+              <Skeleton key={idx} className="h-14 rounded-2xl" />
             ))}
           </div>
         )}
@@ -283,7 +283,7 @@ export default function AdminUsersPage() {
               </DialogClose>
             </DialogHeader>
             <div className="p-6 space-y-4">
-              {selectedLoading && <div className="h-32 rounded-2xl bg-slate-50 dark:bg-slate-800/40 animate-pulse" />}
+              {selectedLoading && <Skeleton className="h-32 rounded-2xl" />}
               {!selectedLoading && selected && (
                 <>
                   <div className="grid grid-cols-2 gap-3 text-xs">

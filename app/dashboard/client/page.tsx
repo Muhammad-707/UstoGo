@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { CircleCheckBig, Clock, Heart, MapPin, Wallet } from 'lucide-react';
 import { Icon } from '@/components/icons/LucideIcons';
 import { useTranslations } from 'next-intl';
 
@@ -13,7 +14,10 @@ import { useFavorites } from '@/contexts/FavoritesContext';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { getAvatarUrl } from '@/lib/placeholders';
 import type { Booking, MasterPublic, MyReferral } from '@/lib/api/types';
-import { FilterContainer, FilterItem, InViewRow } from '@/components/ui/FilterAnimate';
+import { InViewRow } from '@/components/ui/FilterAnimate';
+import { MetricGrid, type Metric } from '@/components/dashboard/MetricCard';
+import { EmptyState } from '@/components/ui/EmptyState';
+import { Skeleton } from '@/components/ui/skeleton';
 import { useDateFormat } from '@/lib/datetime';
 import { Button } from '@/components/ui/button';
 import {
@@ -43,6 +47,7 @@ export default function ClientDashboardPage() {
   const [referral, setReferral] = useState<MyReferral | null>(null);
   const [copied, setCopied] = useState(false);
   const [recentlyViewed, setRecentlyViewed] = useState<MasterPublic[]>([]);
+  const [bookingFilter, setBookingFilter] = useState<'ALL' | 'ACTIVE' | 'COMPLETED'>('ALL');
 
   useEffect(() => {
     reviewsApi
@@ -122,12 +127,22 @@ export default function ClientDashboardPage() {
   const totalSpent = completed.reduce((sum, b) => sum + (Number(b.price) || 0), 0);
   const unreviewedCompleted = completed.filter((b) => !reviewedBookingIds.has(b.id));
 
-  const metrics = [
-    { title: t('metricTotalSpent'), value: money(totalSpent), icon: 'DollarSign', color: 'from-blue-600 to-sky-500' },
-    { title: t('metricActiveBookings'), value: t('metricActiveBookingsValue', { count: active.length }), icon: 'Clock', color: 'from-amber-500 to-orange-500' },
-    { title: t('metricCompletedProjects'), value: t('metricCompletedProjectsValue', { count: completed.length }), icon: 'CheckCircle2', color: 'from-emerald-500 to-teal-500' },
-    { title: t('metricSavedMasters'), value: t('metricSavedMastersValue', { count: favoriteIds.length }), icon: 'Heart', color: 'from-purple-500 to-pink-500' },
+  const metrics: Metric[] = [
+    { label: t('metricTotalSpent'), value: money(totalSpent), Icon: Wallet, tone: 'blue' },
+    { label: t('metricActiveBookings'), value: active.length, Icon: Clock, tone: 'amber', href: '/booking' },
+    { label: t('metricCompletedProjects'), value: completed.length, Icon: CircleCheckBig, tone: 'emerald' },
+    { label: t('metricSavedMasters'), value: favoriteIds.length, Icon: Heart, tone: 'violet', href: '/favorites' },
   ];
+
+  /** The one booking happening right now, if there is one — everything else can wait. */
+  const inProgress = bookings.find((b) => b.status === 'IN_PROGRESS') ?? null;
+
+  const visibleBookings =
+    bookingFilter === 'ALL'
+      ? bookings
+      : bookingFilter === 'ACTIVE'
+        ? active
+        : completed;
 
   return (
     <DashboardLayout role="CLIENT" title={t('title')} subtitle={t('overview')}>
@@ -149,22 +164,38 @@ export default function ClientDashboardPage() {
         </div>
       )}
 
-      {/* Metrics Grid */}
-      <FilterContainer className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        {metrics.map((m, idx) => (
-          <Card key={idx} asChild>
-            <FilterItem index={idx} className="p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl flex items-center justify-between">
+      {/* Live booking spotlight — the one thing on this page that is happening now. */}
+      {inProgress && (
+        <div className="relative overflow-hidden rounded-3xl border border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50 p-6 shadow-md dark:border-blue-900/60 dark:from-blue-950/50 dark:to-slate-900">
+          <div className="flex flex-col items-start justify-between gap-5 sm:flex-row sm:items-center">
+            <div className="flex items-start gap-4">
+              <span className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-blue-600 text-white shadow-lg shadow-blue-600/30">
+                <span className="absolute inset-0 animate-ping rounded-2xl bg-blue-500/40" />
+                <MapPin size={22} className="relative" />
+              </span>
               <div className="space-y-1">
-                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">{m.title}</span>
-                <h3 className="text-2xl font-extrabold text-slate-900 dark:text-white">{m.value}</h3>
+                <p className="text-xs font-extrabold uppercase tracking-wide text-blue-700 dark:text-sky-300">
+                  {t('activeNow')}
+                </p>
+                <h4 className="text-sm font-bold text-slate-900 dark:text-white">
+                  {inProgress.serviceTitle} — {inProgress.masterDisplayName}
+                </h4>
+                <p className="text-xs text-slate-500 dark:text-slate-400">{t('activeNowDesc')}</p>
               </div>
-              <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${m.color} text-white flex items-center justify-center shadow-lg`}>
-                <Icon name={m.icon} size={22} />
-              </div>
-            </FilterItem>
-          </Card>
-        ))}
-      </FilterContainer>
+            </div>
+            <Link
+              href={`/booking/${inProgress.id}`}
+              className="flex w-full items-center justify-center gap-1.5 rounded-xl bg-blue-600 px-5 py-3 text-xs font-bold text-white shadow-md transition hover:bg-blue-700 sm:w-auto"
+            >
+              <MapPin size={14} />
+              {t('trackLive')}
+            </Link>
+          </div>
+        </div>
+      )}
+
+      {/* Metrics Grid */}
+      <MetricGrid metrics={metrics} />
 
       {/* Referral */}
       {referral && (
@@ -246,16 +277,57 @@ export default function ClientDashboardPage() {
 
       {/* Recent Bookings Table */}
       <Card className="rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-6 shadow-xl">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-4">
           <h3 className="text-lg font-bold text-slate-900 dark:text-white">{t('recentBookings')}</h3>
+
+          {/* Status pills. The table is the reason this page is opened twice a week and
+              it had no way to say "just the ones still running". */}
+          {bookings.length > 0 && (
+            <div className="no-scrollbar flex items-center gap-1.5 overflow-x-auto rounded-2xl bg-slate-100 p-1 dark:bg-slate-800/70">
+              {([
+                { key: 'ALL' as const, label: t('filterAll'), count: bookings.length },
+                { key: 'ACTIVE' as const, label: t('filterActive'), count: active.length },
+                { key: 'COMPLETED' as const, label: t('filterCompleted'), count: completed.length },
+              ]).map((f) => (
+                <Button
+                  key={f.key}
+                  size="raw"
+                  variant="ghost"
+                  onClick={() => setBookingFilter(f.key)}
+                  className={`shrink-0 rounded-xl px-3.5 py-2 text-xs font-bold transition ${
+                    bookingFilter === f.key
+                      ? 'bg-white text-blue-600 shadow-sm dark:bg-slate-900 dark:text-sky-400'
+                      : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200'
+                  }`}
+                >
+                  {f.label} ({f.count})
+                </Button>
+              ))}
+            </div>
+          )}
         </div>
 
-        {loading && <p className="text-xs text-slate-400 font-semibold">{t('loading')}</p>}
+        {loading && (
+          <div className="space-y-2.5">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <Skeleton key={i} className="h-12 w-full rounded-xl" />
+            ))}
+          </div>
+        )}
         {!loading && bookings.length === 0 && (
-          <p className="text-xs text-slate-400 font-semibold">{t('noBookings')}</p>
+          <EmptyState
+            icon="Calendar"
+            variant="inline"
+            title={t('noBookings')}
+            actionLabel={t('bookAgain')}
+            actionHref="/search"
+          />
+        )}
+        {!loading && bookings.length > 0 && visibleBookings.length === 0 && (
+          <EmptyState icon="Calendar" variant="inline" title={t('noBookingsFiltered')} />
         )}
 
-        {!loading && bookings.length > 0 && (
+        {!loading && visibleBookings.length > 0 && (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
               <thead>
@@ -270,7 +342,7 @@ export default function ClientDashboardPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-slate-800 font-semibold">
-                {bookings.map((b, idx) => (
+                {visibleBookings.map((b, idx) => (
                   <InViewRow key={b.id} index={idx} className="hover:bg-slate-50 dark:hover:bg-slate-800/40 cursor-pointer" onClick={() => { const m = mastersMap[b.masterId]; if (m) setSelectedMaster(m); }}>
                     <td className="py-4 font-mono font-bold text-blue-600 dark:text-sky-400">{b.bookingNumber}</td>
                     <td className="py-4 text-slate-900 dark:text-white">{b.serviceTitle}</td>
@@ -367,7 +439,7 @@ export default function ClientDashboardPage() {
                     rel="noopener noreferrer"
                   >
                     <Icon name="whatsapp" size={16} />
-                    Write on WhatsApp
+                    {t('writeOnWhatsApp')}
                   </a>
                 </Button>
               )}
@@ -378,7 +450,7 @@ export default function ClientDashboardPage() {
                 className="w-full h-auto py-3 rounded-2xl border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-extrabold text-xs hover:bg-slate-50 dark:hover:bg-slate-800"
                 onClick={() => setSelectedMaster(null)}
               >
-                <Link href={`/master/${selectedMaster.id}`}>View Full Profile</Link>
+                <Link href={`/master/${selectedMaster.id}`}>{t('viewFullProfile')}</Link>
               </Button>
             </div>
             </>

@@ -14,6 +14,8 @@ import { Switch } from '@/components/ui/switch';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Card } from '@/components/ui/card';
 import { DatePicker, todayISO } from '@/components/ui/date-picker';
+import { EmptyState } from '@/components/ui/EmptyState';
+import { Skeleton } from '@/components/ui/skeleton';
 
 type DayUi = WorkingDay & { isWorking: boolean };
 
@@ -156,7 +158,13 @@ export default function WorkingSchedulePage() {
       )}
 
       <Card className="rounded-3xl border border-slate-200 dark:border-slate-800 p-8 space-y-6 shadow-xl">
-        {loading && <p className="text-xs text-slate-400 font-semibold">{t('loading')}</p>}
+        {loading && (
+          <div className="space-y-3">
+            {Array.from({ length: 7 }).map((_, i) => (
+              <Skeleton key={i} className="h-14 rounded-2xl" />
+            ))}
+          </div>
+        )}
         {!loading &&
           days.map((day) => (
             <div
@@ -276,7 +284,14 @@ export default function WorkingSchedulePage() {
           {addingExc ? t('saving') : t('addException')}
         </Button>
 
-        {exceptions.length === 0 && <p className="text-xs text-slate-400 font-semibold">{t('noExceptions')}</p>}
+        {exceptions.length === 0 && (
+          <EmptyState
+            variant="inline"
+            icon="calendar"
+            title={t('noExceptions')}
+            description={t('noExceptionsDesc')}
+          />
+        )}
         <div className="space-y-2">
           {exceptions.map((exc) => (
             <div

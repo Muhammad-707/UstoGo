@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { ChartColumn, ShieldCheck, Star, Users } from 'lucide-react';
 import { Icon } from '@/components/icons/LucideIcons';
 import { useMoney } from '@/lib/money';
 import { useTranslations } from 'next-intl';
@@ -13,6 +14,9 @@ import { revalidateMastersCache } from '@/lib/api/revalidate';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import type { AdminMasterListItem, ApprovalStatus, Booking, Category, DashboardResponse, PlatformNps } from '@/lib/api/types';
 import { FilterContainer, FilterItem, InViewRow } from '@/components/ui/FilterAnimate';
+import { BookingsChart } from '@/components/dashboard/BookingsChart';
+import { MetricGrid, type Metric } from '@/components/dashboard/MetricCard';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
@@ -66,7 +70,7 @@ export default function AdminDashboardPage() {
         const res = await adminApi.dashboard();
         if (!cancelled) setData(res);
       } catch (err) {
-        if (!cancelled) setError(err instanceof ApiError ? err.message : 'Failed to load dashboard data.');
+        if (!cancelled) setError(err instanceof ApiError ? err.message : t('errLoadDashboard'));
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -85,7 +89,7 @@ export default function AdminDashboardPage() {
       const res = await adminApi.masters.list({ approvalStatus, categoryId: categoryId || undefined, limit: 20 });
       setMasters(res.items);
     } catch (err) {
-      setMastersError(err instanceof ApiError ? err.message : 'Failed to load masters.');
+      setMastersError(err instanceof ApiError ? err.message : t('errLoadMasters'));
     } finally {
       setMastersLoading(false);
     }
@@ -104,14 +108,14 @@ export default function AdminDashboardPage() {
       await loadMasters();
       revalidateMastersCache();
     } catch (err) {
-      setMastersError(err instanceof ApiError ? err.message : 'Failed to approve master.');
+      setMastersError(err instanceof ApiError ? err.message : t('errApprove'));
     } finally {
       setActingId(null);
     }
   };
 
   const handleReject = async (id: string) => {
-    const reason = window.prompt('Rejection reason:');
+    const reason = window.prompt(t('rejectionReasonPrompt'));
     if (!reason) return;
     setActingId(id);
     try {
@@ -119,7 +123,7 @@ export default function AdminDashboardPage() {
       await loadMasters();
       revalidateMastersCache();
     } catch (err) {
-      setMastersError(err instanceof ApiError ? err.message : 'Failed to reject master.');
+      setMastersError(err instanceof ApiError ? err.message : t('errReject'));
     } finally {
       setActingId(null);
     }
@@ -152,16 +156,43 @@ export default function AdminDashboardPage() {
     ? data.bookings.pending + data.bookings.accepted + data.bookings.inProgress + data.bookings.completed + data.bookings.cancelled + data.bookings.expired
     : 0;
 
-  const metrics = data
+  const metrics: Metric[] = data
     ? [
-        { title: t('metricTotalClients'), value: data.users.clients.toLocaleString(), growth: t('metricTotalClientsGrowth', { count: data.users.blocked }), icon: 'Users', color: 'from-emerald-500 to-teal-500', bg: 'from-emerald-500/10 to-teal-500/10' },
-        { title: t('metricTotalMasters'), value: data.users.masters.toLocaleString(), growth: `${data.masters.approved} ${t('approved')}`, icon: 'shieldcheck', color: 'from-blue-600 to-sky-500', bg: 'from-blue-600/10 to-sky-500/10' },
-        { title: t('metricMonthlyBookings'), value: totalBookings.toLocaleString(), growth: t('metricCompletedCount', { count: data.bookings.completed }), icon: 'BarChart3', color: 'from-amber-500 to-orange-500', bg: 'from-amber-500/10 to-orange-500/10' },
-        { title: 'Average Rating', value: data.reviews.averageRating.toFixed(2), growth: `${data.reviews.count} reviews`, icon: 'Star', color: 'from-purple-600 to-indigo-600', bg: 'from-purple-600/10 to-indigo-600/10' },
+        {
+          label: t('metricTotalClients'),
+          value: data.users.clients,
+          hint: t('metricTotalClientsGrowth', { count: data.users.blocked }),
+          Icon: Users,
+          tone: 'emerald',
+          href: '/dashboard/admin/users',
+        },
+        {
+          label: t('metricTotalMasters'),
+          value: data.users.masters,
+          hint: `${data.masters.approved} ${t('approved')}`,
+          Icon: ShieldCheck,
+          tone: 'blue',
+          href: '/dashboard/admin/users',
+        },
+        {
+          label: t('metricMonthlyBookings'),
+          value: totalBookings,
+          hint: t('metricCompletedCount', { count: data.bookings.completed }),
+          Icon: ChartColumn,
+          tone: 'amber',
+          href: '/dashboard/admin/bookings',
+        },
+        {
+          label: t('metricAverageRating'),
+          value: data.reviews.averageRating,
+          decimals: 2,
+          hint: t('metricReviewsCount', { count: data.reviews.count }),
+          Icon: Star,
+          tone: 'violet',
+          href: '/dashboard/admin/reviews',
+        },
       ]
     : [];
-
-  const barMax = data && data.series.length ? Math.max(...data.series.map((s) => s.created), 1) : 1;
 
   return (
     <DashboardLayout role="ADMIN" title={t('title')} subtitle={t('platformHealth')}>
@@ -171,56 +202,54 @@ export default function AdminDashboardPage() {
         </div>
       )}
 
-      {/* Metrics Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        {loading &&
-          Array.from({ length: 4 }).map((_, idx) => (
-            <Card key={idx} className="p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl h-[100px] animate-pulse" />
+      {/* Metrics Grid — every tile links to the screen its figure came from, which is
+          what an operator opens this page to do next. */}
+      {loading ? (
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {Array.from({ length: 4 }).map((_, idx) => (
+            <Skeleton key={idx} className="h-[148px] rounded-[1.5rem]" />
           ))}
-        {!loading &&
-          metrics.map((m, idx) => (
-            <Card key={idx} className="p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl flex items-center justify-between group hover:shadow-2xl hover:-translate-y-0.5 transition-all duration-300">
-              <div className="space-y-1">
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{m.title}</span>
-                <h3 className="text-2xl font-extrabold text-slate-900 dark:text-white">{m.value}</h3>
-                <span className="text-[10px] font-bold text-emerald-500">{m.growth}</span>
-              </div>
-              <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${m.color} text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300`}>
-                <Icon name={m.icon} size={24} />
-              </div>
-            </Card>
-          ))}
-      </div>
+        </div>
+      ) : (
+        <MetricGrid metrics={metrics} />
+      )}
 
       {/* Chart + Quick Stats Row */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
         {/* Chart */}
+        {/* Bookings per day.
+            Three things were wrong with the old chart. It was titled "Revenue &
+            Bookings Growth" and labelled "2026" while plotting neither revenue nor a
+            year — the series is a rolling window of daily booking counts and carries
+            no money at all. It threw away half the data it was given: the API returns
+            `created` *and* `completed` per day and only `created` was drawn. And it
+            floored every bar at 4% height, so a day with zero bookings rendered a
+            visible stub — which is why the chart read as a flat line with a few random
+            spikes rather than as mostly-empty days. */}
         <Card className="lg:col-span-2 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-6 shadow-xl">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
               <h3 className="text-lg font-bold text-slate-900 dark:text-white">{t('chartTitle')}</h3>
-              <p className="text-xs text-slate-500">{t('chartSubtitle')}</p>
+              <p className="text-xs text-slate-500">{t('chartSubtitle', { days: data?.series.length ?? 0 })}</p>
             </div>
-            <span className="text-xs font-bold text-purple-600 dark:text-purple-400">{t('chartPeriod')}</span>
+            <div className="flex items-center gap-4">
+              <span className="flex items-center gap-1.5 text-[11px] font-bold text-slate-500 dark:text-slate-400">
+                <span className="h-2.5 w-2.5 rounded-full bg-gradient-to-t from-violet-600 to-indigo-500" />
+                {t('chartCreated')}
+              </span>
+              <span className="flex items-center gap-1.5 text-[11px] font-bold text-slate-500 dark:text-slate-400">
+                <span className="h-2.5 w-2.5 rounded-full bg-gradient-to-t from-emerald-600 to-teal-400" />
+                {t('chartCompleted')}
+              </span>
+            </div>
           </div>
 
-          {!loading && data && data.series.length > 0 && (
-            <div className="h-52 flex items-end justify-between gap-3 pt-6 border-b border-slate-100 dark:border-slate-800">
-              {data.series.map((s, idx) => (
-                <div key={idx} className="flex-1 flex flex-col items-center gap-2 h-full justify-end group">
-                  <div
-                    style={{ height: `${Math.max((s.created / barMax) * 100, 4)}%` }}
-                    className="w-full bg-gradient-to-t from-purple-600 via-indigo-500 to-sky-400 rounded-t-xl group-hover:from-purple-500 group-hover:to-sky-300 transition-all duration-300 shadow-md"
-                  />
-                  <span className="text-[10px] text-slate-400 font-bold">{s.date.slice(5)}</span>
-                </div>
-              ))}
-            </div>
-          )}
+          {!loading && data && data.series.length > 0 && <BookingsChart series={data.series} />}
+
           {!loading && data && data.series.length === 0 && (
             <p className="text-xs text-slate-400 font-semibold text-center py-10">{t('noChartData')}</p>
           )}
-          {loading && <div className="h-52 rounded-2xl bg-slate-50 dark:bg-slate-800/40 animate-pulse" />}
+          {loading && <Skeleton className="h-52 rounded-2xl" />}
         </Card>
 
         {/* Quick Stats */}
@@ -231,7 +260,7 @@ export default function AdminDashboardPage() {
               { label: t('metricTotalClients'), value: data?.users.clients.toLocaleString() ?? '—', icon: 'Users', color: 'text-emerald-500', bg: 'bg-emerald-50 dark:bg-emerald-950/20' },
               { label: t('metricTotalMasters'), value: data?.users.masters.toLocaleString() ?? '—', icon: 'shieldcheck', color: 'text-blue-500', bg: 'bg-blue-50 dark:bg-blue-950/20' },
               { label: t('metricMonthlyBookings'), value: totalBookings.toLocaleString() ?? '—', icon: 'BarChart3', color: 'text-amber-500', bg: 'bg-amber-50 dark:bg-amber-950/20' },
-              { label: 'Avg Rating', value: data ? data.reviews.averageRating.toFixed(2) : '—', icon: 'Star', color: 'text-purple-500', bg: 'bg-purple-50 dark:bg-purple-950/20' },
+              { label: t('metricAvgRatingShort'), value: data ? data.reviews.averageRating.toFixed(2) : '—', icon: 'Star', color: 'text-purple-500', bg: 'bg-purple-50 dark:bg-purple-950/20' },
             ].map((s, i) => (
               <div key={i} className="flex items-center justify-between p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/50">
                 <div className="flex items-center gap-3">
@@ -253,7 +282,7 @@ export default function AdminDashboardPage() {
           <h3 className="text-lg font-bold text-slate-900 dark:text-white">{t('npsTitle')}</h3>
           <p className="text-[10px] text-slate-400 font-semibold mt-0.5">{t('npsSubtitle')}</p>
         </div>
-        {npsLoading && <div className="h-24 rounded-2xl bg-slate-50 dark:bg-slate-800/40 animate-pulse" />}
+        {npsLoading && <Skeleton className="h-24 rounded-2xl" />}
         {!npsLoading && (!nps || nps.responseCount === 0) && (
           <p className="text-xs text-slate-400 font-semibold">{t('npsNoData')}</p>
         )}
@@ -326,7 +355,7 @@ export default function AdminDashboardPage() {
         {mastersLoading && (
           <div className="space-y-2">
             {Array.from({ length: 4 }).map((_, idx) => (
-              <div key={idx} className="h-14 rounded-2xl bg-slate-50 dark:bg-slate-800/40 animate-pulse" />
+              <Skeleton key={idx} className="h-14 rounded-2xl" />
             ))}
           </div>
         )}
@@ -423,14 +452,14 @@ export default function AdminDashboardPage() {
                               disabled={actingId === m.id}
                               className="btn-success px-3 py-1.5 rounded-xl disabled:opacity-60 font-bold transition"
                             >
-                              Approve
+                              {t('actionApprove')}
                             </Button>
                             <Button size="raw" variant="ghost"
                               onClick={() => handleReject(m.id)}
                               disabled={actingId === m.id}
                               className="px-3 py-1.5 rounded-xl bg-red-600 hover:bg-red-700 disabled:opacity-60 text-white font-bold shadow-sm transition"
                             >
-                              Reject
+                              {t('actionReject')}
                             </Button>
                           </>
                         )}
@@ -486,7 +515,7 @@ export default function AdminDashboardPage() {
               {masterBookingsLoading ? (
                 <div className="space-y-2">
                   {Array.from({ length: 3 }).map((_, i) => (
-                    <div key={i} className="h-12 rounded-2xl bg-slate-50 dark:bg-slate-800 animate-pulse" />
+                    <Skeleton key={i} className="h-12 rounded-2xl" />
                   ))}
                 </div>
               ) : masterBookings.length === 0 ? (

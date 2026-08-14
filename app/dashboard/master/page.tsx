@@ -2,8 +2,26 @@
 
 import React, { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
+import {
+  Award,
+  Briefcase,
+  CalendarDays,
+  CircleCheckBig,
+  ClipboardList,
+  Clock,
+  Compass,
+  CreditCard,
+  Image as ImageIcon,
+  MessageCircle,
+  MessagesSquare,
+  Settings,
+  Star,
+  type LucideIcon,
+} from 'lucide-react';
 import { Icon } from '@/components/icons/LucideIcons';
 import { useTranslations } from 'next-intl';
+
+import { cn } from '@/lib/utils';
 
 import { useWeekdays, useDateFormat } from '@/lib/datetime';
 import { useAuth } from '@/contexts/AuthContext';
@@ -18,10 +36,12 @@ import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import type { Booking, City, MasterNps, MasterStats, MasterStatus, WorkingDay } from '@/lib/api/types';
 import { getAvatarUrl } from '@/lib/placeholders';
 import { FilterContainer, FilterItem } from '@/components/ui/FilterAnimate';
+import { MetricGrid, type Metric } from '@/components/dashboard/MetricCard';
 import { AnalyticsSection } from '@/components/master/AnalyticsSection';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
 
 
 export default function MasterDashboardPage() {
@@ -84,7 +104,7 @@ export default function MasterDashboardPage() {
       const updated = await masterCabinetApi.setInstantBook(!status.instantBookEnabled);
       setStatus(updated);
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Failed to update instant-book.');
+      setError(err instanceof ApiError ? err.message : t('errInstantBook'));
     } finally {
       setTogglingInstantBook(false);
     }
@@ -116,7 +136,7 @@ export default function MasterDashboardPage() {
       setPending(pendingRes.items);
       setUpcoming(upcomingRes.items);
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Failed to load bookings.');
+      setError(err instanceof ApiError ? err.message : t('errLoadBookings'));
     } finally {
       setLoading(false);
     }
@@ -146,7 +166,7 @@ export default function MasterDashboardPage() {
       await bookingsApi.accept(id);
       setPending((prev) => prev.filter((b) => b.id !== id));
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Failed to accept booking.');
+      setError(err instanceof ApiError ? err.message : t('errAccept'));
     } finally {
       setActingId(null);
     }
@@ -158,7 +178,7 @@ export default function MasterDashboardPage() {
       await bookingsApi.reject(id, 'Not available');
       setPending((prev) => prev.filter((b) => b.id !== id));
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Failed to decline booking.');
+      setError(err instanceof ApiError ? err.message : t('errDecline'));
     } finally {
       setActingId(null);
     }
@@ -173,7 +193,7 @@ export default function MasterDashboardPage() {
       if (err instanceof ApiError && (err.code === 'TOO_EARLY_TO_START' || err.status === 422)) {
         setError(t('startJobTooEarly'));
       } else {
-        setError(err instanceof ApiError ? err.message : 'Failed to start job.');
+        setError(err instanceof ApiError ? err.message : t('errStartJob'));
       }
     } finally {
       setActingId(null);
@@ -188,7 +208,7 @@ export default function MasterDashboardPage() {
       await refreshUser();
       revalidateMastersCache();
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Failed to update availability.');
+      setError(err instanceof ApiError ? err.message : t('errAvailability'));
     } finally {
       setTogglingActive(false);
     }
@@ -214,50 +234,52 @@ export default function MasterDashboardPage() {
     }
   };
 
-  const metrics = [
+  const metrics: Metric[] = [
     {
-      title: t('metricJobsCompleted'),
-      value: String(masterProfile?.completedBookingsCount ?? 0),
-      growth: t('metricJobsCompletedValue', { count: masterProfile?.completedBookingsCount ?? 0 }),
-      icon: 'checkcircle2',
-      color: 'from-emerald-500 to-teal-500',
+      label: t('metricJobsCompleted'),
+      value: masterProfile?.completedBookingsCount ?? 0,
+      Icon: CircleCheckBig,
+      tone: 'emerald',
     },
     {
-      title: t('metricCustomerRating'),
-      value: masterProfile ? `${Number(masterProfile.ratingAverage).toFixed(1)} / 5` : '—',
-      growth: `${masterProfile?.ratingCount ?? 0} ${t('reviewsCount')}`,
-      icon: 'star',
-      color: 'from-yellow-500 to-amber-500',
+      label: t('metricCustomerRating'),
+      value: masterProfile ? Number(masterProfile.ratingAverage) : 0,
+      decimals: 1,
+      suffix: ' / 5',
+      hint: `${masterProfile?.ratingCount ?? 0} ${t('reviewsCount')}`,
+      Icon: Star,
+      tone: 'amber',
+      href: '/reviews',
     },
     {
-      title: t('metricActiveServices'),
-      value: String(activeServicesCount),
-      growth: t('metricActiveServicesSub'),
-      icon: 'briefcase',
-      color: 'from-blue-500 to-indigo-500',
+      label: t('metricActiveServices'),
+      value: activeServicesCount,
+      hint: t('metricActiveServicesSub'),
+      Icon: Briefcase,
+      tone: 'blue',
+      href: '/settings/services',
     },
     {
-      title: t('metricUpcomingJobs'),
-      value: String(upcoming.length),
-      growth: t('metricUpcomingJobsSub'),
-      icon: 'calendar',
-      color: 'from-violet-500 to-purple-500',
+      label: t('metricUpcomingJobs'),
+      value: upcoming.length,
+      hint: t('metricUpcomingJobsSub'),
+      Icon: CalendarDays,
+      tone: 'violet',
     },
   ];
 
-  const quickActions = [
-    { href: '/settings/services', label: t('qaServices'), icon: 'briefcase', color: 'bg-blue-500' },
-    { href: '/settings/schedule', label: t('qaSchedule'), icon: 'clock', color: 'bg-emerald-500' },
-    { href: '/settings/portfolio', label: t('qaPortfolio'), icon: 'image', color: 'bg-violet-500' },
-    { href: '/settings/certificates', label: t('qaCertificates'), icon: 'award', color: 'bg-amber-500' },
-    { href: '/settings/profile', label: t('qaProfile'), icon: 'mappin', color: 'bg-rose-500' },
-    { href: '/messages', label: t('qaWhatsApp'), icon: 'whatsapp', color: 'bg-[#25D366]' },
-    { href: '/quotes', label: t('qaQuotes'), icon: 'calculator', color: 'bg-cyan-500' },
-    { href: '/dashboard/master/schedule-optimizer', label: t('qaRouteOptimizer'), icon: 'compass', color: 'bg-teal-500' },
-    { href: '/settings/quick-replies', label: t('qaQuickReplies'), icon: 'message', color: 'bg-indigo-500' },
-    { href: '/payments', label: t('qaPayments'), icon: 'creditcard', color: 'bg-fuchsia-500' },
+  const quickActions: { href: string; label: string; Icon: LucideIcon; tile: string }[] = [
+    { href: '/settings/services', label: t('qaServices'), Icon: Briefcase, tile: 'from-blue-600 to-sky-500 shadow-blue-500/25' },
+    { href: '/settings/schedule', label: t('qaSchedule'), Icon: Clock, tile: 'from-emerald-600 to-teal-500 shadow-emerald-500/25' },
+    { href: '/settings/portfolio', label: t('qaPortfolio'), Icon: ImageIcon, tile: 'from-violet-600 to-fuchsia-500 shadow-violet-500/25' },
+    { href: '/settings/certificates', label: t('qaCertificates'), Icon: Award, tile: 'from-amber-500 to-orange-500 shadow-amber-500/25' },
+    { href: '/settings/profile', label: t('qaProfile'), Icon: Settings, tile: 'from-rose-500 to-pink-500 shadow-rose-500/25' },
+    { href: '/messages', label: t('qaWhatsApp'), Icon: MessageCircle, tile: 'from-green-500 to-emerald-500 shadow-green-500/25' },
+    { href: '/quotes', label: t('qaQuotes'), Icon: ClipboardList, tile: 'from-cyan-600 to-sky-500 shadow-cyan-500/25' },
+    { href: '/dashboard/master/schedule-optimizer', label: t('qaRouteOptimizer'), Icon: Compass, tile: 'from-teal-600 to-emerald-500 shadow-teal-500/25' },
+    { href: '/settings/quick-replies', label: t('qaQuickReplies'), Icon: MessagesSquare, tile: 'from-indigo-600 to-blue-500 shadow-indigo-500/25' },
+    { href: '/payments', label: t('qaPayments'), Icon: CreditCard, tile: 'from-fuchsia-600 to-purple-500 shadow-fuchsia-500/25' },
   ];
-
   const orderedSchedule = [...schedule].sort((a, b) => {
     const today = new Date().getDay();
     const rot = (w: number) => (w - today + 7) % 7;
@@ -280,19 +302,20 @@ export default function MasterDashboardPage() {
 
   return (
     <DashboardLayout role="MASTER" title={t('title')} subtitle={t('overview')} action={
-      <div className="flex items-center gap-3">
-        {/* These sit on the hero's amber gradient, not on the page. Slate-on-orange and
-            amber-on-amber both washed out; a translucent secondary and a solid white
-            primary are what read against a coloured band. */}
+      /* `flex-wrap`: these used to be two `whitespace-nowrap` buttons in a `shrink-0`
+         row on a coloured band. On the plain header the band is gone and the row had
+         nowhere to go — at the Tajik label lengths the secondary button slid under the
+         primary one. They wrap now, and take the page's own button colours. */
+      <div className="flex flex-wrap items-center justify-end gap-2">
         <Link
           href="/settings/schedule"
-          className="px-5 py-2.5 rounded-xl bg-white/15 hover:bg-white/25 backdrop-blur border border-white/25 text-xs font-bold text-white transition whitespace-nowrap"
+          className="rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-xs font-bold text-slate-700 shadow-sm transition hover:border-amber-300 hover:text-amber-700 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300 dark:hover:text-amber-400"
         >
           {t('manageSchedule')}
         </Link>
         <Link
           href="/settings/services"
-          className="px-5 py-2.5 rounded-xl bg-white text-amber-700 hover:bg-amber-50 font-extrabold text-xs shadow-lg transition whitespace-nowrap"
+          className="rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 px-5 py-2.5 text-xs font-extrabold text-white shadow-lg shadow-amber-500/25 transition hover:from-amber-600 hover:to-orange-700"
         >
           {t('editServices')}
         </Link>
@@ -490,22 +513,7 @@ export default function MasterDashboardPage() {
       )}
 
       {/* Metrics Grid */}
-      <FilterContainer className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {metrics.map((m, idx) => (
-          <Card key={idx} asChild>
-            <FilterItem index={idx} className="p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl flex items-center justify-between hover:shadow-2xl hover:-translate-y-0.5 transition">
-              <div className="space-y-1">
-                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">{m.title}</span>
-                <h3 className="text-2xl font-extrabold text-slate-900 dark:text-white">{m.value}</h3>
-                {m.growth && <span className="text-[10px] font-bold text-emerald-500">{m.growth}</span>}
-              </div>
-              <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${m.color} text-white flex items-center justify-center shadow-lg`}>
-                <Icon name={m.icon} size={22} />
-              </div>
-            </FilterItem>
-          </Card>
-        ))}
-      </FilterContainer>
+      <MetricGrid metrics={metrics} />
 
       {/* Analytics */}
       <AnalyticsSection stats={stats} loading={statsLoading} />
@@ -540,23 +548,28 @@ export default function MasterDashboardPage() {
         )}
       </Card>
 
-      {/* Quick Actions */}
+      {/* Quick Actions — the same tile the client feed uses, so a shortcut looks like
+          a shortcut in both cabinets. Five across, not seven: at seven the Tajik
+          labels wrapped to three lines inside a 90px cell. */}
       <div>
-        <h3 className="text-sm font-extrabold uppercase tracking-widest text-slate-400 mb-4">{t('quickActions')}</h3>
-        <FilterContainer className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-4">
-          {quickActions.map((qa, idx) => (
-            <FilterItem key={qa.href} index={idx}>
-              <Card asChild>
-                <Link
+        <h3 className="mb-4 text-sm font-extrabold uppercase tracking-widest text-slate-400">{t('quickActions')}</h3>
+        <FilterContainer className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+          {quickActions.map((qa) => (
+            <FilterItem key={qa.href} className="h-full">
+              <Link
                 href={qa.href}
-                className="rounded-3xl border border-slate-200 dark:border-slate-800 shadow-md p-5 flex flex-col items-center gap-3 text-center hover:border-amber-400 hover:shadow-lg transition group"
+                className="group flex h-full flex-col gap-3 rounded-[1.25rem] border border-slate-200 bg-white p-5 shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition-[box-shadow,border-color,transform] duration-300 hover:-translate-y-1 hover:border-amber-300 hover:shadow-lg dark:border-slate-800 dark:bg-slate-900 dark:hover:border-amber-900/70"
               >
-                  <div className={`w-11 h-11 rounded-2xl ${qa.color} text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition`}>
-                    <Icon name={qa.icon} size={20} />
-                  </div>
-                  <span className="text-[11px] font-bold text-slate-700 dark:text-slate-200 leading-tight">{qa.label}</span>
-                </Link>
-              </Card>
+                <span
+                  className={cn(
+                    'flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br text-white shadow-lg ring-1 ring-white/20 transition-transform duration-300 group-hover:-rotate-6 group-hover:scale-110',
+                    qa.tile,
+                  )}
+                >
+                  <qa.Icon size={19} strokeWidth={2.2} />
+                </span>
+                <span className="text-xs font-bold leading-tight text-slate-700 dark:text-slate-200">{qa.label}</span>
+              </Link>
             </FilterItem>
           ))}
         </FilterContainer>
@@ -565,7 +578,13 @@ export default function MasterDashboardPage() {
       {/* Pending Job Requests */}
       <Card className="rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-6 shadow-xl">
         <h3 className="text-lg font-bold text-slate-900 dark:text-white">{t('pendingApprovals')}</h3>
-        {loading && <p className="text-xs text-slate-400 font-semibold">{t('loadingRequests')}</p>}
+        {loading && (
+          <div className="space-y-3">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <Skeleton key={i} className="h-24 rounded-2xl" />
+            ))}
+          </div>
+        )}
         {!loading && pending.length === 0 && (
           <EmptyState variant="inline" icon="clock" title={t('noPendingRequests')} />
         )}

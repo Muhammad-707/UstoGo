@@ -11,6 +11,8 @@ import type { PortfolioImage } from '@/lib/api/types';
 import { MasterPageHeader } from '@/components/master/MasterPageHeader';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { EmptyState } from '@/components/ui/EmptyState';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const MAX_IMAGES = 20;
 
@@ -131,14 +133,15 @@ export default function PortfolioPage() {
       )}
 
       <Card className="rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-xl">
-        {loading && <p className="text-xs text-slate-400 font-semibold">{t('loading')}</p>}
-        {!loading && images.length === 0 && (
-          <div className="py-12 text-center space-y-3">
-            <div className="w-14 h-14 rounded-2xl bg-amber-50 dark:bg-amber-950/40 text-amber-500 mx-auto flex items-center justify-center">
-              <Icon name="image" size={26} />
-            </div>
-            <p className="text-xs text-slate-400 font-semibold">{t('empty')}</p>
+        {loading && (
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <Skeleton key={i} className="aspect-square rounded-2xl" />
+            ))}
           </div>
+        )}
+        {!loading && images.length === 0 && (
+          <EmptyState variant="inline" icon="image" title={t('empty')} description={t('emptyDesc')} />
         )}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
           {images.map((item, index) => (

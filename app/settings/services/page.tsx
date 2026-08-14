@@ -15,6 +15,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
 import { Card } from '@/components/ui/card';
+import { EmptyState } from '@/components/ui/EmptyState';
+import { Skeleton } from '@/components/ui/skeleton';
 
 type PriceType = 'FIXED' | 'HOURLY' | 'FROM';
 
@@ -441,14 +443,20 @@ export default function MasterServicesPage() {
           <Icon name="sparkles" size={16} className="text-amber-500" />
           {t('myServicesTitle', { count: services.length })}
         </h3>
-        {loading && <p className="text-xs text-slate-400 font-semibold">{t('loading')}</p>}
-        {!loading && services.length === 0 && (
-          <div className="py-10 text-center space-y-3">
-            <div className="w-14 h-14 rounded-2xl bg-amber-50 dark:bg-amber-950/40 text-amber-500 mx-auto flex items-center justify-center">
-              <Icon name="briefcase" size={26} />
-            </div>
-            <p className="text-xs text-slate-400 font-semibold">{t('noServices')}</p>
+        {loading && (
+          <div className="space-y-3">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <Skeleton key={i} className="h-24 rounded-2xl" />
+            ))}
           </div>
+        )}
+        {!loading && services.length === 0 && (
+          <EmptyState
+            variant="inline"
+            icon="briefcase"
+            title={t('noServices')}
+            description={t('noServicesDesc')}
+          />
         )}
         <div className="space-y-3">
           {services.map((s) => (

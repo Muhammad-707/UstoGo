@@ -9,6 +9,7 @@ import { ApiError } from '@/lib/api/client';
 import { useRequireAuth } from '@/hooks/useRequireAuth';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { FilterContainer, FilterItem } from '@/components/ui/FilterAnimate';
+import { Skeleton } from '@/components/ui/skeleton';
 import { getAvatarUrl } from '@/lib/placeholders';
 import type { Paginated, Review } from '@/lib/api/types';
 import { useDateFormat } from '@/lib/datetime';
@@ -73,7 +74,7 @@ export default function AdminReviewsPage() {
       action={
         <Link
           href="/dashboard/admin"
-          className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-white/15 hover:bg-white/25 backdrop-blur text-white text-xs font-bold transition"
+          className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs font-bold text-slate-700 shadow-sm transition hover:border-slate-300 hover:text-slate-900 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300 dark:hover:text-white"
         >
           <Icon name="chevronleft" size={14} />
           {t('back')}
@@ -94,7 +95,7 @@ export default function AdminReviewsPage() {
         {loading && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {Array.from({ length: 4 }).map((_, idx) => (
-              <div key={idx} className="h-36 rounded-2xl bg-slate-50 dark:bg-slate-800/40 animate-pulse" />
+              <Skeleton key={idx} className="h-36 rounded-2xl" />
             ))}
           </div>
         )}

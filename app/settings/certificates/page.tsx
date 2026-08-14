@@ -13,6 +13,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { DatePicker, todayISO } from '@/components/ui/date-picker';
+import { EmptyState } from '@/components/ui/EmptyState';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function CertificatesPage() {
   const t = useTranslations('settingsCertificates');
@@ -154,14 +156,20 @@ export default function CertificatesPage() {
       )}
 
       <Card className="rounded-3xl border border-slate-200 dark:border-slate-800 divide-y divide-slate-100 dark:divide-slate-800 shadow-xl overflow-hidden">
-        {loading && <div className="p-6 text-xs text-slate-400 font-semibold">{t('loading')}</div>}
-        {!loading && certs.length === 0 && (
-          <div className="p-12 text-center space-y-3">
-            <div className="w-14 h-14 rounded-2xl bg-amber-50 dark:bg-amber-950/40 text-amber-500 mx-auto flex items-center justify-center">
-              <Icon name="award" size={26} />
-            </div>
-            <p className="text-xs text-slate-400 font-semibold">{t('noCertificates')}</p>
+        {loading && (
+          <div className="space-y-3 p-6">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <Skeleton key={i} className="h-20 rounded-2xl" />
+            ))}
           </div>
+        )}
+        {!loading && certs.length === 0 && (
+          <EmptyState
+            variant="inline"
+            icon="award"
+            title={t('noCertificates')}
+            description={t('noCertificatesDesc')}
+          />
         )}
         {certs.map((c) => (
           <div key={c.id} className="p-6 flex items-center justify-between">

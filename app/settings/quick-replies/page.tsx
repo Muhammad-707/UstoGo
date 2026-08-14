@@ -10,6 +10,8 @@ import { MasterPageHeader } from '@/components/master/MasterPageHeader';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
+import { EmptyState } from '@/components/ui/EmptyState';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const MAX_REPLIES = 20;
 
@@ -93,7 +95,13 @@ export default function QuickRepliesPage() {
     <div className="page-shell page-shell-narrow py-10 space-y-8">
 
       {error && <p className="text-xs font-bold text-red-600 dark:text-red-400">{error}</p>}
-      {loading && <p className="text-xs text-slate-400 font-semibold">{t('loading')}</p>}
+      {loading && (
+          <div className="space-y-3">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <Skeleton key={i} className="h-16 rounded-2xl" />
+            ))}
+          </div>
+        )}
 
       <Card className="rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-xl space-y-3">
         <div className="flex gap-3">
@@ -155,7 +163,7 @@ export default function QuickRepliesPage() {
           </Card>
         ))}
         {!loading && replies.length === 0 && (
-          <p className="text-xs text-slate-400 font-semibold text-center py-8">{t('empty')}</p>
+          <EmptyState variant="inline" icon="messagesquare" title={t('empty')} description={t('emptyDesc')} />
         )}
       </div>
     </div>
