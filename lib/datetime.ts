@@ -13,6 +13,28 @@ import { useLocale, useTranslations } from 'next-intl';
  *
  * `weekday` is the JavaScript convention the API also uses: 0 = Sunday … 6 = Saturday.
  */
+/**
+ * Month names, from the catalogue, for the same reason the weekdays are.
+ *
+ * A long-month date built with `Intl` was the app's one hydration mismatch: Node
+ * resolved `tg-TJ` one way and the browser another, so the server sent
+ * "14 Август 2026" and the client re-rendered "14 августа 2026 г." — React threw the
+ * whole subtree away on every page that shows a date picker. Names we own render the
+ * same in both places by construction.
+ *
+ * `month` is 0-based, matching `Date.prototype.getMonth`.
+ */
+export function useMonthNames() {
+  const t = useTranslations('common');
+  const names = t.raw('months') as string[];
+
+  return {
+    long: (month: number): string => names[month] ?? '',
+    /** "14 Август 2026" — day, month name, year, in that order for all three locales. */
+    formatLongDate: (date: Date): string => `${date.getDate()} ${names[date.getMonth()] ?? ''} ${date.getFullYear()}`,
+  };
+}
+
 export function useWeekdays() {
   const t = useTranslations('common');
   const long = t.raw('weekdays') as string[];

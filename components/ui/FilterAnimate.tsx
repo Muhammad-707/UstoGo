@@ -1,7 +1,7 @@
 'use client';
 
 import { motion, AnimatePresence, type Variants } from 'framer-motion';
-import { Children, createContext, useContext, type ReactNode } from 'react';
+import { Children, createContext, useContext, useMemo, type ReactNode } from 'react';
 
 // Smooth, non-bouncy stagger: children fade/slide in one after another.
 export const staggerContainerVariants: Variants = {
@@ -13,6 +13,36 @@ export const staggerContainerVariants: Variants = {
     },
   },
 };
+
+/** The whole wave finishes inside this, however many children there are. */
+const MAX_TOTAL_STAGGER = 0.9;
+const PREFERRED_STAGGER = 0.09;
+
+/**
+ * A per-child delay that shortens as the list grows.
+ *
+ * A flat 0.09s per child is fine for the eight cards on a landing row and catastrophic
+ * for a long list: the admin review queue holds 306 items, so the last card began its
+ * fade-in 27 seconds after the page loaded, and every card until then sat at
+ * `opacity: 0`. The page looked empty and broken for half a minute. Capping the *total*
+ * keeps the effect on short lists and makes it a quick ripple on long ones.
+ */
+function buildStagger(count: number): Variants {
+  const step = count > 1 ? Math.min(PREFERRED_STAGGER, MAX_TOTAL_STAGGER / (count - 1)) : 0;
+  return {
+    hidden: {},
+    show: { transition: { staggerChildren: step, delayChildren: 0.05 } },
+  };
+}
+
+/**
+ * Memoised on purpose: a fresh `variants` object on every render makes framer-motion
+ * re-evaluate the whole variant tree, which restarts the entrance and leaves the
+ * children pinned at `opacity: 0` for as long as the parent keeps re-rendering.
+ */
+function useStagger(count: number): Variants {
+  return useMemo(() => buildStagger(count), [count]);
+}
 
 export const staggerItemVariants: Variants = {
   hidden: { opacity: 0, y: 20 },
@@ -67,6 +97,7 @@ export function FilterContainer({
   // every later child parked at `hidden`, i.e. `opacity: 0`. That is why the marketplace
   // rendered a blank gap where its category chips should be: they were there, invisible.
   const count = Children.count(children);
+  const stagger = useStagger(count);
 
   return (
     <StaggerContext.Provider value={true}>
@@ -74,7 +105,7 @@ export function FilterContainer({
         key={count}
         initial="hidden"
         animate="show"
-        variants={staggerContainerVariants}
+        variants={stagger}
         className={className}
       >
         {children}
@@ -175,13 +206,16 @@ export function AnimatedGrid({
   className?: string;
   children: ReactNode;
 }) {
+  const count = Children.count(children);
+  const stagger = useStagger(count);
+
   return (
     <AnimatePresence mode="wait">
       <motion.div
         key={animKey}
         initial="hidden"
         animate="show"
-        variants={staggerContainerVariants}
+        variants={stagger}
         exit={{ opacity: 0, transition: { duration: 0.15, ease: 'easeIn' } }}
         className={className}
       >

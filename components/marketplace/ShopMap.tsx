@@ -1,7 +1,7 @@
 'use client';
 
-import React from 'react';
-import { MapContainer, TileLayer, Marker, Popup, Circle } from 'react-leaflet';
+import React, { useEffect } from 'react';
+import { MapContainer, TileLayer, Marker, Popup, Circle, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useTranslations } from 'next-intl';
@@ -24,6 +24,36 @@ function pinIcon(color: string) {
 }
 
 const shopPin = pinIcon('#059669');
+
+/**
+ * Keeps the viewport on the pins that are actually rendered.
+ *
+ * `MapContainer`'s `center` and `zoom` are read once, on mount — Leaflet owns the view
+ * afterwards and react-leaflet does not push later prop values into it. So filtering the
+ * list to one city, or getting a geolocation fix, changed which markers existed while the
+ * map stayed framed on the whole country, and the four Dushanbe branches the reader had
+ * just asked for were four pins lost somewhere in the middle of it.
+ */
+function FitToShops({ shops, origin }: ShopMapProps) {
+  const map = useMap();
+
+  useEffect(() => {
+    const points: [number, number][] = shops.map((shop) => [shop.latitude, shop.longitude]);
+    if (origin) points.push([origin.lat, origin.lng]);
+    if (points.length === 0) return;
+
+    // A single pin has no extent to fit — fitBounds on a zero-size box zooms to the
+    // maximum tile level and shows one building.
+    if (points.length === 1) {
+      map.setView(points[0], 13, { animate: true });
+      return;
+    }
+
+    map.fitBounds(L.latLngBounds(points), { padding: [48, 48], maxZoom: 14, animate: true });
+  }, [map, shops, origin]);
+
+  return null;
+}
 
 interface ShopMapProps {
   shops: MarketplaceShop[];
@@ -49,6 +79,8 @@ export default function ShopMap({ shops, origin }: ShopMapProps) {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
+
+        <FitToShops shops={shops} origin={origin} />
 
         {origin && (
           <Circle

@@ -7,6 +7,7 @@ import { Icon } from '@/components/icons/LucideIcons';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { useMonthNames } from '@/lib/datetime';
 import { cn } from '@/lib/utils';
 
 /**
@@ -79,6 +80,7 @@ export function DatePicker({
   'aria-label': ariaLabel,
 }: DatePickerProps) {
   const t = useTranslations('common');
+  const months = useMonthNames();
   const locale = useLocale() as keyof typeof DATE_LOCALES;
   const dateLocale = DATE_LOCALES[locale] ?? enUS;
   const [open, setOpen] = React.useState(false);
@@ -87,13 +89,9 @@ export function DatePicker({
   const minDate = fromISODate(min);
   const maxDate = fromISODate(max);
 
-  const label = selected
-    ? selected.toLocaleDateString(locale === 'tj' ? 'tg-TJ' : locale === 'ru' ? 'ru-RU' : 'en-US', {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric',
-      })
-    : placeholder ?? t('selectDate');
+  // Built from the catalogue, not from `Intl`: `tg-TJ` resolves differently in Node and
+  // in the browser, which made this label the app's one hydration mismatch.
+  const label = selected ? months.formatLongDate(selected) : placeholder ?? t('selectDate');
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -139,12 +137,14 @@ export function DatePicker({
             setOpen(false);
           }}
           formatters={{
-            // Russian and Tajik month names arrive lowercase from the locale; a
-            // caption reading "август 2026" looks like a bug next to everything
-            // else on the page being title-cased.
+            // Same month table as the trigger label. date-fns has no Tajik locale, so
+            // this fell back to `ru` and put Russian month names in the caption of a
+            // fully Tajik calendar. Title-cased because the Russian names are lowercase
+            // in the catalogue (they read "14 августа" inline) and a caption reading
+            // "августа 2026" looks like a bug next to everything else.
             formatCaption: (month) => {
-              const label = month.toLocaleString(dateLocale.code, { month: 'long', year: 'numeric' });
-              return label.charAt(0).toUpperCase() + label.slice(1);
+              const name = months.long(month.getMonth());
+              return `${name.charAt(0).toUpperCase()}${name.slice(1)} ${month.getFullYear()}`;
             },
           }}
           className={cn(

@@ -1,31 +1,63 @@
 import type { ReactNode } from 'react';
+import {
+  Award,
+  Bell,
+  Briefcase,
+  CalendarDays,
+  ClipboardList,
+  Clock,
+  Compass,
+  CreditCard,
+  FileText,
+  Heart,
+  Image,
+  LayoutGrid,
+  MessageCircle,
+  MessagesSquare,
+  Package,
+  Search,
+  Settings,
+  ShieldCheck,
+  ShoppingBag,
+  ShoppingCart,
+  Star,
+  Store,
+  Tag,
+  User,
+  Users,
+  Wrench,
+  type LucideIcon,
+} from 'lucide-react';
 
 /**
  * `labelKey` is a key in the `dashboardLayout` message namespace, not a label. The nav
  * used to carry English strings straight into the JSX, which is why a Tajik dashboard
  * still read "Overview / Active Jobs / Find Masters" — the labels never went through
  * next-intl at all. Resolving them is `DashboardLayout`'s job, where the hook lives.
+ *
+ * `groupKey` sorts the items into labelled sections in the sidebar. It matters most for
+ * admin: fourteen destinations in one flat strip is a strip nobody reads to the end.
  */
 export interface NavItem {
   href: string;
   labelKey: string;
-  icon: string;
-  color: string;
+  Icon: LucideIcon;
+  groupKey: string;
   badge?: number;
+  /** Leaves the dashboard for a public page — worth marking so the shell can say so. */
+  external?: boolean;
 }
 
 export interface SidebarConfig {
   role: string;
-  accent: string;
-  accentLight: string;
+  /** Tailwind gradient pair for the role's accent, used by the rail and active states. */
   gradientFrom: string;
   gradientTo: string;
   glow: string;
+  /** Soft tint behind an active item in the sidebar. */
   activeBg: string;
   activeText: string;
-  activeBar: string;
-  ring: string;
-  icon: string;
+  Icon: LucideIcon;
   /** Key in the `dashboardLayout` namespace — `panelADMIN`, `panelMASTER`, `panelCLIENT`. */
   titleKey: string;
   nav: NavItem[];
@@ -33,80 +65,88 @@ export interface SidebarConfig {
 
 export const adminSidebar: SidebarConfig = {
   role: 'ADMIN',
-  accent: 'purple',
-  accentLight: 'purple-50',
-  gradientFrom: 'from-purple-600',
+  gradientFrom: 'from-violet-600',
   gradientTo: 'to-indigo-700',
-  glow: 'shadow-purple-500/30',
-  activeBg: 'bg-purple-50 dark:bg-purple-500/10',
-  activeText: 'text-purple-700 dark:text-purple-300',
-  activeBar: 'bg-gradient-to-b from-purple-500 to-indigo-600',
-  ring: 'ring-purple-500/40',
-  icon: 'shieldcheck',
+  glow: 'shadow-violet-500/30',
+  activeBg: 'bg-violet-50 dark:bg-violet-500/10',
+  activeText: 'text-violet-700 dark:text-violet-300',
+  Icon: ShieldCheck,
   titleKey: 'panelADMIN',
   nav: [
-    { href: '/dashboard/admin', labelKey: 'navOverview', icon: 'grid', color: 'bg-purple-500' },
-    { href: '/dashboard/admin/users', labelKey: 'navUsers', icon: 'user', color: 'bg-purple-500' },
-    { href: '/dashboard/admin/bookings', labelKey: 'navBookings', icon: 'calendar', color: 'bg-purple-500' },
-    { href: '/dashboard/admin/reviews', labelKey: 'navReviews', icon: 'star', color: 'bg-purple-500' },
-    { href: '/dashboard/admin/reports', labelKey: 'navReports', icon: 'filetext', color: 'bg-purple-500' },
-    { href: '/dashboard/admin/certificates', labelKey: 'navCertificates', icon: 'award', color: 'bg-purple-500' },
-    { href: '/dashboard/admin/categories', labelKey: 'navCategories', icon: 'grid', color: 'bg-purple-500' },
-    { href: '/dashboard/admin/banners', labelKey: 'navBanners', icon: 'image', color: 'bg-purple-500' },
-    { href: '/dashboard/admin/broadcast', labelKey: 'navBroadcast', icon: 'bell', color: 'bg-purple-500' },
-    { href: '/dashboard/admin/audit-logs', labelKey: 'navAuditLog', icon: 'shieldcheck', color: 'bg-purple-500' },
-    { href: '/dashboard/admin/marketplace/products', labelKey: 'navProducts', icon: 'package', color: 'bg-purple-500' },
-    { href: '/dashboard/admin/marketplace/categories', labelKey: 'navProductCategories', icon: 'tag', color: 'bg-purple-500' },
-    { href: '/dashboard/admin/marketplace/orders', labelKey: 'navOrders', icon: 'shoppingcart', color: 'bg-purple-500' },
-    { href: '/dashboard/admin/marketplace/shops', labelKey: 'navShops', icon: 'store', color: 'bg-purple-500' },
+    { href: '/dashboard/admin', labelKey: 'navOverview', Icon: LayoutGrid, groupKey: 'groupOverview' },
+
+    { href: '/dashboard/admin/users', labelKey: 'navUsers', Icon: Users, groupKey: 'groupCommunity' },
+    { href: '/dashboard/admin/bookings', labelKey: 'navBookings', Icon: CalendarDays, groupKey: 'groupCommunity' },
+    { href: '/dashboard/admin/reviews', labelKey: 'navReviews', Icon: Star, groupKey: 'groupCommunity' },
+    { href: '/dashboard/admin/reports', labelKey: 'navReports', Icon: FileText, groupKey: 'groupCommunity' },
+    { href: '/dashboard/admin/certificates', labelKey: 'navCertificates', Icon: Award, groupKey: 'groupCommunity' },
+
+    { href: '/dashboard/admin/categories', labelKey: 'navCategories', Icon: LayoutGrid, groupKey: 'groupContent' },
+    { href: '/dashboard/admin/banners', labelKey: 'navBanners', Icon: Image, groupKey: 'groupContent' },
+    { href: '/dashboard/admin/broadcast', labelKey: 'navBroadcast', Icon: Bell, groupKey: 'groupContent' },
+    { href: '/dashboard/admin/audit-logs', labelKey: 'navAuditLog', Icon: ShieldCheck, groupKey: 'groupContent' },
+
+    { href: '/dashboard/admin/marketplace/products', labelKey: 'navProducts', Icon: Package, groupKey: 'groupShop' },
+    { href: '/dashboard/admin/marketplace/categories', labelKey: 'navProductCategories', Icon: Tag, groupKey: 'groupShop' },
+    { href: '/dashboard/admin/marketplace/orders', labelKey: 'navOrders', Icon: ShoppingCart, groupKey: 'groupShop' },
+    { href: '/dashboard/admin/marketplace/shops', labelKey: 'navShops', Icon: Store, groupKey: 'groupShop' },
   ],
 };
 
 export const masterSidebar: SidebarConfig = {
   role: 'MASTER',
-  accent: 'amber',
-  accentLight: 'amber-50',
   gradientFrom: 'from-amber-500',
   gradientTo: 'to-orange-600',
   glow: 'shadow-amber-500/30',
   activeBg: 'bg-amber-50 dark:bg-amber-500/10',
   activeText: 'text-amber-700 dark:text-amber-300',
-  activeBar: 'bg-gradient-to-b from-amber-500 to-orange-600',
-  ring: 'ring-amber-500/40',
-  icon: 'wrench',
+  Icon: Wrench,
   titleKey: 'panelMASTER',
   nav: [
-    { href: '/dashboard/master', labelKey: 'navOverview', icon: 'grid', color: 'bg-amber-500' },
-    { href: '/messages', labelKey: 'navWhatsApp', icon: 'whatsapp', color: 'bg-[#25D366]' },
-    { href: '/reviews', labelKey: 'navReviews', icon: 'star', color: 'bg-amber-500' },
-    { href: '/settings/services', labelKey: 'navServices', icon: 'briefcase', color: 'bg-amber-500' },
-    { href: '/settings/schedule', labelKey: 'navSchedule', icon: 'clock', color: 'bg-amber-500' },
-    { href: '/settings/profile', labelKey: 'navSettings', icon: 'settings', color: 'bg-amber-500' },
+    { href: '/dashboard/master', labelKey: 'navOverview', Icon: LayoutGrid, groupKey: 'groupOverview' },
+
+    { href: '/quotes', labelKey: 'navQuotes', Icon: ClipboardList, groupKey: 'groupWork', external: true },
+    { href: '/messages', labelKey: 'navWhatsApp', Icon: MessageCircle, groupKey: 'groupWork', external: true },
+    { href: '/reviews', labelKey: 'navReviews', Icon: Star, groupKey: 'groupWork', external: true },
+    {
+      href: '/dashboard/master/schedule-optimizer',
+      labelKey: 'navOptimizer',
+      Icon: Compass,
+      groupKey: 'groupWork',
+    },
+    { href: '/payments', labelKey: 'navPayments', Icon: CreditCard, groupKey: 'groupWork', external: true },
+
+    { href: '/settings/services', labelKey: 'navServices', Icon: Briefcase, groupKey: 'groupAccount' },
+    { href: '/settings/schedule', labelKey: 'navSchedule', Icon: Clock, groupKey: 'groupAccount' },
+    { href: '/settings/portfolio', labelKey: 'navPortfolio', Icon: Image, groupKey: 'groupAccount' },
+    { href: '/settings/certificates', labelKey: 'navCertificatesMine', Icon: Award, groupKey: 'groupAccount' },
+    { href: '/settings/quick-replies', labelKey: 'navQuickReplies', Icon: MessagesSquare, groupKey: 'groupAccount' },
+    { href: '/settings/profile', labelKey: 'navSettings', Icon: Settings, groupKey: 'groupAccount' },
   ],
 };
 
 export const clientSidebar: SidebarConfig = {
   role: 'CLIENT',
-  accent: 'blue',
-  accentLight: 'blue-50',
   gradientFrom: 'from-blue-600',
   gradientTo: 'to-sky-600',
   glow: 'shadow-blue-500/30',
   activeBg: 'bg-blue-50 dark:bg-blue-500/10',
   activeText: 'text-blue-700 dark:text-blue-300',
-  activeBar: 'bg-gradient-to-b from-blue-500 to-sky-600',
-  ring: 'ring-blue-500/40',
-  icon: 'user',
+  Icon: User,
   titleKey: 'panelCLIENT',
   nav: [
-    { href: '/dashboard/client', labelKey: 'navOverview', icon: 'grid', color: 'bg-blue-500' },
-    { href: '/search', labelKey: 'navFindMasters', icon: 'search', color: 'bg-blue-500' },
-    { href: '/messages', labelKey: 'navWhatsApp', icon: 'whatsapp', color: 'bg-[#25D366]' },
-    { href: '/favorites', labelKey: 'navFavorites', icon: 'heart', color: 'bg-blue-500' },
-    { href: '/marketplace', labelKey: 'navMarketplace', icon: 'shoppingbag', color: 'bg-blue-500' },
-    { href: '/cart', labelKey: 'navCart', icon: 'shoppingcart', color: 'bg-blue-500' },
-    { href: '/orders', labelKey: 'navOrders', icon: 'package', color: 'bg-blue-500' },
-    { href: '/settings/profile', labelKey: 'navSettings', icon: 'settings', color: 'bg-blue-500' },
+    { href: '/dashboard/client', labelKey: 'navOverview', Icon: LayoutGrid, groupKey: 'groupOverview' },
+
+    { href: '/search', labelKey: 'navFindMasters', Icon: Search, groupKey: 'groupWork', external: true },
+    { href: '/messages', labelKey: 'navWhatsApp', Icon: MessageCircle, groupKey: 'groupWork', external: true },
+    { href: '/favorites', labelKey: 'navFavorites', Icon: Heart, groupKey: 'groupWork', external: true },
+    { href: '/reviews', labelKey: 'navReviews', Icon: Star, groupKey: 'groupWork', external: true },
+
+    { href: '/marketplace', labelKey: 'navMarketplace', Icon: ShoppingBag, groupKey: 'groupShop', external: true },
+    { href: '/cart', labelKey: 'navCart', Icon: ShoppingCart, groupKey: 'groupShop', external: true },
+    { href: '/orders', labelKey: 'navOrders', Icon: Package, groupKey: 'groupShop', external: true },
+
+    { href: '/settings/profile', labelKey: 'navSettings', Icon: Settings, groupKey: 'groupAccount' },
   ],
 };
 
@@ -114,6 +154,17 @@ export function getSidebarConfig(role: string): SidebarConfig {
   if (role === 'ADMIN') return adminSidebar;
   if (role === 'MASTER') return masterSidebar;
   return clientSidebar;
+}
+
+/** Nav items in source order, bucketed by their group, groups in first-seen order. */
+export function groupNav(nav: NavItem[]): { groupKey: string; items: NavItem[] }[] {
+  const groups: { groupKey: string; items: NavItem[] }[] = [];
+  for (const item of nav) {
+    const existing = groups.find((g) => g.groupKey === item.groupKey);
+    if (existing) existing.items.push(item);
+    else groups.push({ groupKey: item.groupKey, items: [item] });
+  }
+  return groups;
 }
 
 export interface DashboardLayoutProps {

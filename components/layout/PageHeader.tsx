@@ -1,5 +1,9 @@
+'use client';
+
 import React from 'react';
 import { Icon } from '@/components/icons/LucideIcons';
+import { useInsideDashboardShell } from '@/components/layout/DashboardShell';
+import { cn } from '@/lib/utils';
 
 export type PageHeaderAccent = 'blue' | 'amber';
 
@@ -37,11 +41,27 @@ interface PageHeaderProps {
  */
 export function PageHeader({ icon, eyebrow, title, hint, action, accent = 'blue' }: PageHeaderProps) {
   const tone = ACCENT[accent];
+  // Inside the cabinet the band becomes a card in the content column: a full-bleed
+  // strip with its own `page-shell` nested inside the shell's own container indented
+  // the header twice and pushed it out of line with everything below it.
+  const inShell = useInsideDashboardShell();
 
   return (
-    <section className="relative overflow-hidden border-b border-slate-200/80 dark:border-slate-800/80 bg-white/70 dark:bg-slate-900/50">
+    <section
+      className={cn(
+        'relative overflow-hidden',
+        inShell
+          ? 'rounded-[1.5rem] border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900'
+          : 'border-b border-slate-200/80 bg-white/70 dark:border-slate-800/80 dark:bg-slate-900/50'
+      )}
+    >
       <div className={`pointer-events-none absolute inset-0 bg-gradient-to-r ${tone.wash} to-transparent`} />
-      <div className="relative page-shell py-7 sm:py-9 flex flex-col sm:flex-row sm:items-center justify-between gap-5">
+      <div
+        className={cn(
+          'relative flex flex-col justify-between gap-5 sm:flex-row sm:items-center',
+          inShell ? 'p-6 sm:p-7' : 'page-shell py-7 sm:py-9'
+        )}
+      >
         <div className="flex items-start gap-4 min-w-0">
           <div
             className={`hidden sm:flex w-13 h-13 shrink-0 rounded-2xl bg-gradient-to-br ${tone.tile} text-white items-center justify-center shadow-lg w-[52px] h-[52px]`}
