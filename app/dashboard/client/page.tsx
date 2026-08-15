@@ -11,11 +11,17 @@ import { bookingsApi, mastersApi, referralApi, reviewsApi } from '@/lib/api/endp
 import { getBookingsSocket } from '@/lib/bookings/socket';
 import { useRequireAuth } from '@/hooks/useRequireAuth';
 import { useFavorites } from '@/contexts/FavoritesContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
-import { getAvatarUrl } from '@/lib/placeholders';
+import { getAvatarUrl, getCoverUrl } from '@/lib/placeholders';
 import type { Booking, MasterPublic, MyReferral } from '@/lib/api/types';
 import { InViewRow } from '@/components/ui/FilterAnimate';
 import { MetricGrid, type Metric } from '@/components/dashboard/MetricCard';
+import { CabinetCta } from '@/components/dashboard/CabinetCta';
+import { CabinetHero } from '@/components/dashboard/CabinetHero';
+import { SectionHeading } from '@/components/dashboard/SectionHeading';
+import { Panel } from '@/components/dashboard/Panel';
+import { Notice } from '@/components/dashboard/Notice';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useDateFormat } from '@/lib/datetime';
@@ -36,6 +42,7 @@ export default function ClientDashboardPage() {
   const { money } = useMoney();
   useRequireAuth(['CLIENT']);
   const { favoriteIds } = useFavorites();
+  const { user } = useAuth();
 
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
@@ -146,22 +153,41 @@ export default function ClientDashboardPage() {
 
   return (
     <DashboardLayout role="CLIENT" title={t('title')} subtitle={t('overview')}>
+<CabinetHero
+        accent="blue"
+        eyebrow={t('heroEyebrow')}
+        title={t('heroGreeting', { name: user?.clientProfile?.firstName || user?.email?.split('@')[0] || '' })}
+        description={t('heroDesc')}
+        media={
+          <span className="relative hidden shrink-0 sm:block">
+            <span
+              aria-hidden
+              className="absolute -inset-1 rounded-[1.4rem] bg-gradient-to-br from-blue-500 to-sky-400 opacity-60 blur dark:opacity-70"
+            />
+            <img
+              src={getAvatarUrl(user?.id ?? '', user?.clientProfile?.firstName ?? '')}
+              alt=""
+              className="relative h-16 w-16 rounded-2xl border-2 border-white/80 object-cover dark:border-white/25"
+            />
+          </span>
+        }
+        stats={[
+          { label: t('metricTotalSpent'), value: money(totalSpent), Icon: Wallet },
+          { label: t('metricActiveBookings'), value: String(active.length), Icon: Clock },
+          { label: t('metricCompletedProjects'), value: String(completed.length), Icon: CircleCheckBig },
+          { label: t('metricSavedMasters'), value: String(favoriteIds.length), Icon: Heart },
+        ]}
+      />
+
       {unreviewedCompleted.length > 0 && (
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-2xl bg-gradient-to-r from-blue-50 to-sky-50 dark:from-blue-950/30 dark:to-sky-950/20 border border-blue-200 dark:border-blue-900">
-          <div className="flex items-start gap-3">
-            <Icon name="star" size={20} className="text-blue-500 shrink-0 mt-0.5" />
-            <div>
-              <p className="text-xs font-extrabold text-blue-900 dark:text-blue-200">{t('recommendTitle')}</p>
-              <p className="text-[11px] text-blue-700/80 dark:text-blue-300/80 mt-0.5">{t('recommendSubtitle')}</p>
-            </div>
-          </div>
-          <Link
-            href={`/reviews?booking=${unreviewedCompleted[0].id}`}
-            className="shrink-0 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-md transition"
-          >
-            {t('recommendCta')}
-          </Link>
-        </div>
+        <Notice
+          tone="info"
+          title={t('recommendTitle')}
+          actionLabel={t('recommendCta')}
+          actionHref={`/reviews?booking=${unreviewedCompleted[0].id}`}
+        >
+          {t('recommendSubtitle')}
+        </Notice>
       )}
 
       {/* Live booking spotlight — the one thing on this page that is happening now. */}
@@ -194,8 +220,16 @@ export default function ClientDashboardPage() {
         </div>
       )}
 
-      {/* Metrics Grid */}
-      <MetricGrid metrics={metrics} />
+      <div className="space-y-5 pt-2">
+        <SectionHeading
+          accent="blue"
+          eyebrow={t('sectionWorkEyebrow')}
+          title={t('overview')}
+          href="/booking"
+          hrefLabel={t('viewTracker')}
+        />
+        <MetricGrid metrics={metrics} />
+      </div>
 
       {/* Referral */}
       {referral && (
@@ -246,39 +280,58 @@ export default function ClientDashboardPage() {
         </Card>
       )}
 
-      {/* Recently Viewed Masters */}
+      {/* Recently viewed — the same photo-led card the public master grid uses, so a
+          client recognises the people they were just looking at. */}
       {recentlyViewed.length > 0 && (
-        <Card className="rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-4 shadow-xl">
-          <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-            <Icon name="eye" size={18} />
-            {t('recentlyViewed')}
-          </h3>
-          <div className="flex gap-4 overflow-x-auto pb-1 -mx-1 px-1">
+        <div className="space-y-5 pt-2">
+          <SectionHeading
+            accent="blue"
+            eyebrow={t('recentlyViewedEyebrow')}
+            title={t('recentlyViewed')}
+            href="/search"
+            hrefLabel={t('bookAgain')}
+          />
+          <div className="no-scrollbar -mx-1 flex gap-5 overflow-x-auto px-1 pb-2">
             {recentlyViewed.map((m) => (
               <Link
                 key={m.id}
                 href={`/master/${m.id}`}
-                className="shrink-0 w-40 rounded-2xl border border-slate-100 dark:border-slate-800 p-3 hover:border-blue-200 dark:hover:border-sky-900 hover:shadow-lg transition space-y-2"
+                className="group w-52 shrink-0 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-lg transition-[box-shadow,border-color,transform] duration-300 hover:-translate-y-2 hover:border-blue-200 hover:shadow-2xl hover:shadow-blue-500/10 dark:border-slate-800 dark:bg-slate-900 dark:hover:border-sky-900"
               >
-                <img
-                  src={m.avatarUrl ?? getAvatarUrl(m.id, m.displayName)}
-                  alt={m.displayName}
-                  className="w-full h-24 rounded-xl object-cover"
-                />
-                <div>
-                  <p className="text-xs font-extrabold text-slate-900 dark:text-white truncate">{m.displayName}</p>
-                  <p className="text-[10px] text-amber-500 font-bold">★ {m.ratingAverage}</p>
+                <div className="relative h-28 overflow-hidden">
+                  <img
+                    src={m.bannerUrl ?? getCoverUrl(m.id)}
+                    alt=""
+                    className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-110"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 to-transparent" />
+                  <span className="absolute right-2.5 top-2.5 flex items-center gap-1 rounded-full bg-slate-900/80 px-2 py-0.5 text-[11px] font-bold text-amber-400 backdrop-blur-md">
+                    ★ {m.ratingAverage}
+                  </span>
+                </div>
+                <div className="relative px-4 pb-4">
+                  <img
+                    src={m.avatarUrl ?? getAvatarUrl(m.id, m.displayName)}
+                    alt={m.displayName}
+                    className="-mt-8 h-14 w-14 rounded-2xl border-4 border-white object-cover shadow-lg transition-transform duration-300 group-hover:scale-105 dark:border-slate-900"
+                  />
+                  <p className="mt-2.5 truncate text-sm font-extrabold text-slate-900 dark:text-white">
+                    {m.displayName}
+                  </p>
+                  <p className="truncate text-xs font-semibold text-blue-600 dark:text-sky-400">{m.cityName}</p>
                 </div>
               </Link>
             ))}
           </div>
-        </Card>
+        </div>
       )}
 
       {/* Recent Bookings Table */}
-      <Card className="rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-6 shadow-xl">
+      <div className="space-y-5 pt-2">
+        <SectionHeading accent="blue" eyebrow={t('sectionWorkEyebrow')} title={t('sectionHistoryTitle')} />
+        <Panel padding="default" bodyClassName="space-y-6">
         <div className="flex flex-wrap items-center justify-between gap-4">
-          <h3 className="text-lg font-bold text-slate-900 dark:text-white">{t('recentBookings')}</h3>
+          <h3 className="text-base font-extrabold tracking-tight text-slate-900 dark:text-white">{t('recentBookings')}</h3>
 
           {/* Status pills. The table is the reason this page is opened twice a week and
               it had no way to say "just the ones still running". */}
@@ -385,7 +438,8 @@ export default function ClientDashboardPage() {
             </table>
           </div>
         )}
-      </Card>
+        </Panel>
+      </div>
 
       {/* Master Profile Overlay */}
       <Dialog open={!!selectedMaster} onOpenChange={(open) => !open && setSelectedMaster(null)}>
@@ -457,6 +511,15 @@ export default function ClientDashboardPage() {
           )}
         </DialogContent>
       </Dialog>
+
+      <CabinetCta
+        accent="blue"
+        eyebrow={t('ctaEyebrow')}
+        title={t('ctaTitle')}
+        description={t('ctaDesc')}
+        primary={{ href: '/search', label: t('ctaPrimary') }}
+        secondary={{ href: '/marketplace', label: t('ctaSecondary') }}
+      />
     </DashboardLayout>
   );
 }

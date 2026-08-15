@@ -57,6 +57,10 @@ export interface SidebarConfig {
   /** Soft tint behind an active item in the sidebar. */
   activeBg: string;
   activeText: string;
+  /** Icon colour for the active nav item, both themes. */
+  navIcon: string;
+  /** The role-coloured glow behind the rail header. */
+  aura: string;
   Icon: LucideIcon;
   /** Key in the `dashboardLayout` namespace — `panelADMIN`, `panelMASTER`, `panelCLIENT`. */
   titleKey: string;
@@ -70,6 +74,8 @@ export const adminSidebar: SidebarConfig = {
   glow: 'shadow-violet-500/30',
   activeBg: 'bg-violet-50 dark:bg-violet-500/10',
   activeText: 'text-violet-700 dark:text-violet-300',
+  navIcon: 'text-violet-600 dark:text-violet-400',
+  aura: 'bg-violet-500',
   Icon: ShieldCheck,
   titleKey: 'panelADMIN',
   nav: [
@@ -95,26 +101,28 @@ export const adminSidebar: SidebarConfig = {
 
 export const masterSidebar: SidebarConfig = {
   role: 'MASTER',
-  gradientFrom: 'from-amber-500',
-  gradientTo: 'to-orange-600',
-  glow: 'shadow-amber-500/30',
-  activeBg: 'bg-amber-50 dark:bg-amber-500/10',
-  activeText: 'text-amber-700 dark:text-amber-300',
+  gradientFrom: 'from-blue-600',
+  gradientTo: 'to-sky-500',
+  glow: 'shadow-blue-500/30',
+  activeBg: 'bg-blue-50 dark:bg-blue-500/10',
+  activeText: 'text-blue-700 dark:text-blue-300',
+  navIcon: 'text-blue-600 dark:text-sky-400',
+  aura: 'bg-blue-500',
   Icon: Wrench,
   titleKey: 'panelMASTER',
   nav: [
     { href: '/dashboard/master', labelKey: 'navOverview', Icon: LayoutGrid, groupKey: 'groupOverview' },
 
-    { href: '/quotes', labelKey: 'navQuotes', Icon: ClipboardList, groupKey: 'groupWork', external: true },
-    { href: '/messages', labelKey: 'navWhatsApp', Icon: MessageCircle, groupKey: 'groupWork', external: true },
-    { href: '/reviews', labelKey: 'navReviews', Icon: Star, groupKey: 'groupWork', external: true },
+    { href: '/quotes', labelKey: 'navQuotes', Icon: ClipboardList, groupKey: 'groupWork' },
+    { href: '/messages', labelKey: 'navWhatsApp', Icon: MessageCircle, groupKey: 'groupWork' },
+    { href: '/reviews', labelKey: 'navReviews', Icon: Star, groupKey: 'groupWork' },
     {
       href: '/dashboard/master/schedule-optimizer',
       labelKey: 'navOptimizer',
       Icon: Compass,
       groupKey: 'groupWork',
     },
-    { href: '/payments', labelKey: 'navPayments', Icon: CreditCard, groupKey: 'groupWork', external: true },
+    { href: '/payments', labelKey: 'navPayments', Icon: CreditCard, groupKey: 'groupWork' },
 
     { href: '/settings/services', labelKey: 'navServices', Icon: Briefcase, groupKey: 'groupAccount' },
     { href: '/settings/schedule', labelKey: 'navSchedule', Icon: Clock, groupKey: 'groupAccount' },
@@ -132,15 +140,17 @@ export const clientSidebar: SidebarConfig = {
   glow: 'shadow-blue-500/30',
   activeBg: 'bg-blue-50 dark:bg-blue-500/10',
   activeText: 'text-blue-700 dark:text-blue-300',
+  navIcon: 'text-blue-600 dark:text-sky-400',
+  aura: 'bg-blue-500',
   Icon: User,
   titleKey: 'panelCLIENT',
   nav: [
     { href: '/dashboard/client', labelKey: 'navOverview', Icon: LayoutGrid, groupKey: 'groupOverview' },
 
     { href: '/search', labelKey: 'navFindMasters', Icon: Search, groupKey: 'groupWork', external: true },
-    { href: '/messages', labelKey: 'navWhatsApp', Icon: MessageCircle, groupKey: 'groupWork', external: true },
+    { href: '/messages', labelKey: 'navWhatsApp', Icon: MessageCircle, groupKey: 'groupWork' },
     { href: '/favorites', labelKey: 'navFavorites', Icon: Heart, groupKey: 'groupWork', external: true },
-    { href: '/reviews', labelKey: 'navReviews', Icon: Star, groupKey: 'groupWork', external: true },
+    { href: '/reviews', labelKey: 'navReviews', Icon: Star, groupKey: 'groupWork' },
 
     { href: '/marketplace', labelKey: 'navMarketplace', Icon: ShoppingBag, groupKey: 'groupShop', external: true },
     { href: '/cart', labelKey: 'navCart', Icon: ShoppingCart, groupKey: 'groupShop', external: true },

@@ -10,5 +10,6 @@
   "add": "Add",
   "limitReached": "You've reached the limit of 20 quick replies.",
   "empty": "No quick replies yet.",
-  "emptyDesc": "Saved replies save you typing in chat. Create your first one."
+  "emptyDesc": "Saved replies save you typing in chat. Create your first one.",
+  "myRepliesTitle": "My quick replies"
 }

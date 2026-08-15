@@ -235,5 +235,9 @@
     "октября",
     "ноября",
     "декабря"
-  ]
+  ],
+  "unreadCount": "{count} непрочитанных",
+  "timeMinutesAgo": "{count} мин назад",
+  "timeHoursAgo": "{count} ч назад",
+  "timeDaysAgo": "{count} дн назад"
 }

@@ -1,7 +1,7 @@
 {
   "craftsmanVerification": "Craftsman Verification",
   "certificatesLicenses": "Certificates & Licenses",
-  "addNewLicense": "+ Add New License",
+  "addNewLicense": "Add New License",
   "issuerVerified": "Issuer: {issuer} • Verified in {year}",
   "verifiedActive": "Verified Active",
   "certificateHint": "Certificates with a file attached appear on your public page",
@@ -17,5 +17,6 @@
   "noCertificates": "No certificates added yet",
   "loading": "Loading...",
   "saving": "Saving...",
-  "noCertificatesDesc": "Upload your training certificates — they appear on your profile and build trust."
+  "noCertificatesDesc": "Upload your training certificates — they appear on your profile and build trust.",
+  "myCertificatesTitle": "My certificates"
 }

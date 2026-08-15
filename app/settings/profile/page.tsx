@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { useTranslations } from 'next-intl';
-import { Icon } from '@/components/icons/LucideIcons';
+import { KeyRound, MapPin, MessageCircle, ShieldAlert, UserRound } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { citiesApi, masterCabinetApi, usersApi } from '@/lib/api/endpoints';
 import { ApiError } from '@/lib/api/client';
@@ -14,6 +14,9 @@ import { resolveOwnFileUrl, uploadFile } from '@/lib/api/upload';
 import { getAvatarUrl, getCoverUrl } from '@/lib/placeholders';
 import type { City } from '@/lib/api/types';
 import { PageHeader } from '@/components/layout/PageHeader';
+import { PageBody } from '@/components/layout/PageBody';
+import { Panel } from '@/components/dashboard/Panel';
+import { Notice } from '@/components/dashboard/Notice';
 import { useDateFormat } from '@/lib/datetime';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -21,7 +24,6 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
-import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 
 const MasterLocationPicker = dynamic(() => import('@/components/masters/MasterLocationPicker'), {
@@ -31,6 +33,7 @@ const MasterLocationPicker = dynamic(() => import('@/components/masters/MasterLo
 
 export default function EditProfilePage() {
   const t = useTranslations('settingsProfile');
+  const tm = useTranslations('dashboardMaster');
   const fmt = useDateFormat();
   const { user, refreshUser, logout } = useAuth();
   const isMaster = user?.role === 'MASTER';
@@ -200,69 +203,94 @@ export default function EditProfilePage() {
   const effectiveAvatar = avatarUrl ?? getAvatarUrl(user?.id ?? '', fullName);
   const effectiveBanner = bannerUrl ?? getCoverUrl(user?.id ?? '');
 
+  /**
+   * One primary button for the whole cabinet, in the neutral.
+   *
+   * It used to take the role's accent, which put a saturated amber or blue slab next to
+   * every form — and the accent then had nothing left to mean, because it was already
+   * on the button, the header tile and the active nav row. The accent marks *whose*
+   * cabinet this is; the button marks what to press.
+   */
+  const primaryBtn =
+    'bg-slate-900 text-white hover:bg-slate-800 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-200';
+
   return (
     <>
       <PageHeader
         icon="User"
         eyebrow={t('accountSettings')}
         title={t('editProfile')}
-        accent={isMaster ? 'amber' : 'blue'}
+        hint={t('displayNameHint')}
+        accent="blue"
       />
-    <div className="page-shell page-shell-narrow py-10 space-y-8">
+    <PageBody narrow>
 
+      {/* The identity card, on the banner rather than under it.
+          The name and the email used to sit on a white strip below the picture with the
+          avatar hanging off the seam between them, which gave the page two headers and a
+          fifty-pixel band of nothing. Everything now lives on the photograph the master
+          chose, with one scrim carrying the type — the same treatment the dashboard's
+          welcome band uses, so the two read as the same product. */}
       {isMaster && (
-        <Card className="rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-xl">
-          <div className="relative h-40 sm:h-52">
-            <img src={effectiveBanner} alt="" className="w-full h-full object-cover" />
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-900/70 to-transparent" />
-            <input
-              ref={bannerInputRef}
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={handleBannerChange}
-            />
-            <Button
-              onClick={() => bannerInputRef.current?.click()}
-              disabled={uploadingBanner}
-              className="absolute bottom-3 right-3 h-auto px-3 py-2 rounded-xl bg-white/90 hover:bg-white backdrop-blur text-slate-800 text-[10px] font-extrabold"
-            >
-              {uploadingBanner ? '...' : t('changeBanner')}
-            </Button>
-            <img
-              src={effectiveAvatar}
-              alt=""
-              className="absolute -bottom-10 left-6 w-24 h-24 rounded-3xl object-cover border-4 border-white dark:border-slate-900 shadow-xl"
-            />
-          </div>
-          <div className="pt-12 pb-6 px-6 flex items-center justify-between">
-            <div>
-              <h2 className="font-extrabold text-slate-900 dark:text-white">{displayName || '—'}</h2>
-              <p className="text-xs text-slate-400 font-semibold">{user?.email}</p>
+        <section className="relative isolate overflow-hidden rounded-3xl border border-slate-200/90 shadow-lg shadow-slate-900/[0.06] dark:border-slate-800 dark:shadow-none">
+          <img src={effectiveBanner} alt="" className="absolute inset-0 h-full w-full object-cover" />
+          <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/45 to-slate-950/15" />
+          <div aria-hidden className="absolute -left-20 -top-24 h-64 w-64 rounded-full bg-blue-500/25 blur-3xl" />
+
+          <input ref={bannerInputRef} type="file" accept="image/*" className="hidden" onChange={handleBannerChange} />
+          <Button
+            onClick={() => bannerInputRef.current?.click()}
+            disabled={uploadingBanner}
+            className="absolute right-4 top-4 z-10 h-auto rounded-xl border border-white/25 bg-white/15 px-3 py-2 text-[11px] font-bold text-white backdrop-blur-md transition hover:bg-white/25"
+          >
+            {uploadingBanner ? '…' : t('changeBanner')}
+          </Button>
+
+          <div className="relative flex flex-wrap items-end justify-between gap-4 p-5 pt-32 sm:p-6 sm:pt-40">
+            <div className="flex min-w-0 items-center gap-4">
+              <span className="relative shrink-0">
+                <span
+                  aria-hidden
+                  className="absolute -inset-1 rounded-[1.4rem] bg-gradient-to-br from-blue-500 to-sky-400 opacity-70 blur"
+                />
+                <img
+                  src={effectiveAvatar}
+                  alt=""
+                  className="relative h-[72px] w-[72px] rounded-2xl border-2 border-white/30 object-cover"
+                />
+              </span>
+              <div className="min-w-0">
+                <span className="inline-block rounded-full border border-blue-400/40 bg-blue-500/25 px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-widest text-blue-100 backdrop-blur-md">
+                  {tm('badge')}
+                </span>
+                <h2 className="mt-1.5 truncate text-2xl font-extrabold tracking-tight text-white drop-shadow-sm">
+                  {displayName || '—'}
+                </h2>
+                <p className="truncate text-[12.5px] font-medium text-white/70">{user?.email}</p>
+              </div>
             </div>
-            <input
-              ref={avatarInputRef}
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={handleAvatarChange}
-            />
+
+            <input ref={avatarInputRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarChange} />
             <Button
               variant="brand"
               onClick={() => avatarInputRef.current?.click()}
               disabled={uploadingAvatar}
-              className="h-auto px-4 py-2.5 rounded-2xl bg-amber-600 hover:bg-amber-700 shadow-amber-600/25 text-xs"
+              className="h-auto rounded-2xl bg-white px-4 py-2.5 text-[13px] font-bold text-slate-900 shadow-lg transition hover:bg-slate-100"
             >
-              {uploadingAvatar ? '...' : t('changeAvatar')}
+              {uploadingAvatar ? '…' : t('changeAvatar')}
             </Button>
           </div>
-        </Card>
+        </section>
       )}
 
-      <Card className="p-8 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-6 shadow-xl">
+      <Panel title={t('personalDetailsTitle')} Icon={UserRound} accent="blue" divided bodyClassName="space-y-5">
         {!isMaster && (
-          <div className="flex items-center gap-6">
-            <img src={effectiveAvatar} alt="" className="w-20 h-20 rounded-3xl object-cover border-2 border-amber-500" />
+          <div className="flex items-center gap-5">
+            <img
+              src={effectiveAvatar}
+              alt=""
+              className="h-20 w-20 rounded-2xl object-cover ring-1 ring-slate-200 dark:ring-slate-700"
+            />
             <input
               ref={avatarInputRef}
               type="file"
@@ -271,12 +299,12 @@ export default function EditProfilePage() {
               onChange={handleAvatarChange}
             />
             <Button
-              variant="secondary"
+              variant="ghost"
               onClick={() => avatarInputRef.current?.click()}
               disabled={uploadingAvatar}
-              className="h-auto px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-xs font-bold text-slate-700 dark:text-slate-200"
+              className="h-auto rounded-xl border border-slate-200 px-4 py-2 text-xs font-bold text-slate-700 dark:border-slate-700 dark:text-slate-200"
             >
-              {uploadingAvatar ? '...' : t('changeAvatar')}
+              {uploadingAvatar ? '…' : t('changeAvatar')}
             </Button>
           </div>
         )}
@@ -382,9 +410,9 @@ export default function EditProfilePage() {
         )}
 
         {isMaster && (
-          <div className="space-y-6 p-6 rounded-3xl bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900/40">
-            <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
-              <Icon name="whatsapp" size={18} className="text-[#25D366]" />
+          <div className="space-y-5 rounded-2xl border border-emerald-200/80 bg-emerald-50/50 p-5 dark:border-emerald-900/40 dark:bg-emerald-950/20">
+            <h3 className="flex items-center gap-2 text-sm font-extrabold text-slate-900 dark:text-white">
+              <MessageCircle size={17} className="text-[#25D366]" />
               {t('whatsappSectionTitle')}
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -408,10 +436,10 @@ export default function EditProfilePage() {
                   aria-pressed={whatsappEnabled}
                   onClick={() => setWhatsappEnabled(!whatsappEnabled)}
                   className={cn(
-                    'w-full h-auto py-3 rounded-2xl text-xs font-bold',
+                    'h-auto w-full rounded-xl py-3 text-xs font-bold',
                     whatsappEnabled
                       ? 'bg-[#25D366] text-white hover:bg-[#1ebe5d]'
-                      : 'bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-400 hover:bg-slate-300 dark:hover:bg-slate-600',
+                      : 'bg-slate-200 text-slate-500 hover:bg-slate-300 dark:bg-slate-700 dark:text-slate-400 dark:hover:bg-slate-600',
                   )}
                 >
                   {whatsappEnabled ? t('whatsappEnabled') : t('whatsappDisabled')}
@@ -426,22 +454,24 @@ export default function EditProfilePage() {
             {whatsappPhone && (
               <Button
                 asChild
-                className="h-auto gap-2 px-5 py-2.5 rounded-2xl bg-[#25D366] hover:bg-[#1ebe5d] text-white text-xs font-bold shadow"
+                className="h-auto gap-2 rounded-xl bg-[#25D366] px-5 py-2.5 text-xs font-bold text-white shadow hover:bg-[#1ebe5d]"
               >
                 <a href={waLink(whatsappPhone)!} target="_blank" rel="noopener noreferrer">
-                  <Icon name="whatsapp" size={16} />
+                  <MessageCircle size={15} />
                   {t('whatsappTest')}
                 </a>
               </Button>
             )}
-            <p className="text-[10px] text-slate-500 dark:text-slate-400">{t('whatsappChangeWarning')}</p>
+            <p className="text-[10px] leading-relaxed text-slate-500 dark:text-slate-400">
+              {t('whatsappChangeWarning')}
+            </p>
           </div>
         )}
 
         {isMaster && (
-          <div className="space-y-4 p-6 rounded-3xl bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/40">
-            <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
-              <Icon name="mappin" size={18} className="text-amber-600 dark:text-amber-400" />
+          <div className="space-y-4 rounded-2xl border border-blue-200/80 bg-blue-50/50 p-5 dark:border-blue-900/40 dark:bg-blue-950/20">
+            <h3 className="flex items-center gap-2 text-sm font-extrabold text-slate-900 dark:text-white">
+              <MapPin size={17} className="text-blue-600 dark:text-sky-400" />
               {t('locationSectionTitle')}
             </h3>
             <MasterLocationPicker
@@ -457,15 +487,15 @@ export default function EditProfilePage() {
           </div>
         )}
 
-        {error && <p className="text-xs font-bold text-red-600 dark:text-red-400">{error}</p>}
-        {saved && <p className="text-xs font-bold text-emerald-600 dark:text-emerald-400">{t('savedOk')}</p>}
+        {error && <Notice tone="danger">{error}</Notice>}
+        {saved && <Notice tone="success">{t('savedOk')}</Notice>}
 
-        <div className="flex items-center gap-3 pt-2">
+        <div className="flex flex-wrap items-center gap-2.5 border-t border-slate-100 pt-5 dark:border-slate-800">
           <Button
             variant="brand"
             onClick={handleSave}
             disabled={saving}
-            className="h-auto px-8 py-3.5 rounded-2xl bg-amber-600 hover:bg-amber-700 shadow-amber-600/25 text-xs"
+            className={cn('h-auto rounded-2xl px-7 py-3 text-[13px] font-medium', primaryBtn)}
           >
             {t('saveChanges')}
           </Button>
@@ -473,23 +503,24 @@ export default function EditProfilePage() {
             variant="destructive"
             onClick={handleDelete}
             disabled={deleting}
-            className="h-auto px-5 py-3.5 rounded-2xl bg-red-50 dark:bg-red-950/40 text-red-600 dark:text-red-400 font-extrabold text-xs"
+            className="h-auto gap-2 rounded-xl px-5 py-3 text-xs font-extrabold"
           >
-            {deleting ? '...' : t('deleteAccount')}
+            <ShieldAlert size={14} />
+            {deleting ? '…' : t('deleteAccount')}
           </Button>
           <Button
             asChild
-            variant="outline"
-            className="h-auto px-5 py-3.5 rounded-2xl border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-extrabold text-xs hover:bg-slate-100 dark:hover:bg-slate-800 gap-2 ml-auto"
+            variant="ghost"
+            className="ml-auto h-auto gap-2 rounded-xl border border-slate-200 px-5 py-3 text-xs font-extrabold text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800"
           >
             <Link href="/settings/security">
-              <Icon name="key" size={14} />
+              <KeyRound size={14} />
               {t('securitySettings')}
             </Link>
           </Button>
         </div>
-      </Card>
-    </div>
+      </Panel>
+    </PageBody>
     </>
   );
 }

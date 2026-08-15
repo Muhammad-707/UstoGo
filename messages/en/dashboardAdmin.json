@@ -69,5 +69,16 @@
   "chartTotalCreated": "Created total",
   "chartTotalCompleted": "Completed total",
   "chartTooltip": "{date}: {created} created, {completed} completed",
-  "metricAvgRatingShort": "Average rating"
+  "metricAvgRatingShort": "Average rating",
+  "ctaEyebrow": "Control panel",
+  "ctaTitle": "Keep the review queue and reports at zero",
+  "ctaDesc": "Every unverified master is a lost booking. Every unanswered report is lost trust.",
+  "ctaPrimary": "Master queue",
+  "ctaSecondary": "Reports",
+  "heroEyebrow": "Control panel",
+  "heroTitle": "Platform health",
+  "heroDesc": "Users, bookings and reviews — in real time.",
+  "sectionOpsEyebrow": "Operations",
+  "sectionQualityEyebrow": "Quality",
+  "sectionQueueEyebrow": "Moderation"
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { useSearchParams } from 'next/navigation';
@@ -22,6 +22,20 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Card } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { DatePicker, todayISO } from '@/components/ui/date-picker';
+import dynamic from 'next/dynamic';
+import {
+  buildAddressSchema,
+  normalizeTajikPhone,
+  validateAddress,
+  type AddressField,
+} from '@/lib/validation/booking';
+import { Skeleton } from '@/components/ui/skeleton';
+
+/** Leaflet touches `window` at import time, so the map only ever loads in the browser. */
+const BookingAddressMap = dynamic(() => import('@/components/booking/BookingAddressMap'), {
+  ssr: false,
+  loading: () => <Skeleton className="h-56 w-full rounded-2xl" />,
+});
 
 // The backend rejects bookings made less than 2 hours in advance (SLOT_TOO_SOON).
 const MIN_BOOKING_ADVANCE_MS = 2 * 60 * 60 * 1000;
@@ -35,6 +49,47 @@ function formatSlotLabel(iso: string, durationMinutes?: number): string {
     return `${startLabel} - ${endLabel}`;
   }
   return startLabel;
+}
+
+const FIELD_INPUT =
+  'w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition';
+
+/** What a field looks like once the schema has rejected it. */
+const INVALID_FIELD = 'border-rose-400 bg-rose-50/60 focus:ring-rose-400/40 focus:border-rose-500 dark:border-rose-800 dark:bg-rose-950/30';
+
+/**
+ * One labelled field, with room reserved for the message it may need.
+ *
+ * The label carries a red asterisk because every field on the address step is required —
+ * the reader should be able to see that before they press anything, not after.
+ */
+function Field({
+  label,
+  error,
+  hint,
+  children,
+}: {
+  label: string;
+  error?: string;
+  hint?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="space-y-2">
+      <label className="block text-xs font-bold uppercase tracking-wider text-slate-400">
+        {label} <span className="text-rose-500">*</span>
+      </label>
+      {children}
+      {error ? (
+        <p className="flex items-center gap-1.5 text-[11px] font-semibold text-rose-600 dark:text-rose-400">
+          <Icon name="AlertTriangle" size={12} />
+          {error}
+        </p>
+      ) : (
+        hint && <p className="text-[10px] text-slate-400">{hint}</p>
+      )}
+    </div>
+  );
 }
 
 function Spinner({ className = '' }: { className?: string }) {
@@ -88,6 +143,41 @@ export default function BookingWizardPage() {
   const [contactPhone, setContactPhone] = useState('');
   const [savedAddresses, setSavedAddresses] = useState<SavedAddress[]>([]);
   const [selectedSavedAddressId, setSelectedSavedAddressId] = useState<string | null>(null);
+  const [addressPoint, setAddressPoint] = useState<[number, number] | null>(null);
+  const [addressErrors, setAddressErrors] = useState<Partial<Record<AddressField, string>>>({});
+
+  /**
+   * The address step, validated as a whole rather than as one `disabled` attribute.
+   *
+   * The schema is memoised on `t` so switching language rebuilds the messages without
+   * rebuilding it on every keystroke.
+   */
+  const addressSchema = useMemo(
+    () =>
+      buildAddressSchema({
+        city: t('vCityRequired'),
+        district: t('vDistrictRequired'),
+        street: t('vStreetRequired'),
+        streetShort: t('vStreetShort'),
+        house: t('vHouseRequired'),
+        phone: t('vPhoneRequired'),
+        phoneInvalid: t('vPhoneInvalid'),
+      }),
+    [t],
+  );
+
+  const addressValues = { cityId, district, street, house, contactPhone };
+
+  /** Clears one field's error the moment it is edited — an error that outlives the fix
+      trains people to ignore the whole colour. */
+  const clearAddressError = (field: AddressField) =>
+    setAddressErrors((prev) => (prev[field] ? { ...prev, [field]: undefined } : prev));
+
+  const handleAddressContinue = async () => {
+    const errors = await validateAddress(addressSchema, addressValues);
+    setAddressErrors(errors);
+    if (Object.keys(errors).length === 0) setStep(4);
+  };
 
   const applySavedAddress = (address: SavedAddress) => {
     setSelectedSavedAddressId(address.id);
@@ -96,6 +186,7 @@ export default function BookingWizardPage() {
     setStreet(address.addressLine);
     setHouse('');
     if (address.contactPhone) setContactPhone(address.contactPhone);
+    setAddressErrors({});
   };
 
   useEffect(() => {
@@ -248,7 +339,11 @@ export default function BookingWizardPage() {
           cityId,
           district,
           line: composedAddressLine,
-          ...(contactPhone.trim() ? { contactPhone: contactPhone.trim() } : {}),
+          contactPhone: normalizeTajikPhone(contactPhone),
+          // The pin, when the client dropped one. `POST /bookings` has always accepted
+          // these two and nothing was sending them, so a master got a street name and
+          // had to guess the building.
+          ...(addressPoint ? { latitude: addressPoint[0], longitude: addressPoint[1] } : {}),
         },
         note: jobNotes || undefined,
         attachmentKeys: attachmentFileIds.length > 0 ? attachmentFileIds : undefined,
@@ -687,18 +782,25 @@ export default function BookingWizardPage() {
                 </div>
               )}
 
+              {/* Every field here is required and every one says so, both with the
+                  asterisk on its label and — once "review order" has been pressed — with
+                  its own message underneath. The step used to gate on district and street
+                  alone, so a master could be sent to a street with no building number and
+                  no phone to ring. */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label className="text-xs font-bold uppercase tracking-wider text-slate-400">{t('cityLabel')}</label>
+                <Field label={t('cityLabel')} error={addressErrors.cityId}>
                   <Select
                     value={cityId || undefined}
                     onValueChange={(value) => {
                       setCityId(value);
                       setDistrict('');
                       setSelectedSavedAddressId(null);
+                      clearAddressError('cityId');
                     }}
                   >
-                    <SelectTrigger className="w-full p-4 rounded-2xl text-xs font-bold">
+                    <SelectTrigger
+                      className={cn('w-full p-4 rounded-2xl text-xs font-bold', addressErrors.cityId && INVALID_FIELD)}
+                    >
                       <SelectValue placeholder={t('selectCity')} />
                     </SelectTrigger>
                     <SelectContent>
@@ -709,16 +811,20 @@ export default function BookingWizardPage() {
                       ))}
                     </SelectContent>
                   </Select>
-                </div>
+                </Field>
 
-                <div className="space-y-2">
-                  <label className="text-xs font-bold uppercase tracking-wider text-slate-400">{t('districtLabel')}</label>
+                <Field label={t('districtLabel')} error={addressErrors.district}>
                   <Select
                     value={district || undefined}
-                    onValueChange={setDistrict}
+                    onValueChange={(value) => {
+                      setDistrict(value);
+                      clearAddressError('district');
+                    }}
                     disabled={!activeCity}
                   >
-                    <SelectTrigger className="w-full p-4 rounded-2xl text-xs font-bold">
+                    <SelectTrigger
+                      className={cn('w-full p-4 rounded-2xl text-xs font-bold', addressErrors.district && INVALID_FIELD)}
+                    >
                       <SelectValue placeholder={t('selectDistrict')} />
                     </SelectTrigger>
                     <SelectContent>
@@ -729,49 +835,58 @@ export default function BookingWizardPage() {
                       ))}
                     </SelectContent>
                   </Select>
-                </div>
+                </Field>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label className="text-xs font-bold uppercase tracking-wider text-slate-400">{t('streetLabel')}</label>
+                <Field label={t('streetLabel')} error={addressErrors.street}>
                   <Input
                     type="text"
                     value={street}
-                    onChange={(e) => setStreet(e.target.value)}
+                    onChange={(e) => {
+                      setStreet(e.target.value);
+                      clearAddressError('street');
+                    }}
                     placeholder={t('streetPlaceholder')}
-                    className="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition"
+                    aria-invalid={Boolean(addressErrors.street)}
+                    className={cn(FIELD_INPUT, addressErrors.street && INVALID_FIELD)}
                   />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                    {t('houseLabel')} <span className="text-slate-400 normal-case">{t('optional')}</span>
-                  </label>
+                </Field>
+                <Field label={t('houseLabel')} error={addressErrors.house}>
                   <Input
                     type="text"
                     value={house}
-                    onChange={(e) => setHouse(e.target.value)}
+                    onChange={(e) => {
+                      setHouse(e.target.value);
+                      clearAddressError('house');
+                    }}
                     placeholder={t('housePlaceholder')}
-                    className="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition"
+                    aria-invalid={Boolean(addressErrors.house)}
+                    className={cn(FIELD_INPUT, addressErrors.house && INVALID_FIELD)}
                   />
-                </div>
+                </Field>
               </div>
 
-              <div className="space-y-2">
-                <label className="text-xs font-bold uppercase tracking-wider text-slate-400">{t('phoneLabel')}</label>
-                  <Input
-                    type="tel"
-                    value={contactPhone}
-                    onChange={(e) => setContactPhone(e.target.value)}
-                    placeholder={user?.phone ?? '+992 __ ___-__-__'}
-                    className="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition"
-                  />
-                <p className="text-[10px] text-slate-400">{t('phoneHint')}</p>
-              </div>
+              <Field label={t('phoneLabel')} error={addressErrors.contactPhone} hint={t('phoneHint')}>
+                <Input
+                  type="tel"
+                  value={contactPhone}
+                  onChange={(e) => {
+                    setContactPhone(e.target.value);
+                    clearAddressError('contactPhone');
+                  }}
+                  placeholder={user?.phone ?? '+992 __ ___-__-__'}
+                  aria-invalid={Boolean(addressErrors.contactPhone)}
+                  className={cn(FIELD_INPUT, addressErrors.contactPhone && INVALID_FIELD)}
+                />
+              </Field>
 
-              <div className="h-40 rounded-2xl bg-slate-200 dark:bg-slate-800 flex items-center justify-center text-xs text-slate-500 font-bold border border-slate-300 dark:border-slate-700">
-                {t('mapPlaceholder')}
-              </div>
+              <BookingAddressMap
+                point={addressPoint}
+                onChange={setAddressPoint}
+                cityLatitude={activeCity?.latitude}
+                cityLongitude={activeCity?.longitude}
+              />
 
               <div className="flex gap-4">
                 <Button size="raw" variant="ghost"
@@ -780,10 +895,12 @@ export default function BookingWizardPage() {
                 >
                   {t('back')}
                 </Button>
+                {/* Enabled on purpose. A disabled button that never explains itself is
+                    the reason people abandon a checkout; pressing this one runs the
+                    schema and points at what is missing. */}
                 <Button size="raw" variant="ghost"
-                  onClick={() => setStep(4)}
-                  disabled={!district || !street.trim()}
-                  className="flex-1 py-4 rounded-2xl bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-extrabold text-xs shadow-lg transition btn-ripple"
+                  onClick={handleAddressContinue}
+                  className="flex-1 py-4 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-lg transition btn-ripple"
                 >
                   {t('reviewOrder')}
                 </Button>

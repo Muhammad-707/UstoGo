@@ -48,5 +48,17 @@
   "activeNow": "Ҳозир дар ҷараён",
   "activeNowDesc": "Ҳаракати устои худро дар харита пайгирӣ кунед.",
   "trackLive": "Пайгирии зинда",
-  "noBookingsFiltered": "Дар ин ҳолат фармоиш нест"
+  "noBookingsFiltered": "Дар ин ҳолат фармоиш нест",
+  "ctaEyebrow": "Кабинети шумо",
+  "ctaTitle": "Устои муносибро дар чанд дақиқа ёбед",
+  "ctaDesc": "Зиёда аз 1400 устои санҷидашуда — аз рӯи категория, баҳо ва масофа ҷустуҷӯ кунед.",
+  "ctaPrimary": "Ёфтани усто",
+  "ctaSecondary": "Ба мағоза",
+  "heroEyebrow": "Кабинети мизоҷ",
+  "heroGreeting": "Салом, {name}!",
+  "heroDesc": "Ҳамаи фармоишҳо, устоҳо ва хароҷоти шумо дар як ҷо.",
+  "sectionWorkEyebrow": "Фаъолияти шумо",
+  "sectionHistoryTitle": "Таърихи фармоишҳо",
+  "recentlyViewedEyebrow": "Аз нав дидан",
+  "referralEyebrow": "Дӯстонро даъват кунед"
 }

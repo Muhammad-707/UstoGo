@@ -6,5 +6,6 @@
   "loadFailed": "Роҳ барои ин сана сохта нашуд.",
   "empty": "Дар ин сана коре ҷадвал нашудааст.",
   "savingsAmount": "Сарфа ~{km} км",
-  "savingsHint": "Роҳи беҳина: {optimized} км дар муқобили {chronological} км дар тартиби фармоиш."
+  "savingsHint": "Роҳи беҳина: {optimized} км дар муқобили {chronological} км дар тартиби фармоиш.",
+  "stopsTitle": "Тартиби боздидҳо"
 }

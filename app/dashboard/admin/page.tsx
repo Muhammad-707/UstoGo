@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { ChartColumn, ShieldCheck, Star, Users } from 'lucide-react';
+import { BarChart3, ChartColumn, Gauge, Heart, ShieldCheck, Star, Users } from 'lucide-react';
 import { Icon } from '@/components/icons/LucideIcons';
 import { useMoney } from '@/lib/money';
 import { useTranslations } from 'next-intl';
@@ -16,6 +16,11 @@ import type { AdminMasterListItem, ApprovalStatus, Booking, Category, DashboardR
 import { FilterContainer, FilterItem, InViewRow } from '@/components/ui/FilterAnimate';
 import { BookingsChart } from '@/components/dashboard/BookingsChart';
 import { MetricGrid, type Metric } from '@/components/dashboard/MetricCard';
+import { CabinetCta } from '@/components/dashboard/CabinetCta';
+import { CabinetHero } from '@/components/dashboard/CabinetHero';
+import { SectionHeading } from '@/components/dashboard/SectionHeading';
+import { Panel } from '@/components/dashboard/Panel';
+import { Notice } from '@/components/dashboard/Notice';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -27,7 +32,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Card } from '@/components/ui/card';
 
 /** Radix has no empty-string option, so "any" travels as this sentinel. */
 const ANY = '__any';
@@ -196,18 +200,39 @@ export default function AdminDashboardPage() {
 
   return (
     <DashboardLayout role="ADMIN" title={t('title')} subtitle={t('platformHealth')}>
-      {error && (
-        <div className="p-4 rounded-2xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 text-xs font-bold text-red-600 dark:text-red-400">
-          {error}
-        </div>
-      )}
+      {error && <Notice tone="danger">{error}</Notice>}
+
+      <CabinetHero
+        accent="violet"
+        eyebrow={t('heroEyebrow')}
+        title={t('heroTitle')}
+        description={t('heroDesc')}
+        media={
+          <span className="relative hidden shrink-0 sm:block">
+            <span
+              aria-hidden
+              className="absolute -inset-1 rounded-[1.4rem] bg-gradient-to-br from-violet-500 to-fuchsia-500 opacity-60 blur dark:opacity-70"
+            />
+            <span className="relative flex h-16 w-16 items-center justify-center rounded-2xl border-2 border-white/80 bg-gradient-to-br from-violet-600 to-indigo-700 text-white dark:border-white/25">
+              <ShieldCheck size={28} strokeWidth={2.1} />
+            </span>
+          </span>
+        }
+        stats={[
+          { label: t('metricTotalClients'), value: data?.users.clients.toLocaleString() ?? '—' },
+          { label: t('metricTotalMasters'), value: data?.users.masters.toLocaleString() ?? '—' },
+          { label: t('metricMonthlyBookings'), value: totalBookings.toLocaleString() },
+          { label: t('metricAvgRatingShort'), value: data ? data.reviews.averageRating.toFixed(2) : '—' },
+        ]}
+      />
 
       {/* Metrics Grid — every tile links to the screen its figure came from, which is
           what an operator opens this page to do next. */}
+      <SectionHeading accent="violet" eyebrow={t('sectionOpsEyebrow')} title={t('platformHealth')} className="pt-2" />
       {loading ? (
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {Array.from({ length: 4 }).map((_, idx) => (
-            <Skeleton key={idx} className="h-[148px] rounded-[1.5rem]" />
+            <Skeleton key={idx} className="h-[74px] rounded-2xl" />
           ))}
         </div>
       ) : (
@@ -226,12 +251,15 @@ export default function AdminDashboardPage() {
             floored every bar at 4% height, so a day with zero bookings rendered a
             visible stub — which is why the chart read as a flat line with a few random
             spikes rather than as mostly-empty days. */}
-        <Card className="lg:col-span-2 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-6 shadow-xl">
-          <div className="flex flex-wrap items-start justify-between gap-3">
-            <div>
-              <h3 className="text-lg font-bold text-slate-900 dark:text-white">{t('chartTitle')}</h3>
-              <p className="text-xs text-slate-500">{t('chartSubtitle', { days: data?.series.length ?? 0 })}</p>
-            </div>
+        <Panel
+          className="lg:col-span-2"
+          Icon={BarChart3}
+          accent="violet"
+          title={t('chartTitle')}
+          description={t('chartSubtitle', { days: data?.series.length ?? 0 })}
+          divided
+          bodyClassName="space-y-6"
+          action={
             <div className="flex items-center gap-4">
               <span className="flex items-center gap-1.5 text-[11px] font-bold text-slate-500 dark:text-slate-400">
                 <span className="h-2.5 w-2.5 rounded-full bg-gradient-to-t from-violet-600 to-indigo-500" />
@@ -242,19 +270,18 @@ export default function AdminDashboardPage() {
                 {t('chartCompleted')}
               </span>
             </div>
-          </div>
-
+          }
+        >
           {!loading && data && data.series.length > 0 && <BookingsChart series={data.series} />}
 
           {!loading && data && data.series.length === 0 && (
             <p className="text-xs text-slate-400 font-semibold text-center py-10">{t('noChartData')}</p>
           )}
           {loading && <Skeleton className="h-52 rounded-2xl" />}
-        </Card>
+        </Panel>
 
         {/* Quick Stats */}
-        <Card className="rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-xl space-y-4">
-          <h3 className="text-sm font-bold text-slate-900 dark:text-white">{t('quickStats')}</h3>
+        <Panel Icon={Gauge} accent="blue" title={t('quickStats')} divided>
           <div className="space-y-3">
             {[
               { label: t('metricTotalClients'), value: data?.users.clients.toLocaleString() ?? '—', icon: 'Users', color: 'text-emerald-500', bg: 'bg-emerald-50 dark:bg-emerald-950/20' },
@@ -267,21 +294,18 @@ export default function AdminDashboardPage() {
                   <div className={`w-8 h-8 rounded-xl ${s.bg} flex items-center justify-center ${s.color}`}>
                     <Icon name={s.icon} size={14} />
                   </div>
-                  <span className="text-[10px] font-bold text-slate-400 uppercase">{s.label}</span>
+                  <span className="text-[13px] font-semibold text-slate-500 dark:text-slate-400">{s.label}</span>
                 </div>
-                <span className="text-sm font-extrabold text-slate-900 dark:text-white">{s.value}</span>
+                <span className="text-base font-extrabold text-slate-900 dark:text-white">{s.value}</span>
               </div>
             ))}
           </div>
-        </Card>
+        </Panel>
       </div>
 
       {/* Platform NPS */}
-      <Card className="rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-6 shadow-xl">
-        <div>
-          <h3 className="text-lg font-bold text-slate-900 dark:text-white">{t('npsTitle')}</h3>
-          <p className="text-[10px] text-slate-400 font-semibold mt-0.5">{t('npsSubtitle')}</p>
-        </div>
+      <SectionHeading accent="violet" eyebrow={t('sectionQualityEyebrow')} title={t('npsTitle')} description={t('npsSubtitle')} className="pt-2" />
+      <Panel Icon={Heart} accent="rose" title={t('npsTitle')} divided bodyClassName="space-y-6">
         {npsLoading && <Skeleton className="h-24 rounded-2xl" />}
         {!npsLoading && (!nps || nps.responseCount === 0) && (
           <p className="text-xs text-slate-400 font-semibold">{t('npsNoData')}</p>
@@ -307,15 +331,12 @@ export default function AdminDashboardPage() {
             </div>
           </div>
         )}
-      </Card>
+      </Panel>
 
       {/* Master Verification Table */}
-      <Card className="rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-6 shadow-xl">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <h3 className="text-lg font-bold text-slate-900 dark:text-white">{t('verificationQueue')}</h3>
-            <p className="text-[10px] text-slate-400 font-semibold mt-0.5">{t('verificationQueueSub')}</p>
-          </div>
+      <SectionHeading accent="violet" eyebrow={t('sectionQueueEyebrow')} title={t('verificationQueue')} description={t('verificationQueueSub')} className="pt-2" />
+      <Panel Icon={ShieldCheck} accent="violet" title={t('verificationQueue')} divided bodyClassName="space-y-6"
+        action={
           <FilterContainer className="flex flex-wrap items-center gap-3">
             <FilterItem>
               <Select value={approvalStatus} onValueChange={(value) => { setApprovalStatus(value as ApprovalStatus); }}>
@@ -344,13 +365,9 @@ export default function AdminDashboardPage() {
               </Select>
             </FilterItem>
           </FilterContainer>
-        </div>
-
-        {mastersError && (
-          <div className="p-4 rounded-2xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 text-xs font-bold text-red-600 dark:text-red-400">
-            {mastersError}
-          </div>
-        )}
+        }
+      >
+        {mastersError && <Notice tone="danger">{mastersError}</Notice>}
 
         {mastersLoading && (
           <div className="space-y-2">
@@ -477,7 +494,7 @@ export default function AdminDashboardPage() {
             </table>
           </div>
         )}
-      </Card>
+      </Panel>
 
       {/* Master Booking Details Overlay */}
       <Dialog open={!!selectedMaster} onOpenChange={(open) => !open && setSelectedMaster(null)}>
@@ -556,6 +573,15 @@ export default function AdminDashboardPage() {
           )}
         </DialogContent>
       </Dialog>
+
+      <CabinetCta
+        accent="violet"
+        eyebrow={t('ctaEyebrow')}
+        title={t('ctaTitle')}
+        description={t('ctaDesc')}
+        primary={{ href: '/dashboard/admin/masters', label: t('ctaPrimary') }}
+        secondary={{ href: '/dashboard/admin/reports', label: t('ctaSecondary') }}
+      />
     </DashboardLayout>
   );
 }

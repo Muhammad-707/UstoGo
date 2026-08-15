@@ -6,5 +6,6 @@
   "loadFailed": "Could not load a route for that date.",
   "empty": "No jobs scheduled on this date.",
   "savingsAmount": "Save ~{km} km",
-  "savingsHint": "Optimized route: {optimized} km vs {chronological} km in booking order."
+  "savingsHint": "Optimized route: {optimized} km vs {chronological} km in booking order.",
+  "stopsTitle": "Visit order"
 }

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef, useTransition } from 'react';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
 import { usePathname, useRouter } from 'next/navigation';
 import { useLocale, useTranslations } from 'next-intl';
 import { Icon } from '@/components/icons/LucideIcons';
@@ -9,6 +10,7 @@ import { setLocale } from '@/i18n/actions';
 import { locales, localeMeta, type Locale } from '@/i18n/locales';
 import { useAuth, dashboardPathFor } from '@/contexts/AuthContext';
 import { cartApi, notificationsApi } from '@/lib/api/endpoints';
+import { resolveOwnFileUrl } from '@/lib/api/upload';
 import { NOTIFICATION_TYPES, type NotificationItem } from '@/lib/api/types';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -46,6 +48,35 @@ export const Navbar: React.FC = () => {
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [cartCount, setCartCount] = useState(0);
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  /** Clock for the relative timestamps, ticked once a minute so "5 дақ пеш" stays true. */
+  const [now, setNow] = useState<number | null>(null);
+
+  const avatarFileId = user?.masterProfile?.avatarFileId ?? user?.clientProfile?.avatarFileId ?? null;
+
+  useEffect(() => {
+    if (!avatarFileId) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- drops a stale photo on logout or removal
+      setAvatarUrl(null);
+      return;
+    }
+    let cancelled = false;
+    resolveOwnFileUrl(avatarFileId)
+      .then((url) => {
+        if (!cancelled) setAvatarUrl(url);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [avatarFileId]);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- starts the clock once the component is on the client
+    setNow(Date.now());
+    const id = setInterval(() => setNow(Date.now()), 60_000);
+    return () => clearInterval(id);
+  }, []);
 
   useEffect(() => {
     if (!user) {
@@ -104,13 +135,74 @@ export const Navbar: React.FC = () => {
     return known ? tn(type) : tn('fallback');
   };
 
-  const notificationIcon = (type: string): string => {
-    if (type.startsWith('BOOKING')) return 'Clock';
-    if (type.startsWith('REVIEW')) return 'Star';
-    if (type.startsWith('QUOTE')) return 'FileText';
-    if (type === 'MESSAGE_RECEIVED') return 'MessageSquare';
-    if (type === 'ORDER_PLACED') return 'shoppingbag';
-    return 'CheckCircle2';
+  /**
+   * Icon *and* colour per family.
+   *
+   * Every row used to be the same blue clock, so a cancelled booking, a new review and
+   * a payment confirmation were visually identical and the list read as one repeated
+   * item. The colour is what lets the eye sort the list before reading a word of it.
+   */
+  const notificationLook = (type: string): { icon: string; chip: string } => {
+    if (type.endsWith('_CANCELLED') || type.endsWith('_REJECTED') || type.endsWith('_EXPIRED') || type.endsWith('_DECLINED')) {
+      return { icon: 'X', chip: 'bg-rose-50 text-rose-600 dark:bg-rose-500/10 dark:text-rose-400' };
+    }
+    if (type.endsWith('_COMPLETED') || type.endsWith('_ACCEPTED') || type.endsWith('_APPROVED') || type === 'PAYMENT_CONFIRMED') {
+      return { icon: 'CheckCircle2', chip: 'bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400' };
+    }
+    if (type.startsWith('REVIEW')) {
+      return { icon: 'Star', chip: 'bg-amber-50 text-amber-600 dark:bg-amber-500/10 dark:text-amber-400' };
+    }
+    if (type.startsWith('QUOTE')) {
+      return { icon: 'FileText', chip: 'bg-cyan-50 text-cyan-600 dark:bg-cyan-500/10 dark:text-cyan-400' };
+    }
+    if (type === 'MESSAGE_RECEIVED') {
+      return { icon: 'MessageSquare', chip: 'bg-violet-50 text-violet-600 dark:bg-violet-500/10 dark:text-violet-400' };
+    }
+    if (type === 'ORDER_PLACED') {
+      return { icon: 'shoppingbag', chip: 'bg-fuchsia-50 text-fuchsia-600 dark:bg-fuchsia-500/10 dark:text-fuchsia-400' };
+    }
+    if (type.startsWith('BOOKING')) {
+      return { icon: 'Clock', chip: 'bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-sky-400' };
+    }
+    return { icon: 'Bell', chip: 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400' };
+  };
+
+  /**
+   * "3 дақ пеш" rather than "10.08.2026, 17:28:48".
+   *
+   * A notification list is read to find out what just happened; a full timestamp to the
+   * second answers a question nobody asked and pushed the actual message off the row.
+   *
+   * Built from the catalogue rather than `Intl.RelativeTimeFormat` for the same reason
+   * the weekdays are: `tj` is not a language tag, and even `tg` is missing from most
+   * CLDR builds, so the formatter silently answered a Tajik interface in Russian.
+   */
+  const relativeTime = (iso: string): string => {
+    const then = new Date(iso).getTime();
+    if (Number.isNaN(then)) return '';
+    // Before `now` is set — server render and first paint — fall back to the date, so
+    // the markup the server sent matches what the client renders over it.
+    if (now === null) return new Date(iso).toLocaleDateString(intlLocale, { day: 'numeric', month: 'short' });
+    const mins = Math.round((now - then) / 60_000);
+    if (mins < 1) return t('justNow');
+    if (mins < 60) return t('timeMinutesAgo', { count: mins });
+    const hours = Math.round(mins / 60);
+    if (hours < 24) return t('timeHoursAgo', { count: hours });
+    const days = Math.round(hours / 24);
+    if (days < 30) return t('timeDaysAgo', { count: days });
+    return new Date(iso).toLocaleDateString(intlLocale, { day: 'numeric', month: 'short' });
+  };
+
+  /** Where a notification should take you — a bell you cannot click through is a dead end. */
+  const notificationHref = (n: NotificationItem): string => {
+    const bookingId = (n.payload?.bookingId as string) || '';
+    if (n.type.startsWith('BOOKING') && bookingId) return `/booking/${bookingId}`;
+    if (n.type.startsWith('QUOTE')) return '/quotes';
+    if (n.type.startsWith('REVIEW')) return '/reviews';
+    if (n.type === 'MESSAGE_RECEIVED') return '/messages';
+    if (n.type === 'ORDER_PLACED') return '/orders';
+    if (n.type === 'PAYMENT_CONFIRMED') return '/payments';
+    return '/notifications';
   };
 
   /**
@@ -147,7 +239,10 @@ export const Navbar: React.FC = () => {
    * trick collapses here for a different reason — an `fr` needs free space to divide,
    * and inside a shrink-to-fit `inline-flex` there is none, so it resolves to 0. The
    * label's own `offsetWidth` is neither of those problems, and it is re-read whenever
-   * the label changes, which is what makes this survive a language switch.
+   * the label changes, which is what makes this survive a language switch — and now
+   * also whenever the font finishes loading, because the first measurement is taken
+   * against the fallback face and comes out several pixels short, which is exactly the
+   * clip you see on the last letter of the label.
    */
   const bookLabel = t('bookService');
   const bookLabelRef = useRef<HTMLSpanElement>(null);
@@ -155,9 +250,11 @@ export const Navbar: React.FC = () => {
   const [bookOpen, setBookOpen] = useState(false);
 
   useEffect(() => {
-    if (bookLabelRef.current) {
-      setBookLabelWidth(bookLabelRef.current.offsetWidth);
-    }
+    const measure = () => {
+      if (bookLabelRef.current) setBookLabelWidth(bookLabelRef.current.offsetWidth);
+    };
+    measure();
+    document.fonts?.ready.then(measure).catch(() => {});
   }, [bookLabel]);
 
   return (
@@ -225,17 +322,40 @@ export const Navbar: React.FC = () => {
                     )}
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent align="end" sideOffset={12} className="w-80 sm:w-96 rounded-2xl p-4">
-                  <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
-                    <h4 className="text-sm font-bold text-slate-900 dark:text-white">{t('notificationsTitle')}</h4>
-                    <Link href="/notifications" className="text-xs font-semibold text-blue-600 hover:underline">
+                <PopoverContent align="end" sideOffset={12} className="w-[22rem] overflow-hidden rounded-2xl p-0 sm:w-[25rem]">
+                  <div className="flex items-center justify-between gap-3 border-b border-slate-100 px-4 py-3.5 dark:border-slate-800">
+                    <div className="flex items-center gap-2.5">
+                      <span className="flex h-8 w-8 items-center justify-center rounded-[10px] bg-blue-50 text-blue-600 ring-1 ring-inset ring-blue-200/70 dark:bg-blue-500/10 dark:text-sky-400 dark:ring-sky-500/20">
+                        <Icon name="Bell" size={15} />
+                      </span>
+                      <div>
+                        <h4 className="text-[13px] font-extrabold leading-tight text-slate-900 dark:text-white">
+                          {t('notificationsTitle')}
+                        </h4>
+                        {unreadCount > 0 && (
+                          <p className="text-[10px] font-bold text-blue-600 dark:text-sky-400">
+                            {t('unreadCount', { count: unreadCount })}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                    <Link
+                      href="/notifications"
+                      className="shrink-0 rounded-lg px-2 py-1 text-[11px] font-extrabold text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white"
+                    >
                       {t('viewAll')}
                     </Link>
                   </div>
-                  <ScrollArea className="max-h-72">
-                    <div className="divide-y divide-slate-100 dark:divide-slate-800/60">
+
+                  <ScrollArea className="max-h-[22rem]">
+                    <div className="p-2">
                       {notifications.length === 0 && (
-                        <p className="py-8 text-center text-xs font-semibold text-slate-400">{tn('empty')}</p>
+                        <div className="flex flex-col items-center gap-2 py-10">
+                          <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-100 text-slate-400 dark:bg-slate-800">
+                            <Icon name="Bell" size={20} />
+                          </span>
+                          <p className="text-xs font-semibold text-slate-400">{tn('empty')}</p>
+                        </div>
                       )}
                       {notifications.map((n) => {
                         // Only a few notification types carry a prebuilt title/message in
@@ -243,34 +363,70 @@ export const Navbar: React.FC = () => {
                         // empty lines above it. The type itself is always present and is
                         // enough to say what happened, in the reader's own language.
                         const title = (n.payload?.title as string) || notificationTitle(n.type);
-                        const message = (n.payload?.message as string) || '';
+                        // A bare "Фармоиши нав" five times over says nothing about *which*
+                        // job. Whatever the payload does carry — the service, the booking
+                        // number, the other party — is the line that makes the row useful.
+                        const message =
+                          (n.payload?.message as string) ||
+                          [
+                            n.payload?.serviceTitle as string | undefined,
+                            n.payload?.clientName as string | undefined,
+                            n.payload?.masterDisplayName as string | undefined,
+                            n.payload?.bookingNumber ? `#${n.payload.bookingNumber}` : undefined,
+                          ]
+                            .filter(Boolean)
+                            .join(' · ');
+                        const look = notificationLook(n.type);
 
                         return (
-                          <div
+                          <Link
                             key={n.id}
+                            href={notificationHref(n)}
                             className={cn(
-                              'py-3 flex gap-3 items-start px-2 rounded-xl transition',
+                              'group relative flex items-start gap-3 rounded-xl px-2.5 py-2.5 transition-colors',
                               n.isRead
-                                ? 'hover:bg-slate-50 dark:hover:bg-slate-800/40'
-                                : 'bg-blue-50/60 dark:bg-blue-950/30 hover:bg-blue-50 dark:hover:bg-blue-950/50',
+                                ? 'hover:bg-slate-50 dark:hover:bg-slate-800/50'
+                                : 'bg-blue-50/50 hover:bg-blue-50 dark:bg-blue-500/[0.07] dark:hover:bg-blue-500/10',
                             )}
                           >
-                            <div className="p-2 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-sky-400 mt-0.5 shrink-0">
-                              <Icon name={notificationIcon(n.type)} size={16} />
-                            </div>
+                            {!n.isRead && (
+                              <span
+                                aria-hidden
+                                className="absolute inset-y-2.5 left-0 w-[3px] rounded-full bg-blue-500"
+                              />
+                            )}
+                            <span
+                              className={cn(
+                                'mt-px flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px]',
+                                look.chip,
+                              )}
+                            >
+                              <Icon name={look.icon} size={16} />
+                            </span>
+
                             <div className="min-w-0 flex-1">
-                              <div className="flex items-start gap-2">
-                                <p className="text-xs font-bold text-slate-900 dark:text-slate-100 flex-1">{title}</p>
-                                {!n.isRead && <span className="mt-1 w-2 h-2 rounded-full bg-blue-600 shrink-0" />}
+                              <div className="flex items-baseline justify-between gap-2">
+                                <p
+                                  className={cn(
+                                    'min-w-0 flex-1 truncate text-[13px] leading-snug',
+                                    n.isRead
+                                      ? 'font-semibold text-slate-700 dark:text-slate-300'
+                                      : 'font-extrabold text-slate-900 dark:text-white',
+                                  )}
+                                >
+                                  {title}
+                                </p>
+                                <span className="shrink-0 text-[10px] font-bold tabular-nums text-slate-400">
+                                  {relativeTime(n.createdAt)}
+                                </span>
                               </div>
                               {message && (
-                                <p className="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-2 mt-0.5">{message}</p>
+                                <p className="mt-0.5 line-clamp-2 text-[11px] leading-relaxed text-slate-500 dark:text-slate-400">
+                                  {message}
+                                </p>
                               )}
-                              <span className="text-[10px] text-slate-400 mt-1 block">
-                                {new Date(n.createdAt).toLocaleString(intlLocale)}
-                              </span>
                             </div>
-                          </div>
+                          </Link>
                         );
                       })}
                     </div>
@@ -343,11 +499,22 @@ export const Navbar: React.FC = () => {
                     variant="outline"
                     className="h-auto gap-2 pl-1.5 pr-2.5 py-1.5 rounded-2xl border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 [&[data-state=open]>svg]:rotate-180"
                   >
-                    <span className="w-7 h-7 rounded-xl bg-gradient-to-br from-blue-600 to-sky-500 text-white flex items-center justify-center text-[11px] font-extrabold shrink-0">
-                      {(user.masterProfile?.displayName || user.clientProfile?.firstName || user.email)
-                        .charAt(0)
-                        .toUpperCase()}
-                    </span>
+                    {/* The account chip showed an initial even for people who had
+                        uploaded a photo — the file id was on the profile the whole time,
+                        it was simply never resolved here. */}
+                    {avatarUrl ? (
+                      <img
+                        src={avatarUrl}
+                        alt=""
+                        className="h-7 w-7 shrink-0 rounded-full object-cover ring-1 ring-slate-200 dark:ring-slate-700"
+                      />
+                    ) : (
+                      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-slate-900 text-[11px] font-semibold text-white dark:bg-white dark:text-slate-900">
+                        {(user.masterProfile?.displayName || user.clientProfile?.firstName || user.email)
+                          .charAt(0)
+                          .toUpperCase()}
+                      </span>
+                    )}
                     <span className="hidden lg:inline max-w-[110px] truncate">
                       {user.masterProfile?.displayName || user.clientProfile?.firstName || user.email}
                     </span>
@@ -400,7 +567,7 @@ export const Navbar: React.FC = () => {
           {isClientView && (
             <Button
               asChild
-              className="hidden md:inline-flex h-11 px-3.5 rounded-2xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white text-xs font-bold shadow-lg shadow-blue-600/25 hover:shadow-xl hover:shadow-blue-600/35 transition-shadow duration-300"
+              className="group relative hidden h-11 items-center gap-0 overflow-hidden rounded-2xl bg-gradient-to-br from-blue-600 via-blue-600 to-indigo-600 p-1.5 text-white text-xs font-bold shadow-lg shadow-blue-600/30 transition-shadow duration-300 hover:shadow-xl hover:shadow-blue-600/40 md:inline-flex"
             >
               <Link
                 href="/booking"
@@ -411,15 +578,36 @@ export const Navbar: React.FC = () => {
                 onFocus={() => setBookOpen(true)}
                 onBlur={() => setBookOpen(false)}
               >
-                <Icon name="Calendar" size={17} className="shrink-0" />
+                {/* A light sweeping across the pill on hover — the one flourish that
+                    makes the opening read as deliberate rather than as a reflow. */}
                 <span
-                  className="overflow-hidden whitespace-nowrap transition-[width,opacity] duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]"
-                  style={{ width: bookOpen ? bookLabelWidth : 0, opacity: bookOpen ? 1 : 0 }}
+                  aria-hidden
+                  className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/25 to-transparent transition-transform duration-[900ms] ease-out group-hover:translate-x-full"
+                />
+
+                {/* The glyph sits on its own tile, so the resting state is a square
+                    icon button rather than a wide pill with a lonely icon in it. */}
+                <span className="relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-white/20 transition-colors duration-300 group-hover:bg-white/25">
+                  <Icon name="Calendar" size={16} />
+                </span>
+
+                {/* Spring, not a linear ease: the label used to arrive at full width and
+                    stop dead. A spring settles into it, which is what "smooth" actually
+                    looks like at this size. Opacity leads slightly so the text is legible
+                    before the box has finished growing. */}
+                <motion.span
+                  className="relative z-10 overflow-hidden whitespace-nowrap"
+                  initial={false}
+                  animate={{ width: bookOpen ? bookLabelWidth : 0, opacity: bookOpen ? 1 : 0 }}
+                  transition={{
+                    width: { type: 'spring', stiffness: 260, damping: 30, mass: 0.7 },
+                    opacity: { duration: 0.2, ease: 'easeOut' },
+                  }}
                 >
-                  <span ref={bookLabelRef} className="inline-block pl-2">
+                  <span ref={bookLabelRef} className="inline-block pl-2.5 pr-2">
                     {bookLabel}
                   </span>
-                </span>
+                </motion.span>
               </Link>
             </Button>
           )}

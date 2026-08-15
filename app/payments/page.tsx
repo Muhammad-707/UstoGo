@@ -10,8 +10,10 @@ import { bookingsApi } from '@/lib/api/endpoints';
 import type { Booking } from '@/lib/api/types';
 import { useDateFormat } from '@/lib/datetime';
 
-import { ClientPageHeader } from '@/components/client/ClientPageHeader';
+import { CabinetPage } from '@/components/layout/CabinetPage';
 import { MetricGrid, type Metric } from '@/components/dashboard/MetricCard';
+import { Notice } from '@/components/dashboard/Notice';
+import { Panel } from '@/components/dashboard/Panel';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { FilterContainer, FilterItem } from '@/components/ui/FilterAnimate';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -49,84 +51,88 @@ export default function PaymentsPage() {
   ];
 
   return (
-    <>
-      <ClientPageHeader icon="dollarsign" eyebrow={t('badge')} title={t('title')} />
+    <CabinetPage icon="dollarsign" eyebrow={t('badge')} title={t('title')}>
+      {loading ? (
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <Skeleton key={i} className="h-[74px] rounded-2xl" />
+          ))}
+        </div>
+      ) : (
+        <MetricGrid metrics={metrics} />
+      )}
 
-      <div className="page-shell space-y-8 py-10">
+      {/* The one thing a payments page has to be honest about: nothing is charged
+          here. Stated once, next to the figures, rather than buried under them. */}
+      <Notice tone="info" Icon={Info}>
+        {t('payDirectlyNotice')}
+      </Notice>
 
-        {loading ? (
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+      <Panel
+        Icon={Receipt}
+        accent="emerald"
+        title={t('transactionsTitle')}
+        padding="none"
+        divided
+        action={
+          completed.length > 0 ? (
+            <span className="rounded-lg bg-slate-100 px-2.5 py-1 text-[11px] font-extrabold tabular-nums text-slate-600 dark:bg-slate-800 dark:text-slate-300">
+              {completed.length}
+            </span>
+          ) : undefined
+        }
+      >
+        {loading && (
+          <div className="space-y-2.5 p-5">
             {Array.from({ length: 4 }).map((_, i) => (
-              <Skeleton key={i} className="h-[148px] rounded-[1.5rem]" />
+              <Skeleton key={i} className="h-16 rounded-xl" />
             ))}
           </div>
-        ) : (
-          <MetricGrid metrics={metrics} />
         )}
 
-        {/* The one thing a payments page has to be honest about: nothing is charged
-            here. Stated once, next to the figures, rather than buried under them. */}
-        <div className="flex items-start gap-3 rounded-3xl border border-blue-200 bg-blue-50/70 p-5 dark:border-blue-900/60 dark:bg-blue-950/30">
-          <Info size={16} className="mt-0.5 shrink-0 text-blue-600 dark:text-sky-400" />
-          <p className="text-xs leading-relaxed text-blue-900 dark:text-sky-200">{t('payDirectlyNotice')}</p>
-        </div>
+        {!loading && completed.length === 0 && (
+          <EmptyState
+            variant="inline"
+            icon="dollarsign"
+            title={t('noTransactions')}
+            description={t('noTransactionsDesc')}
+            actionLabel={t('findMaster')}
+            actionHref="/search"
+          />
+        )}
 
-        <section className="space-y-4">
-          <h3 className="text-lg font-extrabold text-slate-900 dark:text-white">{t('transactionsTitle')}</h3>
-
-          {loading && (
-            <div className="space-y-3">
-              {Array.from({ length: 4 }).map((_, i) => (
-                <Skeleton key={i} className="h-20 rounded-3xl" />
-              ))}
-            </div>
-          )}
-
-          {!loading && completed.length === 0 && (
-            <EmptyState
-              icon="dollarsign"
-              title={t('noTransactions')}
-              description={t('noTransactionsDesc')}
-              actionLabel={t('findMaster')}
-              actionHref="/search"
-            />
-          )}
-
-          {!loading && completed.length > 0 && (
-            <FilterContainer className="space-y-3">
-              {completed.map((b, idx) => (
-                <FilterItem key={b.id} index={idx}>
-                  <Link
-                    href={`/booking/${b.id}`}
-                    className="group flex items-center justify-between gap-4 rounded-3xl border border-slate-200 bg-white p-5 shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition-[box-shadow,border-color,transform] duration-200 hover:-translate-y-0.5 hover:border-emerald-200 hover:shadow-lg dark:border-slate-800 dark:bg-slate-900 dark:hover:border-emerald-900"
-                  >
-                    <div className="flex min-w-0 items-center gap-4">
-                      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-400">
-                        <CircleCheckBig size={19} strokeWidth={2.2} />
-                      </span>
-                      <div className="min-w-0">
-                        <p className="truncate text-sm font-extrabold text-slate-900 dark:text-white">
-                          {b.serviceTitle}
-                        </p>
-                        <p className="mt-0.5 truncate text-xs text-slate-500 dark:text-slate-400">
-                          {b.masterDisplayName}
-                        </p>
-                        <p className="mt-1 font-mono text-[11px] text-slate-400">
-                          {b.bookingNumber} · {b.completedAt ? fmt.date(b.completedAt) : '—'}
-                        </p>
-                      </div>
-                    </div>
-
-                    <span className="shrink-0 text-base font-extrabold text-slate-900 tabular-nums dark:text-white">
-                      {money(b.price)}
+        {!loading && completed.length > 0 && (
+          <FilterContainer className="divide-y divide-slate-100 dark:divide-slate-800">
+            {completed.map((b, idx) => (
+              <FilterItem key={b.id} index={idx}>
+                <Link
+                  href={`/booking/${b.id}`}
+                  className="group flex items-center justify-between gap-4 px-5 py-3.5 transition-colors hover:bg-slate-50/70 dark:hover:bg-slate-800/30"
+                >
+                  <div className="flex min-w-0 items-center gap-3.5">
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-emerald-50 text-emerald-600 ring-1 ring-inset ring-emerald-200/70 dark:bg-emerald-500/10 dark:text-emerald-400 dark:ring-emerald-500/20">
+                      <CircleCheckBig size={17} strokeWidth={2.4} />
                     </span>
-                  </Link>
-                </FilterItem>
-              ))}
-            </FilterContainer>
-          )}
-        </section>
-      </div>
-    </>
+                    <div className="min-w-0">
+                      <p className="truncate text-[13px] font-extrabold text-slate-900 dark:text-white">
+                        {b.serviceTitle}
+                      </p>
+                      <p className="truncate text-[11px] font-semibold text-slate-500 dark:text-slate-400">
+                        {b.masterDisplayName} · {b.completedAt ? fmt.date(b.completedAt) : '—'}
+                      </p>
+                      <p className="truncate font-mono text-[10px] text-slate-400">{b.bookingNumber}</p>
+                    </div>
+                  </div>
+
+                  <span className="shrink-0 text-sm font-extrabold text-slate-900 tabular-nums dark:text-white">
+                    {money(b.price)}
+                  </span>
+                </Link>
+              </FilterItem>
+            ))}
+          </FilterContainer>
+        )}
+      </Panel>
+    </CabinetPage>
   );
 }

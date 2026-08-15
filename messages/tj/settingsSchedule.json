@@ -26,10 +26,11 @@
   "exceptionStart": "Оғоз",
   "exceptionEnd": "Анҷом",
   "exceptionNote": "Эзоҳ (ихтиёрӣ)",
-  "addException": "+ Иловаи Истисно",
+  "addException": "Иловаи Истисно",
   "remove": "Нест",
   "noExceptions": "Ҳанӯз истисно нест",
   "exceptionFailed": "Захираи истисно номуваффақ шуд",
   "loading": "Боркунӣ...",
-  "noExceptionsDesc": "Рӯзҳои истироҳат ё рухсатиро илова кунед — дар он рӯзҳо фармоиш қабул намешавад."
+  "noExceptionsDesc": "Рӯзҳои истироҳат ё рухсатиро илова кунед — дар он рӯзҳо фармоиш қабул намешавад.",
+  "weeklyHoursTitle": "Соатҳои корӣ"
 }

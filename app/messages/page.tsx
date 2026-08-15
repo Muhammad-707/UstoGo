@@ -9,10 +9,13 @@ import type { Booking, QuickReply, UserRole } from '@/lib/api/types';
 import { useAuth } from '@/contexts/AuthContext';
 import { getAvatarUrl } from '@/lib/placeholders';
 import { waLink, waBookingText } from '@/lib/whatsapp';
+import { CabinetPage } from '@/components/layout/CabinetPage';
+import { Notice } from '@/components/dashboard/Notice';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Card } from '@/components/ui/card';
+import { FilterContainer, FilterItem } from '@/components/ui/FilterAnimate';
 import { Skeleton } from '@/components/ui/skeleton';
+import { cn } from '@/lib/utils';
 
 const WHATSAPP_STATUSES = new Set(['ACCEPTED', 'IN_PROGRESS', 'COMPLETED']);
 
@@ -42,21 +45,45 @@ function WhatsAppContactCard({
   if (!phone) return null;
 
   return (
-    <Card asChild>
-      <motion.div
-      whileHover={{ y: -3 }}
-      transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-      className="flex items-center gap-4 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 hover:shadow-lg hover:border-emerald-200 dark:hover:border-emerald-900 transition-[box-shadow,border-color]"
+    <motion.article
+      whileHover={{ y: -4 }}
+      transition={{ type: 'spring', stiffness: 320, damping: 24 }}
+      className="group relative h-full overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 shadow-[0_1px_2px_rgba(16,24,40,0.04)] transition-[box-shadow,border-color] duration-300 hover:border-emerald-300 hover:shadow-[0_18px_38px_-22px_rgba(16,185,129,0.55)] dark:border-slate-800 dark:bg-slate-900 dark:shadow-none dark:hover:border-emerald-900"
     >
-        <img src={getAvatarUrl(id, name)} alt={name} className="w-12 h-12 rounded-2xl object-cover flex-shrink-0" />
-        <div className="flex-1 min-w-0">
-          <h4 className="text-sm font-bold text-slate-900 dark:text-white truncate">{name}</h4>
-          <p className="text-xs text-slate-500 truncate mt-0.5">{booking.serviceTitle}</p>
-          <span className="text-[10px] text-slate-400 mt-0.5 block">{booking.bookingNumber}</span>
+      {/* WhatsApp's own green, as a wash in the corner rather than as another green
+          rectangle. It is what tells you at a glance which of these cards is a channel
+          you can actually open. */}
+      <span
+        aria-hidden
+        className="pointer-events-none absolute -right-10 -top-14 h-36 w-36 rounded-full bg-emerald-500/[0.10] blur-2xl transition-opacity duration-500 group-hover:opacity-100 dark:bg-emerald-500/[0.16]"
+      />
+
+      <div className="relative flex items-center gap-3">
+        <span className="relative shrink-0">
+          <img
+            src={getAvatarUrl(id, name)}
+            alt={name}
+            className="h-11 w-11 rounded-full object-cover ring-2 ring-emerald-500/25"
+          />
+          <span className="absolute -bottom-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-emerald-500 text-white ring-2 ring-white dark:ring-slate-900">
+            <Icon name="whatsapp" size={10} />
+          </span>
+        </span>
+
+        <div className="min-w-0 flex-1">
+          <h4 className="truncate text-[14px] font-bold tracking-[-0.01em] text-slate-900 dark:text-white">{name}</h4>
+          <p className="truncate text-[12.5px] text-slate-500 dark:text-slate-400">{booking.serviceTitle}</p>
         </div>
+
+        <span className="shrink-0 self-start rounded-md bg-slate-900/[0.05] px-1.5 py-0.5 font-mono text-[10px] font-semibold text-slate-500 dark:bg-white/10 dark:text-slate-400">
+          {booking.bookingNumber}
+        </span>
+      </div>
+
+      <div className="relative mt-3.5 flex items-center gap-2 border-t border-slate-100 pt-3.5 dark:border-slate-800">
         {role === 'MASTER' && quickReplies.length > 0 && (
           <Select value={selectedReplyId || undefined} onValueChange={setSelectedReplyId}>
-            <SelectTrigger className="hidden md:flex max-w-[160px] p-2 rounded-xl text-[10px] font-bold text-slate-700 dark:text-slate-200">
+            <SelectTrigger className="min-w-0 flex-1 rounded-xl px-3 py-2 text-[11.5px] font-semibold text-slate-600 dark:text-slate-300">
               <SelectValue placeholder={t('quickReplyDefault')} />
             </SelectTrigger>
             <SelectContent>
@@ -71,15 +98,17 @@ function WhatsAppContactCard({
             href={link}
             target="_blank"
             rel="noopener noreferrer"
-            className="btn-success flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-bold transition shrink-0"
+            className={cn(
+              'inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 px-4 py-2.5 text-[12.5px] font-bold text-white shadow-lg shadow-emerald-600/25 transition hover:from-emerald-400 hover:to-teal-500',
+              role === 'MASTER' && quickReplies.length > 0 ? '' : 'flex-1',
+            )}
           >
-            <Icon name="whatsapp" size={16} />
-            <span className="hidden sm:inline">{t('whatsappButton')}</span>
-            <span className="sm:hidden">{t('whatsappButtonShort')}</span>
+            <Icon name="whatsapp" size={15} />
+            {t('whatsappButton')}
           </a>
         )}
-      </motion.div>
-    </Card>
+      </div>
+    </motion.article>
   );
 }
 
@@ -132,25 +161,13 @@ export default function WhatsAppContactsPage() {
   }
 
   return (
-    <div className="page-shell py-8 space-y-8">
-      <div>
-        <span className="text-xs font-extrabold uppercase tracking-widest text-[#25D366]">
-          {t('badge')}
-        </span>
-        <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white mt-1">{t('title')}</h1>
-        <p className="text-xs text-slate-500 mt-1">{t('subtitle')}</p>
-      </div>
-
-      {error && (
-        <div className="p-4 rounded-2xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 text-xs font-bold text-red-600 dark:text-red-400">
-          {error}
-        </div>
-      )}
+    <CabinetPage icon="whatsapp" eyebrow={t('badge')} title={t('title')} hint={t('subtitle')}>
+      {error && <Notice tone="danger">{error}</Notice>}
 
       {loading && (
-        <div className="space-y-3">
-          {Array.from({ length: 3 }).map((_, i) => (
-            <Skeleton key={i} className="h-20 rounded-2xl" />
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <Skeleton key={i} className="h-[132px] rounded-2xl" />
           ))}
         </div>
       )}
@@ -164,13 +181,19 @@ export default function WhatsAppContactsPage() {
         />
       )}
 
+      {/* A grid, not a stack. Twelve full-width rows each holding a name, a service and
+          one button was a table with the lines rubbed out — 90% of every row was empty
+          and the page ran off the bottom of the screen. Three to a row, each card the
+          size of what it actually says. */}
       {!loading && contacts.length > 0 && (
-        <div className="space-y-4">
+        <FilterContainer className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
           {contacts.map((b) => (
-            <WhatsAppContactCard key={b.id} booking={b} role={user.role} quickReplies={quickReplies} />
+            <FilterItem key={b.id} className="h-full">
+              <WhatsAppContactCard booking={b} role={user.role} quickReplies={quickReplies} />
+            </FilterItem>
           ))}
-        </div>
+        </FilterContainer>
       )}
-    </div>
+    </CabinetPage>
   );
 }

@@ -48,5 +48,17 @@
   "activeNow": "Сейчас в работе",
   "activeNowDesc": "Следите за мастером на карте.",
   "trackLive": "Отслеживать",
-  "noBookingsFiltered": "Заказов в этом статусе нет"
+  "noBookingsFiltered": "Заказов в этом статусе нет",
+  "ctaEyebrow": "Ваш кабинет",
+  "ctaTitle": "Найдите нужного мастера за пару минут",
+  "ctaDesc": "Более 1400 проверенных мастеров — поиск по категории, рейтингу и расстоянию.",
+  "ctaPrimary": "Найти мастера",
+  "ctaSecondary": "В магазин",
+  "heroEyebrow": "Кабинет клиента",
+  "heroGreeting": "Здравствуйте, {name}!",
+  "heroDesc": "Все ваши заказы, мастера и расходы в одном месте.",
+  "sectionWorkEyebrow": "Ваша активность",
+  "sectionHistoryTitle": "История заказов",
+  "recentlyViewedEyebrow": "Вы недавно смотрели",
+  "referralEyebrow": "Пригласите друзей"
 }

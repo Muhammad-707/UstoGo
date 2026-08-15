@@ -2,13 +2,18 @@
 
 import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { Icon } from '@/components/icons/LucideIcons';
+import { ArrowRight, MapPin, Route, TrendingUp } from 'lucide-react';
+
 import { bookingsApi } from '@/lib/api/endpoints';
 import { ApiError } from '@/lib/api/client';
 import type { ScheduleOptimizerResult } from '@/lib/api/types';
 import { MasterPageHeader } from '@/components/master/MasterPageHeader';
+import { DashboardShell } from '@/components/layout/DashboardShell';
+import { PageBody } from '@/components/layout/PageBody';
+import { Panel } from '@/components/dashboard/Panel';
+import { Notice } from '@/components/dashboard/Notice';
+import { EmptyState } from '@/components/ui/EmptyState';
 import { useDateFormat } from '@/lib/datetime';
-import { Card } from '@/components/ui/card';
 import { DatePicker, todayISO } from '@/components/ui/date-picker';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -40,80 +45,91 @@ export default function ScheduleOptimizerPage() {
   }, [load]);
 
   return (
-    <>
-    <MasterPageHeader
-      icon="compass"
-      eyebrow={t('badge')}
-      title={t('title')}
-      hint={t('pageHint')}
-      action={
-        <DatePicker
-          value={date}
-          onChange={setDate}
-          aria-label={t('title')}
-          className="w-auto min-w-52 p-3 rounded-xl font-bold"
-        />
-      }
-    />
-    <div className="page-shell page-shell-narrow py-10 space-y-8">
+    /* Inside the shell, not beside it: the master sidebar links straight here, and
+       without the shell the page dropped the reader out of their own cabinet with no
+       way back but the browser's back button. */
+    <DashboardShell role="MASTER">
+      <MasterPageHeader
+        icon="compass"
+        eyebrow={t('badge')}
+        title={t('title')}
+        hint={t('pageHint')}
+        action={
+          <DatePicker
+            value={date}
+            onChange={setDate}
+            aria-label={t('title')}
+            className="w-auto min-w-52 rounded-xl p-3 font-bold"
+          />
+        }
+      />
 
-      {error && <p className="text-xs font-bold text-red-600 dark:text-red-400">{error}</p>}
-      {loading && (
-          <div className="space-y-3">
+      <PageBody>
+        {error && <Notice tone="danger">{error}</Notice>}
+
+        {loading && (
+          <div className="space-y-2.5">
             {Array.from({ length: 4 }).map((_, i) => (
-              <Skeleton key={i} className="h-20 rounded-2xl" />
+              <Skeleton key={i} className="h-16 rounded-2xl" />
             ))}
           </div>
         )}
 
-      {result && !loading && (
-        <>
-          {result.stops.length === 0 ? (
-            <Card className="rounded-3xl p-12 text-center space-y-2">
-              <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">{t('empty')}</p>
-            </Card>
-          ) : (
-            <>
-              {result.estimatedSavingsKm > 0 && (
-                <Card className="rounded-3xl border border-emerald-200 dark:border-emerald-900 bg-emerald-50/60 dark:bg-emerald-950/20 p-6 flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-2xl bg-emerald-500 text-white flex items-center justify-center shadow-lg shrink-0">
-                    <Icon name="trendingup" size={22} />
-                  </div>
-                  <div>
-                    <p className="text-lg font-extrabold text-emerald-700 dark:text-emerald-300">
-                      {t('savingsAmount', { km: result.estimatedSavingsKm.toFixed(1) })}
-                    </p>
-                    <p className="text-[11px] text-slate-500">
-                      {t('savingsHint', {
-                        optimized: result.totalDistanceKm.toFixed(1),
-                        chronological: result.chronologicalDistanceKm.toFixed(1),
-                      })}
-                    </p>
-                  </div>
-                </Card>
-              )}
+        {result && !loading && result.stops.length === 0 && (
+          <EmptyState icon="compass" tone="blue" title={t('empty')} />
+        )}
 
-              <div className="space-y-3">
+        {result && !loading && result.stops.length > 0 && (
+          <>
+            {result.estimatedSavingsKm > 0 && (
+              <Notice tone="success" Icon={TrendingUp} title={t('savingsAmount', { km: result.estimatedSavingsKm.toFixed(1) })}>
+                {t('savingsHint', {
+                  optimized: result.totalDistanceKm.toFixed(1),
+                  chronological: result.chronologicalDistanceKm.toFixed(1),
+                })}
+              </Notice>
+            )}
+
+            <Panel
+              title={t('stopsTitle')}
+              Icon={Route}
+              accent="blue"
+              divided
+              padding="none"
+              action={
+                <span className="rounded-lg bg-slate-100 px-2.5 py-1 text-[11px] font-extrabold tabular-nums text-slate-600 dark:bg-slate-800 dark:text-slate-300">
+                  {result.stops.length}
+                </span>
+              }
+            >
+              <ol className="divide-y divide-slate-100 dark:divide-slate-800">
                 {result.stops.map((stop, index) => (
-                  <Card key={stop.bookingId} className="rounded-2xl border border-slate-200 dark:border-slate-800 p-4 flex items-center gap-4">
-                    <div className="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center font-extrabold text-xs shrink-0">
+                  <li
+                    key={stop.bookingId}
+                    className="flex items-center gap-3.5 px-5 py-3.5 transition-colors hover:bg-slate-50/70 sm:px-6 dark:hover:bg-slate-800/30"
+                  >
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-600 text-xs font-extrabold text-white tabular-nums">
                       {stop.order}
-                    </div>
+                    </span>
                     <div className="min-w-0 flex-1">
-                      <p className="text-sm font-bold text-slate-900 dark:text-white truncate">{stop.serviceTitle}</p>
-                      <p className="text-[11px] text-slate-400">
+                      <p className="truncate text-sm font-extrabold text-slate-900 dark:text-white">
+                        {stop.serviceTitle}
+                      </p>
+                      <p className="flex items-center gap-1.5 truncate text-[11px] font-semibold text-slate-500 dark:text-slate-400">
+                        <MapPin size={12} className="shrink-0 text-slate-400" />
                         {stop.district} · {fmt.time(stop.scheduledAt)}
                       </p>
                     </div>
-                    {index < result.stops.length - 1 && <Icon name="arrowright" size={14} className="text-slate-300 shrink-0" />}
-                  </Card>
+                    {index < result.stops.length - 1 && (
+                      <ArrowRight size={14} className="shrink-0 text-slate-300 dark:text-slate-600" />
+                    )}
+                  </li>
                 ))}
-              </div>
-            </>
-          )}
-        </>
-      )}
-    </div>
-    </>
+              </ol>
+            </Panel>
+          </>
+        )}
+      </PageBody>
+    </DashboardShell>
   );
 }

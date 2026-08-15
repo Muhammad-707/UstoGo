@@ -48,5 +48,17 @@
   "activeNow": "In progress now",
   "activeNowDesc": "Follow your master on the live map.",
   "trackLive": "Track live",
-  "noBookingsFiltered": "No bookings with this status"
+  "noBookingsFiltered": "No bookings with this status",
+  "ctaEyebrow": "Your cabinet",
+  "ctaTitle": "Find the right master in minutes",
+  "ctaDesc": "Over 1,400 verified masters — search by category, rating and distance.",
+  "ctaPrimary": "Find a master",
+  "ctaSecondary": "Go to shop",
+  "heroEyebrow": "Client cabinet",
+  "heroGreeting": "Hello, {name}!",
+  "heroDesc": "Every booking, master and expense of yours in one place.",
+  "sectionWorkEyebrow": "Your activity",
+  "sectionHistoryTitle": "Booking history",
+  "recentlyViewedEyebrow": "Viewed recently",
+  "referralEyebrow": "Invite your friends"
 }

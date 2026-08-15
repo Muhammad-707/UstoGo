@@ -15,7 +15,7 @@ const DUSHANBE_CENTER: [number, number] = [38.5598, 68.787];
 const pin = L.divIcon({
   className: '',
   html: `<div style="width:32px;height:32px;transform:translate(-50%,-100%);">
-    <svg viewBox="0 0 24 24" width="32" height="32" fill="#d97706" stroke="white" stroke-width="1.5">
+    <svg viewBox="0 0 24 24" width="32" height="32" fill="#2563eb" stroke="white" stroke-width="1.5">
       <path d="M12 22s8-9.5 8-14a8 8 0 1 0-16 0c0 4.5 8 14 8 14z"/>
       <circle cx="12" cy="8" r="3" fill="white"/>
     </svg>
@@ -149,7 +149,7 @@ export default function MasterLocationPicker({
           type="button"
           onClick={handleSave}
           disabled={saving || !point}
-          className="px-5 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-extrabold disabled:opacity-50 transition"
+          className="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-extrabold disabled:opacity-50 transition"
         >
           {saving ? '...' : t('saveLocation')}
         </Button>

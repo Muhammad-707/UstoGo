@@ -6,18 +6,29 @@ import { motion } from 'framer-motion';
 import { ArrowUpRight, type LucideIcon } from 'lucide-react';
 
 import { CountUp } from '@/components/stats/CountUp';
+import { AccentIcon, type AccentTone } from '@/components/dashboard/AccentIcon';
 import { FilterContainer, FilterItem } from '@/components/ui/FilterAnimate';
 import { cn } from '@/lib/utils';
 
 export type MetricTone = 'blue' | 'emerald' | 'amber' | 'violet' | 'rose' | 'slate';
 
-const TONE: Record<MetricTone, { tile: string; wash: string }> = {
-  blue: { tile: 'from-blue-600 to-sky-500 shadow-blue-500/25', wash: 'bg-blue-500/15' },
-  emerald: { tile: 'from-emerald-600 to-teal-500 shadow-emerald-500/25', wash: 'bg-emerald-500/15' },
-  amber: { tile: 'from-amber-500 to-orange-500 shadow-amber-500/25', wash: 'bg-amber-500/15' },
-  violet: { tile: 'from-violet-600 to-fuchsia-500 shadow-violet-500/25', wash: 'bg-violet-500/15' },
-  rose: { tile: 'from-rose-500 to-pink-500 shadow-rose-500/25', wash: 'bg-rose-500/15' },
-  slate: { tile: 'from-slate-700 to-slate-500 shadow-slate-500/25', wash: 'bg-slate-500/15' },
+/** Border and shadow the card takes on when the pointer is over it. */
+const HOVER: Record<MetricTone, string> = {
+  blue: 'hover:border-blue-200 hover:shadow-[0_14px_30px_-18px_rgba(37,99,235,0.5)] dark:hover:border-sky-900',
+  emerald: 'hover:border-emerald-200 hover:shadow-[0_14px_30px_-18px_rgba(16,185,129,0.5)] dark:hover:border-emerald-900',
+  amber: 'hover:border-amber-200 hover:shadow-[0_14px_30px_-18px_rgba(245,158,11,0.5)] dark:hover:border-amber-900',
+  violet: 'hover:border-violet-200 hover:shadow-[0_14px_30px_-18px_rgba(139,92,246,0.5)] dark:hover:border-violet-900',
+  rose: 'hover:border-rose-200 hover:shadow-[0_14px_30px_-18px_rgba(244,63,94,0.5)] dark:hover:border-rose-900',
+  slate: 'hover:border-slate-300 hover:shadow-[0_14px_30px_-18px_rgba(15,23,42,0.5)] dark:hover:border-slate-700',
+};
+
+const GLYPH: Record<MetricTone, AccentTone> = {
+  blue: 'blue',
+  emerald: 'emerald',
+  amber: 'amber',
+  violet: 'violet',
+  rose: 'rose',
+  slate: 'slate',
 };
 
 export interface Metric {
@@ -36,75 +47,61 @@ export interface Metric {
 }
 
 function MetricBody({ metric }: { metric: Metric }) {
-  const tone = TONE[metric.tone];
   return (
     <>
-      <div
-        className={cn(
-          'pointer-events-none absolute -right-12 -top-12 h-32 w-32 rounded-full opacity-50 blur-3xl transition-opacity duration-500 group-hover:opacity-90',
-          tone.wash
-        )}
-      />
+      <AccentIcon Icon={metric.Icon} tone={GLYPH[metric.tone]} size="sm" />
 
-      <div className="relative flex items-start justify-between gap-3">
-        <span
-          className={cn(
-            'flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br text-white shadow-lg ring-1 ring-white/20 transition-transform duration-300 group-hover:-rotate-6 group-hover:scale-110',
-            tone.tile
+      <div className="min-w-0 flex-1">
+        <p className="truncate text-[12.5px] font-medium text-slate-500 dark:text-slate-400">{metric.label}</p>
+        <p className="text-[21px] font-bold leading-tight tracking-[-0.03em] text-slate-900 tabular-nums dark:text-white">
+          {typeof metric.value === 'number' ? (
+            <CountUp
+              to={metric.value}
+              decimals={metric.decimals}
+              prefix={metric.prefix}
+              suffix={metric.suffix}
+              duration={1.2}
+            />
+          ) : (
+            metric.value
           )}
-        >
-          <metric.Icon size={19} strokeWidth={2.2} />
-        </span>
-        {metric.href && (
-          <ArrowUpRight
-            size={16}
-            className="translate-y-1 text-slate-300 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 dark:text-slate-600"
-          />
+        </p>
+        {metric.hint && (
+          <p className="truncate text-[11.5px] leading-snug text-slate-400 dark:text-slate-500">{metric.hint}</p>
         )}
       </div>
 
-      <div className="relative mt-5 text-3xl font-extrabold leading-none tracking-tight text-slate-900 tabular-nums dark:text-white">
-        {typeof metric.value === 'number' ? (
-          <CountUp
-            to={metric.value}
-            decimals={metric.decimals}
-            prefix={metric.prefix}
-            suffix={metric.suffix}
-            duration={1.2}
-          />
-        ) : (
-          <span className="break-words">{metric.value}</span>
-        )}
-      </div>
-
-      <p className="relative mt-2 text-[11px] font-bold uppercase leading-snug tracking-[0.1em] text-slate-400">
-        {metric.label}
-      </p>
-
-      {metric.hint && (
-        <p className="relative mt-1.5 text-[11px] font-semibold text-slate-500 dark:text-slate-400">{metric.hint}</p>
+      {metric.href && (
+        <ArrowUpRight
+          size={15}
+          strokeWidth={2.4}
+          className="mt-0.5 shrink-0 self-start text-slate-300 transition-colors group-hover:text-slate-500 dark:text-slate-700 dark:group-hover:text-slate-400"
+        />
       )}
     </>
   );
 }
 
-const CARD_CLASS =
-  'group relative h-full overflow-hidden rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-[0_2px_8px_-4px_rgba(15,23,42,0.08)] transition-shadow duration-300 hover:shadow-[0_28px_56px_-28px_rgba(15,23,42,0.3)] sm:p-6 dark:border-slate-800 dark:bg-slate-900';
-
 /**
- * One headline figure on a dashboard.
+ * One supporting figure on a dashboard.
  *
- * All three dashboards had grown their own version of this tile — the client's put the
- * icon on the right and the label above the number, the master's put it on the left,
- * the admin's used a different radius — so the same product looked like three products
- * depending on who signed in. One component, one shape, and the figure counts up so the
- * number is the thing that moves rather than the decoration around it.
+ * It is a *row*, not a poster: a glyph, a caption and a number, about 76px tall. Three
+ * earlier versions of this card put a 38–44px figure under a 48px icon tile with a
+ * coloured wash bleeding across the corner, and four of them ate the whole top of the
+ * screen before the reader reached anything they came for. These are the numbers you
+ * glance at; the earnings spotlight below them is the one that gets to be loud.
+ *
+ * All three dashboards share it, so the same product looks like one product whoever
+ * signs in.
  */
+const CARD_CLASS =
+  'group flex h-full items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3.5 shadow-[0_1px_2px_rgba(16,24,40,0.04)] transition-[box-shadow,border-color] duration-300 dark:border-slate-800 dark:bg-slate-900 dark:shadow-none';
+
 export function MetricCard({ metric }: { metric: Metric }) {
   if (metric.href) {
     return (
-      <motion.div whileHover={{ y: -6 }} transition={{ type: 'spring', stiffness: 320, damping: 24 }} className="h-full">
-        <Link href={metric.href} className={cn(CARD_CLASS, 'block hover:border-blue-200 dark:hover:border-sky-900/80')}>
+      <motion.div whileHover={{ y: -3 }} transition={{ type: 'spring', stiffness: 320, damping: 22 }} className="h-full">
+        <Link href={metric.href} className={cn(CARD_CLASS, HOVER[metric.tone])}>
           <MetricBody metric={metric} />
         </Link>
       </motion.div>
@@ -113,9 +110,9 @@ export function MetricCard({ metric }: { metric: Metric }) {
 
   return (
     <motion.div
-      whileHover={{ y: -6 }}
-      transition={{ type: 'spring', stiffness: 320, damping: 24 }}
-      className={CARD_CLASS}
+      whileHover={{ y: -3 }}
+      transition={{ type: 'spring', stiffness: 320, damping: 22 }}
+      className={cn(CARD_CLASS, HOVER[metric.tone])}
     >
       <MetricBody metric={metric} />
     </motion.div>
@@ -125,7 +122,7 @@ export function MetricCard({ metric }: { metric: Metric }) {
 /** The row of them, with the stagger the rest of the product uses. */
 export function MetricGrid({ metrics, className }: { metrics: Metric[]; className?: string }) {
   return (
-    <FilterContainer className={cn('grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4', className)}>
+    <FilterContainer className={cn('grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4', className)}>
       {metrics.map((m) => (
         <FilterItem key={m.label} className="h-full">
           <MetricCard metric={m} />

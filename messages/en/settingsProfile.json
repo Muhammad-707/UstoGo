@@ -37,5 +37,6 @@
   "locating": "Locating...",
   "saveLocation": "Save Location",
   "clearLocation": "Clear",
-  "locationSaveFailed": "Failed to save location"
+  "locationSaveFailed": "Failed to save location",
+  "personalDetailsTitle": "Personal details"
 }

@@ -69,5 +69,16 @@
   "chartTotalCreated": "Всего создано",
   "chartTotalCompleted": "Всего завершено",
   "chartTooltip": "{date}: создано {created}, завершено {completed}",
-  "metricAvgRatingShort": "Средняя оценка"
+  "metricAvgRatingShort": "Средняя оценка",
+  "ctaEyebrow": "Панель управления",
+  "ctaTitle": "Держите очередь проверки и жалобы пустыми",
+  "ctaDesc": "Каждый непроверенный мастер — потерянный заказ. Каждая жалоба без ответа — потерянное доверие.",
+  "ctaPrimary": "Очередь мастеров",
+  "ctaSecondary": "Жалобы",
+  "heroEyebrow": "Панель управления",
+  "heroTitle": "Здоровье платформы",
+  "heroDesc": "Пользователи, заказы и отзывы — в реальном времени.",
+  "sectionOpsEyebrow": "Операции",
+  "sectionQualityEyebrow": "Качество",
+  "sectionQueueEyebrow": "Модерация"
 }

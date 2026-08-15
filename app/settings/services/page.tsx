@@ -2,19 +2,22 @@
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { Icon } from '@/components/icons/LucideIcons';
+import { Award, Briefcase, Plus, Wrench } from 'lucide-react';
 import { categoriesApi, masterCabinetApi } from '@/lib/api/endpoints';
 import { ApiError } from '@/lib/api/client';
 import { revalidateMastersCache } from '@/lib/api/revalidate';
 import type { Category, MasterService, PricingSuggestion } from '@/lib/api/types';
 import { MasterPageHeader } from '@/components/master/MasterPageHeader';
+import { PageBody } from '@/components/layout/PageBody';
+import { Panel } from '@/components/dashboard/Panel';
+import { Notice } from '@/components/dashboard/Notice';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useMoney } from '@/lib/money';
 import { cn } from '@/lib/utils';
-import { Card } from '@/components/ui/card';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -46,6 +49,7 @@ const EMPTY_FORM: ServiceFormState = {
 
 export default function MasterServicesPage() {
   const t = useTranslations('settingsServices');
+  const { money } = useMoney();
 
   const [services, setServices] = useState<MasterService[]>([]);
   const [allCategories, setAllCategories] = useState<Category[]>([]);
@@ -255,26 +259,19 @@ export default function MasterServicesPage() {
               setForm({ ...EMPTY_FORM, categoryId: myCategoryIds[0] });
             }
           }}
-          className="h-auto px-5 py-2.5 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-extrabold text-xs shadow-lg shadow-amber-900/20"
+          className="h-auto gap-1.5 px-5 py-2.5 rounded-2xl bg-slate-900 text-[13px] font-medium text-white transition hover:bg-slate-800 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-200"
         >
-          + {t('addService')}
+          <Plus size={14} strokeWidth={2.6} />
+          {t('addService')}
         </Button>
       }
     />
-    <div className="page-shell page-shell-narrow py-10 space-y-8">
+    <PageBody narrow>
 
-      {error && (
-        <div className="p-4 rounded-2xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 text-xs font-bold text-red-600 dark:text-red-400">
-          {error}
-        </div>
-      )}
+      {error && <Notice tone="danger">{error}</Notice>}
 
       {/* My categories */}
-      <Card className="rounded-3xl border border-slate-200 dark:border-slate-800 p-6 space-y-4 shadow-xl">
-        <h3 className="text-sm font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
-          <Icon name="award" size={16} className="text-amber-500" />
-          {t('myCategories')}
-        </h3>
+      <Panel title={t('myCategories')} Icon={Award} accent="blue" divided bodyClassName="space-y-4">
         {myCategories.length === 0 && (
           <p className="text-xs text-slate-400 font-semibold">{t('noCategoryAttached')}</p>
         )}
@@ -282,7 +279,7 @@ export default function MasterServicesPage() {
           {myCategories.map((c) => (
             <span
               key={c.id}
-              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-50 dark:bg-amber-950/50 text-amber-800 dark:text-amber-300 text-xs font-bold"
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-50 dark:bg-blue-950/50 text-blue-800 dark:text-sky-300 text-xs font-bold"
             >
               {c.name}
               <Button
@@ -318,14 +315,18 @@ export default function MasterServicesPage() {
             </Button>
           </div>
         )}
-      </Card>
+      </Panel>
 
       {/* Add / edit form */}
       {showForm && (
-        <Card className="rounded-3xl border border-amber-200 dark:border-amber-800/40 p-6 space-y-4 shadow-xl">
-          <h3 className="text-sm font-extrabold text-slate-900 dark:text-white">
-            {editingId !== null ? t('editService') : t('newService')}
-          </h3>
+        <Panel
+          title={editingId !== null ? t('editService') : t('newService')}
+          Icon={Wrench}
+          accent="blue"
+          divided
+          className="border-blue-200/90 dark:border-blue-900/50"
+          bodyClassName="space-y-4"
+        >
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
             <div className="space-y-1">
               <Label htmlFor="service-title" className="text-slate-500">{t('titleLabel')}</Label>
@@ -417,32 +418,34 @@ export default function MasterServicesPage() {
               {durationHint && <span className="text-[10px] text-slate-400 font-bold">{durationHint}</span>}
             </div>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <Button
               variant="brand"
               onClick={handleSave}
               disabled={saving}
-              className="h-auto px-5 py-2.5 rounded-2xl bg-amber-600 hover:bg-amber-700 shadow-amber-600/25 text-xs shadow-md"
+              className="h-auto px-5 py-2.5 rounded-2xl bg-slate-900 text-[13px] font-medium text-white transition hover:bg-slate-800 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-200"
             >
               {saving ? t('saving') : t('save')}
             </Button>
             <Button
-              variant="secondary"
+              variant="ghost"
               onClick={resetForm}
-              className="h-auto px-5 py-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-bold"
+              className="h-auto rounded-xl border border-slate-200 px-5 py-2.5 text-xs font-bold text-slate-600 dark:border-slate-700 dark:text-slate-300"
             >
               {t('cancel')}
             </Button>
           </div>
-        </Card>
+        </Panel>
       )}
 
       {/* Services list */}
-      <Card className="rounded-3xl border border-slate-200 dark:border-slate-800 p-6 space-y-4 shadow-xl">
-        <h3 className="text-sm font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
-          <Icon name="sparkles" size={16} className="text-amber-500" />
-          {t('myServicesTitle', { count: services.length })}
-        </h3>
+      <Panel
+        title={t('myServicesTitle', { count: services.length })}
+        Icon={Briefcase}
+        accent="blue"
+        divided
+        bodyClassName="space-y-4"
+      >
         {loading && (
           <div className="space-y-3">
             {Array.from({ length: 4 }).map((_, i) => (
@@ -458,15 +461,18 @@ export default function MasterServicesPage() {
             description={t('noServicesDesc')}
           />
         )}
-        <div className="space-y-3">
+        <div className="space-y-2.5">
           {services.map((s) => (
             <div
               key={s.id}
-              className={`p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs transition ${(s.isActive ?? true) ? 'hover:border-amber-300 dark:hover:border-amber-800' : 'opacity-60'}`}
+              className={cn(
+                'flex flex-col justify-between gap-3 rounded-2xl border border-slate-200/80 bg-slate-50/60 p-4 text-xs transition sm:flex-row sm:items-center dark:border-slate-800 dark:bg-slate-800/40',
+                (s.isActive ?? true) ? 'hover:border-blue-300 dark:hover:border-sky-900' : 'opacity-60',
+              )}
             >
               <div className="flex items-start gap-3 min-w-0">
-                <div className="hidden sm:flex w-10 h-10 shrink-0 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 text-white items-center justify-center shadow-md">
-                  <Icon name="wrench" size={18} />
+                <div className="hidden h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600 sm:flex dark:bg-blue-500/10 dark:text-sky-400">
+                  <Wrench size={17} strokeWidth={2.2} />
                 </div>
                 <div className="space-y-1 min-w-0">
                   <div className="flex items-center gap-2">
@@ -483,7 +489,11 @@ export default function MasterServicesPage() {
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <span className="font-extrabold text-amber-600 dark:text-amber-400 text-sm">{s.price} {s.currency}</span>
+                {/* `money()`, not `{s.price} {s.currency}`: the column stamps a literal
+                    "USD" on every row, so a master pricing in somoni read their own
+                    catalogue back in dollars. Every other price in the app goes through
+                    this helper. */}
+                <span className="font-extrabold text-blue-600 dark:text-sky-400 text-sm">{money(s.price)}</span>
                 <Button
                   variant="ghost"
                   onClick={() => handleToggleActive(s)}
@@ -496,7 +506,7 @@ export default function MasterServicesPage() {
                 >
                   {(s.isActive ?? true) ? t('active') : t('inactive')}
                 </Button>
-                <Button variant="ghost" onClick={() => startEdit(s)} className="h-auto p-1 text-xs text-slate-400 hover:text-amber-600 hover:bg-transparent font-bold">
+                <Button variant="ghost" onClick={() => startEdit(s)} className="h-auto p-1 text-xs text-slate-400 hover:text-blue-600 hover:bg-transparent font-bold">
                   {t('edit')}
                 </Button>
                 <Button variant="ghost" onClick={() => handleRemove(s)} className="h-auto p-1 text-xs text-slate-400 hover:text-red-500 hover:bg-transparent font-bold">
@@ -506,8 +516,8 @@ export default function MasterServicesPage() {
             </div>
           ))}
         </div>
-      </Card>
-    </div>
+      </Panel>
+    </PageBody>
     </>
   );
 }

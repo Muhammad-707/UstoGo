@@ -2,14 +2,16 @@
 
 import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { Icon } from '@/components/icons/LucideIcons';
+import { Check, MessagesSquare, Pencil, X } from 'lucide-react';
 import { masterCabinetApi } from '@/lib/api/endpoints';
 import { ApiError } from '@/lib/api/client';
 import type { QuickReply } from '@/lib/api/types';
 import { MasterPageHeader } from '@/components/master/MasterPageHeader';
+import { PageBody } from '@/components/layout/PageBody';
+import { Panel } from '@/components/dashboard/Panel';
+import { Notice } from '@/components/dashboard/Notice';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card } from '@/components/ui/card';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -92,19 +94,12 @@ export default function QuickRepliesPage() {
   return (
     <>
     <MasterPageHeader icon="message" eyebrow={t('badge')} title={t('title')} hint={t('pageHint')} />
-    <div className="page-shell page-shell-narrow py-10 space-y-8">
+    <PageBody narrow>
 
-      {error && <p className="text-xs font-bold text-red-600 dark:text-red-400">{error}</p>}
-      {loading && (
-          <div className="space-y-3">
-            {Array.from({ length: 4 }).map((_, i) => (
-              <Skeleton key={i} className="h-16 rounded-2xl" />
-            ))}
-          </div>
-        )}
+      {error && <Notice tone="danger">{error}</Notice>}
 
-      <Card className="rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-xl space-y-3">
-        <div className="flex gap-3">
+      <Panel title={t('myRepliesTitle')} Icon={MessagesSquare} accent="blue" divided bodyClassName="space-y-3">
+        <div className="flex gap-2.5">
           <Input
             type="text"
             value={newText}
@@ -119,54 +114,88 @@ export default function QuickRepliesPage() {
             variant="brand"
             onClick={handleAdd}
             disabled={saving || !newText.trim() || replies.length >= MAX_REPLIES}
-            className="h-auto px-5 py-3 rounded-xl text-xs shadow"
+            className="h-auto px-5 py-3 rounded-2xl bg-slate-900 text-[13px] font-medium text-white transition hover:bg-slate-800 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-200"
           >
             {t('add')}
           </Button>
         </div>
-        {replies.length >= MAX_REPLIES && <p className="text-[10px] text-amber-500 font-bold">{t('limitReached')}</p>}
-      </Card>
+        {replies.length >= MAX_REPLIES && (
+          <p className="text-[10px] font-bold text-amber-600 dark:text-amber-400">{t('limitReached')}</p>
+        )}
 
-      <div className="space-y-3">
-        {replies.map((reply) => (
-          <Card
-            key={reply.id}
-            className="rounded-2xl border border-slate-200 dark:border-slate-800 p-4 flex items-center gap-3"
-          >
-            {editingId === reply.id ? (
-              <>
-                <Input
-                  type="text"
-                  value={editingText}
-                  onChange={(e) => setEditingText(e.target.value)}
-                  maxLength={300}
-                  className="flex-1 p-2 rounded-lg font-semibold"
-                />
-                <Button variant="ghost" size="icon-sm" onClick={handleSaveEdit} disabled={saving} className="text-emerald-600 dark:text-emerald-400">
-                  <Icon name="check" size={16} />
-                </Button>
-                <Button variant="ghost" size="icon-sm" onClick={() => setEditingId(null)} className="text-slate-400">
-                  <Icon name="X" size={16} />
-                </Button>
-              </>
-            ) : (
-              <>
-                <p className="flex-1 text-xs font-semibold text-slate-900 dark:text-white">{reply.text}</p>
-                <Button variant="ghost" size="icon" onClick={() => startEdit(reply)} className="text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
-                  <Icon name="filetext" size={14} />
-                </Button>
-                <Button variant="ghost" size="icon" onClick={() => handleRemove(reply)} className="text-red-500 hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-950/40 rounded-lg">
-                  <Icon name="X" size={14} />
-                </Button>
-              </>
-            )}
-          </Card>
-        ))}
+        {loading && (
+          <div className="space-y-2 pt-1">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <Skeleton key={i} className="h-12 rounded-xl" />
+            ))}
+          </div>
+        )}
+
         {!loading && replies.length === 0 && (
           <EmptyState variant="inline" icon="messagesquare" title={t('empty')} description={t('emptyDesc')} />
         )}
-      </div>
-    </div>
+
+        <div className="space-y-2">
+          {replies.map((reply) => (
+            <div
+              key={reply.id}
+              className="flex items-center gap-2 rounded-2xl border border-slate-200/80 bg-slate-50/60 p-3 transition hover:border-slate-300 dark:border-slate-800 dark:bg-slate-800/40"
+            >
+              {editingId === reply.id ? (
+                <>
+                  <Input
+                    type="text"
+                    value={editingText}
+                    onChange={(e) => setEditingText(e.target.value)}
+                    maxLength={300}
+                    className="flex-1 rounded-lg p-2 font-semibold"
+                  />
+                  <Button
+                    variant="ghost"
+                    size="icon-sm"
+                    onClick={handleSaveEdit}
+                    disabled={saving}
+                    className="rounded-lg text-emerald-600 dark:text-emerald-400"
+                  >
+                    <Check size={16} />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon-sm"
+                    onClick={() => setEditingId(null)}
+                    className="rounded-lg text-slate-400"
+                  >
+                    <X size={16} />
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <p className="flex-1 text-xs font-semibold leading-relaxed text-slate-800 dark:text-slate-100">
+                    {reply.text}
+                  </p>
+                  <Button
+                    variant="ghost"
+                    size="icon-sm"
+                    onClick={() => startEdit(reply)}
+                    className="shrink-0 rounded-lg text-slate-400 hover:bg-slate-200/60 hover:text-slate-700 dark:hover:bg-slate-700"
+                  >
+                    <Pencil size={14} />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon-sm"
+                    onClick={() => handleRemove(reply)}
+                    className="shrink-0 rounded-lg text-slate-400 hover:bg-rose-50 hover:text-rose-500 dark:hover:bg-rose-950/40"
+                  >
+                    <X size={14} />
+                  </Button>
+                </>
+              )}
+            </div>
+          ))}
+        </div>
+      </Panel>
+    </PageBody>
     </>
   );
 }

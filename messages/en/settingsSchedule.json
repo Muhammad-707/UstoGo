@@ -26,10 +26,11 @@
   "exceptionStart": "Start time",
   "exceptionEnd": "End time",
   "exceptionNote": "Note (optional)",
-  "addException": "+ Add Exception",
+  "addException": "Add Exception",
   "remove": "Remove",
   "noExceptions": "No exceptions yet",
   "exceptionFailed": "Failed to save the exception",
   "loading": "Loading...",
-  "noExceptionsDesc": "Add days off or holidays — no bookings will be taken on those dates."
+  "noExceptionsDesc": "Add days off or holidays — no bookings will be taken on those dates.",
+  "weeklyHoursTitle": "Working hours"
 }

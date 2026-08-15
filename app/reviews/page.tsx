@@ -24,6 +24,8 @@ import { cn } from '@/lib/utils';
 import { FilterContainer, FilterItem } from '@/components/ui/FilterAnimate';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { LeaderboardPanel } from '@/components/masters/LeaderboardPanel';
+import { CabinetFrame } from '@/components/layout/CabinetPage';
+import { PageHeader } from '@/components/layout/PageHeader';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useDateFormat } from '@/lib/datetime';
 import { Button } from '@/components/ui/button';
@@ -175,28 +177,21 @@ export default function ReviewsPage() {
   ];
 
   return (
+    <CabinetFrame>
     <div className="pb-24">
 
-      {/* HERO — the page title and the switcher in one band, on the page's own
-          background. The switcher used to float above a card with nothing around it,
-          which read as a stray control rather than as this page's navigation. */}
-      <section className="relative isolate overflow-hidden border-b border-slate-200/70 dark:border-slate-800/70">
-        <div className="absolute -left-40 -top-40 h-96 w-96 rounded-full bg-amber-400/10 blur-3xl" />
-        <div className="absolute -bottom-48 right-1/4 h-96 w-96 rounded-full bg-blue-500/10 blur-3xl" />
-
-        <div className="page-shell relative flex flex-col items-start justify-between gap-6 py-12 lg:flex-row lg:items-end">
-          <div className="space-y-3">
-            <span className="inline-flex items-center gap-2 rounded-full bg-blue-100 px-3 py-1 text-xs font-bold uppercase tracking-wider text-blue-700 dark:bg-blue-950/70 dark:text-sky-300">
-              <MessageSquareQuote size={13} />
-              {t('badge')}
-            </span>
-            <h1 className="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl xl:text-5xl dark:text-white">
-              {t('title')}
-            </h1>
-            <p className="max-w-lg text-sm leading-relaxed text-slate-600 dark:text-slate-400">{t('subtitle')}</p>
-          </div>
-
-          <div className="inline-flex shrink-0 items-center gap-1 rounded-2xl border border-slate-200 bg-white p-1.5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+      {/* The page title and the switcher in one band — the *shared* band, so this screen
+          opens the same way as every other item in the sidebar. It used to draw its own
+          full-bleed hero with its own type scale and its own amber glow, which is what
+          made clicking "Баҳодиҳиҳо" feel like leaving the cabinet. */}
+      <PageHeader
+        icon="messagesquare"
+        eyebrow={t('badge')}
+        title={t('title')}
+        hint={t('subtitle')}
+        accent="blue"
+        action={
+          <div className="inline-flex shrink-0 items-center gap-1 rounded-2xl border border-slate-200 bg-white/80 p-1.5 shadow-sm backdrop-blur-md dark:border-slate-800 dark:bg-slate-900/80">
             {tabs.map((item) => (
               <Button
                 size="raw"
@@ -215,8 +210,8 @@ export default function ReviewsPage() {
               </Button>
             ))}
           </div>
-        </div>
-      </section>
+        }
+      />
 
       <div className="page-shell space-y-10 py-10">
 
@@ -578,5 +573,6 @@ export default function ReviewsPage() {
       </Dialog>
 
     </div>
+    </CabinetFrame>
   );
 }

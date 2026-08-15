@@ -2,7 +2,7 @@
   "badge": "Work Gallery",
   "title": "Portfolio / Gallery",
   "hint": "Showcase your completed work — these photos appear on your public page",
-  "addImage": "+ Add Photo",
+  "addImage": "Add Photo",
   "uploading": "Uploading...",
   "loading": "Loading...",
   "empty": "No photos yet. Upload your first piece of work",
@@ -16,5 +16,6 @@
   "reorderFailed": "Failed to save the order",
   "limitReached": "Limit of 20 photos reached",
   "count": "{current} of {max} photos",
-  "emptyDesc": "Photos of finished jobs are your best advert. Upload your first one."
+  "emptyDesc": "Photos of finished jobs are your best advert. Upload your first one.",
+  "galleryTitle": "Work photos"
 }

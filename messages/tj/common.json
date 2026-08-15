@@ -235,5 +235,9 @@
     "Октябр",
     "Ноябр",
     "Декабр"
-  ]
+  ],
+  "unreadCount": "{count} нахондашуда",
+  "timeMinutesAgo": "{count} дақ пеш",
+  "timeHoursAgo": "{count} соат пеш",
+  "timeDaysAgo": "{count} рӯз пеш"
 }

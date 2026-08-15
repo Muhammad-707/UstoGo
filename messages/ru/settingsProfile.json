@@ -37,5 +37,6 @@
   "locating": "Определение...",
   "saveLocation": "Сохранить Местоположение",
   "clearLocation": "Очистить",
-  "locationSaveFailed": "Не удалось сохранить местоположение"
+  "locationSaveFailed": "Не удалось сохранить местоположение",
+  "personalDetailsTitle": "Личные данные"
 }

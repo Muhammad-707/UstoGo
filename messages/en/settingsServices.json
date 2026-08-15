@@ -1,7 +1,7 @@
 {
   "catalogManagement": "Catalog Management",
   "servicesPricing": "Services & Pricing",
-  "addService": "+ Add Service",
+  "addService": "Add Service",
   "estimatedDuration": "Estimated Duration: {est}",
   "pageHint": "Services only become visible to clients after admin approval",
   "myCategories": "My Categories",

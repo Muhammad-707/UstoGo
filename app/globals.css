@@ -287,6 +287,18 @@ body {
   max-width: 65rem; /* 1040px */
 }
 
+/* Inside the cabinet the content column *is* the container: the shell already draws a
+   `.page-shell` around the sidebar and the column together, so a page that brings its
+   own re-centres itself at a narrower width and adds a second dose of horizontal
+   padding — which is why every settings screen used to sit indented out of line with
+   the header band above it. Neutralising it here means a page can be dropped into the
+   cabinet without rewriting its containers. */
+.in-cabinet .page-shell {
+  max-width: none;
+  margin-inline: 0;
+  padding-inline: 0;
+}
+
 /* ---------------------------------------------------------------------------
    Leaflet popups
    Leaflet ships `.leaflet-container a { color: #0078A8 }`, which outranks a

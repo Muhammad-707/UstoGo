@@ -69,5 +69,16 @@
   "chartTotalCreated": "Ҳамагӣ кушодашуда",
   "chartTotalCompleted": "Ҳамагӣ анҷомёфта",
   "chartTooltip": "{date}: {created} кушода, {completed} анҷом",
-  "metricAvgRatingShort": "Баҳои миёна"
+  "metricAvgRatingShort": "Баҳои миёна",
+  "ctaEyebrow": "Панели идора",
+  "ctaTitle": "Навбати санҷиш ва шикоятҳоро тоза нигоҳ доред",
+  "ctaDesc": "Ҳар устои тасдиқнашуда — фармоиши гумшуда. Ҳар шикояти бебарраса — эътимоди гумшуда.",
+  "ctaPrimary": "Навбати устоҳо",
+  "ctaSecondary": "Шикоятҳо",
+  "heroEyebrow": "Панели идора",
+  "heroTitle": "Саломатии платформа",
+  "heroDesc": "Корбарон, фармоишҳо ва баҳодиҳиҳо — дар вақти воқеӣ.",
+  "sectionOpsEyebrow": "Амалиёт",
+  "sectionQualityEyebrow": "Сифат",
+  "sectionQueueEyebrow": "Модератсия"
 }

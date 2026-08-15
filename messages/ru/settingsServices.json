@@ -1,7 +1,7 @@
 {
   "catalogManagement": "Управление Каталогом",
   "servicesPricing": "Услуги и Цены",
-  "addService": "+ Добавить Услугу",
+  "addService": "Добавить Услугу",
   "estimatedDuration": "Примерная Длительность: {est}",
   "pageHint": "Услуги становятся видны клиентам только после одобрения админом",
   "myCategories": "Мои Категории",

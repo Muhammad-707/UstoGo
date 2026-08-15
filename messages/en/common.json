@@ -235,5 +235,9 @@
     "October",
     "November",
     "December"
-  ]
+  ],
+  "unreadCount": "{count} unread",
+  "timeMinutesAgo": "{count}m ago",
+  "timeHoursAgo": "{count}h ago",
+  "timeDaysAgo": "{count}d ago"
 }

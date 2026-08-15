@@ -7,8 +7,8 @@ import { quotesApi } from '@/lib/api/endpoints';
 import { ApiError } from '@/lib/api/client';
 import type { PriceType, Quote } from '@/lib/api/types';
 import { useAuth } from '@/contexts/AuthContext';
-import { ClientPageHeader } from '@/components/client/ClientPageHeader';
-import { MasterPageHeader } from '@/components/master/MasterPageHeader';
+import { CabinetPage } from '@/components/layout/CabinetPage';
+import { Notice } from '@/components/dashboard/Notice';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -116,24 +116,21 @@ export default function QuotesPage() {
     }
   };
 
-  const Header = isMaster ? MasterPageHeader : ClientPageHeader;
-
   return (
-    <>
-    <Header icon="calculator" eyebrow={t('badge')} title={t('title')} hint={t('pageHint')} />
-    <div className="page-shell page-shell-narrow py-10 space-y-8">
+    <CabinetPage icon="calculator" eyebrow={t('badge')} title={t('title')} hint={t('pageHint')} narrow>
 
-      {error && <p className="text-xs font-bold text-red-600 dark:text-red-400">{error}</p>}
+      {error && <Notice tone="danger">{error}</Notice>}
       {loading && (
           <div className="space-y-3">
             {Array.from({ length: 4 }).map((_, i) => (
-              <Skeleton key={i} className="h-28 rounded-3xl" />
+              <Skeleton key={i} className="h-28 rounded-2xl" />
             ))}
           </div>
         )}
       {!loading && quotes.length === 0 && (
         <EmptyState
           icon="calculator"
+          tone="blue"
           title={t('empty')}
           description={t('emptyDesc')}
           actionLabel={t('findMaster')}
@@ -143,7 +140,7 @@ export default function QuotesPage() {
 
       <div className="space-y-4">
         {quotes.map((quote) => (
-          <Card key={quote.id} className="rounded-3xl border border-slate-200 dark:border-slate-800 p-6 space-y-3">
+          <Card key={quote.id} className="rounded-2xl border border-slate-200/70 dark:border-slate-800/80 p-5 space-y-3">
             <div className="flex items-start justify-between gap-4">
               <div className="min-w-0">
                 <h3 className="text-sm font-extrabold text-slate-900 dark:text-white">
@@ -260,7 +257,6 @@ export default function QuotesPage() {
           </Card>
         ))}
       </div>
-    </div>
-    </>
+    </CabinetPage>
   );
 }

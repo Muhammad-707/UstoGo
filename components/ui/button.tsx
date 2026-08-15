@@ -14,8 +14,22 @@ const buttonVariants = cva(
           "border-border bg-background hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50",
         secondary:
           "bg-secondary text-secondary-foreground hover:bg-[color-mix(in_oklch,var(--secondary),var(--foreground)_5%)] aria-expanded:bg-secondary aria-expanded:text-secondary-foreground",
+        /**
+         * No hover text colour on purpose. `ghost` used to force
+         * `hover:text-foreground`, which is near-black — so every button in the app
+         * that brings its own solid background (the dark "Start job" pill, the blue
+         * submit buttons, the red destructive ones) turned its white label near-black
+         * the moment the pointer touched it and became unreadable. A ghost button
+         * keeps whatever colour its caller gave it; only the background reacts.
+         */
         ghost:
-          "hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:hover:bg-muted/50",
+          "hover:bg-muted aria-expanded:bg-muted aria-expanded:text-foreground dark:hover:bg-muted/50",
+        /**
+         * Behaviour only — no colour, no background, no hover of its own.
+         * For buttons that are fully dressed by the caller (a solid pill with its own
+         * hover), where even `ghost`'s neutral hover background is one rule too many.
+         */
+        unstyled: "",
         destructive:
           "bg-destructive/10 text-destructive hover:bg-destructive/20 focus-visible:border-destructive/40 focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:hover:bg-destructive/30 dark:focus-visible:ring-destructive/40",
         link: "text-primary underline-offset-4 hover:underline",

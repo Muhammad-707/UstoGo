@@ -23,7 +23,7 @@ import { useMoney } from '@/lib/money';
 import { bookingsApi } from '@/lib/api/endpoints';
 import type { Category, MasterPublic, Booking } from '@/lib/api/types';
 import { getCategoryVisual } from '@/lib/categoryVisuals';
-import { getAvatarUrl, getCoverUrl } from '@/lib/placeholders';
+import { WELCOME_IMAGE, getAvatarUrl, getCoverUrl } from '@/lib/placeholders';
 import { useAuth } from '@/contexts/AuthContext';
 import { useDateFormat } from '@/lib/datetime';
 import { cn } from '@/lib/utils';
@@ -31,10 +31,6 @@ import { cn } from '@/lib/utils';
 import { CategoryCard } from '@/components/categories/CategoryCard';
 import { RecommendedProducts } from '@/components/marketplace/RecommendedProducts';
 import { FilterContainer, FilterItem } from '@/components/ui/FilterAnimate';
-
-/** Bright, finished interior — the outcome the feed is selling, not a tool close-up. */
-const WELCOME_IMAGE =
-  'https://images.unsplash.com/photo-1556911220-bff31c812dba?auto=format&fit=crop&w=1400&q=80';
 
 function flattenLeafCategories(categories: Category[]): Category[] {
   const out: Category[] = [];

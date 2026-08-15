@@ -6,5 +6,6 @@
   "loadFailed": "Не удалось построить маршрут на эту дату.",
   "empty": "На эту дату заказов нет.",
   "savingsAmount": "Экономия ~{km} км",
-  "savingsHint": "Оптимальный маршрут: {optimized} км против {chronological} км в порядке бронирования."
+  "savingsHint": "Оптимальный маршрут: {optimized} км против {chronological} км в порядке бронирования.",
+  "stopsTitle": "Порядок выездов"
 }

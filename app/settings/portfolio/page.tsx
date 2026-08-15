@@ -2,15 +2,17 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { Icon } from '@/components/icons/LucideIcons';
+import { ChevronLeft, ChevronRight, ImageIcon, Plus, X } from 'lucide-react';
 import { masterCabinetApi } from '@/lib/api/endpoints';
 import { ApiError } from '@/lib/api/client';
 import { revalidateMastersCache } from '@/lib/api/revalidate';
 import { resolveOwnFileUrl, uploadFile } from '@/lib/api/upload';
 import type { PortfolioImage } from '@/lib/api/types';
 import { MasterPageHeader } from '@/components/master/MasterPageHeader';
+import { PageBody } from '@/components/layout/PageBody';
+import { Panel } from '@/components/dashboard/Panel';
+import { Notice } from '@/components/dashboard/Notice';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -117,22 +119,28 @@ export default function PortfolioPage() {
           <Button
             onClick={() => inputRef.current?.click()}
             disabled={uploading || images.length >= MAX_IMAGES}
-            className="h-auto px-5 py-2.5 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-extrabold text-xs shadow-lg shadow-amber-900/20"
+            className="h-auto gap-1.5 px-5 py-2.5 rounded-2xl bg-slate-900 text-[13px] font-medium text-white transition hover:bg-slate-800 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-200"
           >
-            {uploading ? t('uploading') : `+ ${t('addImage')}`}
+            {uploading ? t('uploading') : (<><Plus size={14} strokeWidth={2.6} />{t('addImage')}</>)}
           </Button>
         </>
       }
     />
-    <div className="page-shell page-shell-narrow py-10 space-y-8">
+    <PageBody narrow>
 
-      {error && (
-        <div className="p-4 rounded-2xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 text-xs font-bold text-red-600 dark:text-red-400">
-          {error}
-        </div>
-      )}
+      {error && <Notice tone="danger">{error}</Notice>}
 
-      <Card className="rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-xl">
+      <Panel
+        title={t('galleryTitle')}
+        Icon={ImageIcon}
+        accent="violet"
+        divided
+        action={
+          <span className="rounded-lg bg-slate-100 px-2.5 py-1 text-[11px] font-extrabold tabular-nums text-slate-600 dark:bg-slate-800 dark:text-slate-300">
+            {t('count', { current: images.length, max: MAX_IMAGES })}
+          </span>
+        }
+      >
         {loading && (
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
             {Array.from({ length: 6 }).map((_, i) => (
@@ -150,48 +158,50 @@ export default function PortfolioPage() {
               className="group relative rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-700 aspect-square bg-slate-100 dark:bg-slate-800"
             >
               {urls[item.fileId] ? (
-                <img src={urls[item.fileId] ?? undefined} alt="" className="w-full h-full object-cover" />
+                <img src={urls[item.fileId] ?? undefined} alt="" className="h-full w-full object-cover" />
               ) : (
-                <div className="w-full h-full flex items-center justify-center">
-                  <Icon name="image" size={28} className="text-slate-300" />
+                <div className="flex h-full w-full items-center justify-center">
+                  <ImageIcon size={26} className="text-slate-300 dark:text-slate-600" />
                 </div>
               )}
-              <div className="absolute inset-0 bg-slate-900/60 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-2">
+              {index === 0 && (
+                <span className="absolute left-2 top-2 rounded-md bg-slate-900/70 px-2 py-0.5 text-[9px] font-extrabold uppercase tracking-wider text-white backdrop-blur-sm">
+                  1
+                </span>
+              )}
+              <div className="absolute inset-0 flex items-center justify-center gap-2 bg-slate-900/60 opacity-0 backdrop-blur-[2px] transition-opacity group-hover:opacity-100">
                 <Button
                   size="icon"
                   onClick={() => move(index, -1)}
                   disabled={index === 0}
-                  className="rounded-xl bg-white/20 hover:bg-white/30 text-white disabled:opacity-30"
+                  className="rounded-xl bg-white/20 text-white hover:bg-white/30 disabled:opacity-30"
                   title={t('moveLeft')}
                 >
-                  <Icon name="chevron-left" size={16} />
+                  <ChevronLeft size={16} />
                 </Button>
                 <Button
                   size="icon"
                   onClick={() => move(index, 1)}
                   disabled={index === images.length - 1}
-                  className="rounded-xl bg-white/20 hover:bg-white/30 text-white disabled:opacity-30"
+                  className="rounded-xl bg-white/20 text-white hover:bg-white/30 disabled:opacity-30"
                   title={t('moveRight')}
                 >
-                  <Icon name="chevron-right" size={16} />
+                  <ChevronRight size={16} />
                 </Button>
                 <Button
                   size="icon"
                   onClick={() => handleRemove(item)}
-                  className="rounded-xl bg-red-500/80 hover:bg-red-600 text-white"
+                  className="rounded-xl bg-rose-500/90 text-white hover:bg-rose-600"
                   title={t('remove')}
                 >
-                  <Icon name="x" size={16} />
+                  <X size={16} />
                 </Button>
               </div>
             </div>
           ))}
         </div>
-        <p className="text-[10px] text-slate-400 font-bold mt-4">
-          {t('count', { current: images.length, max: MAX_IMAGES })}
-        </p>
-      </Card>
-    </div>
+      </Panel>
+    </PageBody>
     </>
   );
 }

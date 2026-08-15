@@ -2,17 +2,19 @@
 
 import React, { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { Icon } from '@/components/icons/LucideIcons';
+import { CalendarClock, CalendarDays, Clock, Plus } from 'lucide-react';
 import { masterCabinetApi } from '@/lib/api/endpoints';
 import { ApiError } from '@/lib/api/client';
 import { revalidateMastersCache } from '@/lib/api/revalidate';
 import type { ScheduleException, WorkingDay } from '@/lib/api/types';
 import { MasterPageHeader } from '@/components/master/MasterPageHeader';
+import { PageBody } from '@/components/layout/PageBody';
+import { Panel } from '@/components/dashboard/Panel';
+import { Notice } from '@/components/dashboard/Notice';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Card } from '@/components/ui/card';
 import { DatePicker, todayISO } from '@/components/ui/date-picker';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -149,17 +151,19 @@ export default function WorkingSchedulePage() {
       title={t('workingSchedule')}
       hint={t('scheduleHint')}
     />
-    <div className="page-shell page-shell-narrow py-10 space-y-8">
+    <PageBody narrow>
 
-      {error && (
-        <div className="p-4 rounded-2xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 text-xs font-bold text-red-600 dark:text-red-400">
-          {error}
-        </div>
-      )}
+      {error && <Notice tone="danger">{error}</Notice>}
 
-      <Card className="rounded-3xl border border-slate-200 dark:border-slate-800 p-8 space-y-6 shadow-xl">
+      <Panel
+        title={t('weeklyHoursTitle')}
+        Icon={Clock}
+        accent="emerald"
+        divided
+        bodyClassName="space-y-2.5"
+      >
         {loading && (
-          <div className="space-y-3">
+          <div className="space-y-2.5">
             {Array.from({ length: 7 }).map((_, i) => (
               <Skeleton key={i} className="h-14 rounded-2xl" />
             ))}
@@ -169,19 +173,21 @@ export default function WorkingSchedulePage() {
           days.map((day) => (
             <div
               key={day.weekday}
-              className={`flex items-center justify-between p-4 rounded-2xl border text-xs transition ${
+              className={`flex items-center justify-between gap-3 rounded-2xl border p-3.5 text-xs transition ${
                 day.isWorking
-                  ? 'bg-emerald-50/60 dark:bg-emerald-950/20 border-emerald-100 dark:border-emerald-900/40'
-                  : 'bg-slate-50 dark:bg-slate-800/40 border-slate-100 dark:border-slate-800'
+                  ? 'border-emerald-100 bg-emerald-50/50 dark:border-emerald-900/40 dark:bg-emerald-950/20'
+                  : 'border-slate-200/80 bg-slate-50/60 dark:border-slate-800 dark:bg-slate-800/40'
               }`}
             >
-              <div className="flex items-center gap-3">
+              <div className="flex min-w-0 items-center gap-3">
                 <Switch
                   checked={day.isWorking}
                   onCheckedChange={(checked) => updateDay(day.weekday, { isWorking: checked })}
-                  className="shrink-0 data-[state=checked]:bg-emerald-500"
+                  className="shrink-0 data-checked:bg-emerald-500"
                 />
-                <span className="font-bold text-slate-900 dark:text-white text-sm">{dayLabels[day.weekday]}</span>
+                <span className="truncate text-sm font-bold text-slate-900 dark:text-white">
+                  {dayLabels[day.weekday]}
+                </span>
               </div>
               {day.isWorking ? (
                 <div className="flex items-center gap-2">
@@ -205,25 +211,27 @@ export default function WorkingSchedulePage() {
             </div>
           ))}
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 pt-1">
           <Button
             variant="brand"
             onClick={handleSave}
             disabled={saving || loading}
-            className="h-auto px-8 py-3.5 rounded-2xl bg-amber-600 hover:bg-amber-700 shadow-amber-600/25 text-xs"
+            className="h-auto px-7 py-3 rounded-2xl bg-slate-900 text-[13px] font-medium text-white transition hover:bg-slate-800 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-200"
           >
             {saving ? t('saving') : t('save')}
           </Button>
           {saved && <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">{t('savedOk')}</span>}
         </div>
-      </Card>
+      </Panel>
 
       {/* Exceptions */}
-      <Card className="rounded-3xl border border-slate-200 dark:border-slate-800 p-8 space-y-6 shadow-xl">
-        <h2 className="text-sm font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
-          <Icon name="calendar" size={16} className="text-amber-500" />
-          {t('exceptionsTitle')}
-        </h2>
+      <Panel
+        title={t('exceptionsTitle')}
+        Icon={CalendarClock}
+        accent="blue"
+        divided
+        bodyClassName="space-y-5"
+      >
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
           <label className="space-y-1">
             <span className="font-bold text-slate-500">{t('exceptionDate')}</span>
@@ -239,7 +247,7 @@ export default function WorkingSchedulePage() {
             <Checkbox
               checked={excDayOff}
               onCheckedChange={(checked) => setExcDayOff(checked === true)}
-              className="data-[state=checked]:bg-amber-600 data-[state=checked]:border-amber-600"
+              className="data-checked:bg-blue-600 data-checked:border-blue-600"
             />
             <span className="font-bold text-slate-700 dark:text-slate-300">{t('exceptionDayOff')}</span>
           </label>
@@ -276,12 +284,19 @@ export default function WorkingSchedulePage() {
           </label>
         </div>
         <Button
-          variant="secondary"
+          variant="ghost"
           onClick={handleAddException}
           disabled={addingExc}
-          className="w-fit h-auto px-5 py-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-bold hover:bg-amber-100 dark:hover:bg-amber-950"
+          className="h-auto w-fit gap-1.5 rounded-xl border border-slate-200 px-5 py-2.5 text-xs font-bold text-slate-700 transition hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-blue-950/40"
         >
-          {addingExc ? t('saving') : t('addException')}
+          {addingExc ? (
+            t('saving')
+          ) : (
+            <>
+              <Plus size={13} strokeWidth={2.6} />
+              {t('addException')}
+            </>
+          )}
         </Button>
 
         {exceptions.length === 0 && (
@@ -296,9 +311,10 @@ export default function WorkingSchedulePage() {
           {exceptions.map((exc) => (
             <div
               key={exc.id}
-              className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800 flex items-center justify-between text-xs"
+              className="flex items-center justify-between gap-3 rounded-2xl border border-slate-200/80 bg-slate-50/60 p-3 text-xs dark:border-slate-800 dark:bg-slate-800/40"
             >
-              <div>
+              <div className="flex min-w-0 items-center gap-2">
+                <CalendarDays size={14} className="shrink-0 text-slate-400" />
                 <span className="font-bold text-slate-900 dark:text-white">{fmtDate(exc.date)}</span>
                 <span className="ml-2 text-slate-500">
                   {exc.isDayOff
@@ -317,8 +333,8 @@ export default function WorkingSchedulePage() {
             </div>
           ))}
         </div>
-      </Card>
-    </div>
+      </Panel>
+    </PageBody>
     </>
   );
 }

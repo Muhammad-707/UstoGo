@@ -73,3 +73,59 @@ export function getCoverUrl(seed: string): string {
 }
 
 export const PLACEHOLDER_REVIEWER_AVATAR = initialsAvatarDataUri('?', '0');
+
+/**
+ * The photograph both welcome panels open on — the client feed's and the master's.
+ *
+ * A bright finished interior: the outcome the platform delivers, not a tool close-up.
+ * Shared from here so the two cabinets cannot drift onto different pictures, which is
+ * exactly how they ended up looking like two products.
+ */
+export const WELCOME_IMAGE =
+  'https://images.unsplash.com/photo-1556911220-bff31c812dba?auto=format&fit=crop&w=1400&q=80';
+
+/** Unsplash CDN URL for a photo id at a given width — `auto=format` hands WebP to browsers that take it. */
+function unsplash(id: string, width: number): string {
+  return `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${width}&q=80`;
+}
+
+/**
+ * The photographs the master's cabinet is built on.
+ *
+ * Every id here is one already proven elsewhere in the product (the hero slider and the
+ * category visuals), so the cabinet cannot end up with a 404 or with a picture of the
+ * wrong trade — and so the signed-in half of the site is photographed from the same
+ * library as the public half rather than looking like a second product.
+ */
+export const MASTER_CABINET_IMAGES = {
+  /**
+   * The band behind the master's own name — one photograph per theme.
+   *
+   * A single picture cannot serve both. The dark-mode shot was being reused under a
+   * white scrim in light mode, where it turned into a grey smear with dark type over
+   * it; a bright shot under the dark scrim goes muddy the other way. So there are two
+   * frames of the *same* house — daylight interior and dusk exterior — swapped by the
+   * theme. Same building, same architecture, so switching themes reads as the lights
+   * going down rather than as a different product.
+   *
+   * Both have to survive being cropped to a very wide, very short band, which is why
+   * they are scenes with depth rather than close-ups: a face or a single tool filling
+   * the frame turns into an unreadable smear at 1300×220.
+   */
+  heroLight: unsplash('photo-1618221195710-dd6b41faaea6', 2000),
+  heroDark: unsplash('photo-1600585154340-be6161a56a0c', 2000),
+  /** The client's own band: the bright, finished room the platform delivers. */
+  clientHeroLight: unsplash('photo-1600607687939-ce8a6c25118c', 2000),
+  clientHeroDark: unsplash('photo-1600585154340-be6161a56a0c', 2000),
+  /** The operator's band — a workplace rather than a home, because that is what it is. */
+  adminHeroLight: unsplash('photo-1524758631624-e2822e304c36', 2000),
+  adminHeroDark: unsplash('photo-1497366811353-6870744d04b2', 2000),
+  /** Tools and wiring: prices and what you actually offer. */
+  services: unsplash('photo-1621905251189-08b45d6a269e', 900),
+  /** A craftsman mid-job: the hours you keep. */
+  schedule: unsplash('photo-1581244277943-fe4a9c777189', 900),
+  /** A finished wall: the proof you show clients. */
+  portfolio: unsplash('photo-1562259949-e8e7689d7828', 900),
+  /** A finished interior: what the work pays for. */
+  payments: unsplash('photo-1616486338812-3dadae4b4ace', 900),
+} as const;
