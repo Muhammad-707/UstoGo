@@ -1,5 +1,3 @@
-import type { BrandId } from '@/components/payments/CardBrandMark';
-
 /**
  * Card data, checked the way a checkout checks it — locally, and only for the things a
  * form can actually know.
@@ -19,60 +17,87 @@ export interface PaymentMethod {
   name: string;
   /** Sub-label key in the `checkout` namespace. */
   kindKey: 'kindBankCard' | 'kindWallet' | 'kindInternational';
-  /** The drawn logo for this brand. */
-  brand: BrandId;
-  /** Gradient the full-size card preview is painted in. */
+  /** The brand's own logo, under `public/brands`. */
+  logo: string;
+  /**
+   * Height for the logo in the method list and on the card face.
+   *
+   * One shared box would make Visa's 3:1 wordmark tower over Mastercard's 1.4:1 discs
+   * or squash it, depending which side binds. Each brand is set to the height that
+   * makes it read at the same optical weight as its neighbours.
+   */
+  listLogo: string;
+  cardLogo: string;
+  /** Gradient the card face is painted in — the brand's own colours. */
   gradient: string;
 }
 
 /**
- * What people in Dushanbe actually pay with: the two local processors, the banks whose
- * cards are in every pocket, and the international schemes for everyone else.
+ * What people in Dushanbe actually pay with: the local banks whose cards are in every
+ * pocket, and the international schemes for everyone else.
  */
 export const PAYMENT_METHODS: PaymentMethod[] = [
   {
     id: 'DUSHANBE_CITY',
     name: 'Душанбе Сити',
     kindKey: 'kindBankCard',
-    brand: 'DUSHANBE_CITY',
-    gradient: 'from-sky-500 via-blue-600 to-blue-800',
+    logo: '/brands/dushanbe-city.svg',
+    listLogo: 'h-6',
+    cardLogo: 'h-7',
+    gradient: 'from-[#0B67C4] via-[#0456A2] to-[#023E78]',
   },
   {
     id: 'ALIF',
     name: 'Alif',
     kindKey: 'kindWallet',
-    brand: 'ALIF',
-    gradient: 'from-emerald-500 via-emerald-600 to-teal-700',
+    logo: '/brands/alif.svg',
+    listLogo: 'h-5',
+    cardLogo: 'h-6',
+    gradient: 'from-[#00C878] via-[#00AF66] to-[#00794A]',
   },
   {
     id: 'AMONATBONK',
     name: 'Амонатбонк',
     kindKey: 'kindBankCard',
-    brand: 'AMONATBONK',
-    gradient: 'from-green-600 via-green-700 to-emerald-800',
+    logo: '/brands/amonatbonk.svg',
+    listLogo: 'h-3.5',
+    cardLogo: 'h-4',
+    gradient: 'from-[#00A855] via-[#008A45] to-[#00602F]',
   },
   {
     id: 'ESKHATA',
     name: 'Эсхата',
     kindKey: 'kindBankCard',
-    brand: 'ESKHATA',
-    gradient: 'from-rose-500 via-red-600 to-red-800',
+    logo: '/brands/eskhata.svg',
+    listLogo: 'h-4',
+    cardLogo: 'h-5',
+    gradient: 'from-[#0A66E0] via-[#004FC7] to-[#00337F]',
   },
   {
     id: 'VISA',
     name: 'Visa',
     kindKey: 'kindInternational',
-    brand: 'VISA',
-    gradient: 'from-slate-700 via-slate-800 to-slate-950',
+    logo: '/brands/visa.svg',
+    listLogo: 'h-4',
+    cardLogo: 'h-5',
+    gradient: 'from-[#2A3A93] via-[#1434CB] to-[#0B1E73]',
   },
   {
     id: 'MASTERCARD',
     name: 'Mastercard',
     kindKey: 'kindInternational',
-    brand: 'MASTERCARD',
-    gradient: 'from-orange-500 via-rose-600 to-rose-800',
+    logo: '/brands/mastercard.svg',
+    listLogo: 'h-7',
+    cardLogo: 'h-8',
+    gradient: 'from-[#F79E1B] via-[#EB001B] to-[#8A0010]',
   },
 ];
+
+/** The scheme badge printed on the card face, once the number says which scheme it is. */
+export const SCHEME_LOGOS: Partial<Record<CardScheme, { src: string; className: string; label: string }>> = {
+  VISA: { src: '/brands/visa.svg', className: 'h-4', label: 'Visa' },
+  MASTERCARD: { src: '/brands/mastercard.svg', className: 'h-6', label: 'Mastercard' },
+};
 
 export const digitsOnly = (value: string): string => value.replace(/\D/g, '');
 
@@ -85,7 +110,7 @@ export function formatCardNumber(value: string): string {
   return digitsOnly(value).slice(0, MAX_CARD_DIGITS).replace(/(.{4})/g, '$1 ').trim();
 }
 
-/** Which scheme issued this number — used to badge the card preview, nothing more. */
+/** Which scheme issued this number — used to badge the card face, nothing more. */
 export function schemeOf(number: string): CardScheme {
   const digits = digitsOnly(number);
   if (/^4/.test(digits)) return 'VISA';

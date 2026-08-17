@@ -1,0 +1,11 @@
+<svg viewBox="0 0 220 44" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Амонатбонк">
+<!--
+  A typographic stand-in, not the bank's mark.
+
+  amonatbonk.tj answered 502 on every attempt (www, bare, /en, archive), so the official
+  file could not be fetched the way the other five were. Drop the real SVG in over this
+  file — same path, same name — and it appears everywhere with no code change.
+-->
+<path d="M4 34 L14 10 L20 10 L30 34 H24.2 L22 28 H12 L9.8 34 Z M13.7 23.4 H20.3 L17 14.6 Z" fill="#008A45"/>
+<text x="38" y="30" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="21" font-weight="700" letter-spacing="-0.2" fill="#1B2B3A">Амонатбонк</text>
+</svg>

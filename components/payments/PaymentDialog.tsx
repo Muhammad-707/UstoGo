@@ -14,10 +14,11 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
-import { CardBrandMark } from '@/components/payments/CardBrandMark';
+import { BrandLogo } from '@/components/payments/BrandLogo';
 import {
   MAX_CARD_DIGITS,
   PAYMENT_METHODS,
+  SCHEME_LOGOS,
   digitsOnly,
   formatCardNumber,
   formatExpiry,
@@ -121,7 +122,7 @@ export function PaymentDialog({ open, onOpenChange, amountLabel, onConfirmed, su
     }
   }
 
-  const scheme = schemeOf(card.number);
+  const schemeLogo = SCHEME_LOGOS[schemeOf(card.number)];
   const cardMessages = useMemo(
     () => ({
       numberRequired: t('vNumberRequired'),
@@ -201,7 +202,11 @@ export function PaymentDialog({ open, onOpenChange, amountLabel, onConfirmed, su
               <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-slate-500 dark:text-slate-400">
                 {t('chooseMethod')}
               </p>
-              <div className="grid grid-cols-2 gap-2.5">
+              {/* One column, not two. Side by side, each tile had about sixty pixels
+                  left for the name after the logo, so "Душанбе Сити" arrived as
+                  "Душанбе С…". A full-width row fits the longest name in the list and
+                  puts all six logos on one vertical line. */}
+              <div className="flex flex-col gap-2">
                 {PAYMENT_METHODS.map((m) => (
                   <Button
                     key={m.id}
@@ -213,18 +218,39 @@ export function PaymentDialog({ open, onOpenChange, amountLabel, onConfirmed, su
                       setStage('card');
                     }}
                     className={cn(
-                      'flex items-center gap-2.5 rounded-2xl border border-slate-200 bg-white p-2.5 text-left transition-[border-color,box-shadow,transform] duration-200 hover:-translate-y-0.5 hover:border-blue-300 hover:shadow-lg dark:border-slate-700 dark:bg-slate-800/60 dark:hover:border-sky-800',
+                      'flex w-full items-center gap-3 rounded-2xl border border-slate-200 bg-white p-2.5 text-left transition-[border-color,box-shadow] duration-200 hover:border-blue-300 hover:shadow-md dark:border-slate-700 dark:bg-slate-800/60 dark:hover:border-sky-800',
                       method.id === m.id && 'border-blue-500 ring-2 ring-blue-500/20 dark:border-sky-600',
                     )}
                   >
-                    <span className="h-8 w-[50px] shrink-0 overflow-hidden rounded-lg shadow-sm ring-1 ring-black/5">
-                      <CardBrandMark brand={m.brand} />
+                    {/* The bare logo, on nothing. A miniature card plate behind every
+                        brand made six identical white rectangles with something small and
+                        off-centre inside them; the logo is the thing being chosen, so it
+                        is what you see. One fixed box for all six, so the names line up
+                        however differently the marks are proportioned.
+
+                        In dark mode the box does get a white ground: four of these six
+                        wordmarks are set in near-black by their owners and would simply
+                        vanish against a slate panel. */}
+                    <span className="flex h-9 w-[84px] shrink-0 items-center justify-center rounded-lg px-1.5 dark:bg-white">
+                      <BrandLogo src={m.logo} alt={m.name} className={cn('object-center', m.listLogo)} />
                     </span>
-                    <span className="min-w-0">
-                      <span className="block truncate text-[12px] font-extrabold leading-tight text-slate-900 dark:text-white">
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate text-[13px] font-extrabold leading-tight text-slate-900 dark:text-white">
                         {m.name}
                       </span>
                       <span className="block truncate text-[10px] font-semibold text-slate-400">{t(m.kindKey)}</span>
+                    </span>
+                    {/* Which one is armed, said with a mark rather than only with a
+                        border — a ring alone is easy to miss on a list this long. */}
+                    <span
+                      className={cn(
+                        'flex h-4 w-4 shrink-0 items-center justify-center rounded-full border-2 transition-colors',
+                        method.id === m.id
+                          ? 'border-blue-600 dark:border-sky-500'
+                          : 'border-slate-300 dark:border-slate-600',
+                      )}
+                    >
+                      {method.id === m.id && <span className="h-2 w-2 rounded-full bg-blue-600 dark:bg-sky-500" />}
                     </span>
                   </Button>
                 ))}
@@ -256,35 +282,45 @@ export function PaymentDialog({ open, onOpenChange, amountLabel, onConfirmed, su
                     typed into the wrong field. */}
                 <div
                   className={cn(
-                    'relative overflow-hidden rounded-2xl bg-gradient-to-br p-4 text-white shadow-lg',
+                    'relative overflow-hidden rounded-2xl bg-gradient-to-br p-4 text-white shadow-xl',
                     method.gradient,
                   )}
                 >
-                  <div className="pointer-events-none absolute -right-10 -top-12 h-32 w-32 rounded-full bg-white/15 blur-2xl" />
-                  <div className="pointer-events-none absolute -bottom-14 -left-8 h-32 w-32 rounded-full bg-black/15 blur-2xl" />
+                  {/* Light falling across a plastic card: one soft highlight, one shadow,
+                      and a hairline of white along the top edge. */}
+                  <div className="pointer-events-none absolute -right-12 -top-16 h-40 w-40 rounded-full bg-white/20 blur-2xl" />
+                  <div className="pointer-events-none absolute -bottom-16 -left-10 h-40 w-40 rounded-full bg-black/20 blur-2xl" />
+                  <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-white/30" />
 
-                  <div className="relative flex items-start justify-between gap-3">
-                    <span className="h-7 w-[44px] overflow-hidden rounded-md shadow-sm ring-1 ring-white/25">
-                      <CardBrandMark brand={method.brand} />
-                    </span>
-                    {/* The scheme the number itself belongs to, once it is recognisable —
-                        skipped when it would simply repeat the chosen brand. */}
-                    {scheme !== 'UNKNOWN' && scheme !== method.brand && (
-                      <span className="h-7 w-[44px] overflow-hidden rounded-md shadow-sm ring-1 ring-white/25">
-                        <CardBrandMark brand={scheme} />
-                      </span>
-                    )}
+                  {/* The bank's own logo, printed in white the way it is on the plastic. */}
+                  <div className="relative flex h-8 items-center">
+                    <BrandLogo src={method.logo} alt={method.name} className={method.cardLogo} mono />
                   </div>
 
-                  <div className="relative mt-3 h-6 w-8 rounded bg-gradient-to-br from-amber-200 to-amber-400 shadow-inner" />
+                  {/* Chip and contactless — the two things every card has. */}
+                  <div className="relative mt-3 flex items-center gap-2.5">
+                    <span className="h-6 w-8 rounded-[5px] bg-gradient-to-br from-amber-100 via-amber-300 to-amber-500 shadow-inner ring-1 ring-amber-600/30" />
+                    <svg viewBox="0 0 24 24" aria-hidden className="h-4 w-4 opacity-70" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+                      <path d="M6 8.5a7 7 0 0 1 0 7" />
+                      <path d="M10 6a11 11 0 0 1 0 12" />
+                      <path d="M14 3.5a15 15 0 0 1 0 17" />
+                    </svg>
+                  </div>
 
-                  <p className="relative mt-3 font-mono text-[15px] font-bold tracking-[0.12em] tabular-nums">
+                  <p className="relative mt-3 font-mono text-[15px] font-bold tracking-[0.12em] tabular-nums drop-shadow-sm">
                     {previewNumber}
                   </p>
 
-                  <div className="relative mt-2.5 flex items-end justify-between gap-4 text-[10px] font-bold uppercase tracking-[0.1em]">
-                    <span className="min-w-0 truncate opacity-90">{card.holder || t('holderPlaceholder')}</span>
+                  <div className="relative mt-2.5 flex items-end gap-3 text-[10px] font-bold uppercase tracking-[0.1em]">
+                    <span className="min-w-0 flex-1 truncate opacity-90">{card.holder || t('holderPlaceholder')}</span>
                     <span className="shrink-0 tabular-nums opacity-90">{formatExpiry(card.expiry) || 'MM/YY'}</span>
+                    {/* The scheme the number itself belongs to, once it is recognisable —
+                        skipped when it would only repeat the brand already printed above. */}
+                    {schemeLogo && method.logo !== schemeLogo.src && (
+                      <span className="flex shrink-0 items-end">
+                        <BrandLogo src={schemeLogo.src} alt={schemeLogo.label} className={schemeLogo.className} mono />
+                      </span>
+                    )}
                   </div>
                 </div>
 
