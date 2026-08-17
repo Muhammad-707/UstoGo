@@ -22,10 +22,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Card } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { DatePicker, todayISO } from '@/components/ui/date-picker';
+import { PhoneField } from '@/components/ui/PhoneField';
+import { PaymentDialog } from '@/components/payments/PaymentDialog';
+import { compressImage } from '@/lib/images/compress';
 import dynamic from 'next/dynamic';
 import {
   buildAddressSchema,
-  normalizeTajikPhone,
+  normalizePhone,
   validateAddress,
   type AddressField,
 } from '@/lib/validation/booking';
@@ -76,7 +79,7 @@ function Field({
 }) {
   return (
     <div className="space-y-2">
-      <label className="block text-xs font-bold uppercase tracking-wider text-slate-400">
+      <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
         {label} <span className="text-rose-500">*</span>
       </label>
       {children}
@@ -90,6 +93,22 @@ function Field({
       )}
     </div>
   );
+}
+
+/**
+ * One attached photo, from the moment it is chosen.
+ *
+ * The preview exists before the upload does — the picture appears the instant the file
+ * is picked, and the tile carries its own progress. The old flow held one boolean for
+ * the whole set, disabled the picker while it was true, and showed nothing at all until
+ * the round-trip finished, so attaching three photos was three sequential waits in front
+ * of an empty box.
+ */
+interface Attachment {
+  /** Stable key for React — the object URL, which is unique per file. */
+  previewUrl: string;
+  fileId: string | null;
+  status: 'uploading' | 'done' | 'error';
 }
 
 function Spinner({ className = '' }: { className?: string }) {
@@ -125,10 +144,9 @@ export default function BookingWizardPage() {
   const [timeSlot, setTimeSlot] = useState<string>('');
 
   const [jobNotes, setJobNotes] = useState('');
-  const [attachmentFileIds, setAttachmentFileIds] = useState<string[]>([]);
-  const [attachmentPreviews, setAttachmentPreviews] = useState<string[]>([]);
-  const [uploadingAttachment, setUploadingAttachment] = useState(false);
+  const [attachments, setAttachments] = useState<Attachment[]>([]);
   const [attachmentError, setAttachmentError] = useState<string | null>(null);
+  const [showPayment, setShowPayment] = useState(false);
   const [bookingConfirmed, setBookingConfirmed] = useState(false);
   const [createdBookingId, setCreatedBookingId] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -297,34 +315,63 @@ export default function BookingWizardPage() {
   const selectedService = services.find((s) => s.id === selectedServiceId) || null;
   const totalPrice = selectedService ? Number(selectedService.price) || 0 : 0;
 
+  /**
+   * Pick photos → see them → they upload behind you.
+   *
+   * Three things make this fast where the old one was slow: the whole selection is
+   * accepted at once, each file is re-encoded to 1600 px before it is sent (a 6 MB camera
+   * shot becomes ~300 KB), and the uploads run together rather than one after another.
+   * The reader waits for none of it — the tiles are on screen before the first byte goes
+   * out, and the only thing that has to finish before "confirm" is the upload itself.
+   */
   const handleAttachmentUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+    const picked = Array.from(e.target.files ?? []);
     e.target.value = '';
-    if (!file) return;
-    if (attachmentFileIds.length >= MAX_ATTACHMENTS) {
+    if (picked.length === 0) return;
+
+    const room = MAX_ATTACHMENTS - attachments.length;
+    if (room <= 0) {
       setAttachmentError(t('attachmentsLimitReached'));
       return;
     }
-    setUploadingAttachment(true);
-    setAttachmentError(null);
-    try {
-      const fileId = await uploadFile(file, 'BOOKING_ATTACHMENT');
-      setAttachmentFileIds((prev) => [...prev, fileId]);
-      setAttachmentPreviews((prev) => [...prev, URL.createObjectURL(file)]);
-    } catch (err) {
-      setAttachmentError(err instanceof ApiError ? err.message : t('attachmentUploadFailed'));
-    } finally {
-      setUploadingAttachment(false);
-    }
+    const files = picked.slice(0, room);
+    setAttachmentError(files.length < picked.length ? t('attachmentsLimitReached') : null);
+
+    const started = files.map((file) => ({
+      file,
+      previewUrl: URL.createObjectURL(file),
+    }));
+    setAttachments((prev) => [
+      ...prev,
+      ...started.map(({ previewUrl }) => ({ previewUrl, fileId: null, status: 'uploading' as const })),
+    ]);
+
+    await Promise.all(
+      started.map(async ({ file, previewUrl }) => {
+        try {
+          const fileId = await uploadFile(await compressImage(file), 'BOOKING_ATTACHMENT');
+          setAttachments((prev) =>
+            prev.map((a) => (a.previewUrl === previewUrl ? { ...a, fileId, status: 'done' } : a)),
+          );
+        } catch (err) {
+          setAttachmentError(err instanceof ApiError ? err.message : t('attachmentUploadFailed'));
+          setAttachments((prev) =>
+            prev.map((a) => (a.previewUrl === previewUrl ? { ...a, status: 'error' } : a)),
+          );
+        }
+      }),
+    );
   };
 
-  const removeAttachment = (index: number) => {
-    setAttachmentFileIds((prev) => prev.filter((_, i) => i !== index));
-    setAttachmentPreviews((prev) => {
-      URL.revokeObjectURL(prev[index]);
-      return prev.filter((_, i) => i !== index);
-    });
+  const removeAttachment = (previewUrl: string) => {
+    URL.revokeObjectURL(previewUrl);
+    setAttachments((prev) => prev.filter((a) => a.previewUrl !== previewUrl));
   };
+
+  const uploadedFileIds = attachments
+    .filter((a) => a.status === 'done' && a.fileId)
+    .map((a) => a.fileId as string);
+  const attachmentsUploading = attachments.some((a) => a.status === 'uploading');
 
   const handleConfirm = async () => {
     if (!preselectedMasterId || !selectedServiceId || !timeSlot) return;
@@ -339,19 +386,24 @@ export default function BookingWizardPage() {
           cityId,
           district,
           line: composedAddressLine,
-          contactPhone: normalizeTajikPhone(contactPhone),
+          contactPhone: normalizePhone(contactPhone),
           // The pin, when the client dropped one. `POST /bookings` has always accepted
           // these two and nothing was sending them, so a master got a street name and
           // had to guess the building.
           ...(addressPoint ? { latitude: addressPoint[0], longitude: addressPoint[1] } : {}),
         },
         note: jobNotes || undefined,
-        attachmentKeys: attachmentFileIds.length > 0 ? attachmentFileIds : undefined,
+        attachmentKeys: uploadedFileIds.length > 0 ? uploadedFileIds : undefined,
       });
       setCreatedBookingId(created.id);
       setBookingConfirmed(true);
     } catch (err) {
-      setSubmitError(err instanceof ApiError ? err.message : t('genericError'));
+      const message = err instanceof ApiError ? err.message : t('genericError');
+      setSubmitError(message);
+      // Rethrown on purpose: the payment sheet is waiting on this promise and shows the
+      // failure with the card still filled in, instead of closing on a booking that
+      // was never created.
+      throw new Error(message);
     } finally {
       setSubmitting(false);
     }
@@ -528,19 +580,19 @@ export default function BookingWizardPage() {
 
           <div className="bg-slate-50 dark:bg-slate-800/60 p-6 rounded-2xl text-left text-xs space-y-3 border border-slate-200 dark:border-slate-700 max-w-md mx-auto">
             <div className="flex justify-between">
-              <span className="text-slate-400">{t('master')}</span>
+              <span className="font-semibold text-slate-700 dark:text-slate-300">{t('master')}</span>
               <span className="font-bold text-slate-900 dark:text-white">{master.displayName}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-slate-400">{t('scheduledDate')}</span>
+              <span className="font-semibold text-slate-700 dark:text-slate-300">{t('scheduledDate')}</span>
               <span className="font-bold text-slate-900 dark:text-white">
                 {date} ({formatSlotLabel(timeSlot, selectedService?.durationMinutes)})
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-slate-400">{t('totalPrice')}</span>
+              <span className="font-semibold text-slate-700 dark:text-slate-300">{t('totalPrice')}</span>
               <span className="font-extrabold text-blue-600 dark:text-sky-400">
-                {totalPrice.toFixed(2)} {selectedService?.currency ?? ''}
+                {money(totalPrice)}
               </span>
             </div>
           </div>
@@ -570,10 +622,14 @@ export default function BookingWizardPage() {
               <h3 className="text-lg font-bold text-slate-900 dark:text-white">{t('step1Heading')}</h3>
 
               <div className="space-y-3">
-                <label className="text-xs font-bold uppercase tracking-wider text-slate-400">{t('chosenCraftsman')}</label>
+                <label className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">{t('chosenCraftsman')}</label>
                 <div className="flex items-center gap-4 p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                  {/* The master's own photograph when they have uploaded one — this card
+                      showed their initials even for masters with an avatar, because it
+                      never read `avatarUrl`. */}
+                  {/* eslint-disable-next-line @next/next/no-img-element -- short-lived signed URL, not an optimizable static asset */}
                   <img
-                    src={getAvatarUrl(master.id, master.displayName)}
+                    src={master.avatarUrl || getAvatarUrl(master.id, master.displayName)}
                     alt={master.displayName}
                     className="w-14 h-14 rounded-2xl object-cover"
                   />
@@ -590,7 +646,7 @@ export default function BookingWizardPage() {
               </div>
 
               <div className="space-y-3">
-                <label className="text-xs font-bold uppercase tracking-wider text-slate-400">{t('selectServiceLabel')}</label>
+                <label className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">{t('selectServiceLabel')}</label>
                 {servicesLoading ? (
                   <div className="flex justify-center py-6">
                     <Spinner />
@@ -601,32 +657,40 @@ export default function BookingWizardPage() {
                   </p>
                 ) : (
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {services.map((svc) => (
-                      <Button size="raw" variant="ghost"
-                        key={svc.id}
-                        type="button"
-                        onClick={() => setSelectedServiceId(svc.id)}
-                        /* `flex-col items-start`: the Button base is an inline-flex row,
-                           which laid the title and the price out side by side with no
-                           gap — "Pipe repair250,00 somoni" on one line. */
-                        className={`flex flex-col items-start gap-0.5 rounded-2xl border p-3.5 text-left text-xs font-bold transition-all hover:-translate-y-0.5 ${
-                          selectedServiceId === svc.id
-                            ? 'border-blue-600 bg-blue-600 text-white shadow-md shadow-blue-600/20'
-                            : 'border-slate-200 bg-slate-50 text-slate-700 hover:border-blue-300 hover:shadow-md dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:border-sky-800'
-                        }`}
-                      >
-                        <span className="whitespace-normal">{svc.title}</span>
-                        <span className={selectedServiceId === svc.id ? 'text-blue-100' : 'text-slate-400'}>
-                          {money(svc.price)}
-                        </span>
-                      </Button>
-                    ))}
+                    {services.map((svc) => {
+                      const isSelected = selectedServiceId === svc.id;
+                      return (
+                        /* `unstyled`, not `ghost`: this card paints its own background,
+                           and a ghost button's hover fill would replace the selected
+                           blue with near-white — the selected service disappeared the
+                           moment the pointer touched it. `flex-col items-start` because
+                           the Button base is an inline-flex row, which laid the title and
+                           the price side by side: "Pipe repair250,00 somoni". */
+                        <Button size="raw" variant="unstyled"
+                          key={svc.id}
+                          type="button"
+                          aria-pressed={isSelected}
+                          onClick={() => setSelectedServiceId(svc.id)}
+                          className={cn(
+                            'flex flex-col items-start gap-0.5 rounded-2xl border p-3.5 text-left text-xs font-bold transition-[background-color,border-color,box-shadow,transform] duration-200 hover:-translate-y-0.5',
+                            isSelected
+                              ? 'border-blue-600 bg-blue-600 text-white shadow-md shadow-blue-600/25 hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-600/30'
+                              : 'border-slate-200 bg-slate-50 text-slate-700 hover:border-blue-300 hover:bg-white hover:shadow-md dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:border-sky-800 dark:hover:bg-slate-700/70',
+                          )}
+                        >
+                          <span className="whitespace-normal">{svc.title}</span>
+                          <span className={isSelected ? 'text-blue-100' : 'text-slate-400'}>
+                            {money(svc.price)}
+                          </span>
+                        </Button>
+                      );
+                    })}
                   </div>
                 )}
               </div>
 
               <div className="space-y-3">
-                <label className="text-xs font-bold uppercase tracking-wider text-slate-400">{t('jobDescription')}</label>
+                <label className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">{t('jobDescription')}</label>
                 <Textarea
                   rows={3}
                   value={jobNotes}
@@ -637,32 +701,57 @@ export default function BookingWizardPage() {
               </div>
 
               <div className="space-y-3">
-                <label className="text-xs font-bold uppercase tracking-wider text-slate-400">{t('attachPhotosLabel')}</label>
+                <label className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">{t('attachPhotosLabel')}</label>
                 <div className="flex flex-wrap gap-3">
-                  {attachmentPreviews.map((src, index) => (
-                    <div key={src} className="relative w-20 h-20 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-700">
+                  {attachments.map((attachment) => (
+                    <div
+                      key={attachment.previewUrl}
+                      className="group relative w-20 h-20 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-700"
+                    >
                       {/* eslint-disable-next-line @next/next/no-img-element -- transient local object URL, not an optimizable remote asset */}
-                      <img src={src} alt="" className="w-full h-full object-cover" />
-                      <Button size="raw" variant="ghost"
-                        onClick={() => removeAttachment(index)}
-                        className="absolute top-1 right-1 w-5 h-5 rounded-full bg-black/60 text-white flex items-center justify-center"
+                      <img
+                        src={attachment.previewUrl}
+                        alt=""
+                        className={cn(
+                          'w-full h-full object-cover transition-opacity duration-300',
+                          attachment.status !== 'done' && 'opacity-50',
+                        )}
+                      />
+                      {/* The tile carries its own state: the picture is already there, the
+                          upload is still happening on top of it. */}
+                      {attachment.status === 'uploading' && (
+                        <div className="absolute inset-0 flex items-center justify-center bg-white/40 dark:bg-slate-900/40">
+                          <Spinner className="w-5 h-5" />
+                        </div>
+                      )}
+                      {attachment.status === 'error' && (
+                        <div className="absolute inset-0 flex items-center justify-center bg-rose-500/25 text-rose-600 dark:text-rose-300">
+                          <Icon name="AlertTriangle" size={18} />
+                        </div>
+                      )}
+                      <Button size="raw" variant="unstyled"
+                        type="button"
+                        aria-label={t('attachmentRemove')}
+                        onClick={() => removeAttachment(attachment.previewUrl)}
+                        className="absolute top-1 right-1 w-5 h-5 rounded-full bg-black/60 text-white flex items-center justify-center transition hover:bg-black/80"
                       >
                         <Icon name="X" size={10} />
                       </Button>
                     </div>
                   ))}
-                  {attachmentFileIds.length < MAX_ATTACHMENTS && (
-                    <label className="w-20 h-20 rounded-2xl border-2 border-dashed border-slate-300 dark:border-slate-700 flex items-center justify-center cursor-pointer hover:border-blue-400 transition text-slate-400">
-                      {uploadingAttachment ? (
-                        <Spinner />
-                      ) : (
-                        <Icon name="image" size={20} />
-                      )}
+                  {attachments.length < MAX_ATTACHMENTS && (
+                    <label className="w-20 h-20 rounded-2xl border-2 border-dashed border-slate-300 dark:border-slate-700 flex flex-col items-center justify-center gap-1 cursor-pointer hover:border-blue-400 hover:text-blue-500 transition text-slate-400">
+                      <Icon name="image" size={20} />
+                      <span className="text-[9px] font-bold uppercase tracking-wide">
+                        {MAX_ATTACHMENTS - attachments.length}
+                      </span>
+                      {/* `multiple`: choosing three photos used to mean opening this
+                          picker three times and waiting for each upload in turn. */}
                       <input
                         type="file"
                         accept="image/*"
+                        multiple
                         className="hidden"
-                        disabled={uploadingAttachment}
                         onChange={handleAttachmentUpload}
                       />
                     </label>
@@ -688,7 +777,7 @@ export default function BookingWizardPage() {
               <h3 className="text-lg font-bold text-slate-900 dark:text-white">{t('step2Heading')}</h3>
 
               <div className="space-y-2">
-                <label className="text-xs font-bold uppercase tracking-wider text-slate-400">{t('appointmentDate')}</label>
+                <label className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">{t('appointmentDate')}</label>
                 <DatePicker
                   value={date}
                   min={todayISO()}
@@ -699,30 +788,37 @@ export default function BookingWizardPage() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-bold uppercase tracking-wider text-slate-400">{t('availableTimeSlots')}</label>
+                <label className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">{t('availableTimeSlots')}</label>
                 {slotsLoading ? (
                   <div className="flex justify-center py-6">
                     <Spinner />
                   </div>
                 ) : slots.length === 0 && busySlots.length === 0 ? (
-                  <p className="text-xs text-slate-500 p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
-                    No availability on this date — try another day.
+                  <p className="flex items-center gap-2 text-xs text-slate-500 p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                    <Icon name="calendar" size={14} className="shrink-0 text-slate-400" />
+                    {t('noSlots')}
                   </p>
                 ) : (
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {slots.map((slot) => (
-                      <Button size="raw" variant="ghost"
-                        key={slot}
-                        onClick={() => setTimeSlot(slot)}
-                        className={`p-3.5 rounded-2xl text-xs font-bold border transition-all hover:-translate-y-0.5 ${
-                          timeSlot === slot
-                            ? 'bg-blue-600 text-white border-blue-600 shadow-md shadow-blue-600/20'
-                            : 'bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-blue-300 dark:hover:border-sky-800 hover:shadow-md'
-                        }`}
-                      >
-                        {formatSlotLabel(slot, selectedService?.durationMinutes)}
-                      </Button>
-                    ))}
+                    {slots.map((slot) => {
+                      const isSelected = timeSlot === slot;
+                      return (
+                        <Button size="raw" variant="unstyled"
+                          key={slot}
+                          type="button"
+                          aria-pressed={isSelected}
+                          onClick={() => setTimeSlot(slot)}
+                          className={cn(
+                            'p-3.5 rounded-2xl text-xs font-bold border transition-[background-color,border-color,box-shadow,transform] duration-200 hover:-translate-y-0.5',
+                            isSelected
+                              ? 'bg-blue-600 text-white border-blue-600 shadow-md shadow-blue-600/25 hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-600/30'
+                              : 'bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-blue-300 hover:bg-white hover:shadow-md dark:hover:border-sky-800 dark:hover:bg-slate-700/70',
+                          )}
+                        >
+                          {formatSlotLabel(slot, selectedService?.durationMinutes)}
+                        </Button>
+                      );
+                    })}
                     {busySlots.map((slot) => (
                       <div
                         key={slot}
@@ -763,17 +859,20 @@ export default function BookingWizardPage() {
 
               {savedAddresses.length > 0 && (
                 <div className="space-y-2">
-                  <span className="text-xs font-bold uppercase tracking-wider text-slate-400">{t('savedAddressesLabel')}</span>
+                  <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">{t('savedAddressesLabel')}</span>
                   <div className="flex flex-wrap gap-2">
                     {savedAddresses.map((address) => (
-                      <Button size="raw" variant="ghost"
+                      <Button size="raw" variant="unstyled"
                         key={address.id}
+                        type="button"
+                        aria-pressed={selectedSavedAddressId === address.id}
                         onClick={() => applySavedAddress(address)}
-                        className={`px-4 py-2 rounded-xl text-xs font-bold border transition ${
+                        className={cn(
+                          'px-4 py-2 rounded-xl text-xs font-bold border transition-colors duration-200',
                           selectedSavedAddressId === address.id
-                            ? 'bg-blue-600 border-blue-600 text-white'
-                            : 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:border-blue-300 dark:hover:border-sky-700'
-                        }`}
+                            ? 'bg-blue-600 border-blue-600 text-white hover:bg-blue-700'
+                            : 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:border-blue-300 hover:bg-white dark:hover:border-sky-700 dark:hover:bg-slate-700/70',
+                        )}
                       >
                         {address.label}
                       </Button>
@@ -867,17 +966,17 @@ export default function BookingWizardPage() {
                 </Field>
               </div>
 
-              <Field label={t('phoneLabel')} error={addressErrors.contactPhone} hint={t('phoneHint')}>
-                <Input
-                  type="tel"
+              {/* Country first, then the number: `PhoneField` groups the digits as they
+                  are typed, checks the length against that country's numbering plan and,
+                  for Tajik numbers, names the operator behind the prefix. */}
+              <Field label={t('phoneLabel')} hint={addressErrors.contactPhone ? undefined : t('phoneHint')}>
+                <PhoneField
                   value={contactPhone}
-                  onChange={(e) => {
-                    setContactPhone(e.target.value);
+                  onChange={(next) => {
+                    setContactPhone(next);
                     clearAddressError('contactPhone');
                   }}
-                  placeholder={user?.phone ?? '+992 __ ___-__-__'}
-                  aria-invalid={Boolean(addressErrors.contactPhone)}
-                  className={cn(FIELD_INPUT, addressErrors.contactPhone && INVALID_FIELD)}
+                  error={addressErrors.contactPhone}
                 />
               </Field>
 
@@ -915,24 +1014,24 @@ export default function BookingWizardPage() {
 
               <div className="bg-slate-50 dark:bg-slate-800/60 p-6 rounded-2xl space-y-3 border border-slate-200 dark:border-slate-700 text-xs">
                 <div className="flex justify-between pb-2 border-b border-slate-200 dark:border-slate-700">
-                  <span className="text-slate-400">{t('craftsman')}</span>
+                  <span className="font-semibold text-slate-700 dark:text-slate-300">{t('craftsman')}</span>
                   <span className="font-bold text-slate-900 dark:text-white">{master.displayName}</span>
                 </div>
                 {selectedService && (
                   <div className="flex justify-between pb-2 border-b border-slate-200 dark:border-slate-700">
-                    <span className="text-slate-400">{t('serviceWord')}</span>
+                    <span className="font-semibold text-slate-700 dark:text-slate-300">{t('serviceWord')}</span>
                     <span className="font-bold text-slate-900 dark:text-white">{selectedService.title}</span>
                   </div>
                 )}
                 <div className="flex justify-between pb-2 border-b border-slate-200 dark:border-slate-700">
-                  <span className="text-slate-400">{t('scheduledTime')}</span>
+                  <span className="font-semibold text-slate-700 dark:text-slate-300">{t('scheduledTime')}</span>
                   <span className="font-bold text-slate-900 dark:text-white">
                     {date} ({formatSlotLabel(timeSlot, selectedService?.durationMinutes)})
                   </span>
                 </div>
                 {district && (
                   <div className="flex justify-between pb-2 border-b border-slate-200 dark:border-slate-700">
-                    <span className="text-slate-400">{t('serviceAddress')}</span>
+                    <span className="font-semibold text-slate-700 dark:text-slate-300">{t('serviceAddress')}</span>
                     <span className="font-bold text-slate-900 dark:text-white text-right">
                       {district}
                       {composedAddressLine ? `, ${composedAddressLine}` : ''}
@@ -941,7 +1040,7 @@ export default function BookingWizardPage() {
                 )}
                 {selectedService?.durationMinutes && (
                   <div className="flex justify-between pb-2 border-b border-slate-200 dark:border-slate-700">
-                    <span className="text-slate-400">{t('estimatedDuration')}</span>
+                    <span className="font-semibold text-slate-700 dark:text-slate-300">{t('estimatedDuration')}</span>
                     <span className="font-bold text-slate-900 dark:text-white">
                       {t('hoursUnit', { count: Math.round((selectedService.durationMinutes / 60) * 10) / 10 })}
                     </span>
@@ -950,7 +1049,7 @@ export default function BookingWizardPage() {
                 <div className="flex justify-between pt-2 text-sm">
                   <span className="font-bold text-slate-900 dark:text-white">{t('totalAmount')}</span>
                   <span className="font-extrabold text-blue-600 dark:text-sky-400">
-                    {totalPrice.toFixed(2)} {selectedService?.currency ?? ''}
+                    {money(totalPrice)}
                   </span>
                 </div>
               </div>
@@ -959,12 +1058,26 @@ export default function BookingWizardPage() {
                 <p className="text-xs font-bold text-red-600 dark:text-red-400 text-center">{submitError}</p>
               )}
 
-              <Button size="raw" variant="ghost"
-                onClick={handleConfirm}
-                disabled={submitting}
-                className="btn-success w-full py-4 rounded-2xl disabled:opacity-60 font-extrabold text-sm transition btn-ripple flex items-center justify-center gap-2"
+              {/* Photos still going up? Say so, and hold the button — a booking created
+                  now would reach the master without the pictures it refers to. */}
+              {attachmentsUploading && (
+                <p className="flex items-center justify-center gap-2 text-[11px] font-bold text-slate-500">
+                  <Spinner className="w-3.5 h-3.5" />
+                  {t('attachmentsStillUploading')}
+                </p>
+              )}
+
+              <Button size="raw" variant="unstyled"
+                type="button"
+                onClick={() => setShowPayment(true)}
+                disabled={submitting || attachmentsUploading}
+                className="btn-success w-full py-4 rounded-2xl disabled:opacity-60 disabled:cursor-not-allowed font-extrabold text-sm transition btn-ripple flex items-center justify-center gap-2"
               >
-                {submitting && <Spinner className="w-4 h-4 border-white/40 border-t-white" />}
+                {submitting ? (
+                  <Spinner className="w-4 h-4 border-white/40 border-t-white" />
+                ) : (
+                  <Icon name="creditcard" size={16} />
+                )}
                 {t('confirmAndPay', { amount: money(totalPrice) })}
               </Button>
             </div>
@@ -984,7 +1097,7 @@ export default function BookingWizardPage() {
 
               <div className="relative space-y-5 p-6">
                 <div>
-                  <p className="text-[11px] font-extrabold uppercase tracking-[0.15em] text-slate-400">
+                  <p className="text-[11px] font-extrabold uppercase tracking-[0.15em] text-slate-500 dark:text-slate-400">
                     {t('summaryTitle')}
                   </p>
                   <p className="mt-1 text-[11px] font-semibold text-blue-600 dark:text-sky-400">
@@ -998,7 +1111,7 @@ export default function BookingWizardPage() {
                   <dl className="space-y-3 border-t border-slate-100 pt-4 dark:border-slate-800">
                     {summaryRows.map((row) => (
                       <div key={row.label} className="flex items-start justify-between gap-3">
-                        <dt className="shrink-0 text-[11px] font-semibold text-slate-400">{row.label}</dt>
+                        <dt className="shrink-0 text-[11px] font-semibold text-slate-600 dark:text-slate-400">{row.label}</dt>
                         <dd className="text-right text-xs font-bold text-slate-900 dark:text-white">{row.value}</dd>
                       </div>
                     ))}
@@ -1007,7 +1120,7 @@ export default function BookingWizardPage() {
 
                 {selectedService && (
                   <div className="border-t border-slate-100 pt-4 dark:border-slate-800">
-                    <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">{t('totalAmount')}</p>
+                    <p className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">{t('totalAmount')}</p>
                     <p className="mt-1 text-3xl font-extrabold leading-none tracking-tight text-slate-900 tabular-nums dark:text-white">
                       {money(totalPrice)}
                     </p>
@@ -1018,6 +1131,16 @@ export default function BookingWizardPage() {
           </aside>
         )}
       </div>
+
+      {/* The booking is created by the payment sheet, not before it: nothing is sent to
+          the master until the card has cleared. */}
+      <PaymentDialog
+        open={showPayment}
+        onOpenChange={setShowPayment}
+        amountLabel={money(totalPrice)}
+        summary={selectedService ? `${selectedService.title} · ${master.displayName}` : undefined}
+        onConfirmed={handleConfirm}
+      />
 
     </div>
   );

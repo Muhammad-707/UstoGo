@@ -32,6 +32,7 @@ import { downloadFile } from '@/lib/api/download';
 import { revalidateMastersCache } from '@/lib/api/revalidate';
 import { getBookingsSocket } from '@/lib/bookings/socket';
 import { useMoney } from '@/lib/money';
+import { formatE164 } from '@/lib/phone';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import type { Booking, City, MasterNps, MasterStats, MasterStatus, WorkingDay } from '@/lib/api/types';
 import { MASTER_CABINET_IMAGES, getAvatarUrl } from '@/lib/placeholders';
@@ -533,7 +534,7 @@ export default function MasterDashboardPage() {
                       className="inline-flex items-center gap-1.5 text-emerald-600 transition-colors hover:text-emerald-700 dark:text-emerald-400"
                     >
                       <Phone size={14} strokeWidth={1.75} className="shrink-0" />
-                      {b.contactPhone}
+                      {formatE164(b.contactPhone)}
                     </a>
                   )}
                 </div>

@@ -15,15 +15,22 @@ const buttonVariants = cva(
         secondary:
           "bg-secondary text-secondary-foreground hover:bg-[color-mix(in_oklch,var(--secondary),var(--foreground)_5%)] aria-expanded:bg-secondary aria-expanded:text-secondary-foreground",
         /**
-         * No hover text colour on purpose. `ghost` used to force
-         * `hover:text-foreground`, which is near-black — so every button in the app
-         * that brings its own solid background (the dark "Start job" pill, the blue
-         * submit buttons, the red destructive ones) turned its white label near-black
-         * the moment the pointer touched it and became unreadable. A ghost button
-         * keeps whatever colour its caller gave it; only the background reacts.
+         * A veil, not a background.
+         *
+         * `ghost` used to hover with `bg-muted` — a near-white fill. Every button in the
+         * app that brings its own colour (a selected blue service card, an admin filter
+         * pill, the dark "Start job" button) has that colour *replaced* by near-white the
+         * moment the pointer touches it: 63 of them, and the selected item in a booking
+         * step vanished into the page. Hover state cannot be a background here, because
+         * the caller owns the background.
+         *
+         * So it is an 8% veil in the button's own text colour, painted between the
+         * background and the label (`-z-10` under `isolate`). On a bare ghost button that
+         * reads as the old grey wash; on a blue one it deepens the blue; on a dark one it
+         * lifts it. Nothing the caller wrote is overwritten, ever.
          */
         ghost:
-          "hover:bg-muted aria-expanded:bg-muted aria-expanded:text-foreground dark:hover:bg-muted/50",
+          "relative isolate before:pointer-events-none before:absolute before:inset-0 before:-z-10 before:rounded-[inherit] before:bg-current before:opacity-0 before:transition-opacity before:duration-200 hover:before:opacity-[0.08] aria-expanded:before:opacity-[0.08]",
         /**
          * Behaviour only — no colour, no background, no hover of its own.
          * For buttons that are fully dressed by the caller (a solid pill with its own

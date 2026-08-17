@@ -273,9 +273,6 @@ export const Navbar: React.FC = () => {
               <span className="text-[22px] font-extrabold tracking-tight bg-gradient-to-r from-slate-900 via-blue-900 to-slate-900 dark:from-white dark:via-blue-300 dark:to-white bg-clip-text text-transparent">
                 Usto<span className="text-blue-600 dark:text-sky-400">Go</span>
               </span>
-              <span className="hidden sm:inline px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider bg-blue-100 text-blue-700 dark:bg-blue-950/80 dark:text-blue-300 rounded-md border border-blue-200 dark:border-blue-800">
-                PRO
-              </span>
             </div>
             <p className="text-[10px] font-medium text-slate-500 dark:text-slate-400 mt-1 hidden 2xl:block whitespace-nowrap">
               {t('brandSub')}

@@ -23,6 +23,7 @@ import { getBookingsSocket } from '@/lib/bookings/socket';
 import { CANCELLATION_REASON_CODES, type BookingDetail, type CancellationReasonCode, type City, type CompletionCertificate } from '@/lib/api/types';
 import { useAuth } from '@/contexts/AuthContext';
 import { getAvatarUrl } from '@/lib/placeholders';
+import { formatE164 } from '@/lib/phone';
 import { useMoney } from '@/lib/money';
 import { useDateFormat } from '@/lib/datetime';
 import { Input } from '@/components/ui/input';
@@ -101,6 +102,7 @@ export default function BookingDetailsPage() {
   const [certificateLoading, setCertificateLoading] = useState(false);
   const [showCertificateModal, setShowCertificateModal] = useState(false);
   const [masterLiveLocation, setMasterLiveLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [masterAvatarUrl, setMasterAvatarUrl] = useState<string | null>(null);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [paidAmount, setPaidAmount] = useState('');
   const [paymentNote, setPaymentNote] = useState('');
@@ -147,6 +149,27 @@ export default function BookingDetailsPage() {
   useEffect(() => {
     citiesApi.list().then((list) => setCities(list)).catch(() => setCities([]));
   }, []);
+
+  /**
+   * The master's photograph.
+   *
+   * `GET /bookings/:id` carries the master's name and id but not their avatar, so this
+   * card drew initials for every master — including the ones with a photo on their
+   * public profile. One extra public call, made once the booking is known.
+   */
+  useEffect(() => {
+    if (!booking?.masterId) return;
+    let cancelled = false;
+    mastersApi
+      .media(booking.masterId)
+      .then((media) => {
+        if (!cancelled) setMasterAvatarUrl(media.avatarUrl);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [booking?.masterId]);
 
   const load = useCallback(async () => {
     if (!bookingId) return;
@@ -829,17 +852,22 @@ export default function BookingDetailsPage() {
           )}
 
           {/* Master Info Card */}
-          <Card className="p-6 rounded-3xl border border-slate-200 dark:border-slate-800 flex items-center justify-between shadow-lg">
-            <div className="flex items-center gap-4">
-              <img src={getAvatarUrl(booking.masterId, booking.masterDisplayName)} alt={booking.masterDisplayName} className="w-14 h-14 rounded-2xl object-cover" />
-              <div>
-                <h4 className="font-bold text-slate-900 dark:text-white text-base">{booking.masterDisplayName}</h4>
-                <p className="text-xs text-slate-500">{booking.serviceTitle}</p>
+          <Card className="p-6 rounded-3xl border border-slate-200 dark:border-slate-800 flex items-center justify-between gap-4 shadow-lg">
+            <div className="flex min-w-0 items-center gap-4">
+              {/* eslint-disable-next-line @next/next/no-img-element -- signed avatar URL, expires in minutes */}
+              <img
+                src={masterAvatarUrl ?? getAvatarUrl(booking.masterId, booking.masterDisplayName)}
+                alt={booking.masterDisplayName}
+                className="w-14 h-14 shrink-0 rounded-2xl object-cover"
+              />
+              <div className="min-w-0">
+                <h4 className="truncate font-bold text-slate-900 dark:text-white text-base">{booking.masterDisplayName}</h4>
+                <p className="truncate text-xs text-slate-500">{booking.serviceTitle}</p>
               </div>
             </div>
             <Link
               href={`/master/${booking.masterId}`}
-              className="px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
+              className="shrink-0 px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-800 dark:text-slate-200 transition-colors hover:border-blue-300 hover:bg-slate-100 dark:hover:bg-slate-800"
             >
               {t('profile')}
             </Link>
@@ -877,10 +905,16 @@ export default function BookingDetailsPage() {
               )}
               <p className="text-slate-500">{booking.addressLine || '—'}</p>
               {booking.contactPhone && (
-                <p className="pt-1 font-bold text-emerald-600 dark:text-emerald-400">
-                  <Icon name="Phone" size={12} className="inline mr-1" />
-                  {booking.contactPhone}
-                </p>
+                /* A number on a job card exists to be rung — so it dials, and it is
+                   grouped the way the country writes it rather than printed as a
+                   twelve-digit run. */
+                <a
+                  href={`tel:${booking.contactPhone}`}
+                  className="mt-1 inline-flex items-center gap-1.5 font-bold text-emerald-600 transition-colors hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300"
+                >
+                  <Icon name="phone" size={12} />
+                  {formatE164(booking.contactPhone)}
+                </a>
               )}
               {booking.clientNote && (
                 <p className="pt-2 text-slate-600 dark:text-slate-300 italic">{booking.clientNote}</p>

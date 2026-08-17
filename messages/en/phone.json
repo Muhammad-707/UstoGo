@@ -1,0 +1,36 @@
+{
+  "countryLabel": "Country",
+  "valid": "This number looks right",
+  "error": {
+    "required": "Enter a phone number",
+    "length": "The number must be {digits} digits long",
+    "repeated": "No such number exists"
+  },
+  "country": {
+    "TJ": "Tajikistan",
+    "RU": "Russia",
+    "KZ": "Kazakhstan",
+    "UZ": "Uzbekistan",
+    "KG": "Kyrgyzstan",
+    "TM": "Turkmenistan",
+    "AF": "Afghanistan",
+    "TR": "Türkiye",
+    "AE": "United Arab Emirates",
+    "SA": "Saudi Arabia",
+    "QA": "Qatar",
+    "KW": "Kuwait",
+    "IR": "Iran",
+    "CN": "China",
+    "KR": "South Korea",
+    "IN": "India",
+    "PK": "Pakistan",
+    "AZ": "Azerbaijan",
+    "GE": "Georgia",
+    "BY": "Belarus",
+    "UA": "Ukraine",
+    "PL": "Poland",
+    "DE": "Germany",
+    "GB": "United Kingdom",
+    "US": "USA / Canada"
+  }
+}

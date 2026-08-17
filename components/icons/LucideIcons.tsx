@@ -489,7 +489,69 @@ export const Icon: React.FC<IconProps> = ({ name, size = 20, className = '', ...
           <line x1="16" y1="18" x2="16" y2="18" />
         </svg>
       );
+    /* `Phone` used to fall through to the default circle — every phone number in the
+       product (booking receipt, master card, contact panels) was prefixed with a bare
+       ring instead of a handset. */
+    case 'phone':
+    case 'phonecall':
+    case 'phone-call':
+      return (
+        <svg {...iconProps}>
+          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" />
+        </svg>
+      );
+    case 'mail':
+      return (
+        <svg {...iconProps}>
+          <rect x="2" y="4" width="20" height="16" rx="2" />
+          <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+        </svg>
+      );
+    case 'lock':
+      return (
+        <svg {...iconProps}>
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+          <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+        </svg>
+      );
+    case 'shield':
+      return (
+        <svg {...iconProps}>
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+        </svg>
+      );
+    case 'camera':
+      return (
+        <svg {...iconProps}>
+          <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z" />
+          <circle cx="12" cy="13" r="3" />
+        </svg>
+      );
+    case 'upload':
+      return (
+        <svg {...iconProps}>
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+          <polyline points="17 8 12 3 7 8" />
+          <line x1="12" y1="3" x2="12" y2="15" />
+        </svg>
+      );
+    case 'info':
+      return (
+        <svg {...iconProps}>
+          <circle cx="12" cy="12" r="10" />
+          <line x1="12" y1="16" x2="12" y2="12" />
+          <line x1="12" y1="8" x2="12.01" y2="8" />
+        </svg>
+      );
+    case 'chevronup':
+    case 'chevron-up':
+      return (
+        <svg {...iconProps}>
+          <polyline points="18 15 12 9 6 15" />
+        </svg>
+      );
     case 'alerttriangle':
+    case 'alert-triangle':
       return (
         <svg {...iconProps}>
           <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
@@ -498,10 +560,12 @@ export const Icon: React.FC<IconProps> = ({ name, size = 20, className = '', ...
         </svg>
       );
     default:
-      return (
-        <svg {...iconProps}>
-          <circle cx="12" cy="12" r="10" />
-        </svg>
-      );
+      /* A name with no glyph used to render a plain circle, which is indistinguishable
+         from a deliberate one — that is how `Phone` shipped as a ring next to every
+         phone number. It now says so out loud in development and draws nothing. */
+      if (process.env.NODE_ENV !== 'production') {
+        console.warn(`[Icon] no glyph for "${name}" — add it to LucideIcons.tsx`);
+      }
+      return null;
   }
 };

@@ -1,4 +1,7 @@
 import * as yup from 'yup';
+import { digitsOf, isValidPhone, parseE164, toE164 } from '@/lib/phone';
+
+export { digitsOf };
 
 /**
  * Every field of the booking address, as one schema.
@@ -23,24 +26,26 @@ export interface AddressMessages {
   phoneInvalid: string;
 }
 
-/** Digits only, so the same number validates whether it was typed with spaces or without. */
-export const digitsOf = (value: string): string => value.replace(/\D/g, '');
-
 /**
- * Tajik mobile numbers are `+992` plus nine digits. A bare nine digits is accepted and
- * normalised — people type their own number the way they say it, not the way a database
- * stores it.
+ * The contact number, checked against the numbering plan of the country it claims.
+ *
+ * `PhoneField` already hands this schema an E.164 string and refuses to produce a
+ * malformed one, so this is the second gate rather than the first: it exists because a
+ * form must never depend on a widget for its correctness.
  */
-export function isTajikPhone(value: string): boolean {
+export function isValidContactPhone(value: string): boolean {
   const digits = digitsOf(value);
-  if (digits.length === 12) return digits.startsWith('992');
-  return digits.length === 9;
+  if (!digits) return false;
+  const { country, national } = parseE164(value.startsWith('+') ? value : `+${digits}`);
+  return isValidPhone(country, national);
 }
 
 /** `+992XXXXXXXXX` — the one shape the API is sent, whatever was typed. */
-export function normalizeTajikPhone(value: string): string {
+export function normalizePhone(value: string): string {
   const digits = digitsOf(value);
-  return `+${digits.length === 9 ? `992${digits}` : digits}`;
+  if (!digits) return '';
+  const { country, national } = parseE164(value.startsWith('+') ? value : `+${digits}`);
+  return toE164(country, national);
 }
 
 export function buildAddressSchema(m: AddressMessages) {
@@ -53,7 +58,7 @@ export function buildAddressSchema(m: AddressMessages) {
       .string()
       .trim()
       .required(m.phone)
-      .test('tj-phone', m.phoneInvalid, (value) => isTajikPhone(value ?? '')),
+      .test('phone', m.phoneInvalid, (value) => isValidContactPhone(value ?? '')),
   });
 }
 

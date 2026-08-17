@@ -291,12 +291,16 @@ export default function ClientDashboardPage() {
             href="/search"
             hrefLabel={t('bookAgain')}
           />
-          <div className="no-scrollbar -mx-1 flex gap-5 overflow-x-auto px-1 pb-2">
+          {/* `py-4` with a matching negative margin: the row scrolls horizontally, which
+              makes it clip vertically too, so a card lifting on hover had its top edge
+              cut off and the browser flashed a scrollbar — the "jump" this hover used to
+              have. The room is reserved instead, and the lift is a shorter, eased one. */}
+          <div className="no-scrollbar -mx-1 -my-2 flex gap-5 overflow-x-auto px-1 py-4">
             {recentlyViewed.map((m) => (
               <Link
                 key={m.id}
                 href={`/master/${m.id}`}
-                className="group w-52 shrink-0 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-lg transition-[box-shadow,border-color,transform] duration-300 hover:-translate-y-2 hover:border-blue-200 hover:shadow-2xl hover:shadow-blue-500/10 dark:border-slate-800 dark:bg-slate-900 dark:hover:border-sky-900"
+                className="group w-52 shrink-0 transform-gpu overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-lg transition-[box-shadow,border-color,transform] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1.5 hover:border-blue-200 hover:shadow-2xl hover:shadow-blue-500/10 motion-reduce:transform-none motion-reduce:transition-none dark:border-slate-800 dark:bg-slate-900 dark:hover:border-sky-900"
               >
                 <div className="relative h-28 overflow-hidden">
                   <img
