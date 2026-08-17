@@ -22,13 +22,17 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import { Separator } from '@/components/ui/separator';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 
-/** The icon cluster buttons all share this shape — one place to change their feel. */
+/**
+ * The icon cluster buttons all share this shape — one place to change their feel.
+ *
+ * 40px on a phone, 36 on the pill: below `sm` these are the only controls in the bar
+ * besides the drawer, and a 36px target with 2px between neighbours is a mis-tap.
+ */
 const clusterButton =
-  'h-9 w-9 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white';
+  'h-10 w-10 rounded-xl text-slate-600 hover:bg-slate-100 hover:text-slate-900 sm:h-9 sm:w-9 sm:hover:bg-white dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white sm:dark:hover:bg-slate-700';
 
 export const Navbar: React.FC = () => {
   const pathname = usePathname();
@@ -208,13 +212,14 @@ export const Navbar: React.FC = () => {
    * Every label is `whitespace-nowrap`: a two-line link grows the bar past its own
    * height and the page below then starts underneath it.
    */
+  /** `icon` is for the phone drawer, where a row of bare words is a wall of text. */
   const navLinks = [
-    { href: '/home', label: t('home') },
-    { href: '/categories', label: t('categories') },
-    { href: '/search', label: t('searchMasters') },
-    { href: '/marketplace', label: t('marketplace') },
-    { href: '/reviews', label: t('reviews') },
-    { href: '/about', label: t('about') },
+    { href: '/home', label: t('home'), icon: 'Home' },
+    { href: '/categories', label: t('categories'), icon: 'Grid' },
+    { href: '/search', label: t('searchMasters'), icon: 'Search' },
+    { href: '/marketplace', label: t('marketplace'), icon: 'shoppingbag' },
+    { href: '/reviews', label: t('reviews'), icon: 'Star' },
+    { href: '/about', label: t('about'), icon: 'info' },
   ];
 
   const languages: Array<{ code: Locale; flag: string; label: string }> = locales.map((code) => ({
@@ -261,20 +266,21 @@ export const Navbar: React.FC = () => {
           Shorter on a phone: 72px of chrome above every screen is a desktop habit, and
           the controls that used to fill it — theme, language, the account chip — now
           live in the drawer, where there is room to label them. */}
-      <div className="page-shell flex h-16 items-center justify-between gap-3 sm:h-[72px] sm:gap-4">
+      <div className="page-shell flex h-16 items-center justify-between gap-2 sm:h-[72px] sm:gap-4">
 
-        {/* Brand Logo — also the link to the landing page */}
-        <Link href="/" className="flex items-center gap-2.5 group shrink-0">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-sky-400 flex items-center justify-center text-white shadow-lg shadow-blue-500/25 group-hover:scale-105 transition-transform duration-300">
-            <Icon name="Wrench" size={21} className="stroke-[2.5]" />
+        {/* Brand Logo — also the link to the landing page. A step smaller on a phone:
+            at desktop size the wordmark plus its tile took a third of a 360px bar and
+            pushed the icons into each other. */}
+        <Link href="/" className="group flex min-w-0 shrink items-center gap-2 sm:gap-2.5">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-tr from-blue-600 to-sky-400 text-white shadow-lg shadow-blue-500/25 transition-transform duration-300 group-hover:scale-105 sm:h-10 sm:w-10">
+            <Icon name="Wrench" size={19} className="stroke-[2.5] sm:hidden" />
+            <Icon name="Wrench" size={21} className="hidden stroke-[2.5] sm:block" />
           </div>
-          <div className="leading-none">
-            <div className="flex items-center gap-1.5">
-              <span className="text-[22px] font-extrabold tracking-tight bg-gradient-to-r from-slate-900 via-blue-900 to-slate-900 dark:from-white dark:via-blue-300 dark:to-white bg-clip-text text-transparent">
-                Usto<span className="text-blue-600 dark:text-sky-400">Go</span>
-              </span>
-            </div>
-            <p className="text-[10px] font-medium text-slate-500 dark:text-slate-400 mt-1 hidden 2xl:block whitespace-nowrap">
+          <div className="min-w-0 leading-none">
+            <span className="block truncate bg-gradient-to-r from-slate-900 via-blue-900 to-slate-900 bg-clip-text text-[19px] font-extrabold tracking-tight text-transparent sm:text-[22px] dark:from-white dark:via-blue-300 dark:to-white">
+              Usto<span className="text-blue-600 dark:text-sky-400">Go</span>
+            </span>
+            <p className="mt-1 hidden whitespace-nowrap text-[10px] font-medium text-slate-500 2xl:block dark:text-slate-400">
               {t('brandSub')}
             </p>
           </div>
@@ -303,17 +309,20 @@ export const Navbar: React.FC = () => {
         </nav>
 
         {/* Right Header Actions */}
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex shrink-0 items-center gap-1 sm:gap-2">
 
-          {/* Icon cluster: notifications, cart, theme — one surface instead of three */}
-          <div className="flex items-center gap-0.5 p-1 rounded-2xl bg-slate-100/80 dark:bg-slate-800/60">
+          {/* Icon cluster: notifications, cart, theme — one surface instead of three.
+              The surface is a desktop idea: with theme and language moved into the
+              drawer, a grey pill drawn around one lonely bell reads as a mistake, so
+              below `sm` the icons stand on the bar itself at a full 40px tap target. */}
+          <div className="flex items-center gap-1 rounded-2xl sm:gap-0.5 sm:bg-slate-100/80 sm:p-1 sm:dark:bg-slate-800/60">
             {user && (
               <Popover>
                 <PopoverTrigger asChild>
                   <Button variant="ghost" size="icon" className={cn(clusterButton, 'relative')} aria-label={t('notificationsTitle')}>
                     <Icon name="Bell" size={17} />
                     {unreadCount > 0 && (
-                      <span className="absolute top-0.5 right-0.5 w-4 h-4 bg-red-500 text-white text-[9px] font-extrabold rounded-full flex items-center justify-center border-2 border-slate-100 dark:border-slate-800">
+                      <span className="absolute right-1 top-1 flex h-4 w-4 items-center justify-center rounded-full border-2 border-white bg-red-500 text-[9px] font-extrabold text-white sm:right-0.5 sm:top-0.5 sm:border-slate-100 dark:border-slate-900 sm:dark:border-slate-800">
                         {unreadCount}
                       </span>
                     )}
@@ -437,7 +446,7 @@ export const Navbar: React.FC = () => {
                 <Link href="/cart">
                   <Icon name="shoppingcart" size={17} />
                   {cartCount > 0 && (
-                    <span className="absolute top-0.5 right-0.5 w-4 h-4 bg-emerald-500 text-white text-[9px] font-extrabold rounded-full flex items-center justify-center border-2 border-slate-100 dark:border-slate-800">
+                    <span className="absolute right-1 top-1 flex h-4 w-4 items-center justify-center rounded-full border-2 border-white bg-emerald-500 text-[9px] font-extrabold text-white sm:right-0.5 sm:top-0.5 sm:border-slate-100 dark:border-slate-900 sm:dark:border-slate-800">
                       {cartCount}
                     </span>
                   )}
@@ -618,111 +627,127 @@ export const Navbar: React.FC = () => {
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-10 w-10 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 xl:hidden"
-                aria-label="Menu"
+                className="h-10 w-10 shrink-0 rounded-xl text-slate-600 hover:bg-slate-100 xl:hidden dark:text-slate-300 dark:hover:bg-slate-800"
+                aria-label={t('navMenu')}
               >
                 <Icon name="Menu" size={21} />
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-[88vw] max-w-sm p-0 xl:hidden">
-              <SheetHeader className="border-b border-slate-200 dark:border-slate-800">
+            {/* The phone's menu.
+                `overflow-y-auto` on a plain div, not `ScrollArea`: Radix lays its
+                viewport's child out as a table, so anything with an intrinsic minimum —
+                the language row, the wide CTA — pushed the whole panel wider than the
+                sheet and hung off the right edge of the screen. */}
+            <SheetContent
+              side="right"
+              className="flex w-[86vw] max-w-[340px] flex-col overflow-x-hidden p-0 xl:hidden"
+            >
+              <SheetHeader className="shrink-0 border-b border-slate-200 dark:border-slate-800">
                 <SheetTitle className="flex items-center gap-2 text-base font-extrabold">
-                  <span className="w-8 h-8 rounded-lg bg-gradient-to-tr from-blue-600 to-sky-400 flex items-center justify-center text-white">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-tr from-blue-600 to-sky-400 text-white">
                     <Icon name="Wrench" size={16} className="stroke-[2.5]" />
                   </span>
                   Usto<span className="-ml-2 text-blue-600 dark:text-sky-400">Go</span>
                 </SheetTitle>
               </SheetHeader>
 
-              <ScrollArea className="flex-1">
-                <div className="space-y-2 px-4 pt-5 pb-[max(1.5rem,env(safe-area-inset-bottom))]">
-                  <Button
-                    asChild
-                    variant="ghost"
-                    className={cn(
-                      'w-full h-auto justify-start px-4 py-3 rounded-xl text-sm font-semibold',
-                      pathname === '/'
-                        ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-sky-400'
-                        : 'text-slate-700 dark:text-slate-200 hover:bg-blue-50 dark:hover:bg-blue-950/50',
-                    )}
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    <Link href="/">{t('landing')}</Link>
-                  </Button>
-                  {navLinks.map((link) => (
-                    <Button
-                      key={link.href}
-                      asChild
-                      variant="ghost"
-                      className={cn(
-                        'w-full h-auto justify-start px-4 py-3 rounded-xl text-sm font-semibold',
-                        isLinkActive(link.href)
-                          ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-sky-400'
-                          : 'text-slate-700 dark:text-slate-200 hover:bg-blue-50 dark:hover:bg-blue-950/50',
-                      )}
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      <Link href={link.href}>{link.label}</Link>
-                    </Button>
-                  ))}
+              <div className="min-w-0 flex-1 overflow-y-auto overscroll-contain">
+                <div className="min-w-0 space-y-5 px-4 pt-4 pb-[max(1.5rem,env(safe-area-inset-bottom))]">
 
-                  <Separator className="my-3" />
-
-                  {isClientView && (
-                    <Button
-                      asChild
-                      className="md:hidden w-full h-auto justify-center gap-2 px-4 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold shadow-lg shadow-blue-600/25"
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      <Link href="/booking">
-                        <Icon name="Calendar" size={16} />
-                        {t('bookService')}
-                      </Link>
-                    </Button>
-                  )}
+                  {/* Who is signed in, and the way into their cabinet. The drawer used
+                      to open on a list of links with no sign anywhere that you were
+                      logged in at all. */}
                   {user ? (
-                    <>
-                      <Button
-                        asChild
-                        variant="ghost"
-                        className="w-full h-auto justify-start gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-blue-50 dark:hover:bg-blue-950"
-                        onClick={() => setMobileMenuOpen(false)}
-                      >
-                        <Link href={dashboardPathFor(user.role)}>{t('myDashboard')}</Link>
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        onClick={() => {
-                          setMobileMenuOpen(false);
-                          handleLogout();
-                        }}
-                        className="w-full h-auto justify-start gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-red-600 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950/40"
-                      >
-                        {t('logOut')}
-                      </Button>
-                    </>
+                    <Link
+                      href={dashboardPathFor(user.role)}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="tap-press flex min-w-0 items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-3 dark:border-slate-800 dark:bg-slate-800/60"
+                    >
+                      {avatarUrl ? (
+                        // eslint-disable-next-line @next/next/no-img-element -- short-lived signed URL
+                        <img src={avatarUrl} alt="" className="h-10 w-10 shrink-0 rounded-full object-cover" />
+                      ) : (
+                        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-slate-900 text-sm font-bold text-white dark:bg-white dark:text-slate-900">
+                          {(user.masterProfile?.displayName || user.clientProfile?.firstName || user.email)
+                            .charAt(0)
+                            .toUpperCase()}
+                        </span>
+                      )}
+                      <span className="min-w-0 flex-1">
+                        <span className="block truncate text-sm font-extrabold text-slate-900 dark:text-white">
+                          {user.masterProfile?.displayName || user.clientProfile?.firstName || user.email}
+                        </span>
+                        <span className="block truncate text-[11px] font-semibold text-blue-600 dark:text-sky-400">
+                          {t('myDashboard')}
+                        </span>
+                      </span>
+                      <Icon name="ChevronRight" size={16} className="shrink-0 text-slate-400" />
+                    </Link>
                   ) : (
                     !loading && (
-                      <Button
-                        asChild
-                        variant="ghost"
-                        className="w-full h-auto justify-start gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-blue-50 dark:hover:bg-blue-950"
+                      <Link
+                        href="/auth/login"
                         onClick={() => setMobileMenuOpen(false)}
+                        className="tap-press flex items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-800 dark:border-slate-800 dark:bg-slate-800/60 dark:text-slate-100"
                       >
-                        <Link href="/auth/login">{t('logIn')}</Link>
-                      </Button>
+                        <Icon name="User" size={16} />
+                        {t('logIn')}
+                      </Link>
                     )
                   )}
 
-                  <Separator className="my-3" />
+                  {isClientView && (
+                    <Link
+                      href="/booking"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="tap-press flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 px-4 py-3.5 text-sm font-extrabold text-white shadow-lg shadow-blue-600/25"
+                    >
+                      <Icon name="Calendar" size={16} />
+                      <span className="truncate">{t('bookService')}</span>
+                    </Link>
+                  )}
 
-                  {/* The two settings the header used to carry as bare icons. Here they
-                      have their names on them, which is the whole reason they moved. */}
-                  <div className="space-y-1.5">
+                  <div className="min-w-0 space-y-1">
+                    <p className="px-1 pb-1 text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500 dark:text-slate-400">
+                      {t('navMenu')}
+                    </p>
+                    {[{ href: '/', label: t('landing'), icon: 'Home' }, ...navLinks].map((link) => {
+                      const active = link.href === '/' ? pathname === '/' : isLinkActive(link.href);
+                      return (
+                        <Link
+                          key={link.href}
+                          href={link.href}
+                          onClick={() => setMobileMenuOpen(false)}
+                          className={cn(
+                            'tap-press flex min-w-0 items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition-colors',
+                            active
+                              ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-sky-400'
+                              : 'text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800/70',
+                          )}
+                        >
+                          <span
+                            className={cn(
+                              'flex h-8 w-8 shrink-0 items-center justify-center rounded-lg',
+                              active
+                                ? 'bg-blue-600 text-white'
+                                : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400',
+                            )}
+                          >
+                            <Icon name={link.icon} size={16} />
+                          </span>
+                          <span className="truncate">{link.label}</span>
+                        </Link>
+                      );
+                    })}
+                  </div>
+
+                  <div className="min-w-0 space-y-1.5">
                     <p className="px-1 text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500 dark:text-slate-400">
                       {t('selectLanguage')}
                     </p>
-                    <div className="grid grid-cols-3 gap-1.5">
+                    {/* `min-w-0` on the cells: three fixed-content chips in a grid are
+                        what stretched this panel past the screen edge. */}
+                    <div className="grid min-w-0 grid-cols-3 gap-1.5">
                       {languages.map((l) => (
                         <Button
                           key={l.code}
@@ -731,34 +756,53 @@ export const Navbar: React.FC = () => {
                           type="button"
                           onClick={() => setLang(l.code)}
                           className={cn(
-                            'tap-press flex flex-col items-center gap-1 rounded-xl border px-2 py-2.5 text-[11px] font-bold transition-colors',
+                            'tap-press flex min-w-0 flex-col items-center gap-0.5 rounded-xl border px-1 py-2 text-[10px] font-bold transition-colors',
                             lang === l.code
                               ? 'border-blue-600 bg-blue-600 text-white'
                               : 'border-slate-200 bg-white text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200',
                           )}
                         >
-                          <span className="text-base leading-none">{l.flag}</span>
-                          <span className="truncate">{l.label}</span>
+                          <span className="text-sm leading-none">{l.flag}</span>
+                          <span className="w-full truncate text-center">{l.label}</span>
                         </Button>
                       ))}
                     </div>
                   </div>
 
-                  <Button
-                    variant="ghost"
-                    type="button"
-                    onClick={toggleTheme}
-                    className="mt-1.5 h-auto w-full justify-start gap-3 rounded-xl px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-blue-50 dark:text-slate-200 dark:hover:bg-blue-950"
-                  >
-                    {darkMode ? (
-                      <Icon name="Sun" size={17} className="text-amber-400" />
-                    ) : (
-                      <Icon name="Moon" size={17} />
+                  <div className="min-w-0 space-y-1 border-t border-slate-200 pt-3 dark:border-slate-800">
+                    <Button
+                      variant="unstyled"
+                      size="raw"
+                      type="button"
+                      onClick={toggleTheme}
+                      className="tap-press flex w-full min-w-0 items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800/70"
+                    >
+                      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400">
+                        {darkMode ? <Icon name="Sun" size={16} className="text-amber-400" /> : <Icon name="Moon" size={16} />}
+                      </span>
+                      <span className="truncate">{t('toggleThemeTooltip')}</span>
+                    </Button>
+
+                    {user && (
+                      <Button
+                        variant="unstyled"
+                        size="raw"
+                        type="button"
+                        onClick={() => {
+                          setMobileMenuOpen(false);
+                          handleLogout();
+                        }}
+                        className="tap-press flex w-full min-w-0 items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-red-600 transition-colors hover:bg-red-50 dark:hover:bg-red-950/40"
+                      >
+                        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-red-50 text-red-600 dark:bg-red-950/50">
+                          <Icon name="LogOut" size={16} />
+                        </span>
+                        <span className="truncate">{t('logOut')}</span>
+                      </Button>
                     )}
-                    {t('toggleThemeTooltip')}
-                  </Button>
+                  </div>
                 </div>
-              </ScrollArea>
+              </div>
             </SheetContent>
           </Sheet>
         </div>

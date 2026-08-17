@@ -54,7 +54,7 @@ export function CategoryCard({
         className="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition-[box-shadow,border-color] duration-300 hover:border-blue-200 hover:shadow-[0_24px_48px_-24px_rgba(37,99,235,0.35)] dark:border-slate-800 dark:bg-slate-900 dark:hover:border-sky-900/80 dark:hover:shadow-[0_24px_48px_-24px_rgba(56,189,248,0.25)]"
       >
         {/* Photo */}
-        <div className={cn('relative overflow-hidden', compact ? 'h-32' : 'h-44')}>
+        <div className={cn('relative overflow-hidden', compact ? 'h-24 sm:h-32' : 'h-36 sm:h-44')}>
           <img
             src={visual.image}
             alt=""
@@ -88,12 +88,12 @@ export function CategoryCard({
         </div>
 
         {/* Icon chip, straddling the photo edge */}
-        <div className="relative px-5">
+        <div className="relative px-3.5 sm:px-5">
           <div
             className={cn(
-              'absolute -top-6 flex items-center justify-center rounded-2xl border-4 border-white shadow-sm transition-transform duration-300 group-hover:-rotate-6 group-hover:scale-110 dark:border-slate-900',
+              'absolute -top-5 flex items-center justify-center rounded-2xl border-4 border-white shadow-sm sm:-top-6 transition-transform duration-300 group-hover:-rotate-6 group-hover:scale-110 dark:border-slate-900',
               visual.tile,
-              compact ? 'h-11 w-11' : 'h-12 w-12'
+              compact ? 'h-10 w-10 sm:h-11 sm:w-11' : 'h-11 w-11 sm:h-12 sm:w-12'
             )}
           >
             <Icon size={compact ? 18 : 20} strokeWidth={2.2} />
@@ -101,11 +101,11 @@ export function CategoryCard({
         </div>
 
         {/* Copy */}
-        <div className={cn('flex flex-1 flex-col px-5 pb-5', compact ? 'pt-8' : 'pt-9')}>
+        <div className={cn('flex flex-1 flex-col px-3.5 pb-4 sm:px-5 sm:pb-5', compact ? 'pt-6 sm:pt-8' : 'pt-7 sm:pt-9')}>
           <h3
             className={cn(
               'font-extrabold tracking-tight text-slate-900 transition-colors group-hover:text-blue-600 dark:text-white dark:group-hover:text-sky-400',
-              compact ? 'text-sm' : 'text-lg'
+              compact ? 'text-[13px] sm:text-sm' : 'text-base sm:text-lg'
             )}
           >
             {category.name}
@@ -122,7 +122,7 @@ export function CategoryCard({
             </p>
           )}
 
-          <div className="mt-auto flex items-center gap-1.5 pt-4 text-[11px] font-semibold text-slate-500 dark:text-slate-400">
+          <div className="mt-auto flex items-center gap-1.5 pt-3 text-[11px] sm:pt-4 font-semibold text-slate-500 dark:text-slate-400">
             <BadgeCheck
               size={14}
               className={mastersCount > 0 ? 'text-emerald-500' : 'text-slate-300 dark:text-slate-600'}

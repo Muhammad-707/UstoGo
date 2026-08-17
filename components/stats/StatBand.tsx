@@ -42,7 +42,7 @@ export function StatBand({ items, className }: { items: readonly StatItem[]; cla
   return (
     <FilterContainer
       className={cn(
-        'grid grid-cols-2 gap-8 lg:grid-cols-4 lg:gap-0 lg:divide-x lg:divide-slate-200/80 dark:lg:divide-slate-800',
+        'grid grid-cols-2 gap-x-4 gap-y-6 sm:gap-8 lg:grid-cols-4 lg:gap-0 lg:divide-x lg:divide-slate-200/80 dark:lg:divide-slate-800',
         className
       )}
     >
@@ -50,11 +50,11 @@ export function StatBand({ items, className }: { items: readonly StatItem[]; cla
         <FilterItem key={s.label} className="lg:px-8 lg:first:pl-0 lg:last:pr-0">
           <s.Icon size={18} strokeWidth={2.2} className={TONE[s.tone]} />
 
-          <div className="mt-3 text-3xl font-extrabold leading-none tracking-tight text-slate-900 tabular-nums sm:text-4xl dark:text-white">
+          <div className="mt-2.5 text-2xl font-extrabold leading-none tracking-tight text-slate-900 tabular-nums sm:mt-3 sm:text-4xl dark:text-white">
             <CountUp to={s.value} decimals={s.decimals} prefix={s.prefix} suffix={s.suffix} />
           </div>
 
-          <p className="mt-2 text-[11px] font-semibold uppercase leading-snug tracking-[0.12em] text-slate-500 dark:text-slate-400">
+          <p className="mt-1.5 text-[10px] font-semibold uppercase leading-snug tracking-[0.1em] text-slate-500 sm:mt-2 sm:text-[11px] sm:tracking-[0.12em] dark:text-slate-400">
             {s.label}
           </p>
         </FilterItem>

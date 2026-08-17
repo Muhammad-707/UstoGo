@@ -68,7 +68,7 @@ export default function LandingClient({
   }, [leafCategories, categoryStats, categoryFilter]);
 
   return (
-    <div className="space-y-24 pb-24 overflow-hidden">
+    <div className="space-y-14 overflow-hidden pb-14 sm:space-y-24 sm:pb-24">
 
       {/* 1. HERO SECTION (CINEMATIC FULLSCREEN SLIDER) */}
       <HeroSlider /> 
@@ -86,22 +86,22 @@ export default function LandingClient({
       </section>
 
       {/* 3. POPULAR CATEGORIES SECTION */}
-      <section className="page-shell space-y-8">
+      <section className="page-shell space-y-5 sm:space-y-8">
 
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+        <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-end sm:gap-4">
           <div>
             <span className="text-xs font-extrabold uppercase tracking-widest text-blue-600 dark:text-sky-400">
               {t('browseServices')}
             </span>
-            <h2 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight mt-1">
+            <h2 className="mt-1 text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl dark:text-white">
               {t('topCategories')}
             </h2>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="no-scrollbar -mx-1 flex items-center gap-2 overflow-x-auto px-1">
             <Button size="raw" variant="ghost"
               onClick={() => setCategoryFilter('all')}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition ${
+              className={`shrink-0 whitespace-nowrap rounded-xl px-3.5 py-2 text-xs font-bold transition sm:px-4 ${
                 categoryFilter === 'all'
                   ? 'bg-blue-600 text-white'
                   : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800'
@@ -111,7 +111,7 @@ export default function LandingClient({
             </Button>
             <Button size="raw" variant="ghost"
               onClick={() => setCategoryFilter('popular')}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition ${
+              className={`shrink-0 whitespace-nowrap rounded-xl px-3.5 py-2 text-xs font-bold transition sm:px-4 ${
                 categoryFilter === 'popular'
                   ? 'bg-blue-600 text-white'
                   : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800'
@@ -123,7 +123,7 @@ export default function LandingClient({
         </div>
 
         {/* Category Cards Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-2 sm:gap-6 md:grid-cols-3 lg:grid-cols-5">
           {displayedCategories.slice(0, 10).map((cat, idx) => {
             const stat = categoryStats.get(cat.name);
             return (
@@ -153,14 +153,14 @@ export default function LandingClient({
       </section>
 
       {/* 4. HOW IT WORKS SECTION */}
-      <section className="bg-slate-100/70 dark:bg-slate-900/50 py-20 border-y border-slate-200/80 dark:border-slate-800/80">
-        <div className="page-shell space-y-16">
+      <section className="border-y border-slate-200/80 bg-slate-100/70 py-12 sm:py-20 dark:border-slate-800/80 dark:bg-slate-900/50">
+        <div className="page-shell space-y-10 sm:space-y-16">
 
           <div className="text-center max-w-2xl mx-auto space-y-3">
             <span className="text-xs font-extrabold uppercase tracking-widest text-blue-600 dark:text-sky-400">
               {t('seamlessExp')}
             </span>
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+            <h2 className="text-2xl font-extrabold tracking-tight text-slate-900 sm:text-4xl dark:text-white">
               {t('howItWorks')}
             </h2>
             <p className="text-sm text-slate-600 dark:text-slate-400">
@@ -168,7 +168,7 @@ export default function LandingClient({
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+          <div className="relative grid grid-cols-1 gap-4 sm:gap-8 md:grid-cols-3">
 
             {/* Connecting line (desktop only) */}
             <div className="hidden md:block absolute top-14 left-[16.5%] right-[16.5%] h-px bg-gradient-to-r from-blue-300 via-sky-300 to-emerald-300 dark:from-blue-800 dark:via-sky-800 dark:to-emerald-800" />
@@ -182,7 +182,7 @@ export default function LandingClient({
                 <motion.div
                   whileHover={{ y: -8 }}
                   transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-                  className={`group relative bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-4 shadow-lg hover:shadow-2xl ${step.ring} transition-shadow duration-300 h-full`}
+                  className={`group relative bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-3.5 sm:space-y-4 shadow-lg hover:shadow-2xl ${step.ring} transition-shadow duration-300 h-full`}
                 >
                   <div className="relative w-14 h-14">
                     <motion.div
@@ -194,7 +194,7 @@ export default function LandingClient({
                       {step.n}
                     </div>
                   </div>
-                  <h3 className="text-xl font-extrabold text-slate-900 dark:text-white">{t(step.titleKey)}</h3>
+                  <h3 className="text-lg font-extrabold text-slate-900 sm:text-xl dark:text-white">{t(step.titleKey)}</h3>
                   <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
                     {t(step.descKey)}
                   </p>
@@ -208,14 +208,14 @@ export default function LandingClient({
       </section>
 
       {/* 5. TOP MASTERS SECTION */}
-      <section className="page-shell space-y-8">
+      <section className="page-shell space-y-5 sm:space-y-8">
 
         <div className="flex items-center justify-between">
           <div>
             <span className="text-xs font-extrabold uppercase tracking-widest text-blue-600 dark:text-sky-400">
               {t('verifiedExcellence')}
             </span>
-            <h2 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight mt-1">
+            <h2 className="mt-1 text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl dark:text-white">
               {t('topRatedCraftsmen')}
             </h2>
           </div>
@@ -227,7 +227,7 @@ export default function LandingClient({
         </div>
 
         {/* Master Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 gap-4 sm:gap-8 md:grid-cols-2 lg:grid-cols-3">
           {topMasters.map((master, idx) => (
             <FilterItem key={master.id} index={idx % 3}>
             <Card asChild>
@@ -237,7 +237,7 @@ export default function LandingClient({
               className="rounded-3xl overflow-hidden border border-slate-200 dark:border-slate-800 group hover:shadow-2xl hover:shadow-blue-500/10 dark:hover:shadow-sky-500/10 hover:border-blue-200 dark:hover:border-sky-900 transition-[box-shadow,border-color] duration-300"
             >
                 {/* Cover Header */}
-                <div className="h-32 relative overflow-hidden">
+                <div className="relative h-24 overflow-hidden sm:h-32">
                   <img src={master.bannerUrl || getCoverUrl(master.id)} alt={master.displayName} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 ease-out" />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 to-transparent" />
                   <div className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-slate-900/80 backdrop-blur-md text-amber-400 text-xs font-bold flex items-center gap-1">
@@ -247,15 +247,15 @@ export default function LandingClient({
                 </div>
 
                 {/* Avatar & Content */}
-                <div className="p-6 relative pt-0">
-                  <div className="-mt-12 flex items-end justify-between mb-4">
+                <div className="relative p-4 pt-0 sm:p-6 sm:pt-0">
+                  <div className="-mt-10 mb-3.5 flex items-end justify-between sm:-mt-12 sm:mb-4">
                     <div className="relative">
                       <motion.div
                         className="absolute -inset-1 rounded-2xl bg-gradient-to-br from-blue-500 to-sky-400 blur"
                         animate={{ opacity: [0.35, 0.85, 0.35] }}
                         transition={{ duration: 2.6, repeat: Infinity, ease: 'easeInOut', delay: idx * 0.3 }}
                       />
-                      <img src={master.avatarUrl || getAvatarUrl(master.id, master.displayName)} alt={master.displayName} className="relative w-20 h-20 rounded-2xl object-cover border-4 border-white dark:border-slate-900 shadow-xl group-hover:scale-105 transition-transform duration-300" />
+                      <img src={master.avatarUrl || getAvatarUrl(master.id, master.displayName)} alt={master.displayName} className="relative h-16 w-16 rounded-2xl border-4 border-white object-cover shadow-xl transition-transform duration-300 group-hover:scale-105 sm:h-20 sm:w-20 dark:border-slate-900" />
                       {master.hasCertificates && (
                         <div className="absolute -bottom-1 -right-1 p-1 bg-blue-600 text-white rounded-full">
                           <Icon name="ShieldCheck" size={14} />
@@ -264,14 +264,14 @@ export default function LandingClient({
                     </div>
                     <div className="text-right">
                       <span className="text-xs text-slate-500 dark:text-slate-400">{t('hourlyRate')}</span>
-                      <p className="text-xl font-extrabold text-slate-900 dark:text-white">
+                      <p className="text-lg font-extrabold text-slate-900 sm:text-xl dark:text-white">
                         {master.priceFrom ? perHour(master.priceFrom) : '—'}
                       </p>
                     </div>
                   </div>
 
                   <div className="space-y-2">
-                    <h3 className="text-lg font-extrabold text-slate-900 dark:text-white">{master.displayName}</h3>
+                    <h3 className="text-base font-extrabold text-slate-900 sm:text-lg dark:text-white">{master.displayName}</h3>
                     <p className="text-xs font-semibold text-blue-600 dark:text-sky-400">{master.cityName}</p>
                     {master.bio && (
                       <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">{master.bio}</p>
@@ -290,7 +290,7 @@ export default function LandingClient({
                   )}
 
                   {/* Action CTA */}
-                  <div className="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center gap-3">
+                  <div className="mt-4 flex items-center gap-2.5 border-t border-slate-100 pt-3.5 sm:mt-6 sm:gap-3 sm:pt-4 dark:border-slate-800">
                     <Link
                       href={`/master/${master.id}`}
                       className="flex-1 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-center text-xs font-bold text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
@@ -316,7 +316,7 @@ export default function LandingClient({
 
       {/* 6. CALL TO ACTION SECTION */}
       <section className="page-shell">
-        <div className="bg-gradient-to-br from-blue-600 via-indigo-600 to-blue-800 rounded-3xl p-8 sm:p-14 text-white shadow-2xl shadow-blue-900/30 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-8">
+        <div className="bg-gradient-to-br from-blue-600 via-indigo-600 to-blue-800 relative flex flex-col items-center justify-between gap-6 overflow-hidden rounded-3xl p-6 text-white shadow-2xl shadow-blue-900/30 sm:p-14 md:flex-row md:gap-8">
 
           {/* Decorative glows + pattern */}
           <div className="absolute -top-20 -right-10 w-72 h-72 rounded-full bg-sky-400/20 blur-3xl animate-float" />
@@ -333,7 +333,7 @@ export default function LandingClient({
             <span className="px-3 py-1 text-xs font-bold bg-white/20 rounded-full uppercase tracking-wider">
               {t('readyToUpgrade')}
             </span>
-            <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
+            <h2 className="text-2xl font-extrabold tracking-tight sm:text-4xl">
               {t('ctaTitle')}
             </h2>
             <p className="text-sm text-blue-100 leading-relaxed">
@@ -345,7 +345,7 @@ export default function LandingClient({
             <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
               <Link
                 href="/booking"
-                className="block px-8 py-4 rounded-2xl bg-white text-blue-900 font-extrabold text-sm shadow-xl hover:shadow-2xl hover:shadow-white/20 transition text-center"
+                className="block rounded-2xl bg-white px-6 py-3.5 text-center text-sm font-extrabold text-blue-900 shadow-xl transition hover:shadow-2xl hover:shadow-white/20 sm:px-8 sm:py-4"
               >
                 {t('bookService')}
               </Link>
@@ -353,7 +353,7 @@ export default function LandingClient({
             <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
               <Link
                 href="/auth/register/master"
-                className="block px-8 py-4 rounded-2xl bg-blue-900/60 border border-blue-400/40 text-white font-extrabold text-sm hover:bg-blue-900/80 transition text-center"
+                className="block rounded-2xl border border-blue-400/40 bg-blue-900/60 px-6 py-3.5 text-center text-sm font-extrabold text-white transition hover:bg-blue-900/80 sm:px-8 sm:py-4"
               >
                 {t('becomeMaster')}
               </Link>

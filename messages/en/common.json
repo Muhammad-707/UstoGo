@@ -249,5 +249,6 @@
   "navSchedule": "Schedule",
   "navMessages": "Messages",
   "navBookings": "Bookings",
-  "navUsers": "Users"
+  "navUsers": "Users",
+  "navMenu": "Menu"
 }

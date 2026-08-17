@@ -249,5 +249,6 @@
   "navSchedule": "График",
   "navMessages": "Сообщения",
   "navBookings": "Заказы",
-  "navUsers": "Пользователи"
+  "navUsers": "Пользователи",
+  "navMenu": "Меню"
 }
