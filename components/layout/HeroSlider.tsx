@@ -156,7 +156,10 @@ export default function HeroSlider() {
 
   return (
     <section
-      className="relative min-h-[92vh] flex items-center justify-center overflow-hidden bg-slate-950 py-12 lg:py-20 px-4 sm:px-6 lg:px-8"
+      // `svh` on phones: `vh` is measured against the *largest* viewport, so with the
+      // browser's address bar showing, a 92vh hero is taller than the screen and the
+      // page jumps every time the bar hides on scroll.
+      className="relative flex min-h-[88svh] items-center justify-center overflow-hidden bg-slate-950 px-4 py-12 sm:px-6 lg:min-h-[92vh] lg:px-8 lg:py-20"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
       onTouchStart={handleTouchStart}

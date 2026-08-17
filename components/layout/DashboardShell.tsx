@@ -245,7 +245,7 @@ export function DashboardShell({
               onClick={() => setMobileOpen(false)}
               className="absolute inset-0 bg-slate-950/60 backdrop-blur-sm"
             />
-            <div className="animate-fade-in no-scrollbar absolute inset-y-0 left-0 w-72 max-w-[85vw] overflow-y-auto bg-white shadow-2xl ring-1 ring-slate-200 dark:bg-slate-900 dark:ring-white/10">
+            <div className="animate-fade-in no-scrollbar absolute inset-y-0 left-0 w-72 max-w-[85vw] overflow-y-auto bg-white pb-safe shadow-2xl ring-1 ring-slate-200 dark:bg-slate-900 dark:ring-white/10">
               <button
                 type="button"
                 aria-label={t('closeMenu')}

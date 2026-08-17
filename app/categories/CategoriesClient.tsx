@@ -188,7 +188,7 @@ export default function CategoriesClient() {
         <div className="absolute -left-40 -top-40 h-96 w-96 rounded-full bg-blue-500/10 blur-3xl dark:bg-blue-500/15" />
         <div className="absolute -bottom-48 right-1/3 h-96 w-96 rounded-full bg-sky-400/10 blur-3xl dark:bg-sky-400/10" />
 
-        <div className="relative page-shell grid items-center gap-12 py-16 lg:grid-cols-[1.05fr_1fr] lg:py-20">
+        <div className="relative page-shell grid items-center gap-12 py-8 sm:py-16 lg:grid-cols-[1.05fr_1fr] lg:py-20">
 
           {/* Left — copy, search, numbers */}
           <motion.div
@@ -330,7 +330,7 @@ export default function CategoriesClient() {
       </div>
 
       {/* 3. GRID */}
-      <section className="page-shell py-12">
+      <section className="page-shell py-6 sm:py-12">
         {loading && (
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             {Array.from({ length: 6 }).map((_, i) => (

@@ -26,7 +26,7 @@ const ANY = '__any';
 const SearchMap = dynamic(() => import('@/components/search/SearchMap'), {
   ssr: false,
   loading: () => (
-    <Skeleton className="h-[520px] w-full rounded-3xl" />
+    <Skeleton className="h-[380px] sm:h-[520px] w-full rounded-3xl" />
   ),
 });
 
@@ -195,7 +195,7 @@ export default function SearchClient({
         <div className="absolute -left-40 -top-40 h-96 w-96 rounded-full bg-blue-500/10 blur-3xl" />
         <div className="absolute -bottom-48 right-1/4 h-96 w-96 rounded-full bg-sky-400/10 blur-3xl" />
 
-        <div className="page-shell relative space-y-5 py-12">
+        <div className="page-shell relative space-y-5 py-6 sm:py-12">
           <div className="max-w-2xl space-y-3">
             <span className="inline-flex items-center gap-2 rounded-full bg-blue-100 px-3 py-1 text-xs font-bold uppercase tracking-wider text-blue-700 dark:bg-blue-950/70 dark:text-sky-300">
               <Icon name="Search" size={13} />

@@ -171,7 +171,7 @@ export default function MarketplacePage() {
         <div className="absolute -right-40 -top-40 h-96 w-96 rounded-full bg-emerald-500/10 blur-3xl" />
         <div className="absolute -bottom-48 left-1/3 h-96 w-96 rounded-full bg-teal-400/10 blur-3xl" />
 
-        <div className="relative page-shell grid items-center gap-12 py-16 lg:grid-cols-[1fr_1.05fr]">
+        <div className="relative page-shell grid items-center gap-12 py-8 sm:py-16 lg:grid-cols-[1fr_1.05fr]">
 
           {/* Artwork */}
           <div className="relative hidden lg:block">
@@ -336,7 +336,7 @@ export default function MarketplacePage() {
       </div>
 
       {/* 3. PRODUCTS */}
-      <section className="page-shell py-12">
+      <section className="page-shell py-6 sm:py-12">
         {loading && (
           <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4">
             {Array.from({ length: 8 }).map((_, idx) => (
@@ -405,7 +405,7 @@ export default function MarketplacePage() {
       </section>
 
       {toast && (
-        <div className="animate-fade-in fixed bottom-6 left-1/2 z-50 -translate-x-1/2 rounded-2xl bg-slate-900 px-5 py-3 text-xs font-bold text-white shadow-2xl dark:bg-white dark:text-slate-900">
+        <div className="animate-fade-in fixed bottom-[calc(5rem+env(safe-area-inset-bottom))] left-1/2 z-50 -translate-x-1/2 lg:bottom-6 rounded-2xl bg-slate-900 px-5 py-3 text-xs font-bold text-white shadow-2xl dark:bg-white dark:text-slate-900">
           {toast}
         </div>
       )}

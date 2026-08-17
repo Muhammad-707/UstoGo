@@ -18,7 +18,10 @@ export const Footer: React.FC = () => {
   }, []);
 
   return (
-    <footer className="bg-slate-900 text-slate-400 border-t border-slate-800 pt-16 pb-12 relative overflow-hidden">
+    // Tighter on a phone. At desktop spacing this footer ran to about two full screens
+    // of scrolling below every page, which on a phone is the last thing anyone wants
+    // between them and the bottom bar.
+    <footer className="relative overflow-hidden border-t border-slate-800 bg-slate-900 pt-10 pb-8 text-slate-400 sm:pt-16 sm:pb-12">
       {/* Subtle Background Glow */}
       <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-sky-500/10 rounded-full blur-3xl pointer-events-none" />
@@ -26,7 +29,7 @@ export const Footer: React.FC = () => {
       <div className="page-shell relative z-10">
         
         {/* Top Newsletter & Banner Callout */}
-        <div className="bg-gradient-to-r from-blue-900/40 via-slate-800/80 to-blue-950/40 p-8 sm:p-12 rounded-3xl border border-blue-800/40 shadow-2xl mb-16 flex flex-col lg:flex-row items-center justify-between gap-8 backdrop-blur-xl">
+        <div className="mb-10 flex flex-col items-center justify-between gap-6 rounded-3xl border border-blue-800/40 bg-gradient-to-r from-blue-900/40 via-slate-800/80 to-blue-950/40 p-6 shadow-2xl backdrop-blur-xl sm:p-12 lg:mb-16 lg:flex-row lg:gap-8">
           <div className="max-w-xl text-center lg:text-left">
             <span className="px-3 py-1 text-xs font-bold text-sky-400 bg-sky-950/60 rounded-full border border-sky-800/60 uppercase tracking-widest inline-block mb-3">
               {t('joinHomeowners')}
@@ -56,10 +59,12 @@ export const Footer: React.FC = () => {
         </div>
 
         {/* Links Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-slate-800">
-          
+        {/* Two columns of links on a phone, not one. Four stacked lists is a very long
+            scroll for four short lists. */}
+        <div className="grid grid-cols-2 gap-x-6 gap-y-8 border-b border-slate-800 pb-8 md:grid-cols-2 lg:grid-cols-5 lg:gap-10 lg:pb-12">
+
           {/* Brand Info */}
-          <div className="lg:col-span-2 space-y-4">
+          <div className="col-span-2 space-y-4 lg:col-span-2">
             <Link href="/" className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-sky-400 flex items-center justify-center text-white shadow-lg shadow-blue-500/25">
                 <Icon name="Wrench" size={22} className="stroke-[2.5]" />
@@ -124,12 +129,12 @@ export const Footer: React.FC = () => {
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+        <div className="flex flex-col items-center justify-between gap-3 pt-6 text-center text-xs text-slate-500 sm:flex-row sm:gap-4 sm:pt-8 sm:text-left">
           <p>{t('copyright')}</p>
-          <div className="flex items-center gap-6">
-            <span className="hover:text-slate-300 cursor-pointer">{t('privacyPolicy')}</span>
-            <span className="hover:text-slate-300 cursor-pointer">{t('termsOfService')}</span>
-            <span className="hover:text-slate-300 cursor-pointer">{t('craftsmanEthics')}</span>
+          <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
+            <span className="cursor-pointer hover:text-slate-300">{t('privacyPolicy')}</span>
+            <span className="cursor-pointer hover:text-slate-300">{t('termsOfService')}</span>
+            <span className="cursor-pointer hover:text-slate-300">{t('craftsmanEthics')}</span>
           </div>
         </div>
 

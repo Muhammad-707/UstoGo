@@ -98,18 +98,14 @@ export const Navbar: React.FC = () => {
     router.push('/');
   };
 
+  // Light is the default; dark only if this browser has chosen it before. Must agree
+  // with the pre-paint script in `app/layout.tsx`, or the page flips after hydration.
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem('ustogo-theme');
-      if (stored === 'dark' || (!stored && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-        // eslint-disable-next-line react-hooks/set-state-in-effect -- hydrates theme from localStorage (unavailable during SSR)
-        setDarkMode(true);
-        document.documentElement.classList.add('dark');
-      } else {
-        setDarkMode(false);
-        document.documentElement.classList.remove('dark');
-      }
-    }
+    if (typeof window === 'undefined') return;
+    const isDark = localStorage.getItem('ustogo-theme') === 'dark';
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- hydrates theme from localStorage (unavailable during SSR)
+    setDarkMode(isDark);
+    document.documentElement.classList.toggle('dark', isDark);
   }, []);
 
   const toggleTheme = () => {
@@ -258,10 +254,14 @@ export const Navbar: React.FC = () => {
   }, [bookLabel]);
 
   return (
-    <header className="sticky top-0 z-50 w-full glass-panel border-b border-slate-200/80 dark:border-slate-800/80 shadow-sm transition-colors duration-300">
+    <header className="sticky top-0 z-50 w-full glass-panel border-b border-slate-200/80 pt-safe shadow-sm transition-colors duration-300 dark:border-slate-800/80">
       {/* `page-shell` on purpose: it is the one container the whole site uses, so the
-          wordmark, the page header band below and the page content share a left edge. */}
-      <div className="page-shell h-[72px] flex items-center justify-between gap-4">
+          wordmark, the page header band below and the page content share a left edge.
+
+          Shorter on a phone: 72px of chrome above every screen is a desktop habit, and
+          the controls that used to fill it — theme, language, the account chip — now
+          live in the drawer, where there is room to label them. */}
+      <div className="page-shell flex h-16 items-center justify-between gap-3 sm:h-[72px] sm:gap-4">
 
         {/* Brand Logo — also the link to the landing page */}
         <Link href="/" className="flex items-center gap-2.5 group shrink-0">
@@ -445,11 +445,14 @@ export const Navbar: React.FC = () => {
               </Button>
             )}
 
+            {/* Theme and language are `sm:` and up. On a phone they are two more taps
+                competing with the notification bell for a 360px bar; both have a labelled
+                row in the drawer instead. */}
             <Button
               variant="ghost"
               size="icon"
               onClick={toggleTheme}
-              className={clusterButton}
+              className={cn(clusterButton, 'hidden sm:inline-flex')}
               title={t('toggleThemeTooltip')}
               aria-label={t('toggleThemeTooltip')}
             >
@@ -461,7 +464,7 @@ export const Navbar: React.FC = () => {
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="ghost"
-                  className="h-9 gap-1 px-2 rounded-xl text-slate-700 dark:text-slate-200 text-xs font-bold hover:bg-white dark:hover:bg-slate-700 [&[data-state=open]>svg]:rotate-180"
+                  className="hidden h-9 gap-1 rounded-xl px-2 text-xs font-bold text-slate-700 hover:bg-white sm:inline-flex dark:text-slate-200 dark:hover:bg-slate-700 [&[data-state=open]>svg]:rotate-180"
                   title={t('selectLanguage')}
                 >
                   <span>{currentLangObj.flag}</span>
@@ -632,7 +635,7 @@ export const Navbar: React.FC = () => {
               </SheetHeader>
 
               <ScrollArea className="flex-1">
-                <div className="px-4 py-5 space-y-2">
+                <div className="space-y-2 px-4 pt-5 pb-[max(1.5rem,env(safe-area-inset-bottom))]">
                   <Button
                     asChild
                     variant="ghost"
@@ -710,6 +713,50 @@ export const Navbar: React.FC = () => {
                       </Button>
                     )
                   )}
+
+                  <Separator className="my-3" />
+
+                  {/* The two settings the header used to carry as bare icons. Here they
+                      have their names on them, which is the whole reason they moved. */}
+                  <div className="space-y-1.5">
+                    <p className="px-1 text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500 dark:text-slate-400">
+                      {t('selectLanguage')}
+                    </p>
+                    <div className="grid grid-cols-3 gap-1.5">
+                      {languages.map((l) => (
+                        <Button
+                          key={l.code}
+                          variant="unstyled"
+                          size="raw"
+                          type="button"
+                          onClick={() => setLang(l.code)}
+                          className={cn(
+                            'tap-press flex flex-col items-center gap-1 rounded-xl border px-2 py-2.5 text-[11px] font-bold transition-colors',
+                            lang === l.code
+                              ? 'border-blue-600 bg-blue-600 text-white'
+                              : 'border-slate-200 bg-white text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200',
+                          )}
+                        >
+                          <span className="text-base leading-none">{l.flag}</span>
+                          <span className="truncate">{l.label}</span>
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <Button
+                    variant="ghost"
+                    type="button"
+                    onClick={toggleTheme}
+                    className="mt-1.5 h-auto w-full justify-start gap-3 rounded-xl px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-blue-50 dark:text-slate-200 dark:hover:bg-blue-950"
+                  >
+                    {darkMode ? (
+                      <Icon name="Sun" size={17} className="text-amber-400" />
+                    ) : (
+                      <Icon name="Moon" size={17} />
+                    )}
+                    {t('toggleThemeTooltip')}
+                  </Button>
                 </div>
               </ScrollArea>
             </SheetContent>

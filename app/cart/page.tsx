@@ -109,7 +109,7 @@ export default function CartPage() {
     <>
       <ClientPageHeader icon="shoppingcart" eyebrow={t('badge')} title={t('title')} />
 
-      <div className="page-shell space-y-14 py-12">
+      <div className="page-shell space-y-14 py-6 sm:py-12">
 
         {loading && (
           <div className="grid gap-8 lg:grid-cols-[1fr_360px]">
@@ -348,7 +348,7 @@ export default function CartPage() {
       </div>
 
       {toast && (
-        <div className="animate-fade-in fixed bottom-6 left-1/2 z-50 -translate-x-1/2 rounded-2xl bg-slate-900 px-5 py-3 text-xs font-bold text-white shadow-2xl dark:bg-white dark:text-slate-900">
+        <div className="animate-fade-in fixed bottom-[calc(5rem+env(safe-area-inset-bottom))] left-1/2 z-50 -translate-x-1/2 lg:bottom-6 rounded-2xl bg-slate-900 px-5 py-3 text-xs font-bold text-white shadow-2xl dark:bg-white dark:text-slate-900">
           {toast}
         </div>
       )}

@@ -70,7 +70,7 @@ export default function OrderDetailPage() {
 
   if (loading) {
     return (
-      <div className="page-shell space-y-6 py-12">
+      <div className="page-shell space-y-6 py-6 sm:py-12">
         <Skeleton className="h-4 w-32" />
         <div className="grid gap-8 lg:grid-cols-[1fr_340px]">
           <Skeleton className="h-96 rounded-3xl" />
@@ -82,7 +82,7 @@ export default function OrderDetailPage() {
 
   if (notFound || !order) {
     return (
-      <div className="page-shell py-16">
+      <div className="page-shell py-8 sm:py-16">
         <EmptyState
           icon="package"
           tone="emerald"
@@ -222,7 +222,7 @@ export default function OrderDetailPage() {
       </div>
 
       {toast && (
-        <div className="animate-fade-in fixed bottom-6 left-1/2 z-50 -translate-x-1/2 rounded-2xl bg-slate-900 px-5 py-3 text-xs font-bold text-white shadow-2xl dark:bg-white dark:text-slate-900">
+        <div className="animate-fade-in fixed bottom-[calc(5rem+env(safe-area-inset-bottom))] left-1/2 z-50 -translate-x-1/2 lg:bottom-6 rounded-2xl bg-slate-900 px-5 py-3 text-xs font-bold text-white shadow-2xl dark:bg-white dark:text-slate-900">
           {toast}
         </div>
       )}

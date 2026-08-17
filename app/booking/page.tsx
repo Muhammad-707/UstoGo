@@ -469,7 +469,7 @@ export default function BookingWizardPage() {
   ].filter((r) => r.value);
 
   return (
-    <div className="page-shell py-12">
+    <div className="page-shell py-6 sm:py-12">
 
       {/* Page Title */}
       <div className="text-center space-y-2">
@@ -541,9 +541,13 @@ export default function BookingWizardPage() {
                   {isDone ? <Icon name="check" size={15} className="stroke-[3]" /> : s.num}
                 </motion.div>
 
+                {/* On a phone only the step you are on is named. Four labels of two and
+                    three Tajik words each, under four dots on a 360px screen, wrapped
+                    into a wall of text that told the reader nothing the dots did not. */}
                 <span
                   className={cn(
-                    'px-1 text-[10px] sm:text-xs font-bold leading-tight transition-colors',
+                    'px-1 text-[11px] font-bold leading-tight transition-colors sm:text-xs',
+                    !isCurrent && 'hidden sm:block',
                     isCurrent
                       ? 'text-blue-600 dark:text-sky-400'
                       : isDone

@@ -74,7 +74,7 @@ export default function NotificationsPage() {
         </Button>
       }
     />
-    <div className="page-shell page-shell-narrow py-12 space-y-8">
+    <div className="page-shell page-shell-narrow py-6 sm:py-12 space-y-8">
 
       {!loading && items.length === 0 && (
         <EmptyState icon="Bell" title={t('empty')} description={t('emptyDesc')} />

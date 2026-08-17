@@ -90,7 +90,9 @@ function SheetHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="sheet-header"
-      className={cn("flex flex-col gap-0.5 p-4", className)}
+      // `max()`, not a bare inset: on a device without a notch the inset is 0 and a
+      // plain `pt-safe` would take the header's own padding away with it.
+      className={cn("flex flex-col gap-0.5 p-4 pt-[max(1rem,env(safe-area-inset-top))]", className)}
       {...props}
     />
   )
@@ -100,7 +102,7 @@ function SheetFooter({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="sheet-footer"
-      className={cn("mt-auto flex flex-col gap-2 p-4", className)}
+      className={cn("mt-auto flex flex-col gap-2 p-4 pb-[max(1rem,env(safe-area-inset-bottom))]", className)}
       {...props}
     />
   )

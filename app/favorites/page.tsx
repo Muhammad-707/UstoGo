@@ -51,7 +51,7 @@ export default function FavoritesPage() {
   return (
     <>
     <ClientPageHeader icon="heart" eyebrow={t('badge')} title={t('title')} />
-    <div className="page-shell py-12 space-y-8">
+    <div className="page-shell py-6 sm:py-12 space-y-8">
 
       {loading ? (
         <div className="text-center py-16 text-sm text-slate-500 dark:text-slate-400 font-medium">

@@ -73,7 +73,7 @@ export default function ShopMap({ shops, origin }: ShopMapProps) {
       : DUSHANBE_CENTER;
 
   return (
-    <div className="h-[520px] w-full rounded-3xl overflow-hidden border border-slate-200 dark:border-slate-800 shadow-sm relative z-0">
+    <div className="h-[380px] sm:h-[520px] w-full rounded-3xl overflow-hidden border border-slate-200 dark:border-slate-800 shadow-sm relative z-0">
       <MapContainer center={center} zoom={origin ? 11 : 6} className="h-full w-full">
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

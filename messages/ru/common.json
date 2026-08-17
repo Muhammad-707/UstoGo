@@ -239,5 +239,15 @@
   "unreadCount": "{count} непрочитанных",
   "timeMinutesAgo": "{count} мин назад",
   "timeHoursAgo": "{count} ч назад",
-  "timeDaysAgo": "{count} дн назад"
+  "timeDaysAgo": "{count} дн назад",
+  "navBarLabel": "Основное меню",
+  "navFeed": "Лента",
+  "navSearch": "Поиск",
+  "navShop": "Магазин",
+  "navProfile": "Профиль",
+  "navCabinet": "Кабинет",
+  "navSchedule": "График",
+  "navMessages": "Сообщения",
+  "navBookings": "Заказы",
+  "navUsers": "Пользователи"
 }

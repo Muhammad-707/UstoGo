@@ -83,7 +83,7 @@ export default function ContactClient() {
         <div className="absolute -right-32 -top-40 h-96 w-96 rounded-full bg-blue-500/10 blur-3xl" />
         <div className="absolute -bottom-40 left-1/4 h-80 w-80 rounded-full bg-indigo-400/10 blur-3xl" />
 
-        <div className="page-shell page-shell-narrow relative space-y-5 py-16 text-center">
+        <div className="page-shell page-shell-narrow relative space-y-5 py-8 sm:py-16 text-center">
           <span className="inline-flex items-center gap-2 rounded-full bg-blue-100 px-3 py-1 text-xs font-bold uppercase tracking-wider text-blue-700 dark:bg-blue-950/70 dark:text-sky-300">
             <MessageSquare size={13} />
             {t('badge')}
@@ -97,7 +97,7 @@ export default function ContactClient() {
         </div>
       </section>
 
-      <FilterContainer className="page-shell page-shell-narrow grid grid-cols-1 items-start gap-8 py-12 md:grid-cols-[1.2fr_1fr]">
+      <FilterContainer className="page-shell page-shell-narrow grid grid-cols-1 items-start gap-8 py-6 sm:py-12 md:grid-cols-[1.2fr_1fr]">
         <FilterItem index={0}>
           <Card className="space-y-5 rounded-3xl border border-slate-200 p-8 dark:border-slate-800">
             <h2 className="text-lg font-extrabold text-slate-900 dark:text-white">{t('formTitle')}</h2>

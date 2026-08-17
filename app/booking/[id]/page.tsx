@@ -416,7 +416,7 @@ export default function BookingDetailsPage() {
     /* Shaped like the page it replaces — header band, timeline column, sidebar — so
        nothing jumps when the booking lands. */
     return (
-      <div className="page-shell space-y-8 py-12">
+      <div className="page-shell space-y-8 py-6 sm:py-12">
         <Skeleton className="h-40 w-full rounded-[2rem]" />
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
           <div className="space-y-8 lg:col-span-2">
@@ -484,7 +484,7 @@ export default function BookingDetailsPage() {
   const cancelled = !!booking.cancelledAt;
 
   return (
-    <div className="page-shell py-12 space-y-8">
+    <div className="page-shell py-6 sm:py-12 space-y-8">
 
       {/* Header */}
       <Card className="overflow-hidden rounded-[2rem] border border-slate-200 p-0 shadow-xl dark:border-slate-800">

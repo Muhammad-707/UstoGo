@@ -239,5 +239,15 @@
   "unreadCount": "{count} нахондашуда",
   "timeMinutesAgo": "{count} дақ пеш",
   "timeHoursAgo": "{count} соат пеш",
-  "timeDaysAgo": "{count} рӯз пеш"
+  "timeDaysAgo": "{count} рӯз пеш",
+  "navBarLabel": "Менюи асосӣ",
+  "navFeed": "Лента",
+  "navSearch": "Ҷустуҷӯ",
+  "navShop": "Мағоза",
+  "navProfile": "Профил",
+  "navCabinet": "Кабинет",
+  "navSchedule": "Ҷадвал",
+  "navMessages": "Паёмҳо",
+  "navBookings": "Фармоишҳо",
+  "navUsers": "Корбарон"
 }

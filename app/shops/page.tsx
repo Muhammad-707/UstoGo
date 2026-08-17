@@ -18,7 +18,7 @@ import { Card } from '@/components/ui/card';
 
 const ShopMap = dynamic(() => import('@/components/marketplace/ShopMap'), {
   ssr: false,
-  loading: () => <Skeleton className="h-[520px] w-full rounded-3xl" />,
+  loading: () => <Skeleton className="h-[380px] sm:h-[520px] w-full rounded-3xl" />,
 });
 
 type Origin = { lat: number; lng: number };
@@ -184,7 +184,7 @@ export default function ShopsPage() {
           </div>
         )}
 
-        {loading ? <Skeleton className="h-[520px] w-full rounded-3xl" /> : <ShopMap shops={visible} origin={origin} />}
+        {loading ? <Skeleton className="h-[380px] sm:h-[520px] w-full rounded-3xl" /> : <ShopMap shops={visible} origin={origin} />}
 
         {/* City chips appear only when there is more than one city to choose between. */}
         {!loading && cities.length > 1 && (

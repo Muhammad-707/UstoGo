@@ -150,10 +150,86 @@ body {
 .no-scrollbar {
   scrollbar-width: none;
   -ms-overflow-style: none;
+  -webkit-overflow-scrolling: touch;
 }
 
 .no-scrollbar::-webkit-scrollbar {
   display: none;
+}
+
+/* ---------------------------------------------------------------------------
+   Phone
+
+   The difference between a website on a phone and an app on a phone is mostly
+   these few rules: nothing flashes grey when you touch it, a tap does not wait
+   300ms to find out whether it was a double-tap, the page does not rubber-band
+   the whole document when a list reaches its end, and the browser does not
+   zoom the moment a text field is focused.
+   --------------------------------------------------------------------------- */
+html {
+  /* Landscape on iOS otherwise inflates every font size on its own. */
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: contain;
+}
+
+a,
+button,
+[role='button'],
+label,
+summary,
+input[type='checkbox'],
+input[type='radio'] {
+  touch-action: manipulation;
+}
+
+/* Safari zooms the viewport when a focused field is under 16px, and never zooms
+   back out. Below `sm` every field is 16px for that one reason — it is also the
+   size a form should be on a phone. */
+@media (max-width: 639px) {
+  input:not([type='checkbox']):not([type='radio']),
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}
+
+/* Safe areas: the notch above, the home indicator below. Paired with
+   `viewportFit: 'cover'` in the root layout — without these the fixed bars sit
+   under the system chrome. */
+.pt-safe {
+  padding-top: env(safe-area-inset-top);
+}
+
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.px-safe {
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+/* The height a fixed bottom bar occupies, home indicator included — what the
+   page has to reserve at its end so the last row is not sitting under the bar. */
+.h-bottom-nav {
+  height: calc(4.25rem + env(safe-area-inset-bottom));
+}
+
+/* A pressed tile should give, the way a native row does. Applied to the bottom
+   bar and the cards people actually tap through on a phone. */
+@media (hover: none) {
+  .tap-press {
+    transition: transform 0.12s ease-out, opacity 0.12s ease-out;
+  }
+
+  .tap-press:active {
+    transform: scale(0.96);
+    opacity: 0.85;
+  }
 }
 
 .animate-float {

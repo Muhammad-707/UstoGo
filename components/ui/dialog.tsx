@@ -65,12 +65,29 @@ function DialogContent({
         className={cn(
           // Card geometry of the product: 3xl corners, real padding, a lifted shadow.
           // `max-h`/`overflow` so a long form scrolls inside the dialog instead of
-          // running off the bottom of a laptop screen.
-          "fixed top-1/2 left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] max-h-[calc(100dvh-2rem)] -translate-x-1/2 -translate-y-1/2 gap-4 overflow-y-auto rounded-3xl border border-slate-200 bg-white p-6 text-sm text-popover-foreground shadow-2xl shadow-slate-950/20 duration-150 outline-none sm:max-w-md sm:p-8 dark:border-slate-800 dark:bg-slate-900 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
+          // running off the bottom of the screen.
+          "fixed z-50 grid gap-4 overflow-y-auto border border-slate-200 bg-white text-sm text-popover-foreground shadow-2xl shadow-slate-950/20 duration-200 outline-none dark:border-slate-800 dark:bg-slate-900",
+          // Phone: a sheet that comes up from the bottom edge, full width, rounded only
+          // at the top, clearing the home indicator. A dialog floating in the middle of a
+          // phone screen with a margin around it is a desktop dialog that has been
+          // shrunk; this is the shape every app on the device already uses, and it puts
+          // the actions where the thumb is.
+          "inset-x-0 bottom-0 max-h-[90dvh] w-full rounded-t-3xl rounded-b-none border-b-0 p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))]",
+          "data-open:animate-in data-open:fade-in-0 data-open:slide-in-from-bottom-8 data-closed:animate-out data-closed:fade-out-0 data-closed:slide-out-to-bottom-8",
+          // Tablet and up: back to a centred card.
+          "sm:inset-x-auto sm:bottom-auto sm:top-1/2 sm:left-1/2 sm:max-h-[calc(100dvh-2rem)] sm:max-w-md sm:-translate-x-1/2 sm:-translate-y-1/2 sm:rounded-3xl sm:border-b sm:p-8 sm:pb-8",
+          "sm:data-open:zoom-in-95 sm:data-open:slide-in-from-bottom-0 sm:data-closed:zoom-out-95 sm:data-closed:slide-out-to-bottom-0",
           className
         )}
         {...props}
       >
+        {/* The grab handle every bottom sheet has. Decorative — the sheet is dismissed
+            by the close button, the overlay or Escape — but its absence is what makes a
+            sheet look like a web page that slid up. */}
+        <div
+          aria-hidden
+          className="mx-auto -mt-1 mb-1 h-1.5 w-10 shrink-0 rounded-full bg-slate-300 sm:hidden dark:bg-slate-700"
+        />
         {children}
         {showCloseButton && (
           <DialogPrimitive.Close data-slot="dialog-close" asChild>

@@ -239,5 +239,15 @@
   "unreadCount": "{count} unread",
   "timeMinutesAgo": "{count}m ago",
   "timeHoursAgo": "{count}h ago",
-  "timeDaysAgo": "{count}d ago"
+  "timeDaysAgo": "{count}d ago",
+  "navBarLabel": "Main navigation",
+  "navFeed": "Feed",
+  "navSearch": "Search",
+  "navShop": "Shop",
+  "navProfile": "Profile",
+  "navCabinet": "Cabinet",
+  "navSchedule": "Schedule",
+  "navMessages": "Messages",
+  "navBookings": "Bookings",
+  "navUsers": "Users"
 }

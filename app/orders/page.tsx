@@ -78,7 +78,7 @@ export default function OrdersPage() {
     <>
       <ClientPageHeader icon="package" eyebrow={t('badge')} title={t('title')} />
 
-      <div className="page-shell space-y-8 py-12">
+      <div className="page-shell space-y-8 py-6 sm:py-12">
 
         {loading && (
           <div className="space-y-3">
