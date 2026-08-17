@@ -217,7 +217,7 @@ export function PaymentDialog({ open, onOpenChange, amountLabel, onConfirmed, su
                       method.id === m.id && 'border-blue-500 ring-2 ring-blue-500/20 dark:border-sky-600',
                     )}
                   >
-                    <span className="h-8 w-[52px] shrink-0 overflow-hidden rounded-lg shadow-sm ring-1 ring-black/5">
+                    <span className="h-8 w-[50px] shrink-0 overflow-hidden rounded-lg shadow-sm ring-1 ring-black/5">
                       <CardBrandMark brand={m.brand} />
                     </span>
                     <span className="min-w-0">
@@ -264,13 +264,13 @@ export function PaymentDialog({ open, onOpenChange, amountLabel, onConfirmed, su
                   <div className="pointer-events-none absolute -bottom-14 -left-8 h-32 w-32 rounded-full bg-black/15 blur-2xl" />
 
                   <div className="relative flex items-start justify-between gap-3">
-                    <span className="h-7 w-[46px] overflow-hidden rounded-md shadow-sm ring-1 ring-white/25">
+                    <span className="h-7 w-[44px] overflow-hidden rounded-md shadow-sm ring-1 ring-white/25">
                       <CardBrandMark brand={method.brand} />
                     </span>
                     {/* The scheme the number itself belongs to, once it is recognisable —
                         skipped when it would simply repeat the chosen brand. */}
                     {scheme !== 'UNKNOWN' && scheme !== method.brand && (
-                      <span className="h-7 w-[46px] overflow-hidden rounded-md shadow-sm ring-1 ring-white/25">
+                      <span className="h-7 w-[44px] overflow-hidden rounded-md shadow-sm ring-1 ring-white/25">
                         <CardBrandMark brand={scheme} />
                       </span>
                     )}
